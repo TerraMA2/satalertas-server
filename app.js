@@ -7,6 +7,7 @@ const express = require('express')
     csrf = require('csurf')
 
 const userRouter = require('./routes/user')
+const viewRouter = require('./routes/view')
 
 const errorController = require('./controllers/error')
 
@@ -29,6 +30,7 @@ app.use(express.json())
 // })
 
 app.use('/user', userRouter)
+app.use('/view', viewRouter)
 
 // Error handler
 app.use(errorController.show404)

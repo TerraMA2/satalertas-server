@@ -1,10 +1,13 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "postgres",
-    "database": "terrama-dev",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "username": "mpmt",
+    "password": "secreto",
+    "database": "mpmt",
+    "host": "terrama2.dpi.inpe.br",
+    "dialect": "postgres",
+    "define": {
+      "schema": "terrama2"
+    }
   },
   "test": {
     "username": "postgres",

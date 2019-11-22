@@ -3,8 +3,10 @@
 const app = require('../app')
       debug = require('debug')('terrama2-server:server')
       http = require('http')
+      killPort = require('kill-port')
 
-const port = normalizePort(process.env.PORT || '3000')
+
+const port = normalizePort(process.env.PORT || '3200')
 
 app.set('port', port)
 
@@ -29,6 +31,7 @@ server.on('error', (error) => {
       break
     case 'EADDRINUSE':
       console.error(bind + ' is already in use')
+      killPort(port, 'tcp')
       process.exit(1)
       break
     default:
