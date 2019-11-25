@@ -6,16 +6,13 @@ const models = require('../models')
     LayerType = require('../enum/layerType')
 
 exports.get = (req, res, next) => {
-    // const viewId = req.params.id
-    // if(userId){
-    //     View.findByPk(viewId).then(view => {
-    //         res.json(view)
-    //     })
-    // }else{
-        RegisteredView.findAll({include: ['view']})
-                        .then(registeredViews => {
-            return registeredViews
-        }).then(registeredViews => {
+    const viewId = req.params.id
+    if(viewId){
+        RegisteredView.findOne({include: ['view'], where: {'view_id': viewId}}).then(view => {
+            res.json(view)
+        })
+    }else{
+        RegisteredView.findAll({include: ['view']}).then(registeredViews => {
             const layerType = {
                 1: 'static',
                 2: 'dynamic',
@@ -29,41 +26,43 @@ exports.get = (req, res, next) => {
                 const isPrivate = view.dataValues.private
                 const sourceType = view.dataValues.source_type
                 const uri = registeredView.dataValues.uri
-                const geoserverUrl = uri.substr(uri.lastIndexOf("@")+1)
+                const geoserverUrl = `http://${uri.substr(uri.lastIndexOf("@")+1)}/wms`
                 const workspace = registeredView.dataValues.workspace
                 const layerId = `${workspace}:view${viewId}`
                 let cod = '';
                 let codgroup = '';
-                if (sourceType === 3) {
+
+                if (sourceType === LayerType.ANALYSIS) {
                     cod = viewName.replace(/ /g, '_').toUpperCase()
-                    codgroup = cod.substr(cod.lastIndexOf("_")+1).toUpperCase()
+                    codgroup = cod.substr(cod.lastIndexOf("_")+1)
                 }
+
+                const layerData = {
+                    url: `${geoserverUrl}`,
+                    layers: `${layerId}`,
+                    transparent: true,
+                    format: "image/png",
+                    version: "1.1.0",
+                    time: "P1Y/PRESENT"
+                }
+
+                const legend = {
+                    title: `${viewName}`,
+                    url: `${geoserverUrl}?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=${layerId}`
+                }
+
                 const layer = {
                     cod: `${cod}`,
                     codgroup: `${codgroup}`,
                     label: `${viewName}`,
                     shortLabel: `${viewName}`,
                     value: `${viewId}`,
-                    dateColumn: "execution_date",
-                    areaColumn: "calculated_area_ha",
-                    geomColumn: "intersection_geom",
                     carRegisterColumn: "de_car_validado_sema_numero_do1",
-                    classNameColumn: "dd_deter_inpe_classname",
                     type: `${layerType[sourceType]}`,
                     isPrivate: `${isPrivate}`,
                     isPrimary: false,
-                    layerData: {
-                        url: `${geoserverUrl}`,
-                        layers: `${layerId}`,
-                        transparent: true,
-                        format: "image/png",
-                        version: "1.1.0",
-                        time: "P1Y/PRESENT"
-                    },
-                    legend: {
-                        title: `${viewName}`,
-                        url: `${geoserverUrl}?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=${layerId}`
-                    }
+                    layerData: layerData,
+                    legend: legend
                 }
                 return layer
             })
@@ -83,18 +82,6 @@ exports.get = (req, res, next) => {
                 r[viewName] = [...r[viewName] || [], a];
                 return r;
             }, {});
-
-            // staticLayers = staticLayers.reduce((r, a) => {
-            //     let viewName = 'static'
-            //     r[viewName] = [...r[viewName] || [], a];
-            //     return r;
-            // }, {});
-
-            // dynamicLayers = dynamicLayers.reduce((r, a) => {
-            //     let viewName = 'dynamic'
-            //     r[viewName] = [...r[viewName] || [], a];
-            //     return r;
-            // }, {});
 
             analysisLayers['DETER'][0]['isPrimary'] = true
             analysisLayers['PRODES'][0]['isPrimary'] = true
@@ -144,33 +131,10 @@ exports.get = (req, res, next) => {
                     isPrivate: false,
                     children: dynamicLayers
                 }
-
             ]
-
-            // const test = {
-            //     cod: `${codgroup}`,
-            //     label: `Análise ${codgroup}`,
-            //     parent: true,
-            //     viewGraph: true,
-            //     activearea: true,
-            //     isPrivate: true,
-            //     children: children
-            // }
-
-            // viewsJSON = viewsJSON.reduce((r, a) => {
-            //     r[a.type] = [...r[a.type] || [], a];
-            //     return r;
-            // }, {});
-            // const staticChildren = viewsJSON.static
-            // const dynamicChildren = viewsJSON.dynamic
-            // const analysisChildren = viewsJSON.analysis
-            // analysisChildren = analysisChildren.reduce((r, a) => {
-            //     r[a.type] = [...r[a.cod] || [], a];
-            //     return r;
-            // }, {});
             return viewsJSON
         }).then(viewsJSON => {
             res.json(viewsJSON)
         })
-    // }
+    }
 }
