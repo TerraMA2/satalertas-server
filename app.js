@@ -8,6 +8,7 @@ const express = require('express')
 
 const userRouter = require('./routes/user')
 const viewRouter = require('./routes/view')
+const geoserverRouter = require('./routes/geoserver')
 
 const errorController = require('./controllers/error')
 
@@ -31,6 +32,7 @@ app.use(express.json())
 
 app.use('/user', userRouter)
 app.use('/view', viewRouter)
+app.use('/geoserver', geoserverRouter)
 
 // Error handler
 app.use(errorController.show404)

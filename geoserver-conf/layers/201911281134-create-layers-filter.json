@@ -1,0 +1,14 @@
+[
+    {
+        "tite": "car_deter_biomas_sql",
+        "workspace": "terrama2_filters",
+        "sql": " SELECT main_table.*, secondary_table.gid FROM public.apv_car_deter_28 AS main_table ,public.de_biomas_mt secondary_table WHERE ST_Intersects(intersection_geom,   ST_Transform(secondary_table.geom, 4326)) ",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    }
+]
