@@ -1,0 +1,1356 @@
+[
+    {
+        "title": "app_car_deter_biomas_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_deter_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_deter_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_deter_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_deter_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_carprodes_41 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_app_carprodes_41 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_carprodes_41 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_carprodes_41 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_carprodes_41 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_deter_biomas_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_deter_28 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(intersection_geom,   ST_Transform(secondary_table.geom, 4326))",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_deter_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_car_deter_28 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n    ST_Intersects(intersection_geom,   secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_deter_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_deter_28 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n    ST_Intersects(intersection_geom,   secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_deter_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_deter_28 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n    ST_Intersects(intersection_geom,   secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_deter_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_deter_28 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n    ST_Intersects(intersection_geom,   st_transform(secondary_table.geom, 4326))",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_deter_car_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.area_ha_\nFROM public.apv_car_deter_28 AS main_table\n    ,public.de_car_validado_sema AS secondary_table\nWHERE\n    main_table.de_car_validado_sema_numero_do1 = secondary_table.numero_do1",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_prodes_40 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_car_prodes_40 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_prodes_40 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_prodes_40 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_prodes_40 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_deter_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_cardeter_37 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_deter_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_reserva_cardeter_37 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_deter_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_cardeter_37 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_deter_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_cardeter_37 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_deter_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_cardeter_37 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_carprodes_43 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_reserva_carprodes_43 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_carprodes_43 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_carprodes_43 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "reserva_car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_carprodes_43 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_deter_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_cardeter_68 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_deter_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_ti_cardeter_68 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_deter_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_cardeter_68 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_deter_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_cardeter_68 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_deter_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_cardeter_68 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_carprodes_69 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_ti_carprodes_69 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_carprodes_69 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_carprodes_69 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "ti_car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_carprodes_69 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "uc_car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_uc_carprodes_65 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "uc_car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_uc_carprodes_65 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "uc_car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_uc_carprodes_65 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "uc_car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_uc_carprodes_65 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "uc_car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_uc_carprodes_65 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_deter_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_cardeter_36 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_deter_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_usoant_cardeter_36 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_deter_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_cardeter_36 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_deter_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_cardeter_36 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_deter_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_cardeter_36 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_carprodes_42 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_usoant_carprodes_42 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_carprodes_42 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_carprodes_42 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usoant_car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_carprodes_42 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_carprodes_45 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_usocon_carprodes_45 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_carprodes_45 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_carprodes_45 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_carprodes_45 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_deter_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_cardeter_39 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_deter_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_usocon_cardeter_39 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_deter_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_cardeter_39 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_deter_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_cardeter_39 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "usocon_car_deter_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_cardeter_39 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_prodes_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_carprodes_44 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_prodes_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_veg_carprodes_44 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_prodes_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_carprodes_44 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_prodes_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_carprodes_44 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_prodes_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_carprodes_44 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_deter_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_cardeter_38 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_deter_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_veg_cardeter_38 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_deter_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_cardeter_38 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_deter_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_cardeter_38 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "veg_car_deter_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_cardeter_38 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters"
+    },
+    {
+        "title": "app_car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*\n     , secondary_table.geocodigo\n     , secondary_table.gid\n     , secondary_table.comarca\n     , secondary_table.municipio\n     , secondary_table.nm_meso\n     , secondary_table.nm_micro\nFROM public.apv_app_carfocos_49 AS main_table\n   , public.de_municipios_sema AS secondary_table\nWHERE main_table.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\n  AND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (\n          SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n          FROM public.apv_app_carfocos_49 AS tableWhere\n          GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n          HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_car_focos_48 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  main_table.dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\nAND\nmain_table.de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "reserva_car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*\n     , secondary_table.geocodigo\n     , secondary_table.gid\n     , secondary_table.comarca\n     , secondary_table.municipio\n     , secondary_table.nm_meso\n     , secondary_table.nm_micro\nFROM public.apv_reserva_carfocos_51 AS main_table\n   , public.de_municipios_sema AS secondary_table\nWHERE main_table.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\n  AND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_reserva_carfocos_51 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "ti_car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*\n     , secondary_table.geocodigo\n     , secondary_table.gid\n     , secondary_table.comarca\n     , secondary_table.municipio\n     , secondary_table.nm_meso\n     , secondary_table.nm_micro\nFROM public.apv_ti_carfocos_70 AS main_table\n   , public.de_municipios_sema AS secondary_table\nWHERE\n  main_table.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\n  AND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      ( SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n        FROM public.apv_ti_carfocos_70 AS tableWhere\n            , public.de_municipios_sema AS secondary_tableWhere\n        WHERE\n          tableWhere.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_tableWhere.geocodigo AS INTEGER)\n\n        GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n        HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "uc_car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_uc_carfocos_66 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  main_table.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "veg_car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_veg_carfocos_52 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  main_table.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usocon_car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_usocon_carfocos_53 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  main_table.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usoant_car_focos_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio\n    , secondary_table.nm_meso, secondary_table.nm_micro\nFROM public.apv_usoant_carfocos_50 AS main_table\n    ,public.de_municipios_sema AS secondary_table\nWHERE\n  main_table.apv_car_focos_48_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "veg_car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_carfocos_52 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "veg_car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_carfocos_52 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "veg_car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_veg_carfocos_52 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usocon_car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_carfocos_53 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usocon_car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_carfocos_53 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usocon_car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usocon_carfocos_53 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "app_car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_carfocos_49 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "app_car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_carfocos_49 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND\nmain_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "app_car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_carfocos_49 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND\nmain_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_focos_48 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND\nmain_table.de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_focos_48 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND\nmain_table.de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "reserva_car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_carfocos_51 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\n  AND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_reserva_carfocos_51 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "reserva_car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_carfocos_51 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\n  AND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_reserva_carfocos_51 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "reserva_car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_reserva_carfocos_51 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\n  AND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_reserva_carfocos_51 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "ti_car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_carfocos_70 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n    (   SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n        FROM public.apv_ti_carfocos_70 AS tableWhere\n        GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n        HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "ti_car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_carfocos_70 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n    (   SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n        FROM public.apv_ti_carfocos_70 AS tableWhere\n        GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n        HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "ti_car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_ti_carfocos_70 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n    (   SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n        FROM public.apv_ti_carfocos_70 AS tableWhere\n        GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n        HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "uc_car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_uc_carfocos_66 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "uc_car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_uc_carfocos_66 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "uc_car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_uc_carfocos_66 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usoant_car_focos_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_carfocos_50 AS main_table\n    ,public.de_projus_bacias_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usoant_car_focos_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_carfocos_50 AS main_table\n    ,public.de_terra_indigena_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "usoant_car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_usoant_carfocos_50 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%\n)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "app_car_deter_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": false
+    },
+    {
+        "title": "car_deter_biome_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_deter_28 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": false
+    },
+    {
+        "title": "car_focos_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_car_focos_48 AS main_table\n    ,public.de_unidade_cons_sema AS secondary_table\nWHERE\n  ST_Intersects(intersection_geom, secondary_table.geom)\nAND\nmain_table.de_car_validado_sema_numero_do1 IN\n(\n    SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle\n    FROM public.apv_car_focos_48 AS tableWhere\n    GROUP BY tableWhere.de_car_validado_sema_numero_do1\n    HAVING count(1) BETWEEN %min% AND %max%)\n",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    }
+]
