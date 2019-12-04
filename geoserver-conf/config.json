@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "geoserver",
+    "workspace": "mpmt_alertas",
+    "dataStores": "mpmt_alertas",
+    "host": "http://localhost:8080/geoserver/rest/"
+  },
+  "test": {
+    "username": "admin",
+    "password": "geoserver",
+    "workspace": "mpmt_alertas",
+    "dataStores": "mpmt_alertas",
+    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
+  },
+  "production": {
+    "username": "admin",
+    "password": "geoserver",
+    "workspace": "mpmt_alertas",
+    "dataStores": "mpmt_alertas",
+    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
+  }
+}
