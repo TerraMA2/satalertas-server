@@ -1,0 +1,106 @@
+[
+    {
+        "title": "view88",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.monitored_id,     main_table.intersect_id,       main_table.execution_date,       main_table.intersection_geom,       main_table.calculated_area_ha,       main_table.de_car_validado_sema_area_ha_,       main_table.dd_focos_inpe_id_2,       main_table.dd_focos_inpe_satelite,       main_table.dd_focos_inpe_municipio,       main_table.de_car_validado_sema_numero_do1,       main_table.de_car_validado_sema_numero_do2,       main_table.de_car_validado_sema_municipio1,       main_table.dd_focos_inpe_bioma,       main_table.apv_car_focos_48_id FROM public.apv_car_focos_48 AS main_table WHERE main_table.de_car_validado_sema_numero_do1 IN      (SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle       FROM public.apv_car_focos_48 AS tableWhere       GROUP BY tableWhere.de_car_validado_sema_numero_do1       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "view89",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT monitored_id,\n       intersect_id,\n       execution_date,\n       intersection_geom,\n       calculated_area_ha,\n       apv_car_focos_48_de_car_validado_sema_area_ha_,\n       apv_car_focos_48_dd_focos_inpe_id_2,\n       apv_car_focos_48_dd_focos_inpe_satelite,\n       apv_car_focos_48_dd_focos_inpe_municipio,\n       apv_car_focos_48_de_car_validado_sema_numero_do1,\n       apv_car_focos_48_de_car_validado_sema_numero_do2,\n       apv_car_focos_48_dd_focos_inpe_bioma,\n       apv_app_carfocos_49_id\nFROM public.apv_app_carfocos_49\nWHERE\n  apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_app_carfocos_49 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "view90",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT monitored_id,\n       intersect_id,\n       execution_date,\n       intersection_geom,\n       calculated_area_ha,\n       apv_car_focos_48_de_car_validado_sema_area_ha_,\n       apv_car_focos_48_dd_focos_inpe_id_2,\n       apv_car_focos_48_dd_focos_inpe_satelite,\n       apv_car_focos_48_dd_focos_inpe_municipio,\n       apv_car_focos_48_de_car_validado_sema_numero_do1,\n       apv_car_focos_48_de_car_validado_sema_numero_do2,\n       apv_car_focos_48_dd_focos_inpe_bioma,\n       apv_reserva_carfocos_51_id\nFROM public.apv_reserva_carfocos_51\nWHERE\n  apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_reserva_carfocos_51 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "view91",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT monitored_id,\n       intersect_id,\n       execution_date,\n       intersection_geom,\n       calculated_area_ha,\n       apv_car_focos_48_de_car_validado_sema_area_ha_,\n       apv_car_focos_48_dd_focos_inpe_id_2,\n       apv_car_focos_48_dd_focos_inpe_satelite,\n       apv_car_focos_48_dd_focos_inpe_municipio,\n       apv_car_focos_48_de_car_validado_sema_numero_do1,\n       apv_car_focos_48_de_car_validado_sema_numero_do2,\n       apv_car_focos_48_dd_focos_inpe_bioma,\n       apv_usoant_carfocos_50_id\nFROM public.apv_usoant_carfocos_50\nWHERE\n  apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_usoant_carfocos_50 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "view92",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT monitored_id, intersect_id, execution_date, intersection_geom, calculated_area_ha, apv_car_focos_48_de_car_validado_sema_area_ha_, apv_car_focos_48_dd_focos_inpe_id_2, apv_car_focos_48_dd_focos_inpe_satelite, apv_car_focos_48_dd_focos_inpe_municipio, apv_car_focos_48_de_car_validado_sema_numero_do1, apv_car_focos_48_de_car_validado_sema_numero_do2, apv_car_focos_48_dd_focos_inpe_bioma, apv_usocon_carfocos_53_id FROM public.apv_usocon_carfocos_53\nWHERE\n  apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_usocon_carfocos_53 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "",
+        "addParameter": true
+    },
+    {
+        "title": "view93",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT monitored_id, intersect_id, execution_date, intersection_geom, calculated_area_ha, apv_car_focos_48_de_car_validado_sema_area_ha_, apv_car_focos_48_dd_focos_inpe_id_2, apv_car_focos_48_dd_focos_inpe_satelite, apv_car_focos_48_dd_focos_inpe_municipio, apv_car_focos_48_de_car_validado_sema_municipio1, apv_car_focos_48_de_car_validado_sema_numero_do1, apv_car_focos_48_de_car_validado_sema_numero_do2, apv_car_focos_48_dd_focos_inpe_bioma, apv_veg_carfocos_52_id FROM public.apv_veg_carfocos_52\nWHERE\n  apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_veg_carfocos_52 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "view96",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT monitored_id, intersect_id, execution_date, intersection_geom, calculated_area_ha, apv_car_focos_48_de_car_validado_sema_area_ha_, apv_car_focos_48_dd_focos_inpe_id_2, apv_car_focos_48_dd_focos_inpe_satelite, apv_car_focos_48_dd_focos_inpe_municipio, apv_car_focos_48_de_car_validado_sema_numero_do1, apv_car_focos_48_de_car_validado_sema_numero_do2, apv_car_focos_48_dd_focos_inpe_bioma, apv_ti_carfocos_70_id FROM public.apv_ti_carfocos_70\nWHERE\n  apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_ti_carfocos_70 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "view99",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.monitored_id,\n       main_table.intersect_id,\n       main_table.execution_date,\n       main_table.intersection_geom,\n       main_table.calculated_area_ha,\n       main_table.apv_car_focos_48_dd_focos_inpe_satelite,\n       main_table.apv_car_focos_48_dd_focos_inpe_municipio,\n       main_table.apv_car_focos_48_de_car_validado_sema_numero_do1,\n       main_table.apv_car_focos_48_de_car_validado_sema_numero_do2,\n       main_table.apv_car_focos_48_dd_focos_inpe_bioma\nFROM public.apv_uc_carfocos_66 AS main_table\nWHERE main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_uc_carfocos_66 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
+        "keyColumn": "gid",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    }
+]

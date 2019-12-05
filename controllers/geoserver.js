@@ -1,32 +1,16 @@
 
-const layerUtil = require("../utils/layer");
-const layers = require("../geoserver-conf/layers/201911281134-create-layers-filter");
-const confGeoserver = require('../geoserver-conf/config');
-const axios = require('axios');
+const layersToInsert = require("../geoserver-conf/views/201911281134-create-layers-filter");
+const layersToUpdate = require("../geoserver-conf/views/201912041412-update-layers-filter");
+const GeoServerService = require("../services/geoServer.service");
 
-exports.get = async (req, res, next) => {
+exports.insertLayers = async (req, res, next) => {
+  res.json(await GeoServerService.saveViewsGeoServer(layersToInsert));
+};
 
-  const credentials = Buffer.from('admin:geoserver').toString('base64');
+exports.updateLayers = async (req, res, next) => {
+  res.json(await GeoServerService.saveViewsJsonGeoServer(layersToUpdate));
+};
 
-  const url = `${confGeoserver.development.host}workspaces/${confGeoserver.development.workspace}/featuretypes`;
-
-  const config = { headers: { "Authorization": 'Basic ' + credentials, "Content-Type": 'application/xml' } };
-
-  let response = [];
-
-  for (let layer of layers) {
-
-    const xml = layerUtil.setXml(layer);
-
-    const res = await axios.post(
-      'http://localhost:8080/geoserver/rest/workspaces/mpmt_alertas/featuretypes',
-      xml, config)
-      .then(resp => resp )
-      .catch(err => err);
-
-    res.statusText = res.status ? `${res.status}/${res.statusText} - ${layer.title}` : `${res.response.status}/${res.response.statusText} - ${res.response.data}`
-    response.push(res.statusText);
-  };
-
-  res.json(response);
+exports.deleteLayers = async (req, res, next) => {
+  res.json(await GeoServerService.deleteView(insertLayers()));
 };
