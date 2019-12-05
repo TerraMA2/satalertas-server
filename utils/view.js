@@ -1,5 +1,5 @@
 
-const layer={
+const view = {
     setXml(json) {
         const parameter =
           json.addParameter
@@ -76,4 +76,4 @@ const layer={
     }
 };
 
-module.exports = layer;
+module.exports = view;

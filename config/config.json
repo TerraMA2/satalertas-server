@@ -5,6 +5,7 @@
     "database": "mpmt",
     "host": "terrama2.dpi.inpe.br",
     "dialect": "postgres",
+    "port": 5432,
     "define": {
       "schema": "terrama2"
     }
@@ -14,13 +15,21 @@
     "password": "postgres",
     "database": "terrama-test",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "port": 5432,
+    "define": {
+      "schema": "terrama2"
+    }
   },
   "production": {
     "username": "postgres",
     "password": "postgres",
     "database": "terrama-prod",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "host": "terrama2.dpi.inpe.br",
+    "dialect": "postgres",
+    "port": 5432,
+    "define": {
+      "schema": "terrama2"
+    }
   }
 }
