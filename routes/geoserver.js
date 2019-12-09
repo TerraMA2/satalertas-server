@@ -3,8 +3,9 @@ const express = require('express')
         router = express.Router()
         geoserverController = require('../controllers/geoserver')
 
-router.get('/insertLayers', geoserverController.insertLayers);
-router.get('/updateLayers', geoserverController.updateLayers);
-router.get('/deleteLayers', geoserverController.deleteLayers);
+router.get('/insertViewsFilter', geoserverController.insertViews);
+router.get('/updateViewsFilter', geoserverController.updateViews);
+router.delete('/deleteViews', geoserverController.deleteViews);
+router.post('/saveViews', geoserverController.saveViews);
 
 module.exports = router

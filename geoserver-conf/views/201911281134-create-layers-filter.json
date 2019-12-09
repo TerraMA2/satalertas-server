@@ -2,7 +2,7 @@
     {
         "title": "app_car_deter_biomas_sql",
         "workspace": "mpmt_alertas",
-        "sql": "SELECT main_table.*, secondary_table.gid\nFROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
+        "sql": "SELECT main_table.*, secondary_table.gid FROM public.apv_app_cardeter_35 AS main_table\n    ,public.de_biomas_mt secondary_table\nWHERE\n  ST_Intersects(ST_CollectionExtract(intersection_geom, 3), secondary_table.geom)",
         "keyColumn": "gid",
         "geometry": {
             "name":"intersection_geom",
