@@ -97,7 +97,7 @@ const geoServerUtil = {
         "enabled": true,
         "workspace": {
           "name": confGeoServer.workspace,
-          "href": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/workspaces/terrama2_84.json"
+          "href": `http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/workspaces/${confGeoServer.workspace}.json`
         },
         "connectionParameters": {
           "entry": [
