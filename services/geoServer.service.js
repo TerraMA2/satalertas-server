@@ -20,66 +20,85 @@ module.exports = geoServerService = {
   async saveGeoServer(name, method, url, xmlOrJson, config) {
     const urlMethod = (method === 'put') ? `${url}/${name}`: url;
     const result = await axios[method]( urlMethod, xmlOrJson, config).then(resp => resp ).catch(err => err);
-    return result.statusText = result.status ? `${result.status}/${result.statusText} - ${name}` : `${result.response.status}/${result.response.statusText} - ${result.response.data}`
+
+    const message = result.status && (result.status === 200) ? ' successfully modified! ' : '';
+    return result.statusText = result.status ? `${result.status}/${result.statusText} - ${name} ${message}` : `${result.response.status}/${result.response.statusText} - ${result.response.data}`
   },
 
-  async saveViewsGeoServer(layers) {
-    await this.validateWorkspace();
-    await this.validateDataStore();
+  async saveViewsGeoServer(views) {
     let response = [];
-    for (let layer of layers) {
-      const method = await this.setMethod(`${URL}/${layer.title}.json`);
-      const xml = viewUtil.setXml(layer);
-      response.push(await this.saveGeoServer(layer.title, method, URL, xml, CONFIG));
+    for (let view of views) {
+
+      view.name = view.name ? view.name : view.title;
+
+      await this.validateWorkspace(view.workspace);
+      await this.validateDataStore(view.workspace, view.dataStore);
+
+      const method = await this.setMethod(`${URL}/${view.name}.json`);
+      const xml = viewUtil.setXml(view);
+      response.push(await this.saveGeoServer(view.name, method, URL, xml, CONFIG));
     }
     return response;
   },
 
-  async validateWorkspace() {
+  async validateWorkspace(name) {
     const urlW = `${confGeoServer.host}workspaces`;
-    const method = await this.setMethod(`${urlW}/${confGeoServer.workspace}.json`);
-    let data = geoServerUtil.setWorkSpace(confGeoServer.workspace);
-    console.log(await this.saveGeoServer(data.workspace.name, method, urlW, data, CONFIG_JSON));
+    const method = await this.setMethod(`${urlW}/${name}.json`);
+
+    if (method === 'post') {
+      let data = geoServerUtil.setWorkSpace(name);
+      console.log(await this.saveGeoServer(data.workspace.name, method, urlW, data, CONFIG_JSON));
+    }
   },
 
-  async validateDataStore() {
-    const urlD = `${confGeoServer.host}workspaces/${confGeoServer.workspace}/datastores`;
-    const method = await this.setMethod(`${urlD}/${confGeoServer.datastore}.json`);
-    const data = geoServerUtil.setDataStore(confDb, confGeoServer);
-    console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
+  async validateDataStore(nameWorkspace, nameDataStrore) {
+    const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
+    const method = await this.setMethod(`${urlD}/${nameDataStrore}.json`);
+
+    if (method === 'post') {
+      const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStrore);
+      console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
+    }
   },
 
-  async deleteView(layersToInsert){
+  async deleteView(views){
     let response = [];
 
-    for (let layer of layersToInsert) {
+    for (let view of views) {
 
-      const res = await axios.delete(
-        `${URL}/${layer.title}`,CONFIG)
-        .then(resp => resp )
-        .catch(err => err);
+      view.name = view.name ? view.name : view.title;
 
-      res.statusText = res.status ? `${res.status}/${res.statusText} - ${layer.title}` : `${res.response.status}/${res.response.statusText} - ${res.response.data}`;
+
+      const urli = `${confGeoServer.host}workspaces/${view.workspace}/featuretypes/${view.name}?recurse=true`;
+
+      const res = await axios.delete(urli, CONFIG).then(resp => resp ).catch(err => err);
+
+      res.statusText = res.status ? `${res.status}/${res.statusText} - ${view.name} successfully deleted!` : `${res.response.status}/${res.response.statusText} - ${res.response.data}`;
       response.push(res.statusText);
     }
 
     return response;
   },
 
-  async saveViewsJsonGeoServer(layers){
+  async saveViewsJsonGeoServer(views){
 
-    await this.validateWorkspace();
-    await this.validateDataStore();
 
     const response = [];
-    for (let layer of layers) {
-      const url = `${URL}/${layer.title}.json`;
+    for (let view of views) {
+      view.name = view.name ? view.name : view.title;
+
+      await this.validateWorkspace(view.workspace);
+      await this.validateDataStore(view.workspace, view.dataStore);
+
+      const urli = `${confGeoServer.host}workspaces/${view.workspace}/featuretypes`;
+      const url = `${urli}/${view.name}.json`;
+
       const json = await axios.get( url, CONFIG_JSON).then(resp => resp ).catch(err => err);
 
-      const method = (json && json.status && json.status === 200) ? 'put' : 'post';
+      const method = (json.data && json && json.status && json.status === 200) ? 'put' : 'post';
 
-      const jsonView = geoServerUtil.setJsonView(json, layer);
-      response.push(await this.saveGeoServer(layer.title, method, URL, jsonView, CONFIG_JSON) );
+      const jsonView = geoServerUtil.setJsonView(json, view);
+      response.push(await this.saveGeoServer(view.name, method, urli, jsonView, CONFIG_JSON) );
     }
     return response;
   }

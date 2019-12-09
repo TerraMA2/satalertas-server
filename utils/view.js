@@ -16,15 +16,8 @@ const view = {
             : ``;
 
         const xml = `   <featureType>
-                    <name>${json.title}</name>
-                    <nativeName>${json.title}</nativeName>
-                    <namespace>
-                        <name>${json.workspace}</name>
-                        <atom:link  xmlns:atom="http://www.w3.org/2005/Atom"
-                                    rel="alternate"
-                                    href="http://arizona-umh.cs.umn.edu:8080/geoserver/rest/namespaces/cite.xml"
-                                    type="application/xml"/>
-                    </namespace>
+                    <name>${json.name}</name>
+                    <nativeName>${json.name}</nativeName>
                     <title>${json.title}</title>
                     <keywords>
                         <string>features</string>
@@ -51,7 +44,7 @@ const view = {
                         <entry key="cachingEnabled">false</entry>
                         <entry key="JDBC_VIRTUAL_TABLE">
                             <virtualTable>
-                                <name>${json.title}</name>
+                                <name>${json.name}</name>
                                 <sql>${json.sql}</sql>
                                 <escapeSql>false</escapeSql>
                                 <keyColumn>${json.keyColumn}</keyColumn>
@@ -64,10 +57,6 @@ const view = {
                             </virtualTable>
                         </entry>
                     </metadata>
-                    <store class="dataStore">
-                        <name>${json.dataStore}</name>
-                        <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="alternate" href="http://arizona-umh.cs.umn.edu:8080/geoserver/rest/workspaces/cite/datastores/AlwaysShen.xml" type="application/xml"/>
-                    </store>
                     <maxFeatures>0</maxFeatures>
                     <numDecimals>0</numDecimals>
                 </featureType>`;

@@ -1,14 +1,14 @@
-setViewJson = function(layer){
+
+const env = process.env.NODE_ENV || 'development';
+const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+
+setViewJson = function(view){
   return {
     "featureType": {
-      "name": layer.title,
-      "nativeName": layer.title,
-      "namespace": {
-        "name": layer.workspace,
-        "href": `http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/namespaces/${layer.workspace}`
-      },
-      "title": layer.title,
-      "keywords": { "string": [ "features", layer.title ] },
+      "name": view.name,
+      "nativeName": view.name,
+      "title": view.title,
+      "keywords": { "string": [ "features", view.title ] },
       "srs": "EPSG:4326",
       "nativeBoundingBox": { },
       "latLonBoundingBox": { },
@@ -19,13 +19,14 @@ setViewJson = function(layer){
           {
             "@key": "JDBC_VIRTUAL_TABLE",
             "virtualTable": {
-              "name": layer.title,
-              "sql": layer.sql,
+              "name": view.name,
+              "sql": view.sql,
               "escapeSql": false,
+              "keyColumn":view.keyColumn,
               "geometry": {
-                "name": "intersection_geom",
-                "type": "Geometry",
-                "srid": 4326
+                "name": view.geometry.name,
+                "type": view.geometry.type,
+                "srid": view.geometry.srid
               }
             }
           },
@@ -34,11 +35,6 @@ setViewJson = function(layer){
             "$": "false"
           }
         ]
-      },
-      "store": {
-        "@class": "dataStore",
-        "name": layer.dataStore,
-        "href": `http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/workspaces/${layer.workspace}/datastores/${layer.dataStore}.json`
       },
       "maxFeatures": 0,
       "numDecimals": 0,
@@ -89,15 +85,15 @@ const geoServerUtil = {
       }
     }
   },
-  setDataStore(confDb, confGeoServer){
+  setDataStore(confDb, nameWorkspace, nameDatastore){
     return  {
       "dataStore": {
-        "name": confGeoServer.datastore,
+        "name": nameDatastore,
         "type": "PostGIS",
         "enabled": true,
         "workspace": {
-          "name": confGeoServer.workspace,
-          "href": `http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/workspaces/${confGeoServer.workspace}.json`
+          "name": nameWorkspace,
+          "href": `http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/workspaces/${nameWorkspace}.json`
         },
         "connectionParameters": {
           "entry": [
@@ -123,7 +119,7 @@ const geoServerUtil = {
             },
             {
               "@key": "namespace",
-              "$": `http://${confGeoServer.workspace}`
+              "$": `http://${nameWorkspace}`
             },
             {
               "@key": "max connections",
@@ -138,14 +134,14 @@ const geoServerUtil = {
       }
     }
   },
-  setJsonView(json, layer){
-    const viewJson = (json.status && json === 200) ? json : setViewJson(layer);
+  setJsonView(json, view){
+    const viewJson = (json.status && json === 200) ? json : setViewJson(view);
 
     updateBoundingBox(viewJson);
-    if (layer.addParameter) {
+    if (view.addParameter) {
       addParameter(viewJson);
     }
-    viewJson.featureType.metadata.entry[0].virtualTable.sql = layer.sql;
+    viewJson.featureType.metadata.entry[0].virtualTable.sql = view.sql;
 
     return viewJson;
   }
