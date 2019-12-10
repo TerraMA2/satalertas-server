@@ -7,3 +7,4 @@ logs
 thumbs.db
 *.log
 *.gz
+config/config.json

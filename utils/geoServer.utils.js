@@ -1,48 +1,66 @@
 
-const env = process.env.NODE_ENV || 'development';
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+setViewJson = function(json, view){
+  let result = {};
+  if (json.status && json.status === 200){
+    result = json.data;
 
-setViewJson = function(view){
-  return {
-    "featureType": {
-      "name": view.name,
-      "nativeName": view.name,
-      "title": view.title,
-      "keywords": { "string": [ "features", view.title ] },
-      "srs": "EPSG:4326",
-      "nativeBoundingBox": { },
-      "latLonBoundingBox": { },
-      "projectionPolicy": "FORCE_DECLARED",
-      "enabled": true,
-      "metadata": {
-        "entry": [
-          {
-            "@key": "JDBC_VIRTUAL_TABLE",
-            "virtualTable": {
-              "name": view.name,
-              "sql": view.sql,
-              "escapeSql": false,
-              "keyColumn":view.keyColumn,
-              "geometry": {
-                "name": view.geometry.name,
-                "type": view.geometry.type,
-                "srid": view.geometry.srid
-              }
-            }
-          },
-          {
-            "@key": "cachingEnabled",
-            "$": "false"
-          }
-        ]
-      },
-      "maxFeatures": 0,
-      "numDecimals": 0,
-      "overridingServiceSRS": false,
-      "skipNumberMatched": false,
-      "circularArcPresent": false
+    if (result.featureType.metadata.entry && (result.featureType.metadata.entry["@key"] === "JDBC_VIRTUAL_TABLE")) {
+      result.featureType.metadata.entry.virtualTable.sql = view.sql;
+    } else {
+      result.featureType.metadata.entry.forEach(entry => {
+        if (entry["@key"]  === "JDBC_VIRTUAL_TABLE") {
+          entry.virtualTable.sql = view.sql;
+        }
+      });
     }
-  };
+  } else {
+    result =  {
+      "featureType": {
+        "name": view.name,
+        "nativeName": view.name,
+        "title": view.title,
+        "keywords": { "string": [ "features", view.title ] },
+        "srs": "EPSG:4326",
+        "nativeBoundingBox": { },
+        "latLonBoundingBox": { },
+        "projectionPolicy": "FORCE_DECLARED",
+        "enabled": true,
+        "metadata": {
+          "entry": [
+            {
+              "@key": "JDBC_VIRTUAL_TABLE",
+              "virtualTable": {
+                "name": view.name,
+                "sql": view.sql,
+                "escapeSql": false,
+                "geometry": {
+                  "name": view.geometry.name,
+                  "type": view.geometry.type,
+                  "srid": view.geometry.srid
+                }
+              }
+            },
+            {
+              "@key": "cachingEnabled",
+              "$": "false"
+            }
+          ]
+        },
+        "maxFeatures": 0,
+        "numDecimals": 0,
+        "overridingServiceSRS": false,
+        "skipNumberMatched": false,
+        "circularArcPresent": false
+      }
+    };
+  }
+
+  updateBoundingBox(result);
+  if (view.addParameter) {
+    addParameter(result);
+  }
+
+  return result;
 };
 
 addParameter = function(json) {
@@ -135,13 +153,7 @@ const geoServerUtil = {
     }
   },
   setJsonView(json, view){
-    const viewJson = (json.status && json === 200) ? json : setViewJson(view);
-
-    updateBoundingBox(viewJson);
-    if (view.addParameter) {
-      addParameter(viewJson);
-    }
-    viewJson.featureType.metadata.entry[0].virtualTable.sql = view.sql;
+    const viewJson = setViewJson(json, view);
 
     return viewJson;
   }
