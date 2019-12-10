@@ -81,8 +81,6 @@ module.exports = geoServerService = {
   },
 
   async saveViewsJsonGeoServer(views){
-
-
     const response = [];
     for (let view of views) {
       view.name = view.name ? view.name : view.title;
