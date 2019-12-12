@@ -9,7 +9,7 @@ const express = require('express')
 
 const viewRouter = require('./routes/view')
 const geoserverRouter = require('./routes/geoserver')
-const fileRouter = require('./routes/file')
+const reportRouter = require('./routes/report')
 
 const errorController = require('./controllers/error')
 
@@ -33,7 +33,7 @@ app.use(express.json({limit: '100mb'}))
 
 app.use('/view', viewRouter)
 app.use('/geoserver', geoserverRouter)
-app.use('/file', fileRouter)
+app.use('/report', reportRouter)
 
 // Error handler
 app.use(errorController.show404)
