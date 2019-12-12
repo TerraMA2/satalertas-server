@@ -10,3 +10,4 @@ thumbs.db
 .vscode/
 logs/
 .history/
+config/config.json

@@ -3,7 +3,7 @@
     "username": "mpmt",
     "password": "secreto",
     "database": "mpmt",
-    "host": "terrama2.dpi.inpe.br",
+    "host": "localhost",
     "dialect": "postgres",
     "port": 5432,
     "define": {

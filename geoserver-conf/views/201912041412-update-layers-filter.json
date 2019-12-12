@@ -4,7 +4,7 @@
         "title": "CAR X FOCOS",
         "workspace": "terrama2_88",
         "sql": "SELECT main_table.* FROM public.apv_car_focos_48 AS main_table WHERE main_table.de_car_validado_sema_numero_do1 IN (SELECT tableWhere.de_car_validado_sema_numero_do1 AS subtitle       FROM public.apv_car_focos_48 AS tableWhere       GROUP BY tableWhere.de_car_validado_sema_numero_do1       HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
@@ -18,7 +18,7 @@
         "title": "APP X CAR_FOCOS",
         "workspace": "terrama2_89",
         "sql": "SELECT main_table.* FROM public.apv_app_carfocos_49 AS main_table WHERE apv_car_focos_48_de_car_validado_sema_numero_do1 IN (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_app_carfocos_49 AS tableWhere GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
@@ -32,7 +32,7 @@
         "title": "Reserva X CAR_FOCOS",
         "workspace": "terrama2_90",
         "sql": "SELECT main_table.* FROM public.apv_reserva_carfocos_51 AS main_table WHERE apv_car_focos_48_de_car_validado_sema_numero_do1 IN (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle FROM public.apv_reserva_carfocos_51 AS tableWhere GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
@@ -46,7 +46,7 @@
         "title": "UsoAnt X CAR_FOCOS",
         "workspace": "terrama2_91",
         "sql": "SELECT main_table.* FROM public.apv_usoant_carfocos_50 AS main_table WHERE apv_car_focos_48_de_car_validado_sema_numero_do1 IN\n      (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle\n       FROM public.apv_usoant_carfocos_50 AS tableWhere\n       GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1\n       HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
@@ -60,7 +60,7 @@
         "title": "UsoCon X CAR_FOCOS",
         "workspace": "terrama2_92",
         "sql": "SELECT main_table.* FROM public.apv_usocon_carfocos_53 AS main_table WHERE apv_car_focos_48_de_car_validado_sema_numero_do1 IN (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle FROM public.apv_usocon_carfocos_53 AS tableWhere GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
@@ -74,7 +74,7 @@
         "title": "VegNat X CAR_FOCOS",
         "workspace": "terrama2_93",
         "sql": "SELECT main_table.* FROM public.apv_veg_carfocos_52 AS main_table WHERE apv_car_focos_48_de_car_validado_sema_numero_do1 IN (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle FROM public.apv_veg_carfocos_52 AS tableWhere GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
@@ -88,7 +88,7 @@
         "title": "TI X CAR_FOCOS",
         "workspace": "terrama2_96",
         "sql": "SELECT main_table.* FROM public.apv_ti_carfocos_70 AS main_table WHERE apv_car_focos_48_de_car_validado_sema_numero_do1 IN (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle FROM public.apv_ti_carfocos_70 AS tableWhere GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
@@ -102,7 +102,7 @@
         "title": "UC X CAR_FOCOS",
         "workspace": "terrama2_99",
         "sql": "SELECT main_table.* FROM public.apv_uc_carfocos_66 AS main_table WHERE main_table.apv_car_focos_48_de_car_validado_sema_numero_do1 IN (SELECT tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 AS subtitle FROM public.apv_uc_carfocos_66 AS tableWhere GROUP BY tableWhere.apv_car_focos_48_de_car_validado_sema_numero_do1 HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "gid",
+        "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
