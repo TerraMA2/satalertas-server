@@ -7,3 +7,6 @@ logs
 thumbs.db
 *.log
 *.gz
+.vscode/
+logs/
+.history/
