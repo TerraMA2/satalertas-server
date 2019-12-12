@@ -6,7 +6,6 @@ const express = require('express')
     cors = require('cors')
     csrf = require('csurf')
 
-const userRouter = require('./routes/user')
 const viewRouter = require('./routes/view')
 const geoserverRouter = require('./routes/geoserver')
 
@@ -30,7 +29,6 @@ app.use(express.json())
 //     next()
 // })
 
-app.use('/user', userRouter)
 app.use('/view', viewRouter)
 app.use('/geoserver', geoserverRouter)
 
