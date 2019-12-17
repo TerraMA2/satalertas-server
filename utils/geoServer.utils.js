@@ -1,7 +1,7 @@
 
 setViewJson = function(json, view){
   let result = {};
-  if (json.status && json.status === 200){
+  if (json.status && json.status === 200 && json.data){
     result = json.data;
 
     if (result.featureType.metadata.entry && (result.featureType.metadata.entry["@key"] === "JDBC_VIRTUAL_TABLE")) {

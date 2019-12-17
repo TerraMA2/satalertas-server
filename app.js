@@ -5,9 +5,11 @@ const express = require('express')
     helmet = require('helmet')
     cors = require('cors')
     csrf = require('csurf')
+    bodyParser = require('body-parser')
 
 const viewRouter = require('./routes/view')
 const geoserverRouter = require('./routes/geoserver')
+const reportRouter = require('./routes/report')
 
 const errorController = require('./controllers/error')
 
@@ -20,7 +22,7 @@ app.use(cors())
 app.use(compression())
 app.use(helmet())
 app.use(morgan('combined'))
-app.use(express.json())
+app.use(express.json({limit: '100mb'}))
 
 // app.use(csrfProtection)
 
@@ -31,6 +33,7 @@ app.use(express.json())
 
 app.use('/view', viewRouter)
 app.use('/geoserver', geoserverRouter)
+app.use('/report', reportRouter)
 
 // Error handler
 app.use(errorController.show404)

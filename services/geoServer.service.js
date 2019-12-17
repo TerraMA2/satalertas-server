@@ -7,8 +7,8 @@ const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
 const confDb = require(__dirname + '/../config/config.json')[env];
 
 const URL = `${confGeoServer.host}workspaces/${confGeoServer.workspace}/featuretypes`;
-const CONFIG = { headers: { "Authorization": 'Basic ' + Buffer.from('admin:geoserver').toString('base64'), "Content-Type": 'application/xml' } };
-const CONFIG_JSON = { headers: { "Authorization": 'Basic ' + Buffer.from('admin:geoserver').toString('base64'), "Content-Type": 'application/json' } };
+const CONFIG = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/xml' } };
+const CONFIG_JSON = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/json' } };
 
 module.exports = geoServerService = {
 
@@ -93,7 +93,7 @@ module.exports = geoServerService = {
 
       const json = await axios.get( url, CONFIG_JSON).then(resp => resp ).catch(err => err);
 
-      const method = (json.data && json && json.status && json.status === 200) ? 'put' : 'post';
+      const method = (json.data && json && json.status && json.status === 200 && json.data) ? 'put' : 'post';
 
       const jsonView = geoServerUtil.setJsonView(json, view);
       response.push(await this.saveGeoServer(view.name, method, urli, jsonView, CONFIG_JSON) );
