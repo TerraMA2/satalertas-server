@@ -11,13 +11,13 @@
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
+    "host": "##http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
   },
   "production": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
+    "host": "##http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
   }
 }

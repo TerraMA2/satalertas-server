@@ -1,6 +1,6 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-  const RegisteredView = sequelize.define('RegisteredViews', {
+  const RegisteredView = sequelize.define('registered_views', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -20,10 +20,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     underscored: true,
     underscoredAll: true,
-    timestamps: true,
+    timestamps: false,
   })
   RegisteredView.associate = function(models) {
-    RegisteredView.belongsTo(models.View, {
+    RegisteredView.belongsTo(models.views, {
       onDelete: "CASCADE",
       foreignKey: 'view_id',
       as: 'view'
