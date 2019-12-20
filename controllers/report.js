@@ -3,21 +3,20 @@ const
   Report = models.Report;
   FileService = require("../services/file.service");
 
-exports.add = (req, res) => {
+exports.upload = async (req, res) => {
     const document = req.body;
 
-    res.json(FileService.upload(document));
+    res.json(await FileService.save(document));
 };
 
-exports.get = async (req, res, next) => {
-    const id = req.query.id;
+exports.get = async (req, res) => {
+    const id = req.params.id;
 
     res.json(await FileService.get(id));
 };
 
-exports.delete = async (req, res, next) => {
-    const id = req.query.id;
-    const file = req.body;
+exports.delete = async (req, res) => {
+    const id = req.params.id;
 
-    res.json(await FileService.delete(id, file));
+    res.json(await FileService.delete(id));
 };

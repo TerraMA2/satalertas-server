@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       comment: "Map server URI"
     }
   }, {
+    schema: 'terrama2',
     underscored: true,
     underscoredAll: true,
     timestamps: false,
