@@ -4,3 +4,5 @@ const layerType = {
     ANALYSIS: 3,
     ALERT: 4
 }
+
+module.exports = layerType;

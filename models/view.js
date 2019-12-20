@@ -1,6 +1,6 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-  const View = sequelize.define('View', {
+  const View = sequelize.define('views', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,

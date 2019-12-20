@@ -8,12 +8,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      description: {
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false
+
+      },
+      path: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      date: {
-        type: Sequelize.STRING
-      }
+      createdAt: Sequelize.TIME,
+      updatedAt: Sequelize.DATE
     });
   },
   down: (queryInterface, Sequelize) => {

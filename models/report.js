@@ -1,18 +1,18 @@
-'use strict'
+'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Report = sequelize.define('Report', {
+  const Report = sequelize.define('reports', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    file_name: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       comment: "Report file name"
     },
-    file_path: {
+    path: {
       type: DataTypes.STRING,
       allowNull: false,
       comment: "Report file path"
@@ -21,8 +21,10 @@ module.exports = (sequelize, DataTypes) => {
     underscored: true,
     underscoredAll: true,
     timestamps: true,
-  })
+  });
+
   Report.associate = function(models) {
-  }
+  };
+
   return Report
 }

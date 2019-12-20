@@ -1,8 +1,6 @@
 const models = require('../models')
-    View = models.View
-    RegisteredView = models.RegisteredViews
-    DataSet = models.DataSet
-    DataSetFormat = models.DataSetFormat
+    View = models.views
+    RegisteredView = models.registered_views
     LayerType = require('../enum/layerType')
 
 exports.get = (req, res, next) => {
@@ -29,8 +27,8 @@ exports.get = (req, res, next) => {
                 const geoserverUrl = `http://${uri.substr(uri.lastIndexOf("@")+1)}/wms`
                 const workspace = registeredView.dataValues.workspace
                 const layerId = `${workspace}:view${viewId}`
-                let cod = '';
-                let codgroup = '';
+                let cod = ''
+                let codgroup = ''
 
                 if (sourceType === LayerType.ANALYSIS) {
                     cod = viewName.replace(/ /g, '_').toUpperCase()
@@ -132,8 +130,6 @@ exports.get = (req, res, next) => {
                     children: dynamicLayers
                 }
             ]
-            return viewsJSON
-        }).then(viewsJSON => {
             res.json(viewsJSON)
         })
     }
