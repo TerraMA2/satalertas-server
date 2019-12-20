@@ -42,8 +42,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSONB,
       allowNull: true,
       comment: "Charts"
-    },
+    }
   }, {
+    schema: 'terrama2',
     underscored: true,
     underscoredAll: true,
     timestamps: false,
