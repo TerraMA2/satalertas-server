@@ -1,0 +1,37 @@
+{
+  "featureType": {
+    "name": "carView",
+    "nativeName":"carView",
+    "title": "carView",
+    "keywords": { "string": [ "features",  "carView" ] },
+    "srs": "EPSG:4326",
+    "projectionPolicy": "FORCE_DECLARED",
+    "enabled": true,
+    "metadata": {
+      "entry": [
+        {
+          "@key": "JDBC_VIRTUAL_TABLE",
+          "virtualTable": {
+            "name": "carView",
+            "sql": "SELECT *  FROM public.de_car_validado_sema",
+            "escapeSql": false,
+            "geometry": {
+              "name": "geom",
+              "type": "Geometry",
+              "srid": -1
+            }
+          }
+        },
+        {
+          "@key": "cachingEnabled",
+          "$": "false"
+        }
+      ]
+    },
+    "maxFeatures": 0,
+    "numDecimals": 0,
+    "overridingServiceSRS": false,
+    "skipNumberMatched": false,
+    "circularArcPresent": false
+  }
+}

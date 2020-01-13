@@ -4,20 +4,107 @@
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "host": "http://localhost:8080/geoserver/rest/"
+    "host": "http://localhost:8080/geoserver/rest/",
+    "mosaic": {
+      "wmsStore": {
+        "name": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Wms Store",
+        "workspaceName": "terrama2_6",
+        "capabilitiesURL":  "http://imagens.seplan.mt.gov.br/arcgis/services/SPOT/MosaicSpot2008/ImageServer/WMSServer"
+      },
+      "wmsLayer": {
+        "name": "MosaicSpot2008",
+        "title": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Layer",
+        "workspaceName": "terrama2_6",
+        "wmsStoreName": "MosaicSpot2008",
+        "abstract": "MosaicSpot2008"
+      },
+      "groupLayer": {
+        "name": "MosaicSpot2008_car_validado",
+        "title": "MosaicSpot2008_car_validado",
+        "workspaceName": "terrama2_6",
+        "layers": [
+          {
+            "name": "MosaicSpot2008"
+          },
+          {
+            "name": "view6"
+          }],
+        "styles": []
+      }
+    }
   },
   "test": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "host": "##http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
+    "host": "##http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "mosaic": {
+      "wmsStore": {
+        "name": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Wms Store",
+        "workspaceName": "terrama2_6",
+        "capabilitiesURL":  "http://imagens.seplan.mt.gov.br/arcgis/services/SPOT/MosaicSpot2008/ImageServer/WMSServer"
+      },
+      "wmsLayer": {
+        "name": "MosaicSpot2008",
+        "title": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Layer",
+        "workspaceName": "terrama2_6",
+        "wmsStoreName": "MosaicSpot2008",
+        "abstract": "MosaicSpot2008"
+      },
+      "groupLayer": {
+        "name": "MosaicSpot2008_car_validado",
+        "title": "MosaicSpot2008_car_validado",
+        "workspaceName": "terrama2_6",
+        "layers": [
+          {
+            "name": "MosaicSpot2008"
+          },
+          {
+            "name": "view6"
+          }],
+        "styles": []
+      }
+    }
   },
   "production": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/"
+    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "mosaic": {
+      "wmsStore": {
+        "name": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Wms Store",
+        "workspaceName": "terrama2_6",
+        "capabilitiesURL":  "http://imagens.seplan.mt.gov.br/arcgis/services/SPOT/MosaicSpot2008/ImageServer/WMSServer"
+      },
+      "wmsLayer": {
+        "name": "MosaicSpot2008",
+        "title": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Layer",
+        "workspaceName": "terrama2_6",
+        "wmsStoreName": "MosaicSpot2008",
+        "abstract": "MosaicSpot2008"
+      },
+      "groupLayer": {
+        "name": "MosaicSpot2008_car_validado",
+        "title": "MosaicSpot2008_car_validado",
+        "workspaceName": "terrama2_6",
+        "layers": [
+          {
+            "name": "MosaicSpot2008"
+          },
+          {
+            "name": "view6"
+          }],
+        "styles": []
+      }
+    }
   }
 }

@@ -2729,5 +2729,111 @@
             "srid": 4326
         },
         "dataStore": "terrama2_filters"
+    },
+
+    {
+        "title": "queima_car_aq_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio   , secondary_table.nm_meso, secondary_table.nm_micro  FROM public.a_caraq_queima_97 AS main_table   ,public.de_municipios_sema AS secondary_table  WHERE main_table.a_carfocos_74_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_queima_97 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "queima_car_aq_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_queima_97 AS main_table   ,public.de_unidade_cons_sema AS secondary_table  WHERE ST_Intersects(intersection_geom, secondary_table.geom)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_queima_97 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "queima_car_aq_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_queima_97 AS main_table   ,public.de_terra_indigena_sema AS secondary_table  WHERE ST_Intersects(intersection_geom, secondary_table.geom)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_queima_97 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "queima_car_aq_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_queima_97 AS main_table   ,public.de_projus_bacias_sema AS secondary_table  WHERE ST_Intersects(intersection_geom, secondary_table.geom)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_queima_97 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+
+    {
+        "title": "uc_car_aq_city_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca, secondary_table.municipio   , secondary_table.nm_meso, secondary_table.nm_micro  FROM public.a_caraq_uc_93 AS main_table   ,public.de_municipios_sema AS secondary_table  WHERE main_table.a_carfocos_74_dd_focos_inpe_id_2 = CAST(secondary_table.geocodigo AS INTEGER)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_uc_93 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "uc_car_aq_uc_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_uc_93 AS main_table   ,public.de_unidade_cons_sema AS secondary_table  WHERE ST_Intersects(intersection_geom, secondary_table.geom)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_uc_93 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "uc_car_aq_ti_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_uc_93 AS main_table   ,public.de_terra_indigena_sema AS secondary_table  WHERE ST_Intersects(intersection_geom, secondary_table.geom)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_uc_93 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
+    },
+    {
+        "title": "uc_car_aq_projus_sql",
+        "workspace": "mpmt_alertas",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_uc_93 AS main_table   ,public.de_projus_bacias_sema AS secondary_table  WHERE ST_Intersects(intersection_geom, secondary_table.geom)  AND main_table.a_carfocos_74_de_car_validado_sema_numero_do1 IN  (   SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle   FROM public.a_caraq_uc_93 AS tableWhere   GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1   HAVING count(1) BETWEEN %min% AND %max%  )  ",
+        "keyColumn": "monitored_id",
+        "geometry": {
+            "name":"intersection_geom",
+            "type": "Geometry",
+            "srid": 4326
+        },
+        "dataStore": "terrama2_filters",
+        "addParameter": true
     }
 ]

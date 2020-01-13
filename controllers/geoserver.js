@@ -20,3 +20,8 @@ exports.saveViews = async (req, res, next) => {
   const views = req.body;
   res.json(await GeoServerService.saveViewsJsonGeoServer(views));
 };
+
+exports.saveGroupLayer = async (req, res, next) => {
+  const jsonConf = req.body;
+  res.json(await GeoServerService.saveGroupLayer(jsonConf));
+};
