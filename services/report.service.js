@@ -6,7 +6,41 @@ const Result = require("../utils/result")
   confDb = require(__dirname + '/../config/config.json')[env]
   fs = require('fs')
 
-module.exports = FileService = {
+const QUERY_TYPES_SELECT = { type: "SELECT" };
+
+module.exports = FileReport = {
+  async getReportsByCARCod(carCode) {
+    try {
+      const confWhere = {where: { carCode: carCode.trim() }};
+
+      return Result.ok(await Report.findAll(confWhere));
+    } catch (e) {
+      return Result.err(e);
+    }
+  },
+  async newNumber(type) {
+    const sql =
+      ` SELECT '${type.trim()}' AS type,
+               EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
+               LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS newNumber,
+               CONCAT(
+                    LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0'),
+                    '/',
+                    EXTRACT(YEAR FROM CURRENT_TIMESTAMP)
+               ) AS code
+        FROM alertas.reports AS rep
+        WHERE rep.type = '${type.trim()}'
+          AND rep.created_at BETWEEN
+            CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
+
+    try {
+      const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+
+      return Result.ok(result)
+    } catch (e) {
+      return Result.err(e);
+    }
+  },
   async get(id) {
     const result = id ? await Report.findByPk(id) : await Report.findAll()
 
@@ -27,15 +61,23 @@ module.exports = FileService = {
   async save(document) {
     try {
       const binaryData = new Buffer(document.base64, 'base64').toString('binary')
+      const code = await this.newNumber(document.type.trim());
+      const docName = `${code.data[0].newnumber}_${code.data[0].year}_${code.data[0].type}.pdf`
 
-      await fs.writeFile(`${__dirname}${document.path}/${document.name}`, binaryData, "binary", err => {
+      await fs.writeFile(`${__dirname}${document.path}/${docName}`, binaryData, "binary", err => {
         if (err) {
           throw err;
         }
-        console.log(`Arquivo salvo em ..${document.path}/${document.name}`);
+        console.log(`Arquivo salvo em ..${document.path.trim()}/${docName.trim()}`);
       })
 
-      const report = new Report({name: document['name'], path: document['path']})
+      const report = new Report({
+        name: docName.trim(),
+        code: parseInt(code.data[0].newnumber),
+        carCode: document['carCode'].trim(),
+        path: document['path'].trim(),
+        type: document['type'].trim() })
+
       const result = await Report.create(report.dataValues).then(report => report.dataValues)
 
       return Result.ok(result)
