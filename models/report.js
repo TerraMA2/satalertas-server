@@ -12,10 +12,25 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       comment: "Report file name"
     },
+    code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      comment: "Report code"
+    },
+    carCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      comment: "Code of the CAR"
+    },
     path: {
       type: DataTypes.STRING,
       allowNull: false,
       comment: "Report file path"
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      comment: "Report of the report - DETER, PRODES, QUEIMADA"
     }
   }, {
     underscored: true,

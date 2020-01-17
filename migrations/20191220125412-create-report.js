@@ -8,6 +8,15 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER
         },
+        code: {
+          allowNull: false,
+          type: Sequelize.INTEGER
+        },
+        car_code: {
+          type: Sequelize.STRING,
+          allowNull: false
+
+        },
         name: {
           type: Sequelize.STRING,
           allowNull: false
@@ -17,18 +26,22 @@ module.exports = {
           allowNull: false,
           type: Sequelize.STRING
         },
-        created_at: Sequelize.TIME,
+        type: {
+          allowNull: false,
+          type: Sequelize.STRING
+        },
+        created_at: Sequelize.DATE,
         updated_at: Sequelize.DATE
       },
       {
         charset: 'utf-8',
-        schema: 'terrama2-alert'
+        schema: 'alertas'
       })
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('reports',
       {
-        schema: 'terrama2-alert'
+        schema: 'alertas'
       })
   }
 };
