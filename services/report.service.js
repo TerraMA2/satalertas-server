@@ -86,18 +86,17 @@ module.exports = FileReport = {
       const docName = `${code.data[0].newnumber}_${code.data[0].year.toString()}_${code.data[0].type.trim()}.pdf`
 
       const printer = new PdfPrinter(fonts);
-      docDefinition.content[5].text =
-        type === 'deter' ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code.data[0].newnumber}` :
-          type === 'prodes' ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code.data[0].newnumber}` :
-            type === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code.data[0].newnumber}` :
+      docDefinition.content[4].text =
+        type === 'deter' ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code.data[0].code}` :
+          type === 'prodes' ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code.data[0].code}` :
+            type === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code.data[0].code}` :
               `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${code.data[0].year}`;
 
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
       pdfDoc.pipe(fs.createWriteStream(`${pathDoc}/${docName}`));
       pdfDoc.end();
 
-      const report = await this.saveReport(docName, code.data[0].newnumber, carCode, pathDoc, type)
-
+     const report = await this.saveReport(docName, code.data[0].newnumber, carCode, pathDoc, type)
       return Result.ok(report)
     } catch (e) {
       return Result.err(e)

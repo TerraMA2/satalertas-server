@@ -11,3 +11,5 @@ thumbs.db
 logs/
 .history/
 config/config.json
+.idea/
+documentos/
