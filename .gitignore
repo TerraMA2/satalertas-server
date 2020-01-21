@@ -13,3 +13,4 @@ logs/
 config/config.json
 .idea/
 documentos/
+.vscode/
