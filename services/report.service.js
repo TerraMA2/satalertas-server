@@ -96,7 +96,7 @@ module.exports = FileReport = {
       pdfDoc.pipe(fs.createWriteStream(`${pathDoc}/${docName}`));
       pdfDoc.end();
 
-     const report = await this.saveReport(docName, code.data[0].newnumber, carCode, pathDoc, type)
+      const report = await this.saveReport(docName, code.data[0].newnumber, carCode, pathDoc, type)
       return Result.ok(report)
     } catch (e) {
       return Result.err(e)
