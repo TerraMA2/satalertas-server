@@ -11,29 +11,23 @@ const viewRouter = require('./routes/view')
 const geoserverRouter = require('./routes/geoserver')
 const reportRouter = require('./routes/report')
 
-const errorController = require('./controllers/error')
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/config/config.json')[env];
+const basePath = config.basePath;
 
-// const csrfProtection = csrf()
+const errorController = require('./controllers/error')
 
 const app = express()
 
-// app.use(passport.initialize());
 app.use(cors())
 app.use(compression())
 app.use(helmet())
 app.use(morgan('combined'))
 app.use(express.json({limit: '100mb'}))
 
-// app.use(csrfProtection)
-
-// app.use((req, res, next) => {
-//     res.locals.csrfToken = req.csrfToken()
-//     next()
-// })
-
-app.use('/view', viewRouter)
-app.use('/geoserver', geoserverRouter)
-app.use('/report', reportRouter)
+app.use(basePath+'/view', viewRouter)
+app.use(basePath+'/geoserver', geoserverRouter)
+app.use(basePath+'/report', reportRouter)
 
 // Error handler
 app.use(errorController.show404)
