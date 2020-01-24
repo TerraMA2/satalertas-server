@@ -93,10 +93,10 @@ module.exports = FileReport = {
               `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${code.data[0].year}`;
 
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
-      pdfDoc.pipe(fs.createWriteStream(`${pathDoc}/${docName}`));
+      pdfDoc.pipe(await fs.createWriteStream(`${pathDoc}/${docName}`));
       pdfDoc.end();
 
-      const report = await this.saveReport(docName, code.data[0].newnumber, carCode, pathDoc, type)
+      const report = await this.saveReport(docName, code.data[0].newnumber, carCode, pathDoc, type);
       return Result.ok(report)
     } catch (e) {
       return Result.err(e)
