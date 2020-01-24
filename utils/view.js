@@ -56,6 +56,17 @@ const view = {
                                 ${parameter}
                             </virtualTable>
                         </entry>
+                        <entry key="time">
+                            <dimensionInfo>
+                                <enabled>true</enabled>
+                                <attribute>execution_date</attribute>
+                                <presentation>CONTINUOUS_INTERVAL</presentation>
+                                <units>ISO8601</units>
+                                <defaultValue>
+                                    <strategy>MAXIMUM</strategy>
+                                </defaultValue>
+                            </dimensionInfo>
+                        </entry>
                     </metadata>
                     <maxFeatures>0</maxFeatures>
                     <numDecimals>0</numDecimals>
