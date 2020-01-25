@@ -34,6 +34,12 @@ exports.get = (req, res, next) => {
                     cod = viewName.replace(/ /g, '_').toUpperCase()
                     codgroup = cod.substr(cod.lastIndexOf("_")+1)
                 }
+                if (sourceType === LayerType.STATIC) {
+                    codgroup = 'STATIC';
+                }
+                if (sourceType === LayerType.DYNAMIC) {
+                    codgroup = 'DYNAMIC';
+                }
 
                 const layerData = {
                     url: `${geoserverUrl}`,
@@ -59,6 +65,9 @@ exports.get = (req, res, next) => {
                     type: `${layerType[sourceType]}`,
                     isPrivate: `${isPrivate}`,
                     isPrimary: false,
+                    isDisabled: false,
+                    isHidden: false,
+                    isChild: false,
                     layerData: layerData,
                     legend: legend
                 }
@@ -76,14 +85,23 @@ exports.get = (req, res, next) => {
 
             analysisLayers = analysisLayers.reduce((r, a) => {
                 let viewName = a.cod
-                viewName = viewName.substr(viewName.replace(/ /g, '_').lastIndexOf("_")+1).toUpperCase()
-                r[viewName] = [...r[viewName] || [], a];
+                // viewName = viewName.substr(viewName.replace(/ /g, '_').lastIndexOf("_")+1).toUpperCase()
+                if (viewName.includes('PRODES')) {
+                    r['PRODES'] = [...r['PRODES'] || [], a];
+                } else if (viewName.includes('DETER')) {
+                    r['DETER'] = [...r['DETER'] || [], a];
+                } else if (viewName.includes('FOCOS')) {
+                    r['FOCOS'] = [...r['FOCOS'] || [], a];
+                } else if (viewName.includes('AQ')) {
+                    r['AQ'] = [...r['AQ'] || [], a];
+                }
                 return r;
             }, {});
 
             analysisLayers['DETER'][0]['isPrimary'] = true
             analysisLayers['PRODES'][0]['isPrimary'] = true
             analysisLayers['FOCOS'][0]['isPrimary'] = true
+            analysisLayers['AQ'][0]['isPrimary'] = true
 
             const viewsJSON = [
                 {
