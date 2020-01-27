@@ -12,5 +12,5 @@ logs/
 .history/
 config/config.json
 .idea/
-documentos/*
+documentos/*.pdf
 .vscode/
