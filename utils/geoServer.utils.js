@@ -41,6 +41,18 @@ setViewJson = function(json, view){
               }
             },
             {
+              "@key": "time",
+              "dimensionInfo": {
+                "enabled": true,
+                "attribute": "execution_date",
+                "presentation": "CONTINUOUS_INTERVAL",
+                "units": "ISO8601",
+                "defaultValue": {
+                  "strategy": "MAXIMUM"
+                }
+              }
+            },
+            {
               "@key": "cachingEnabled",
               "$": "false"
             }
