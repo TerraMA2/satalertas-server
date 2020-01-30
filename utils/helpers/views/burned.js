@@ -1,3 +1,5 @@
+const FILTER = require('./filter/burned-filter');
+
 module.exports = {
   CAR_X_FOCOS: {
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
@@ -51,4 +53,5 @@ module.exports = {
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
+  filter: FILTER
 };

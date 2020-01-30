@@ -28,14 +28,14 @@ const LAYERS_CHILDREN = {
     activearea: false,
     isPrivate: true
   },
-  STATIC_DATA: {
+  STATIC: {
     label: 'Dados estáticos',
     parent: true,
     viewGraph: false,
     activearea: false,
     isPrivate: false
   },
-  DYNAMIC_DATA: {
+  DYNAMIC: {
     label: 'Dados dinâmicos',
     parent: true,
     viewGraph: false,

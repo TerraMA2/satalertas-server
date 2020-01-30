@@ -1,52 +1,52 @@
 module.exports = {
-  CAR_X_DETER: {
+  CAR_X_PRODES: {
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
-  CAR_DETER_X_APP: {
+  CAR_PRODES_X_APP: {
     shortLabel: 'APP',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
-  CAR_DETER_X_DESEMB: {
+  CAR_PRODES_X_DESEMB: {
     shortLabel: 'Área Desembargada',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
-  CAR_DETER_X_DESMATE: {
+  CAR_PRODES_X_DESMATE: {
     shortLabel: 'Aut. Desmate',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
-  CAR_DETER_X_EMB: {
+  CAR_PRODES_X_EMB: {
     shortLabel: 'Áreas Embargadas',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
-  CAR_DETER_X_QUEIMA: {
+  CAR_PRODES_X_QUEIMA: {
     shortLabel: 'Aut. Queimada',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
-  CAR_DETER_X_RESERVA: {
+  CAR_PRODES_X_RESERVA: {
     shortLabel: 'Reserva legal',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
-  CAR_DETER_X_TI: {
+  CAR_PRODES_X_TI: {
     shortLabel: 'Terra indígena',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
-  CAR_DETER_X_UC: {
+  CAR_PRODES_X_UC: {
     shortLabel: 'Unidade de conservação',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
-  CAR_DETER_X_USOANT: {
+  CAR_PRODES_X_USOANT: {
     shortLabel: 'Uso antropizado',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
-  CAR_DETER_X_USOCON: {
+  CAR_PRODES_X_USOCON: {
     shortLabel: 'Uso consolidado',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
-  CAR_DETER_X_VEGNAT: {
+  CAR_PRODES_X_VEGNAT: {
     shortLabel: 'Vegetação nativa',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
