@@ -2,6 +2,7 @@ const models = require('../models')
     View = models.views
     RegisteredView = models.registered_views
     LayerType = require('../enum/layerType')
+    ViewService = require("../services/view.service");
 
 exports.get = (req, res, next) => {
     const viewId = req.params.id
@@ -151,4 +152,8 @@ exports.get = (req, res, next) => {
             res.json(viewsJSON)
         })
     }
+}
+
+exports.getByAnalysiName = async (req, res, next) => {
+    res.json(await ViewService.getByAnalysiName(req.query.name))
 }

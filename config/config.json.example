@@ -9,6 +9,7 @@
     "define": {
       "schema": "alertas"
     }
+    "basePath": ""
   },
   "test": {
     "username": "postgres",
@@ -20,6 +21,7 @@
     "define": {
       "schema": "alertas"
     }
+    "basePath": ""
   },
   "production": {
     "username": "postgres",
@@ -31,5 +33,6 @@
     "define": {
       "schema": "alertas"
     }
+    "basePath": "/mpmt/alertaServer"
   }
 }
