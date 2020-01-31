@@ -10,8 +10,8 @@ const VIEWS = {
   PRODES: prodes,
   BURNED: burned,
   BURNED_AREA: burned_area,
-  STATIC_DATA: static_data,
-  DYNAMIC_DATA: dynamic_data
+  STATIC: static_data,
+  DYNAMIC: dynamic_data
 };
 
 module.exports = VIEWS;

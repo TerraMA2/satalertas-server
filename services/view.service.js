@@ -12,225 +12,12 @@ const confView = require(__dirname + '/../config/conf-view.json')
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
 setFilter = function(groupViews, data_view) {
-  return {
-    default: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.default &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.default.view ?
-          VIEWS[data_view.cod_group][data_view.cod].filter.default.view : `${data_view.workspace}:${data_view.view}`
-    },
-    biome: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.biome &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.biome.view ?
-          VIEWS[data_view.cod_group][data_view.cod].filter.biome.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_biome_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.biome &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.biome.field}` ?
-          VIEWS[data_view.cod_group][data_view.cod].filter.biome.field : `gid`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.biome &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.biome.value ?
-          VIEWS[data_view.cod_group][data_view.cod].filter.biome.value : `gid`
-    },
-    region: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.region &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.region.view ?
-          VIEWS[data_view.cod_group][data_view.cod].filter.region.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_city_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.region &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.region.field}` ?
-          [data_view.cod_group][data_view.cod].filter.region.field : `comarca`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.region &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.region.value ?
-          [data_view.cod_group][data_view.cod].filter.region.value : `name`
-    },
-    mesoregion: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.mesoregion &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.mesoregion.view ?
-          [data_view.cod_group][data_view.cod].filter.mesoregion.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_city_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.mesoregion &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.mesoregion.field}` ?
-          [data_view.cod_group][data_view.cod].filter.mesoregion.field : `nm_meso`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.mesoregion &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.mesoregion.value ?
-          [data_view.cod_group][data_view.cod].filter.mesoregion.value : `name`
-    },
-    microregion: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.microregion &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.microregion.view ?
-          [data_view.cod_group][data_view.cod].filter.microregion.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_city_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.microregion &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.microregion.field}` ?
-          [data_view.cod_group][data_view.cod].filter.microregion.field : `nm_micro`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.microregion &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.microregion.value}` ?
-          [data_view.cod_group][data_view.cod].filter.microregion.value : `name`
-    },
-    city: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.city &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.city.view ?
-          [data_view.cod_group][data_view.cod].filter.city.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_city_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.city &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.city.field}` ?
-          [data_view.cod_group][data_view.cod].filter.city.field : `gid`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.city &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.city.value ?
-          [data_view.cod_group][data_view.cod].filter.city.value : `gid`
-    },
-    uc: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.uc &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.uc.view ?
-          [data_view.cod_group][data_view.cod].filter.uc.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_uc_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.uc &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.uc.field}` ?
-          [data_view.cod_group][data_view.cod].filter.uc.field : `gid`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.uc &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.uc.value ?
-          [data_view.cod_group][data_view.cod].filter.uc.value : `gid`
-    },
-    ti: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.ti &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.ti.view ?
-          [data_view.cod_group][data_view.cod].filter.ti.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_ti_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.ti &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.ti.field}` ?
-          [data_view.cod_group][data_view.cod].filter.ti.field : `gid`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.ti &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.ti.value ?
-          [data_view.cod_group][data_view.cod].filter.ti.value : `gid`
-    },
-    car: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.car &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.car.view ?
-          [data_view.cod_group][data_view.cod].filter.car.view : `${data_view.workspace}:${data_view.view}`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.car &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.car.field}` ?
-          [data_view.cod_group][data_view.cod].filter.car.field : `de_car_validado_sema_area_ha_`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.car &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.car.value ?
-          [data_view.cod_group][data_view.cod].filter.car.value :  ``
-    },
-    projus: {
-      view:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.projus &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.projus.view ?
-          [data_view.cod_group][data_view.cod].filter.projus.view : `${confGeoServer.workspace}:${data_view.cod.toLowerCase()}_projus_sql`,
-      field:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.projus &&
-        `${groupViews[data_view.cod_group].tableOwner}${VIEWS[data_view.cod_group][data_view.cod].filter.projus.field}` ?
-          [data_view.cod_group][data_view.cod].filter.projus.field : `gid`,
-      value:
-        VIEWS[data_view.cod_group] &&
-        VIEWS[data_view.cod_group][data_view.cod] &&
-        VIEWS[data_view.cod_group][data_view.cod].filter &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.projus &&
-        VIEWS[data_view.cod_group][data_view.cod].filter.projus.value ?
-          [data_view.cod_group][data_view.cod].filter.projus.value : `gid`
-    }
-  }
-}
+  const view_default = `${data_view.workspace}:${data_view.view}`;
+  return VIEWS[data_view.cod_group] && VIEWS[data_view.cod_group].filter ?
+           VIEWS[data_view.cod_group]
+             .filter(view_default, confGeoServer.workspace, data_view.cod, groupViews[data_view.cod_group].tableOwner, data_view.is_primary) :
+           {};
+};
 
 setLegend = function(data_view) {
   return {
@@ -293,7 +80,7 @@ setViews = function(groupViews, data_view) {
 
 orderView = function(groupViews) {
   const viewsJSON = []
-  const layers = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA', 'STATIC_DATA', 'DYNAMIC_DATA'];
+  const layers = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA', 'STATIC', 'DYNAMIC'];
 
   let child  = [];
   let owner = [];
@@ -325,20 +112,20 @@ orderView = function(groupViews) {
   viewsJSON.push(groupViews.PRODES)
   viewsJSON.push(groupViews.BURNED)
   viewsJSON.push(groupViews.BURNED_AREA)
-  viewsJSON.push(groupViews.STATIC_DATA)
-  viewsJSON.push(groupViews.DYNAMIC_DATA)
+  viewsJSON.push(groupViews.STATIC)
+  viewsJSON.push(groupViews.DYNAMIC)
   return viewsJSON;
 };
 
 module.exports = FileReport = {
-  async getByAnalysiName(type) {
+  async getSidebarConfigDynamic() {
     const sqlViews =
       ` SELECT
                view.id AS view_id,
                TRIM(view.name) AS name_view,
                (CASE
-                   WHEN view.source_type = 1 THEN 'STATIC_DATA'
-                   WHEN view.source_type = 2 THEN 'DYNAMIC_DATA'
+                   WHEN view.source_type = 1 THEN 'STATIC'
+                   WHEN view.source_type = 2 THEN 'DYNAMIC'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER') IS NOT NULL) THEN 'DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES') IS NOT NULL) THEN 'PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
@@ -383,10 +170,10 @@ module.exports = FileReport = {
                (view.source_type = 3) AS is_analysis,
                (r_view.workspace is null) AS is_disable
         FROM terrama2.data_series AS ds
-        INNER JOIN terrama2.data_set_formats AS dsf    ON ds.id   = dsf.data_set_id
-        INNER JOIN terrama2.views            AS view   ON ds.id   = view.data_series_id
-        LEFT JOIN  terrama2.registered_views AS r_view ON view.id = r_view.view_id
-        LEFT JOIN  terrama2.analysis         AS ana    ON view.id = ana.dataset_output
+        INNER JOIN terrama2.data_set_formats AS dsf    ON ds.id           = dsf.data_set_id
+        INNER JOIN terrama2.views            AS view   ON ds.id           = view.data_series_id
+        LEFT JOIN  terrama2.registered_views AS r_view ON view.id         = r_view.view_id
+        LEFT JOIN  terrama2.analysis         AS ana    ON dsf.data_set_id = ana.dataset_output
         WHERE dsf.key = 'table_name'
         ORDER BY type, cod_group, name_view
       `;
@@ -395,8 +182,8 @@ module.exports = FileReport = {
       `
         SELECT  
                (CASE
-                   WHEN view.source_type = 1 THEN 'STATIC_DATA'
-                   WHEN view.source_type = 2 THEN 'DYNAMIC_DATA'
+                   WHEN view.source_type = 1 THEN 'STATIC'
+                   WHEN view.source_type = 2 THEN 'DYNAMIC'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN 'DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN 'PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN 'BURNED'

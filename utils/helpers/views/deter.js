@@ -1,3 +1,5 @@
+const FILTER = require('./filter/deter.filter');
+
 module.exports = {
   CAR_X_DETER: {
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
@@ -24,31 +26,32 @@ module.exports = {
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
   CAR_DETER_X_RESERVA: {
-    shortLabel: 'Reserva legal',
+    shortLabel: 'Reserva Legal',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
   CAR_DETER_X_TI: {
-    shortLabel: 'Terra indígena',
+    shortLabel: 'Terra Indígena',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
   CAR_DETER_X_UC: {
-    shortLabel: 'Unidade de conservação',
+    shortLabel: 'Unidade de Conservação',
     carRegisterColumn: 'de_car_validado_sema_numero_do1'
   },
   CAR_DETER_X_USOANT: {
-    shortLabel: 'Uso antropizado',
+    shortLabel: 'Uso Antropizado',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
   CAR_DETER_X_USOCON: {
-    shortLabel: 'Uso consolidado',
+    shortLabel: 'Uso Consolidado',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
   CAR_DETER_X_VEGNAT: {
-    shortLabel: 'Vegetação nativa',
+    shortLabel: 'Vegetação Nativa',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
-  }
+  },
+  filter: FILTER
 };

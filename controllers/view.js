@@ -154,6 +154,6 @@ exports.get = (req, res, next) => {
     }
 }
 
-exports.getByAnalysiName = async (req, res, next) => {
-    res.json(await ViewService.getByAnalysiName(req.query.name))
+exports.getSidebarConfigDynamic = async (req, res, next) => {
+    res.json(await ViewService.getSidebarConfigDynamic())
 }
