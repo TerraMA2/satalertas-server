@@ -46,7 +46,7 @@ module.exports = function(view_prodes, workspacekAlertas, cod_view, tableOwner, 
     projus: {
       view: `${workspacekAlertas}:${cod_view}_projus_sql`,
       field: `gid`,
-      value: `gid`
+      value: `gid`,
     }
   }
 };

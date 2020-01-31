@@ -78,8 +78,7 @@ setViews = function(groupViews, data_view) {
   }
 }
 
-orderView = function(groupViews) {
-  const viewsJSON = []
+orderView = async function(groupViews) {
   const layers = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA', 'STATIC', 'DYNAMIC'];
 
   let child  = [];
@@ -108,78 +107,25 @@ orderView = function(groupViews) {
     });
   });
 
-  viewsJSON.push(groupViews.DETER)
-  viewsJSON.push(groupViews.PRODES)
-  viewsJSON.push(groupViews.BURNED)
-  viewsJSON.push(groupViews.BURNED_AREA)
-  viewsJSON.push(groupViews.STATIC)
-  viewsJSON.push(groupViews.DYNAMIC)
+  return groupViews;
+};
+
+setResultSidebarConfig = async function(groupViews){
+  const viewsJSON = [];
+
+  viewsJSON.push(groupViews.DETER);
+  viewsJSON.push(groupViews.PRODES);
+  viewsJSON.push(groupViews.BURNED);
+  viewsJSON.push(groupViews.BURNED_AREA);
+  viewsJSON.push(groupViews.STATIC);
+  viewsJSON.push(groupViews.DYNAMIC);
+
   return viewsJSON;
 };
 
-module.exports = FileReport = {
-  async getSidebarConfigDynamic() {
-    const sqlViews =
-      ` SELECT
-               view.id AS view_id,
-               TRIM(view.name) AS name_view,
-               (CASE
-                   WHEN view.source_type = 1 THEN 'STATIC'
-                   WHEN view.source_type = 2 THEN 'DYNAMIC'
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER') IS NOT NULL) THEN 'DETER'
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES') IS NOT NULL) THEN 'PRODES'
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
-                   WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ') IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL))    THEN 'BURNED_AREA'
-                   ELSE UPPER(REPLACE(translate(REPLACE(TRIM(view.name), '  ', ' '),
-                                         'áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',
-                                         'aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'
-                                          ),  ' ','_'))
-               END)   AS cod_group,
-               (UPPER(REPLACE(REPLACE(REPLACE(translate(TRIM(view.name),
-                                         '  áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',
-                                         ' aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'
-                                          ),  ' ','_'), '__', '_'), '-', '_'))
-               ) AS cod,
-               (CASE
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X DETER')  IS NOT NULL) THEN true
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X PRODES') IS NOT NULL) THEN true
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X FOCOS')  IS NOT NULL) THEN true
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X AREA_Q') IS NOT NULL) THEN true
-                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN true
-                   ELSE false
-               END)   AS is_primary,
-               (CASE
-                    WHEN view.source_type = 3 THEN concat(TRIM(dsf.value), '_', ana.id)
-                    ELSE dsf.value
-                END )
-                   AS table_name,
-               (CASE
-                    WHEN view.source_type = 1 THEN 'static'
-                    WHEN view.source_type = 2 THEN 'dynamic'
-                    WHEN view.source_type = 3 THEN 'analysis'
-               END )
-                   AS type,
-               (CASE
-                   WHEN r_view.workspace is null THEN CONCAT('terrama2_', view.id)
-                   ELSE r_view.workspace
-               END ) AS workspace,
-               concat('view', view.id) AS view,
-               (view.source_type = 1) AS is_static,
-               (view.source_type = 2) AS is_dynamic,
-               (view.source_type = 3) AS is_analysis,
-               (r_view.workspace is null) AS is_disable
-        FROM terrama2.data_series AS ds
-        INNER JOIN terrama2.data_set_formats AS dsf    ON ds.id           = dsf.data_set_id
-        INNER JOIN terrama2.views            AS view   ON ds.id           = view.data_series_id
-        LEFT JOIN  terrama2.registered_views AS r_view ON view.id         = r_view.view_id
-        LEFT JOIN  terrama2.analysis         AS ana    ON dsf.data_set_id = ana.dataset_output
-        WHERE dsf.key = 'table_name'
-        ORDER BY type, cod_group, name_view
-      `;
-
-    const sqlGroupViews =
-      `
+getGroupViews = async function() {
+  const sqlGroupViews =
+    `
         SELECT  
                (CASE
                    WHEN view.source_type = 1 THEN 'STATIC'
@@ -245,38 +191,122 @@ module.exports = FileReport = {
         FROM terrama2.views AS view
         GROUP BY cod, label, parent, view_graph, active_area, isPrivate;
       `;
+  try {
+    const dataset_group_views = await RegisteredView.sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
+
+    let groupViews = {};
+    dataset_group_views.forEach(group => {
+      groupViews[group.cod] = group;
+    });
+    return await getViews(groupViews);
+  } catch (e) {
+    throw e
+  }
+};
+
+getViews = async function(groupViews) {
+  const sqlViews =
+    ` SELECT
+               view.id AS view_id,
+               TRIM(view.name) AS name_view,
+               (CASE
+                   WHEN view.source_type = 1 THEN 'STATIC'
+                   WHEN view.source_type = 2 THEN 'DYNAMIC'
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER') IS NOT NULL) THEN 'DETER'
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES') IS NOT NULL) THEN 'PRODES'
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
+                   WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ') IS NOT NULL) OR
+                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL))    THEN 'BURNED_AREA'
+                   ELSE UPPER(REPLACE(translate(REPLACE(TRIM(view.name), '  ', ' '),
+                                         'áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',
+                                         'aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'
+                                          ),  ' ','_'))
+               END)   AS cod_group,
+               (UPPER(REPLACE(REPLACE(REPLACE(translate(TRIM(view.name),
+                                         '  áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',
+                                         ' aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'
+                                          ),  ' ','_'), '__', '_'), '-', '_'))
+               ) AS cod,
+               (CASE
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X DETER')  IS NOT NULL) THEN true
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X PRODES') IS NOT NULL) THEN true
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X FOCOS')  IS NOT NULL) THEN true
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X AREA_Q') IS NOT NULL) THEN true
+                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN true
+                   ELSE false
+               END)   AS is_primary,
+               (CASE
+                    WHEN view.source_type = 3 THEN concat(TRIM(dsf.value), '_', ana.id)
+                    ELSE dsf.value
+                END )
+                   AS table_name,
+               (CASE
+                    WHEN view.source_type = 1 THEN 'static'
+                    WHEN view.source_type = 2 THEN 'dynamic'
+                    WHEN view.source_type = 3 THEN 'analysis'
+               END )
+                   AS type,
+               (CASE
+                   WHEN r_view.workspace is null THEN CONCAT('terrama2_', view.id)
+                   ELSE r_view.workspace
+               END ) AS workspace,
+               concat('view', view.id) AS view,
+               (view.source_type = 1) AS is_static,
+               (view.source_type = 2) AS is_dynamic,
+               (view.source_type = 3) AS is_analysis,
+               (r_view.workspace is null) AS is_disable
+        FROM terrama2.data_series AS ds
+        INNER JOIN terrama2.data_set_formats AS dsf    ON ds.id           = dsf.data_set_id
+        INNER JOIN terrama2.views            AS view   ON ds.id           = view.data_series_id
+        LEFT JOIN  terrama2.registered_views AS r_view ON view.id         = r_view.view_id
+        LEFT JOIN  terrama2.analysis         AS ana    ON dsf.data_set_id = ana.dataset_output
+        WHERE dsf.key = 'table_name'
+        ORDER BY type, cod_group, name_view
+      `;
+
+  try {
+    const dataset_views = await RegisteredView.sequelize.query(sqlViews, QUERY_TYPES_SELECT);
+
+    dataset_views.forEach(dataView => {
+      if(dataView.is_primary) {
+        groupViews[dataView.cod_group].tableOwner = `${dataView.table_name}`;
+      }
+    });
+
+    dataset_views.forEach(dataView => {
+      if (!groupViews[dataView.cod_group].children) { groupViews[dataView.cod_group].children = [] };
+
+      const view = setViews(groupViews, dataView);
+
+      const groupBy = view.isPrimary ? 'owner' : view.isChild ? 'child' : 'other';
+
+      if (!groupViews[dataView.cod_group].children[groupBy]) { groupViews[dataView.cod_group].children[groupBy] = [] };
+
+      groupViews[dataView.cod_group].children[groupBy].push(view);
+    });
+
+    return groupViews;
+  } catch (e) {
+    throw e
+  }
+};
+
+module.exports = FileReport = {
+  async getSidebarConfigDynamic() {
     try {
+      const groupViews = await orderView(await getGroupViews());
 
-      const dataset_group_views = await RegisteredView.sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
-      let groupViews = {};
-      dataset_group_views.forEach( group => {
-        groupViews[group.cod] = group;
-      });
+      return Result.ok(await setResultSidebarConfig(groupViews));
+    } catch (e) {
+      return Result.err(e);
+    }
+  },
 
-      const dataset_views = await RegisteredView.sequelize.query(sqlViews, QUERY_TYPES_SELECT);
-
-      dataset_views.forEach(dataView => {
-        if(dataView.is_primary) {
-          groupViews[dataView.cod_group].tableOwner = `${dataView.table_name}`;
-        }
-      });
-      dataset_views.forEach(dataView => {
-        if (!groupViews[dataView.cod_group].children) { groupViews[dataView.cod_group].children = [] };
-
-        const view = setViews(groupViews, dataView);
-
-        const groupBy = view.isPrimary ? 'owner' : view.isChild ? 'child' : 'other';
-
-        if (!groupViews[dataView.cod_group].children[groupBy]) { groupViews[dataView.cod_group].children[groupBy] = [] };
-
-        groupViews[dataView.cod_group].children[groupBy].push(view);
-      });
-
-      const viewsJSON = orderView(groupViews);
-
-      return Result.ok(viewsJSON)
+  async fetchGroupOfOrderedLayers() {
+    try {
+      return await orderView(await getGroupViews());
     } catch (e) {
       return Result.err(e);
     }
   }
-}
+};

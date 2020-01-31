@@ -55,7 +55,10 @@ module.exports = geoServerService = {
     const result = await axios[method]( urlMethod, xmlOrJson, config).then(resp => resp ).catch(err => err);
 
     const message = result.status && (result.status === 200) ? ' successfully modified! ' : '';
-    return result.statusText = result.status ? `${result.status}/${result.statusText} - ${name} ${message}` : `${result.response.status}/${result.response.statusText} - ${result.response.data}`
+    return result.statusText =
+      result.status ?
+        `${result.status}/${result.statusText} - ${name} ${message}` :
+        `${result.response.status}/${result.response.statusText} - ${result.response.data}`
   },
 
   async saveViewsGeoServer(views) {
