@@ -1,12 +1,13 @@
-module.exports = function(view_focos, workspacekAlertas, cod_view, tableOwner, isPrimary) {
+
+module.exports = function(view_prodes, workspacekAlertas, cod_view, tableOwner, isPrimary) {
   return {
     default: {
-      view: view_focos
+      view: view_prodes
     },
     biome: {
-      view: view_focos,
-      field: isPrimary ? `dd_focos_inpe_bioma` : `${tableOwner}_dd_focos_inpe_bioma`,
-      value: `name`
+      view: `${workspacekAlertas}:${cod_view}_biome_sql`,
+      field: 'gid',
+      value: 'gid'
     },
     region: {
       view: `${workspacekAlertas}:${cod_view}_city_sql`,
@@ -24,9 +25,9 @@ module.exports = function(view_focos, workspacekAlertas, cod_view, tableOwner, i
       value: `name`
     },
     city: {
-      view: view_focos,
-      field: isPrimary ? `dd_focos_inpe_id_2` : `${tableOwner}_dd_focos_inpe_id_2`,
-      value: `geocode`
+      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      field: `gid`,
+      value: `gid`
     },
     uc: {
       view: `${workspacekAlertas}:${cod_view}_uc_sql`,
@@ -39,8 +40,8 @@ module.exports = function(view_focos, workspacekAlertas, cod_view, tableOwner, i
       value: `gid`
     },
     car: {
-      view: view_focos,
-      field: isPrimary ? `de_car_validado_sema_area_ha` : `${tableOwner}_de_car_validado_sema_area_ha`
+      view: view_prodes,
+      field: isPrimary ? `de_car_validado_sema_area_ha_` : `${tableOwner}_de_car_validado_sema_area_ha_`
     },
     projus: {
       view: `${workspacekAlertas}:${cod_view}_projus_sql`,
