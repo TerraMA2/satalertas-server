@@ -24,7 +24,7 @@ setLegend = function(data_view) {
     title: data_view.cod,
     url: `${confGeoServer.legendUrl}${data_view.workspace}:${data_view.view}`
   }
-}
+};
 
 setlayerData = function(data_view) {
   return {
@@ -59,6 +59,9 @@ setViews = function(groupViews, data_view) {
 
           VIEWS[data_view.cod_group][data_view.cod].carRegisterColumn : null,
     type: data_view.type,
+    workspace: data_view.workspace,
+    view: data_view.view,
+    dataStore: data_view.datastore ? data_view.datastore : '',
     isPrivate: data_view.type === 'analysis',
     isChild:
       VIEWS[data_view.cod_group] &&
@@ -76,7 +79,7 @@ setViews = function(groupViews, data_view) {
     layerData: setlayerData(data_view),
     legend: setLegend(data_view)
   }
-}
+};
 
 orderView = async function(groupViews) {
   const layers = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA', 'STATIC', 'DYNAMIC'];

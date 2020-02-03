@@ -1,9 +1,9 @@
 
-module.exports = function(workspacekAlertas, dataStore, cod_view, tableOwner, tableName, isPrimary) {
+module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tableName, isPrimary) {
   return {
     city: {
       title: `${cod_view}_city_sql`,
-      workspace: `${workspacekAlertas}`,
+      workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
         `
           SELECT main_table.*, secondary_table.geocodigo , secondary_table.gid , secondary_table.comarca ,
@@ -34,7 +34,7 @@ module.exports = function(workspacekAlertas, dataStore, cod_view, tableOwner, ta
     },
     uc: {
       title: `${cod_view}_uc_sql`,
-      workspace: `${workspacekAlertas}`,
+      workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
         `
           SELECT main_table.*, secondary_table.gid  
@@ -65,7 +65,7 @@ module.exports = function(workspacekAlertas, dataStore, cod_view, tableOwner, ta
     },
     ti: {
       title: `${cod_view}_ti_sql`,
-      workspace: `${workspacekAlertas}`,
+      workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
         `
           SELECT main_table.*, secondary_table.gid  
@@ -96,7 +96,7 @@ module.exports = function(workspacekAlertas, dataStore, cod_view, tableOwner, ta
     },
     projus: {
       title: `${cod_view}_projus_sql`,
-      workspace: `${workspacekAlertas}`,
+      workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
         `
           SELECT main_table.*, secondary_table.gid  
