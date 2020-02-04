@@ -7,6 +7,7 @@ const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
 const confDb = require(__dirname + '/../config/config.json')[env];
 const ViewService = require(__dirname + "/view.service");
 const FILTER = require(__dirname + '/../utils/helpers/geoserver/filter');
+const VIEW_UPDATE_FILTER = require(__dirname + '/../utils/helpers/geoserver/view.update.filter');
 
 const URL = `${confGeoServer.host}workspaces/${confGeoServer.workspace}/featuretypes`;
 const CONFIG = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/xml' } };
@@ -26,6 +27,19 @@ setViewsDynamic = async function(views) {
     GROUP_FILTER.forEach( group => {
       groupViews[group].children.forEach( layer => {
         const type = group === 'BURNED' ? group.toLowerCase() : 'default';
+
+        if (group === 'BURNED') {
+          const view_burned_update = VIEW_UPDATE_FILTER(
+            layer.workspace,
+            layer.datastore,
+            layer.view,
+            layer.label,
+            layer.tableOwner,
+            layer.tableName,
+            layer.isPrimary)
+
+          viewsDynamic.push(view_burned_update)
+        }
 
         const filter = FILTER[type](
           confGeoServer.workspace,
@@ -121,12 +135,14 @@ module.exports = geoServerService = {
   },
 
   async validateDataStore(nameWorkspace, nameDataStrore) {
-    const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
-    const method = await this.setMethod(`${urlD}/${nameDataStrore}.json`);
+    if (nameDataStrore) {
+      const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
+      const method = await this.setMethod(`${urlD}/${nameDataStrore}.json`);
 
-    if (method === 'post') {
-      const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStrore);
-      console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
+      if (method === 'post') {
+        const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStrore);
+        console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
+      }
     }
   },
 

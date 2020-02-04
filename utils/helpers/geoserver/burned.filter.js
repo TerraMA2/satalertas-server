@@ -2,6 +2,7 @@
 module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tableName, isPrimary) {
   return {
     city: {
+      name: `${cod_view}_city_sql`,
       title: `${cod_view}_city_sql`,
       workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
@@ -30,9 +31,11 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: 4326
         },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      addParameter: true
     },
     uc: {
+      name: `${cod_view}_uc_sql`,
       title: `${cod_view}_uc_sql`,
       workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
@@ -61,9 +64,11 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: 4326
       },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      addParameter: true
     },
     ti: {
+      name: `${cod_view}_ti_sql`,
       title: `${cod_view}_ti_sql`,
       workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
@@ -92,9 +97,11 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: 4326
       },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      addParameter: true
     },
     projus: {
+      name: `${cod_view}_projus_sql`,
       title: `${cod_view}_projus_sql`,
       workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
@@ -123,7 +130,8 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: 4326
       },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      addParameter: true
     }
   }
 };

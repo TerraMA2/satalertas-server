@@ -84,7 +84,7 @@ addParameter = function(json) {
     },
     {
       name: 'max',
-      defaultValue: 99999999999,
+      defaultValue: 999999999,
       regexpValidator: '^[\\d]+$'
     }
   ];

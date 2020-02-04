@@ -2,6 +2,7 @@
 module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tableName, isPrimary) {
   return {
     biome: {
+      name: `${cod_view}_biome_sql`,
       title: `${cod_view}_biome_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
@@ -17,6 +18,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       dataStore: dataStore
     },
     city: {
+      name: `${cod_view}_city_sql`,
       title: `${cod_view}_city_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
@@ -34,6 +36,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       dataStore: `${dataStore}`
     },
     uc: {
+      name: `${cod_view}_uc_sql`,
       title: `${cod_view}_uc_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
@@ -50,6 +53,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       dataStore: `${dataStore}`
     },
     ti: {
+      name: `${cod_view}_ti_sql`,
       title: `${cod_view}_ti_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
@@ -66,6 +70,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       dataStore: `${dataStore}`
     },
     projus: {
+      name: `${cod_view}_projus_sql`,
       title: `${cod_view}_projus_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
