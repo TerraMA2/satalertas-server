@@ -5,12 +5,64 @@ const axios = require('axios');
 const env = process.env.NODE_ENV || 'development';
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
 const confDb = require(__dirname + '/../config/config.json')[env];
-const layerStyle = require('../geoserver-conf/views/layers-style/layers-style');
+const ViewService = require(__dirname + "/view.service");
+const FILTER = require(__dirname + '/../utils/helpers/geoserver/filter');
+const VIEW_UPDATE_FILTER = require(__dirname + '/../utils/helpers/geoserver/view.update.filter');
 
 const URL = `${confGeoServer.host}workspaces/${confGeoServer.workspace}/featuretypes`;
 const CONFIG = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/xml' } };
 const CONFIG_JSON = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/json' } };
 
+setViewsDynamic = async function(views) {
+  if (views.length && views.length > 0) {
+    return views
+  } else {
+    const viewsDynamic = [];
+    const GROUP_FILTER = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA'];
+    const FILTERS_TYPE = ['biome', 'city', 'uc', 'ti', 'projus'];
+
+
+    const groupViews = await ViewService.fetchGroupOfOrderedLayers();
+
+    GROUP_FILTER.forEach( group => {
+      groupViews[group].children.forEach( layer => {
+        const type = group === 'BURNED' ? group.toLowerCase() : 'default';
+
+        if (group === 'BURNED') {
+          const view_burned_update = VIEW_UPDATE_FILTER(
+            layer.workspace,
+            layer.datastore,
+            layer.view,
+            layer.label,
+            layer.tableOwner,
+            layer.tableName,
+            layer.isPrimary)
+
+          viewsDynamic.push(view_burned_update)
+        }
+
+        const filter = FILTER[type](
+          confGeoServer.workspace,
+          confGeoServer.datastore,
+          layer.cod,
+          layer.tableOwner,
+          layer.tableName,
+          layer.isPrimary);
+
+        FILTERS_TYPE.forEach( filterType => {
+          if (filter[filterType]) {
+            const view = filter[filterType];
+            view.view_workspace = layer.workspace;
+            view.view = layer.view;
+            viewsDynamic.push(view);
+          }
+        });
+      });
+    });
+
+    return viewsDynamic;
+  }
+};
 
 module.exports = geoServerService = {
 
@@ -19,22 +71,15 @@ module.exports = geoServerService = {
 
     if(view.title.substring(view.title.length-3, view.title.length) === 'sql') {
       const url = `${confGeoServer.host}layers/${view.workspace}:${view.title}.json`;
-      const analyze =
-        view.title.indexOf('deter', 0) > -1 ? 'deter' :
-          view.title.indexOf('prodes', 0) > -1 ? 'prodes' :
-            view.title.indexOf('focos', 0) > -1 ? 'focos' :
-              view.title.indexOf('aq', 0) > -1 ? 'aq' : '';
-
-      const crossing = view.title.substring(0, view.title.indexOf('_', 0));
 
       const layer = {
         layer: {
           name: view.title,
           type: "VECTOR",
           defaultStyle: {
-            name: `${layerStyle[analyze][crossing].workspace}:${layerStyle[analyze][crossing].name}`,
-            workspace: layerStyle[analyze][crossing].workspace,
-            href: `${confGeoServer.host}workspaces/${layerStyle[analyze][crossing].workspace}/styles/${layerStyle[analyze][crossing].name}.json`
+            name: `${view.view_workspace}:${view.view}_style`,
+            workspace: view.view_workspace,
+            href: `${confGeoServer.host}workspaces/${view.view_workspace}/styles/${view.view}_style.json`
           }
         }
       };
@@ -55,7 +100,10 @@ module.exports = geoServerService = {
     const result = await axios[method]( urlMethod, xmlOrJson, config).then(resp => resp ).catch(err => err);
 
     const message = result.status && (result.status === 200) ? ' successfully modified! ' : '';
-    return result.statusText = result.status ? `${result.status}/${result.statusText} - ${name} ${message}` : `${result.response.status}/${result.response.statusText} - ${result.response.data}`
+    return result.statusText =
+      result.status ?
+        `${result.status}/${result.statusText} - ${name} ${message}` :
+        `${result.response.status}/${result.response.statusText} - ${result.response.data}`
   },
 
   async saveViewsGeoServer(views) {
@@ -87,12 +135,14 @@ module.exports = geoServerService = {
   },
 
   async validateDataStore(nameWorkspace, nameDataStrore) {
-    const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
-    const method = await this.setMethod(`${urlD}/${nameDataStrore}.json`);
+    if (nameDataStrore) {
+      const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
+      const method = await this.setMethod(`${urlD}/${nameDataStrore}.json`);
 
-    if (method === 'post') {
-      const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStrore);
-      console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
+      if (method === 'post') {
+        const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStrore);
+        console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
+      }
     }
   },
 
@@ -117,6 +167,7 @@ module.exports = geoServerService = {
 
   async saveViewsJsonGeoServer(views){
     const response = [];
+    views = await setViewsDynamic(views);
     for (let view of views) {
       view.name = view.name ? view.name : view.title;
 

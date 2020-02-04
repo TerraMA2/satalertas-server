@@ -1,11 +1,11 @@
-const models = require('../models')
-    View = models.views
-    RegisteredView = models.registered_views
-    LayerType = require('../enum/layerType')
+const models = require('../models');
+    View = models.views;
+    RegisteredView = models.registered_views;
+    LayerType = require('../enum/layerType');
     ViewService = require("../services/view.service");
 
 exports.get = (req, res, next) => {
-    const viewId = req.params.id
+    const viewId = req.params.id;
     if(viewId){
         RegisteredView.findOne({include: ['view'], where: {'view_id': viewId}}).then(view => {
             res.json(view)
