@@ -46,7 +46,7 @@ setViews = function(groupViews, data_view) {
       VIEWS[data_view.cod_group] &&
       VIEWS[data_view.cod_group][data_view.cod] &&
       VIEWS[data_view.cod_group][data_view.cod].shortLabel ?
-        VIEWS[data_view.cod_group][data_view.cod].shortLabel : data_view.cod,
+        VIEWS[data_view.cod_group][data_view.cod].shortLabel : data_view.name_view,
     value: data_view.view_id,
     tableOwner: groupViews[data_view.cod_group].tableOwner,
     tableName: data_view.table_name,
@@ -127,8 +127,7 @@ setResultSidebarConfig = async function(groupViews){
 };
 
 getGroupViews = async function() {
-  const sqlGroupViews =
-    `
+  const sqlGroupViews = `
         SELECT  
                (CASE
                    WHEN view.source_type = 1 THEN 'STATIC'
@@ -192,8 +191,7 @@ getGroupViews = async function() {
                null AS children
         
         FROM terrama2.views AS view
-        GROUP BY cod, label, parent, view_graph, active_area, isPrivate;
-      `;
+        GROUP BY cod, label, parent, view_graph, active_area, isPrivate `;
   try {
     const dataset_group_views = await RegisteredView.sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
 
