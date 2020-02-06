@@ -187,17 +187,18 @@ getGroupViews = async function() {
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
                    WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL)) THEN true
-               END)   AS isPrivate,
+               END)   AS is_private,
                null AS children
         
         FROM terrama2.views AS view
-        GROUP BY cod, label, parent, view_graph, active_area, isPrivate `;
+        GROUP BY cod, label, parent, view_graph, active_area, is_private `;
   try {
     const dataset_group_views = await RegisteredView.sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
 
     let groupViews = {};
     dataset_group_views.forEach(group => {
       groupViews[group.cod] = group;
+      groupViews[group.cod].isPrivate = group.is_private;
     });
     return await getViews(groupViews);
   } catch (e) {
