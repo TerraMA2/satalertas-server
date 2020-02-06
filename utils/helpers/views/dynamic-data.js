@@ -1,6 +1,14 @@
 module.exports = {
-  AREAS_QUEIMADAS: {},
-  DETER: {},
-  FOCOS_QUEIMADAS: {},
-  PRODES: ''
+  AREAS_QUEIMADAS: {
+    shortLabel: 'Areas Queimadas'
+  },
+  DETER: {
+    shortLabel: 'DETER'
+  },
+  FOCOS_QUEIMADAS: {
+    shortLabel: 'Focos Queimadas'
+  },
+  PRODES: {
+    shortLabel: 'PRODES'
+  }
 };

@@ -53,5 +53,20 @@ module.exports = {
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
+  CAR_FOCOS_X_EXPLORA: {
+    shortLabel: 'Aut. Exploração',
+    carRegisterColumn: 'de_car_validado_sema_numero_do1',
+    isChild: false
+  },
+  CAR_FOCOS_X_USO_RESTRITO: {
+    shortLabel: 'Uso Restrito',
+    carRegisterColumn: 'de_car_validado_sema_numero_do1',
+    isChild: false
+  },
+  CAR_FOCOS_X_VEG_RADAM: {
+    shortLabel: 'Veg. Radam',
+    carRegisterColumn: 'de_car_validado_sema_numero_do1',
+    isChild: false
+  },
   filter: FILTER
 };
