@@ -4,7 +4,6 @@ const express = require('express')
     morgan = require('morgan')
     helmet = require('helmet')
     cors = require('cors')
-    csrf = require('csurf')
     bodyParser = require('body-parser')
 
 const viewRouter = require('./routes/view')
