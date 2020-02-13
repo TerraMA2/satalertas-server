@@ -32,3 +32,11 @@ exports.upload = async (req, res) => {
 
   res.json(await ReportService.save(document));
 };
+
+exports.getReportCarData = async (req, res) => {
+  res.json(await ReportService.getReportCarData(req.query));
+};
+
+exports.getSynthesisCarData = async (req, res) => {
+  res.json(await ReportService.getSynthesisCarData(req.query));
+};

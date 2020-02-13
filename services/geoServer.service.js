@@ -1,5 +1,5 @@
 
-const viewUtil = require("../utils/view");
+const ViewUtil = require("../utils/view.utils");
 const geoServerUtil = require("../utils/geoServer.utils");
 const axios = require('axios');
 const env = process.env.NODE_ENV || 'development';
@@ -116,7 +116,7 @@ module.exports = geoServerService = {
       await this.validateDataStore(view.workspace, view.dataStore);
 
       const method = await this.setMethod(`${URL}/${view.name}.json`);
-      const xml = viewUtil.setXml(view);
+      const xml = ViewUtil.setXml(view);
       response.push(await this.saveGeoServer(view.name, method, URL, xml, CONFIG));
 
       await this.updateLayer(view);
