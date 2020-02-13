@@ -100,13 +100,19 @@ orderView = async function(groupViews) {
     }) : [];
 
     owner.forEach(p => {
-      groupViews[layer].children.push(p);
+      if (groupViews[layer] && groupViews[layer].children) {
+        groupViews[layer].children.push(p);
+      }
     });
     child.forEach(p => {
-      groupViews[layer].children.push(p);
+      if (groupViews[layer] && groupViews[layer].children) {
+        groupViews[layer].children.push(p);
+      }
     });
     other.forEach(p => {
-      groupViews[layer].children.push(p);
+      if (groupViews[layer] && groupViews[layer].children) {
+        groupViews[layer].children.push(p);
+      }
     });
   });
 
