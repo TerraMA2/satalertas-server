@@ -89,13 +89,13 @@ orderView = async function(groupViews) {
   let other = [];
 
   layers.forEach( layer => {
-    child = groupViews[layer].children && groupViews[layer].children.child ? groupViews[layer].children.child.sort(function (a, b) {
+    child = groupViews[layer] && groupViews[layer].children && groupViews[layer].children.child ? groupViews[layer].children.child.sort(function (a, b) {
       return +(a.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() > b.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()) || +(a.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === b.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()) - 1;
     }) : [];
-    owner = groupViews[layer].children && groupViews[layer].children.owner  ? groupViews[layer].children.owner.sort(function (a, b) {
+    owner = groupViews[layer] && groupViews[layer].children && groupViews[layer].children.owner  ? groupViews[layer].children.owner.sort(function (a, b) {
       return +(a.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() > b.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()) || +(a.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === b.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()) - 1;
     }) : [];
-    other = groupViews[layer].children && groupViews[layer].children.other  ? groupViews[layer].children.other.sort(function (a, b) {
+    other = groupViews[layer] && groupViews[layer].children && groupViews[layer].children.other  ? groupViews[layer].children.other.sort(function (a, b) {
       return +(a.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() > b.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()) || +(a.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === b.shortLabel.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()) - 1;
     }) : [];
 
