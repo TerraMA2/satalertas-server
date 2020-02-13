@@ -46,7 +46,7 @@ setViews = function(groupViews, data_view) {
       VIEWS[data_view.cod_group] &&
       VIEWS[data_view.cod_group][data_view.cod] &&
       VIEWS[data_view.cod_group][data_view.cod].shortLabel ?
-        VIEWS[data_view.cod_group][data_view.cod].shortLabel : data_view.cod,
+        VIEWS[data_view.cod_group][data_view.cod].shortLabel : data_view.name_view,
     value: data_view.view_id,
     tableOwner: groupViews[data_view.cod_group].tableOwner,
     tableName: data_view.table_name,
@@ -127,8 +127,7 @@ setResultSidebarConfig = async function(groupViews){
 };
 
 getGroupViews = async function() {
-  const sqlGroupViews =
-    `
+  const sqlGroupViews = `
         SELECT  
                (CASE
                    WHEN view.source_type = 1 THEN 'STATIC'
@@ -188,18 +187,18 @@ getGroupViews = async function() {
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
                    WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL)) THEN true
-               END)   AS isPrivate,
+               END)   AS is_private,
                null AS children
         
         FROM terrama2.views AS view
-        GROUP BY cod, label, parent, view_graph, active_area, isPrivate;
-      `;
+        GROUP BY cod, label, parent, view_graph, active_area, is_private `;
   try {
     const dataset_group_views = await RegisteredView.sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
 
     let groupViews = {};
     dataset_group_views.forEach(group => {
       groupViews[group.cod] = group;
+      groupViews[group.cod].isPrivate = group.is_private;
     });
     return await getViews(groupViews);
   } catch (e) {
@@ -295,6 +294,76 @@ getViews = async function(groupViews) {
 };
 
 module.exports = FileReport = {
+  async getReportLayers() {
+    const sqlReportLayers = `
+      SELECT 
+              (CASE
+                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X DETER') IS NOT NULL) THEN 2
+                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X PRODES') IS NOT NULL) THEN 3
+                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X FOCOS') IS NOT NULL) THEN 4
+                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X AREA_Q') IS NOT NULL) THEN 5
+                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN 1
+              END)                   AS seq,
+              TRIM(view.name)        AS label,
+              view.id                AS value,
+              'report'               AS type,
+              'count_alias'          AS count_alias,
+              'sum_alias'            AS sum_alias,
+              (CASE
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN 'area'
+                  ELSE 'sum_alias'
+              END)                   AS sort_field,
+              (CASE
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN 'property'
+                  ELSE 'main_table'
+              END)                   AS table_alias,
+              (CASE
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN 'area'
+                  ELSE 'calculated_area_ha'
+              END)                   AS sum_field,
+              (CASE
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN false
+                  ELSE true
+              END)                   AS sum,
+              (CASE
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN false
+                  ELSE true
+              END)                   AS count,
+              (CASE
+                  WHEN view.source_type = 1 THEN 'CAR'
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER') IS NOT NULL) THEN 'DETER'
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES') IS NOT NULL) THEN 'PRODES'
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
+                  WHEN ((SUBSTRING(UPPER(TRIM(view.name)), 'AQ') IS NOT NULL) OR
+                        (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL)) THEN 'BURNED_AREA'
+              END)                    AS cod_group,
+              (CASE
+                  WHEN view.source_type = 3 THEN concat(TRIM(dsf.value), '_', ana.id)
+                  ELSE dsf.value
+                 END)
+                                      AS table_name,
+              (view.source_type = 3)  AS is_dynamic
+      FROM terrama2.data_series AS ds
+               INNER JOIN terrama2.data_set_formats AS dsf ON ds.id = dsf.data_set_id
+               INNER JOIN terrama2.views AS view ON ds.id = view.data_series_id
+               LEFT JOIN terrama2.registered_views AS r_view ON view.id = r_view.view_id
+               LEFT JOIN terrama2.analysis AS ana ON dsf.data_set_id = ana.dataset_output
+      WHERE dsf.key = 'table_name'
+        AND (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X DETER') IS NOT NULL
+          OR SUBSTRING(UPPER(TRIM(view.name)), 'CAR X PRODES') IS NOT NULL
+          OR SUBSTRING(UPPER(TRIM(view.name)), 'CAR X FOCOS') IS NOT NULL
+          OR SUBSTRING(UPPER(TRIM(view.name)), 'CAR X AREA_Q') IS NOT NULL
+          OR SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL)
+      ORDER BY seq
+    `;
+
+    try {
+      return Result.ok(await RegisteredView.sequelize.query(sqlReportLayers, QUERY_TYPES_SELECT));
+    } catch (e) {
+      return Result.err(e);
+    }
+  },
+
   async getSidebarConfigDynamic() {
     try {
       const groupViews = await orderView(await getGroupViews());
