@@ -1099,7 +1099,7 @@ module.exports = FileReport = {
       const landAreaFOCOSCount = resultLandAreaFOCOSCount;
 
 
-      const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(${columnCalculatedAreaHa}), 0) AS area FROM public.${views.BURNED_AREA.children.APP.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+      const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(${columnCalculatedAreaHa}), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_APP.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
       const sqlLegalReserveBURNEDAREASum = `SELECT COALESCE(SUM(${columnCalculatedAreaHa}), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_RESERVA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
 
       const sqlConservationUnitBURNEDAREASum = `SELECT COALESCE(SUM(${columnCalculatedAreaHa}), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_UC.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;

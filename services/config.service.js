@@ -447,6 +447,7 @@ module.exports = ConfigService = {
 
   async getInfoColumns (codGroup) {
     const groupView = await ViewUtil.getGrouped();
+
     const infoColumns ={
       'DETER': {
         [`${groupView.DETER.tableOwner}_dd_deter_inpe_classname`]: {

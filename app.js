@@ -10,6 +10,7 @@ const viewRouter = require('./routes/view')
 const geoserverRouter = require('./routes/geoserver')
 const reportRouter = require('./routes/report')
 const configRouter = require('./routes/config')
+const satVegRouter = require('./routes/sat-veg')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
@@ -29,6 +30,7 @@ app.use(basePath+'/view', viewRouter)
 app.use(basePath+'/geoserver', geoserverRouter)
 app.use(basePath+'/report', reportRouter)
 app.use(basePath+'/config', configRouter)
+app.use(basePath+'/satveg', satVegRouter)
 
 // Error handler
 app.use(errorController.show404)
