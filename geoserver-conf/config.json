@@ -4,8 +4,8 @@
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
-    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "baseHost": "http://terrama.mpmt.mp.br/mpmt/geoserver",
+    "host": "http://terrama.mpmt.mp.br/mpmt/geoserver/rest/",
     "mosaic": {
       "wmsStore": {
         "name": "MosaicSpot2008",
@@ -35,15 +35,15 @@
         "styles": []
       }
     },
-    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
+    "legendUrl": "http://terrama.mpmt.mp.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
   },
   "test": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "baseHost1": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
-    "host1": "##http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "baseHost1": "http://terrama.mpmt.mp.br/mpmt/geoserver",
+    "host1": "##http://terrama.mpmt.mp.br/mpmt/geoserver/rest/",
     "baseHost": "http://localhost:8080/geoserver",
     "host": "http://localhost:8080/geoserver/rest/",
     "mosaic": {
@@ -82,8 +82,8 @@
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
-    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "baseHost": "http://terrama.mpmt.mp.br/mpmt/geoserver",
+    "host": "http://terrama.mpmt.mp.br/mpmt/geoserver/rest/",
     "mosaic": {
       "wmsStore": {
         "name": "MosaicSpot2008",
@@ -113,6 +113,6 @@
         "styles": []
       }
     },
-    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
+    "legendUrl": "http://terrama.mpmt.mp.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
   }
 }

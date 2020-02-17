@@ -29,7 +29,6 @@ exports.generatePdf = async (req, res) => {
 
 exports.upload = async (req, res) => {
   const document = req.body;
-
   res.json(await ReportService.save(document));
 };
 
