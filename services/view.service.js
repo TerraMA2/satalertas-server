@@ -122,13 +122,24 @@ orderView = async function(groupViews) {
 setResultSidebarConfig = async function(groupViews){
   const viewsJSON = [];
 
-  viewsJSON.push(groupViews.DETER);
-  viewsJSON.push(groupViews.PRODES);
-  viewsJSON.push(groupViews.BURNED);
-  viewsJSON.push(groupViews.BURNED_AREA);
-  viewsJSON.push(groupViews.STATIC);
-  viewsJSON.push(groupViews.DYNAMIC);
-
+  if (groupViews.DETER) {
+    viewsJSON.push(groupViews.DETER);
+  }
+  if (groupViews.PRODES) {
+    viewsJSON.push(groupViews.PRODES);
+  }
+  if (groupViews.BURNED) {
+    viewsJSON.push(groupViews.BURNED);
+  }
+  if (groupViews.BURNED_AREA) {
+    viewsJSON.push(groupViews.BURNED_AREA);
+  }
+  if (groupViews.STATIC) {
+    viewsJSON.push(groupViews.STATIC);
+  }
+  if (groupViews.DYNAMIC) {
+    viewsJSON.push(groupViews.DYNAMIC);
+  }
   return viewsJSON;
 };
 
@@ -203,8 +214,11 @@ getGroupViews = async function() {
 
     let groupViews = {};
     dataset_group_views.forEach(group => {
-      groupViews[group.cod] = group;
-      groupViews[group.cod].isPrivate = group.is_private;
+
+      if (group.cod) {
+        groupViews[group.cod] = group;
+        groupViews[group.cod].isPrivate = group.is_private;
+      }
     });
     return await getViews(groupViews);
   } catch (e) {
@@ -224,7 +238,7 @@ getViews = async function(groupViews) {
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES') IS NOT NULL) THEN 'PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
                    WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ') IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL))    THEN 'BURNED_AREA'
+                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL))    THEN 'BURNED_AREA'
                    ELSE UPPER(REPLACE(translate(REPLACE(TRIM(view.name), '  ', ' '),
                                          'áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',
                                          'aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'
