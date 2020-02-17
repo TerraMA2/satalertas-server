@@ -449,7 +449,7 @@ module.exports = ConfigService = {
     const groupView = await ViewUtil.getGrouped();
 
     const infoColumns ={
-      'DETER': {
+      'DETER': groupView.DETER ? {
         [`${groupView.DETER.tableOwner}_dd_deter_inpe_classname`]: {
           'show': true,
           'alias': 'Classe'
@@ -946,8 +946,8 @@ module.exports = ConfigService = {
           'show': false,
           'alias': 'uf'
         }
-      },
-      'PRODES': {
+      } : '',
+      'PRODES': groupView.PRODES ?  {
          [`${groupView.PRODES.tableOwner}_dd_prodes_inpe_class_name`]: {
           'show': true,
           'alias': 'Classe'
@@ -1416,8 +1416,8 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Data'
         }
-      },
-      'BURNED': {
+      } : '',
+      'BURNED': groupView.BURNED ?  {
          [`${groupView.BURNED.tableOwner}_dd_focos_inpe_bioma`]: {
           'show': true,
           'alias': 'Bioma'
@@ -1906,8 +1906,8 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Satélite'
         }
-      },
-      'BURNED_AREA': {
+      } : '',
+      'BURNED_AREA': groupView.BURNED_AREA ?  {
         [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_data_anter`]: {
           'show': false,
           'alias': [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_data_anter`]
@@ -2348,8 +2348,8 @@ module.exports = ConfigService = {
           'show': false,
           'alias': 'pid_a_caraq_veg'
         }
-      },
-      'STATIC': {
+      } : '',
+      'STATIC':  groupView.STATIC ? {
         'a_infrac': {
           'show': false,
           'alias': 'a_infrac'
@@ -2930,8 +2930,8 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'shape_len'
         }
-      },
-      'DYNAMIC': {
+      } : '',
+      'DYNAMIC':  groupView.DYNAMIC ? {
         'ano': {
           'show': true,
           'alias': 'Ano'
@@ -3152,7 +3152,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Data'
         }
-      }
+      } : '',
     }
 
     try {

@@ -7,7 +7,6 @@ const confDb = require(__dirname + '/../config/config.json')[env]
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
 const GROUP_VIEWS  = require('../utils/helpers/group-view')
 const VIEWS = require(__dirname + '/../utils/helpers/views/view')
-const confView = require(__dirname + '/../config/conf-view.json')
 
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
