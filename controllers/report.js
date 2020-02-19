@@ -36,6 +36,10 @@ exports.getReportCarData = async (req, res) => {
   res.json(await ReportService.getReportCarData(req.query));
 };
 
+exports.getPointsAlerts = async (req, res) => {
+  res.json(await ReportService.getPointsAlerts(req.query));
+};
+
 exports.getSynthesisCarData = async (req, res) => {
   res.json(await ReportService.getSynthesisCarData(req.query));
 };

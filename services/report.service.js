@@ -171,8 +171,8 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
                     munic.comarca AS county,
                     substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) as citybbox,
                     substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox,
-                    ST_Y(ST_Transform (ST_Centroid(car.geom), 4326)) AS "lat",
-                    ST_X(ST_Transform (ST_Centroid(car.geom), 4326)) AS "long"
+                    ST_Y(ST_Centroid(car.geom)) AS "lat",
+                    ST_X(ST_Centroid(car.geom)) AS "long"
             FROM public.${carTableName} AS car
             INNER JOIN public.${municipiosTableName} munic ON
                     car.${columnCarEstadualSemas} = '${carRegister}'
@@ -1281,5 +1281,52 @@ module.exports = FileReport = {
     } catch (e) {
       return Result.err(e)
     }
+  },
+  async getPointsAlerts(query) {
+    const { carRegister, date, type } = query;
+    const groupViews = await ViewUtil.getGrouped();
+
+    const groupType = { prodes: 'CAR_X_PRODES', deter: 'CAR_X_DETER', queimada: ''  }
+
+    const sql =
+      `
+        SELECT
+               CAST(main_table.monitored_id AS integer),
+               main_table.intersect_id,
+               ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
+               ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
+               extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
+               main_table.execution_date
+        FROM public.${groupViews[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
+        WHERE main_table.de_car_validado_sema_numero_do1 = '${carRegister}'
+          AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
+          AND main_table.calculated_area_ha >= 12
+    `;
+
+    const sqlBbox = `
+      SELECT
+            substring(ST_EXTENT(car.geom)::TEXT, 5,
+            length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox
+      FROM de_car_validado_sema AS car 
+      WHERE car.numero_do1 = 'MT100425/2017' 
+      GROUP BY gid`;
+
+    try {
+      const carBbox = await Report.sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
+      const points = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+
+      const bboxArray = carBbox[0].bbox.split(',');
+
+      let bbox = bboxArray[0].split(' ').join(',') + ',' + bboxArray[1].split(' ').join(',');
+
+      const currentYear = new Date().getFullYear();
+      points.forEach( point => {
+        point['url'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view},${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}&styles=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view}_style,${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}_style&bbox=${bbox}&width=404&height=431&time=${point.startyear}/${currentYear}&cql_filter=numero_do1='${carRegister}';intersect_id=${point.intersect_id}&srs=EPSG:4674&format=image/png`;
+      });
+
+      return Result.ok(points);
+    } catch (e) {
+      return Result.err(e)
+    }
   }
-}
+};
