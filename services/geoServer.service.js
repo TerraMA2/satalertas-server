@@ -22,6 +22,7 @@ setMosaicDynamic = async function(jsonConf) {
 
   mosaic.wmsStore.workspaceName = groupViews.STATIC.children.CAR_VALIDADO.workspace;
   mosaic.wmsLayer.workspaceName = groupViews.STATIC.children.CAR_VALIDADO.workspace;
+  mosaic.groupLayer.workspaceName = groupViews.STATIC.children.CAR_VALIDADO.workspace;
   mosaic.groupLayer.layers = [{ name: 'MosaicSpot2008' },{ name: groupViews.STATIC.children.CAR_VALIDADO.view }];
 
   return mosaic;
