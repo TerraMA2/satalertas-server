@@ -1,5 +1,5 @@
 {
-  "development_": {
+  "development": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
@@ -37,7 +37,7 @@
     },
     "legendUrl": "http://terrama.mpmt.mp.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
   },
-  "development": {
+  "development_": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
