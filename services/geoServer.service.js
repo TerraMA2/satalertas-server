@@ -13,6 +13,20 @@ const URL = `${confGeoServer.host}workspaces/${confGeoServer.workspace}/featuret
 const CONFIG = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/xml' } };
 const CONFIG_JSON = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/json' } };
 
+setMosaicDynamic = async function(jsonConf) {
+  const mosaic =
+    jsonConf && jsonConf.wmsStore && jsonConf.wmsLayer && jsonConf.groupLayer && jsonConf.legendUrl
+      ? jsonConf : confGeoServer.mosaic;
+
+  const groupViews = await ViewUtil.getGrouped()
+
+  mosaic.wmsStore.workspaceName = groupViews.STATIC.children.CAR_VALIDADO.workspace;
+  mosaic.wmsLayer.workspaceName = groupViews.STATIC.children.CAR_VALIDADO.workspace;
+  mosaic.groupLayer.layers = [{ name: 'MosaicSpot2008' },{ name: groupViews.STATIC.children.CAR_VALIDADO.view }];
+
+  return mosaic;
+};
+
 setViewsDynamic = async function(views) {
   if (views.length && views.length > 0) {
     return views
@@ -25,39 +39,41 @@ setViewsDynamic = async function(views) {
     const groupViews = await ViewService.fetchGroupOfOrderedLayers();
 
     GROUP_FILTER.forEach( group => {
-      groupViews[group].children.forEach( layer => {
-        const type = group === 'BURNED' ? group.toLowerCase() : 'default';
+      if (groupViews[group] && groupViews[group].children) {
+        groupViews[group].children.forEach(layer => {
+          const type = group === 'BURNED' ? group.toLowerCase() : 'default';
 
-        if (group === 'BURNED') {
-          const view_burned_update = VIEW_UPDATE_FILTER(
-            layer.workspace,
-            layer.datastore,
-            layer.view,
-            layer.label,
+          if (group === 'BURNED') {
+            const view_burned_update = VIEW_UPDATE_FILTER(
+              layer.workspace,
+              layer.datastore,
+              layer.view,
+              layer.label,
+              layer.tableOwner,
+              layer.tableName,
+              layer.isPrimary)
+
+            viewsDynamic.push(view_burned_update)
+          }
+
+          const filter = FILTER[type](
+            confGeoServer.workspace,
+            confGeoServer.datastore,
+            layer.cod,
             layer.tableOwner,
             layer.tableName,
-            layer.isPrimary)
+            layer.isPrimary);
 
-          viewsDynamic.push(view_burned_update)
-        }
-
-        const filter = FILTER[type](
-          confGeoServer.workspace,
-          confGeoServer.datastore,
-          layer.cod,
-          layer.tableOwner,
-          layer.tableName,
-          layer.isPrimary);
-
-        FILTERS_TYPE.forEach( filterType => {
-          if (filter[filterType]) {
-            const view = filter[filterType];
-            view.view_workspace = layer.workspace;
-            view.view = layer.view;
-            viewsDynamic.push(view);
-          }
+          FILTERS_TYPE.forEach(filterType => {
+            if (filter[filterType]) {
+              const view = filter[filterType];
+              view.view_workspace = layer.workspace;
+              view.view = layer.view;
+              viewsDynamic.push(view);
+            }
+          });
         });
-      });
+      }
     });
 
     return viewsDynamic;
@@ -272,19 +288,20 @@ module.exports = geoServerService = {
   },
 
   async saveGroupLayer(jsonConf){
-    const response = [];
+    const mosaic = await setMosaicDynamic(jsonConf);
 
+    const response = [];
     try {
       response.push(await this.createWmsStore(
-        jsonConf.wmsStore.name, jsonConf.wmsStore.description, jsonConf.wmsStore.workspaceName,
-        jsonConf.wmsStore.capabilitiesURL));
+        mosaic.wmsStore.name, mosaic.wmsStore.description, mosaic.wmsStore.workspaceName,
+        mosaic.wmsStore.capabilitiesURL));
 
-      response.push(await this.createWmsLayer(jsonConf.wmsLayer.name, jsonConf.wmsLayer.title,
-        jsonConf.wmsLayer.description, jsonConf.wmsLayer.workspaceName, jsonConf.wmsLayer.wmsStoreName,
-        jsonConf.wmsLayer.abstract));
+      response.push(await this.createWmsLayer(mosaic.wmsLayer.name, mosaic.wmsLayer.title,
+        mosaic.wmsLayer.description, mosaic.wmsLayer.workspaceName, mosaic.wmsLayer.wmsStoreName,
+        mosaic.wmsLayer.abstract));
 
-      response.push(await this.createGroupLayer(jsonConf.groupLayer.name, jsonConf.groupLayer.title,
-        jsonConf.groupLayer.workspaceName, jsonConf.groupLayer.layers, jsonConf.groupLayer.styles));
+      response.push(await this.createGroupLayer(mosaic.groupLayer.name, mosaic.groupLayer.title,
+        mosaic.groupLayer.workspaceName, mosaic.groupLayer.layers, mosaic.groupLayer.styles));
     } catch (e) {
       response.push(e);
       console.log(e);
