@@ -42,14 +42,16 @@ setReportFormat = async function(reportData, views, type) {
 
   let radamProdes = 0;
   let radamText = '';
-  for (const radam of radamClasses) {
-    const area = radam['area'];
-    const cls = radam['class'];
-    if (cls !== null) {
-      radamText += `
+  if (radamClasses && radamClasses.length > 0) {
+    for (const radam of radamClasses) {
+      const area = radam['area'];
+      const cls = radam['class'];
+      if (cls !== null) {
+        radamText += `
               ${cls}: ${area}
           `;
-      radamProdes += area;
+        radamProdes += area;
+      }
     }
   }
 
@@ -118,38 +120,40 @@ setReportFormat = async function(reportData, views, type) {
     embargoedArea,
     restrictedUse,
     landArea,
-    burnAuthorization,
-    {
-      affectedArea: 'Vegetação RADAM BR',
-      recentDeforestation: 0,
-      pastDeforestation: radamText,
-      burnlights: 0,
-      burnAreas: 0
-    },
-    {
-      affectedArea: 'Total',
-      recentDeforestation: totalRecentDeforestation,
-      pastDeforestation: totalPastDeforestation,
-      burnlights: totalBurnlights,
-      burnAreas: totalBurnAreas
-    }
+    burnAuthorization
   ];
 
-  resultReportData['tableData'] = propertyDeforestation;
-
-  prodesYear.push({date: 'Total', area: resultReportData.property.prodesTotalArea});
-
-  resultReportData['prodesTableData'] = prodesYear;
 
   const currentYear = new Date().getFullYear();
 
   resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=-61.6904258728027,-18.0950622558594,-50.1677627563477,-7.29556512832642&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
   resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
   resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${currentYear}/P1Y&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
-  resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
 
+  if (type === 'prodes') {
+    propertyDeforestation.push({
+      affectedArea: 'Vegetação RADAM BR',
+        recentDeforestation: 0,
+      pastDeforestation: radamText,
+      burnlights: 0,
+      burnAreas: 0
+    });
+    propertyDeforestation.push({
+      affectedArea: 'Total',
+        recentDeforestation: totalRecentDeforestation,
+      pastDeforestation: totalPastDeforestation,
+      burnlights: totalBurnlights,
+      burnAreas: totalBurnAreas
+    });
+
+    resultReportData['prodesTableData'] = prodesYear;
+    prodesYear.push({date: 'Total', area: resultReportData.property.prodesTotalArea});
+    resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${currentYear}/P1Y&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
+  }
+
+  resultReportData['tableData'] = propertyDeforestation;
 
   return resultReportData;
 };
@@ -245,6 +249,8 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
     const resultDeterYear = await Report.sequelize.query(sqlDeterYear, QUERY_TYPES_SELECT);
     const deterYear = resultDeterYear;
   }
+
+  return await propertyData;
 };
 
 setProdesData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnExecutionDate, carRegister) {
@@ -426,7 +432,7 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
                     count(1) as focuscount,
                     extract('YEAR' FROM focus.${columnExecutionDate}) AS year
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} AS focus
-            INNER JOIN public.${tableName} AS car on
+            INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
                     focus.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
                     extract('YEAR' FROM focus.${columnExecutionDate}) > 2007 AND
                     car.${columnCarEstadualSemas} = '${carRegister}'
@@ -441,7 +447,7 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
                               FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} cf
                               WHERE cf.${columnCarEstadual} = '${carRegister}'
                               GROUP BY date
-                              ORDER BY date;`;
+                              ORDER BY date`;
     const sqlAPPFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_APP.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
     const sqlLegalReserveFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_RESERVA.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
     const sqlConservationUnitFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_UC.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
@@ -494,32 +500,98 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     const resultSpotlightsYear = await Report.sequelize.query(sqlSpotlightsYear, QUERY_TYPES_SELECT);
     const spotlightsYear = resultSpotlightsYear;
+
+    propertyData['burningSpotlights'] = burningSpotlights;
+    propertyData['spotlightsYear'] = spotlightsYear;
+
+    let burnlightCount = 0;
+
+    burnlightCount += aPPFOCOSCount[0]['count'] ? aPPFOCOSCount[0]['count'] : 0
+    burnlightCount += legalReserveFOCOSCount[0]['count'] ? legalReserveFOCOSCount[0]['count'] : 0
+    burnlightCount += conservationUnitFOCOSCount[0]['count'] ? conservationUnitFOCOSCount[0]['count'] : 0
+    burnlightCount += indigenousLandFOCOSCount[0]['count'] ? indigenousLandFOCOSCount[0]['count'] : 0
+    burnlightCount += consolidatedUseFOCOSCount[0]['count'] ? consolidatedUseFOCOSCount[0]['count'] : 0
+    burnlightCount += deforestationFOCOSCount[0]['count'] ? deforestationFOCOSCount[0]['count'] : 0
+    burnlightCount += embargoedAreaFOCOSCount[0]['count'] ? embargoedAreaFOCOSCount[0]['count'] : 0
+    burnlightCount += landAreaFOCOSCount[0]['count'] ? landAreaFOCOSCount[0]['count'] : 0
+
+    if (!propertyData['tableData']){ propertyData['tableData'] = {}; }
+    propertyData['tableData']['affectedArea'] = 'APP';
+    propertyData['tableData']['burnlights'] = parseFloat(aPPFOCOSCount[0]['count'] | 0);
+
+    if (!propertyData['prodesLegalReserve']){ propertyData['prodesLegalReserve'] = {}; }
+    propertyData['prodesLegalReserve']['affectedArea'] = 'ARL';
+    propertyData['prodesLegalReserve']['burnlights'] =  parseFloat(legalReserveFOCOSCount[0]['count'] | 0);
+
+    if (!propertyData['prodesRestrictedUse']){ propertyData['prodesRestrictedUse'] = {}; }
+    propertyData['prodesRestrictedUse']['affectedArea'] = 'AUR';
+    propertyData['prodesRestrictedUse']['burnlights'] = parseFloat(restrictUseFOCOSCount[0]['count'] | 0);
+
+    if (!propertyData['prodesConservationUnit']){ propertyData['prodesConservationUnit'] = {}; }
+    propertyData['prodesConservationUnit']['affectedArea'] = 'UC';
+    propertyData['prodesConservationUnit']['burnlights'] = parseFloat(conservationUnitFOCOSCount[0]['count'] | 0);
+
+    if (!propertyData['prodesIndigenousLand']){ propertyData['prodesIndigenousLand'] = {}; }
+    propertyData['prodesIndigenousLand']['affectedArea'] = 'TI';
+    propertyData['prodesIndigenousLand']['burnlights'] = parseFloat(indigenousLandFOCOSCount[0]['count']);
+
+    if (!propertyData['prodesConsolidatedUse']){ propertyData['prodesConsolidatedUse'] = {}; }
+    propertyData['prodesConsolidatedUse']['affectedArea'] = 'AUC';
+    propertyData['prodesConsolidatedUse']['burnlights'] = parseFloat(consolidatedUseFOCOSCount[0]['count']);
+
+    if (!propertyData['prodesExploration']){ propertyData['prodesExploration'] = {}; }
+    propertyData['prodesExploration']['affectedArea'] = 'AUTEX';
+    propertyData['prodesExploration']['burnlights'] = parseFloat(explorationFOCOSCount[0]['count']);
+
+    if (!propertyData['prodesDeforestation']){ propertyData['prodesDeforestation'] = {}; }
+    propertyData['prodesDeforestation']['affectedArea'] = 'AD';
+    propertyData['prodesDeforestation']['burnlights'] = parseFloat(deforestationFOCOSCount[0]['count']);
+
+    if (!propertyData['prodesEmbargoedArea']){ propertyData['prodesEmbargoedArea'] = {}; }
+    propertyData['prodesEmbargoedArea']['affectedArea'] = 'Área embargada';
+    propertyData['prodesEmbargoedArea']['burnlights'] = parseFloat(embargoedAreaFOCOSCount[0]['count']);
+
+    if (!propertyData['prodesLandArea']){ propertyData['prodesLandArea'] = {}; }
+    propertyData['prodesLandArea']['affectedArea'] = 'Área desembargada';
+    propertyData['prodesLandArea']['burnlights'] = parseFloat(landAreaFOCOSCount[0]['count']);
+
+    if (!propertyData['prodesBurnAuthorization']){ propertyData['prodesBurnAuthorization'] = {}; }
+    propertyData['prodesBurnAuthorization']['affectedArea'] = 'AQ';
+    propertyData['prodesBurnAuthorization']['burnlights'] = parseFloat(burnAuthorizationFOCOSCount[0]['count']);
+
+
+    if (!propertyData['foundBurnlight']) {
+      propertyData['foundBurnlight'] = burnlightCount ? true : false
+    }
   }
+
+  return await propertyData;
 };
 
 setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnCarEstadualSemas, columnExecutionDate, carRegister) {
   if (propertyData && views.BURNED_AREA && type === 'queimada') {
     const sqlBurnedAreas = `
-                    SELECT
-                    COALESCE(SUM(areaq.${columnCalculatedAreaHa}), 0) as burnedAreas,
-                    extract('YEAR' FROM areaq.${columnExecutionDate}) as date
-                    FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} as areaq
-                    INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
-                    areaq.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
-                    car.${columnCarEstadualSemas} = '${carRegister}'
-                    group by date
-                  `;
+      SELECT
+        COALESCE(SUM(areaq.${columnCalculatedAreaHa}), 0) as burnedAreas,
+        extract('YEAR' FROM areaq.${columnExecutionDate}) as date
+      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} as areaq
+      INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
+      areaq.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
+      car.${columnCarEstadualSemas} = '${carRegister}'
+      group by date
+    `;
 
     const resultBurnedAreas = await Report.sequelize.query(sqlBurnedAreas, QUERY_TYPES_SELECT);
     const burnedAreas = resultBurnedAreas;
 
-    const sqlBurnedAreasYear = `SELECT
-                              extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
-                              COALESCE(SUM(areaq.${columnCalculatedAreaHa}), 0) as burnedAreas
-                              FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
-                              WHERE areaq.${columnCarEstadual} = '${carRegister}'
-                              GROUP BY date
-                              ORDER BY date`;
+    const sqlBurnedAreasYear = `
+      SELECT
+        extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
+        COALESCE(SUM(areaq.${columnCalculatedAreaHa}), 0) as burnedAreas
+      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
+      WHERE areaq.${columnCarEstadual} = '${carRegister}'
+      GROUP BY date
+      ORDER BY date`;
 
     const resultBurnedAreasYear = await Report.sequelize.query(sqlBurnedAreasYear, QUERY_TYPES_SELECT);
     const burnedAreasYear = resultBurnedAreasYear;
@@ -575,7 +647,71 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
 
     const resultLandAreaBURNEDAREASum = await Report.sequelize.query(sqlLandAreaBURNEDAREASum, QUERY_TYPES_SELECT);
     const landAreaBURNEDAREASum = resultLandAreaBURNEDAREASum;
+
+    propertyData['burnedAreas'] = burnedAreas;
+    propertyData['burnedAreasYear'] = burnedAreasYear;
+
+    let burnedAreaSum = 0;
+
+    burnedAreaSum += aPPBURNEDAREASum[0]['area'] ? aPPBURNEDAREASum[0]['area'] : 0;
+    burnedAreaSum += legalReserveBURNEDAREASum[0]['area'] ? legalReserveBURNEDAREASum[0]['area'] : 0;
+    burnedAreaSum += conservationUnitBURNEDAREASum[0]['area'] ? conservationUnitBURNEDAREASum[0]['area'] : 0;
+    burnedAreaSum += indigenousLandBURNEDAREASum[0]['area'] ? indigenousLandBURNEDAREASum[0]['area'] : 0;
+    burnedAreaSum += consolidatedUseBURNEDAREASum[0]['area'] ? consolidatedUseBURNEDAREASum[0]['area'] : 0;
+    burnedAreaSum += deforestationBURNEDAREASum[0]['area'] ? deforestationBURNEDAREASum[0]['area'] : 0;
+    burnedAreaSum += embargoedAreaBURNEDAREASum[0]['area'] ? embargoedAreaBURNEDAREASum[0]['area'] : 0;
+    burnedAreaSum += landAreaBURNEDAREASum[0]['area'] ? landAreaBURNEDAREASum[0]['area'] : 0;
+
+    if (!propertyData['tableData']){ propertyData['tableData'] = {}; }
+    propertyData['tableData']['affectedArea'] = 'APP';
+    propertyData['tableData']['burnAreas'] = parseFloat(aPPBURNEDAREASum[0]['area'] | 0);
+
+    if (!propertyData['prodesLegalReserve']){ propertyData['prodesLegalReserve'] = {}; }
+    propertyData['prodesLegalReserve']['affectedArea'] = 'ARL';
+    propertyData['prodesLegalReserve']['burnAreas'] =  parseFloat(legalReserveBURNEDAREASum[0]['area'] | 0);
+
+    if (!propertyData['prodesRestrictedUse']){ propertyData['prodesRestrictedUse'] = {}; }
+    propertyData['prodesRestrictedUse']['affectedArea'] = 'AUR';
+    propertyData['prodesRestrictedUse']['burnAreas'] = parseFloat(restrictUseBURNEDAREASum[0]['area'] | 0);
+
+    if (!propertyData['prodesConservationUnit']){ propertyData['prodesConservationUnit'] = {}; }
+    propertyData['prodesConservationUnit']['affectedArea'] = 'UC';
+    propertyData['prodesConservationUnit']['burnAreas'] = parseFloat(conservationUnitBURNEDAREASum[0]['area'] | 0);
+
+    if (!propertyData['prodesIndigenousLand']){ propertyData['prodesIndigenousLand'] = {}; }
+    propertyData['prodesIndigenousLand']['affectedArea'] = 'TI';
+    propertyData['prodesIndigenousLand']['burnAreas'] = parseFloat(indigenousLandBURNEDAREASum[0]['area']);
+
+    if (!propertyData['prodesConsolidatedUse']){ propertyData['prodesConsolidatedUse'] = {}; }
+    propertyData['prodesConsolidatedUse']['affectedArea'] = 'AUC';
+    propertyData['prodesConsolidatedUse']['burnAreas'] = parseFloat(consolidatedUseBURNEDAREASum[0]['area']);
+
+    if (!propertyData['prodesExploration']){ propertyData['prodesExploration'] = {}; }
+    propertyData['prodesExploration']['affectedArea'] = 'AUTEX';
+    propertyData['prodesExploration']['burnAreas'] = parseFloat(explorationBURNEDAREASum[0]['area']);
+
+    if (!propertyData['prodesDeforestation']){ propertyData['prodesDeforestation'] = {}; }
+    propertyData['prodesDeforestation']['affectedArea'] = 'AD';
+    propertyData['prodesDeforestation']['burnAreas'] = parseFloat(deforestationBURNEDAREASum[0]['area']);
+
+    if (!propertyData['prodesEmbargoedArea']){ propertyData['prodesEmbargoedArea'] = {}; }
+    propertyData['prodesEmbargoedArea']['affectedArea'] = 'Área embargada';
+    propertyData['prodesEmbargoedArea']['burnAreas'] = parseFloat(embargoedAreaBURNEDAREASum[0]['area']);
+
+    if (!propertyData['prodesLandArea']){ propertyData['prodesLandArea'] = {}; }
+    propertyData['prodesLandArea']['affectedArea'] = 'Área desembargada';
+    propertyData['prodesLandArea']['burnAreas'] = parseFloat(landAreaBURNEDAREASum[0]['area']);
+
+    if (!propertyData['prodesBurnAuthorization']){ propertyData['prodesBurnAuthorization'] = {}; }
+    propertyData['prodesBurnAuthorization']['affectedArea'] = 'AQ';
+    propertyData['prodesBurnAuthorization']['burnAreas'] = parseFloat(burnAuthorizationBURNEDAREASum[0]['area']);
+
+    if (!propertyData['foundBurnlight']) {
+      propertyData['foundBurnlight'] = burnedAreaSum ? true : false
+    }
   }
+
+  return await propertyData;
 };
 
 
@@ -733,7 +869,6 @@ module.exports = FileReport = {
   },
   async getReportCarData(query) {
     const { carRegister, date, type } = query;
-
 
     let dateFrom = null;
     let dateTo = null;
