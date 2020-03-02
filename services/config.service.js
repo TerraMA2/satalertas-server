@@ -207,7 +207,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{legalReserve}`
           },
-          carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
             url: `http://terrama.mpmt.mp.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_RESERVA.workspace}:${groupView.PRODES.children.CAR_PRODES_X_RESERVA.view}`,
