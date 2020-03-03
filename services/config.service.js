@@ -169,6 +169,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{indigenousLand}`
           },
+          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
             url: `http://terrama.mpmt.mp.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_TI.workspace}:${groupView.PRODES.children.CAR_PRODES_X_TI.view}`,
@@ -176,6 +177,7 @@ module.exports = ConfigService = {
             format: `image/png`,
             version: `1.1.0`,
             time: `{filterDate}`,
+            cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
             width: `404`,
             height: `431`,
@@ -188,6 +190,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{conservationUnit}`
           },
+          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
             url: `http://terrama.mpmt.mp.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_UC.workspace}:${groupView.PRODES.children.CAR_PRODES_X_UC.view}`,
@@ -195,6 +198,7 @@ module.exports = ConfigService = {
             format: `image/png`,
             version: `1.1.0`,
             time: `{filterDate}`,
+            cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
             width: `404`,
             height: `431`,
