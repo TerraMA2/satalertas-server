@@ -38,52 +38,11 @@
   },
   "legendUrl": "http://191.232.191.147/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
   },
-  "development__": {
-    "username": "admin",
-    "password": "geoserver",
-    "workspace": "mpmt_alertas",
-    "datastore": "mpmt_alertas_datastore",
-    "baseHost": "${confGeoServer.baseHost}",
-    "host": "${confGeoServer.baseHost}/rest/",
-    "mosaic": {
-      "wmsStore": {
-        "name": "MosaicSpot2008",
-        "description": "SPOT/MosaicSpot2008 - Wms Store",
-        "workspaceName": "terrama2_6",
-        "capabilitiesURL": "http://imagens.seplan.mt.gov.br/arcgis/services/SPOT/MosaicSpot2008/ImageServer/WMSServer"
-      },
-      "wmsLayer": {
-        "name": "MosaicSpot2008",
-        "title": "MosaicSpot2008",
-        "description": "SPOT/MosaicSpot2008 - Layer",
-        "workspaceName": "terrama2_6",
-        "wmsStoreName": "MosaicSpot2008",
-        "abstract": "MosaicSpot2008"
-      },
-      "groupLayer": {
-        "name": "MosaicSpot2008_car_validado",
-        "title": "MosaicSpot2008_car_validado",
-        "workspaceName": "terrama2_6",
-        "layers": [
-          {
-            "name": "MosaicSpot2008"
-          },
-          {
-            "name": "view6"
-          }
-        ],
-        "styles": []
-      }
-    },
-    "legendUrl": "${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
-  },
   "development_": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "baseHost1": "${confGeoServer.baseHost}",
-    "host1": "##${confGeoServer.baseHost}/rest/",
     "baseHost": "http://localhost:8080/geoserver",
     "host": "http://localhost:8080/geoserver/rest/",
     "mosaic": {
@@ -122,8 +81,8 @@
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "baseHost": "${confGeoServer.baseHost}",
-    "host": "${confGeoServer.baseHost}/rest/",
+    "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
+    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
     "mosaic": {
       "wmsStore": {
         "name": "MosaicSpot2008",
@@ -153,6 +112,6 @@
         "styles": []
       }
     },
-    "legendUrl": "${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
+    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
   }
 }
