@@ -1451,13 +1451,35 @@ module.exports = FileReport = {
         propertyData.foundDeter = deterSumArea ? true : false
         propertyData.foundBurnlight = burnlightCount || burnedAreaSum ? true : false
 
-        //
-        // propertyData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=-61.6904258728027,-18.0950622558594,-50.1677627563477,-7.29556512832642&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-        // propertyData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-        // propertyData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-        // propertyData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
-        // propertyData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${currentYear}/P1Y&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
-        // propertyData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
+        const sqlDatesSynthesis = `
+          SELECT 'prodesYear' AS key, MIN(prodes.ano) AS start_year, MAX(prodes.ano) AS end_year
+          FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes
+          UNION ALL
+          SELECT 'deterYear'                                                    AS key,
+                 MIN(extract(year from date_trunc('year', deter.date))) AS start_year,
+                 MAX(extract(year from date_trunc('year', deter.date))) AS end_year
+          FROM ${views.DYNAMIC.children.DETER.table_name} AS deter
+          UNION ALL
+          SELECT 'spotlightsYear'                                                        AS key,
+                 MIN(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS start_year,
+                 MAX(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS end_year
+          FROM ${views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name}  AS spotlights
+          UNION ALL
+          SELECT 'burnedAreaYear'                                                           AS key,
+                 MIN(extract(year from date_trunc('year', burnedarea.data_pas))) AS start_year,
+                 MAX(extract(year from date_trunc('year', burnedarea.data_pas))) AS end_year
+          FROM ${views.DYNAMIC.children.AREAS_QUEIMADAS.table_name}  AS burnedarea;
+        `;
+
+        const datesSynthesis = await Report.sequelize.query(sqlDatesSynthesis, QUERY_TYPES_SELECT);
+
+        datesSynthesis.forEach(years => {
+          if (!propertyData['analysisPeriod']) { propertyData['analysisPeriod'] = { } };
+          if (!propertyData['analysisPeriod'][years.key]) { propertyData['analysisPeriod'][years.key] = { }};
+
+          propertyData['analysisPeriod'][years.key]['startYear'] = years.start_year;
+          propertyData['analysisPeriod'][years.key]['endYear'] = years.end_year;
+        });
 
         return Result.ok(propertyData);
       }
