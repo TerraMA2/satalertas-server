@@ -17,7 +17,10 @@ setReportFormat = async function(reportData, views, type) {
 
   const prodesYear = reportData.prodesYear;
 
-  resultReportData['prodesStartYear'] = prodesYear && prodesYear.length > 0 ? prodesYear[0]['date'] : '2007';
+  const sqlProdesStartYear = `SELECT MIN(prodes.ano) AS start_year FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes`;
+  const prodesStartYear = await Report.sequelize.query(sqlProdesStartYear, QUERY_TYPES_SELECT);
+
+  resultReportData['prodesStartYear'] = prodesStartYear[0]['start_year'];
 
   const bboxArray = reportData.bbox.split(',');
 
@@ -434,7 +437,6 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} AS focus
             INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
                     focus.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
-                    extract('YEAR' FROM focus.${columnExecutionDate}) > 2007 AND
                     car.${columnCarEstadualSemas} = '${carRegister}'
             group by year `;
 
@@ -989,7 +991,6 @@ module.exports = FileReport = {
                     FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} as focus
                     INNER JOIN public.${tableName} AS car on
                     focus.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
-                    extract('YEAR' FROM focus.${columnExecutionDate}) > 2007 AND
                     car.${columnCarEstadualSemas} = '${carRegister}'
                     group by year
                   `;
