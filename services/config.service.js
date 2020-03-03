@@ -1,5 +1,7 @@
 const Result = require(__dirname + `/../utils/result`);
 const ViewUtil = require("../utils/view.utils");
+const env = process.env.NODE_ENV || 'development';
+const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
 
 module.exports = ConfigService = {
   async getSynthesisConfig() {
@@ -9,43 +11,43 @@ module.exports = ConfigService = {
       visionslegends: [
         {
           title: `Estado`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.MUNICIPIOS.workspace}:${groupView.STATIC.children.MUNICIPIOS.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.MUNICIPIOS.workspace}:${groupView.STATIC.children.MUNICIPIOS.view}`
         },
         {
           title: `APP`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_APP.workspace}:${groupView.STATIC.children.CV_AREA_APP.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_APP.workspace}:${groupView.STATIC.children.CV_AREA_APP.view}`
         },
         {
           title: `Uso Antropizado`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_USO_ANTROPIZADO_DO_SOLO.workspace}:${groupView.STATIC.children.CV_AREA_USO_ANTROPIZADO_DO_SOLO.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_USO_ANTROPIZADO_DO_SOLO.workspace}:${groupView.STATIC.children.CV_AREA_USO_ANTROPIZADO_DO_SOLO.view}`
         },
         {
           title: `Reserva legal`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_RESERVA_LEGAL_NATIVA.workspace}:${groupView.STATIC.children.CV_AREA_RESERVA_LEGAL_NATIVA.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_RESERVA_LEGAL_NATIVA.workspace}:${groupView.STATIC.children.CV_AREA_RESERVA_LEGAL_NATIVA.view}`
         },
         {
           title: `Vegetação Nativa`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_VEGETACAO_NATIVA.workspace}:${groupView.STATIC.children.CV_AREA_VEGETACAO_NATIVA.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_VEGETACAO_NATIVA.workspace}:${groupView.STATIC.children.CV_AREA_VEGETACAO_NATIVA.view}`
         },
         {
           title: `Uso consolidado`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_USO_CONSOLIDADO.workspace}:${groupView.STATIC.children.CV_AREA_USO_CONSOLIDADO.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CV_AREA_USO_CONSOLIDADO.workspace}:${groupView.STATIC.children.CV_AREA_USO_CONSOLIDADO.view}`
         },
         {
           title: `CAR x DETER`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`
         },
         {
           title: `CAR x PRODES`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`
         },
         {
           title: `CAR x TI`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.DETER.children.CAR_DETER_X_TI.workspace}:${groupView.DETER.children.CAR_DETER_X_TI.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.DETER.children.CAR_DETER_X_TI.workspace}:${groupView.DETER.children.CAR_DETER_X_TI.view}`
         },
         {
           title: `Imóvel`,
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}`
+          url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}`
         }
       ],
       propertyData: {
@@ -58,7 +60,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: null,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.MUNICIPIOS.workspace}:${groupView.STATIC.children.MUNICIPIOS.view},${groupView.STATIC.children.MUNICIPIOS.workspace}:${groupView.STATIC.children.MUNICIPIOS.view},${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}`,
             transparent: true,
             format: `image/png`,
@@ -76,7 +78,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: `numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.MUNICIPIOS.workspace}:${groupView.STATIC.children.MUNICIPIOS.view},${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}`,
             transparent: true,
             format: `image/png`,
@@ -94,7 +96,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: `numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_DETER_X_TI.workspace}:${groupView.DETER.children.CAR_DETER_X_TI.view},${groupView.PRODES.children.CAR_PRODES_X_UC.workspace}:${groupView.PRODES.children.CAR_PRODES_X_UC.view},${groupView.DETER.children.CAR_DETER_X_RESERVA.workspace}:${groupView.DETER.children.CAR_DETER_X_RESERVA.view},${groupView.DETER.children.CAR_DETER_X_APP.workspace}:${groupView.DETER.children.CAR_DETER_X_APP.view},${groupView.DETER.children.CAR_DETER_X_USOCON.workspace}:${groupView.DETER.children.CAR_DETER_X_USOCON.view},${groupView.DETER.children.CAR_DETER_X_USOANT.workspace}:${groupView.DETER.children.CAR_DETER_X_USOANT.view},${groupView.DETER.children.CAR_DETER_X_VEGNAT.workspace}:${groupView.DETER.children.CAR_DETER_X_VEGNAT.view}`,
             transparent: true,
             format: `image/png`,
@@ -112,7 +114,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
             transparent: true,
             format: `image/png`,
@@ -130,7 +132,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
             transparent: true,
             format: `image/png`,
@@ -148,7 +150,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
             transparent: true,
             format: `image/png`,
@@ -171,7 +173,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_TI.workspace}:${groupView.PRODES.children.CAR_PRODES_X_TI.view}`,
             transparent: true,
             format: `image/png`,
@@ -192,7 +194,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_UC.workspace}:${groupView.PRODES.children.CAR_PRODES_X_UC.view}`,
             transparent: true,
             format: `image/png`,
@@ -213,7 +215,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_RESERVA.workspace}:${groupView.PRODES.children.CAR_PRODES_X_RESERVA.view}`,
             transparent: true,
             format: `image/png`,
@@ -234,7 +236,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_APP.workspace}:${groupView.PRODES.children.CAR_PRODES_X_APP.view}`,
             transparent: true,
             format: `image/png`,
@@ -255,7 +257,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_USOCON.workspace}:${groupView.PRODES.children.CAR_PRODES_X_USOCON.view}`,
             transparent: true,
             format: `image/png`,
@@ -276,7 +278,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_AQ_X_USOANT.workspace}:${groupView.BURNED_AREA.children.CAR_AQ_X_USOANT.view}`,
             transparent: true,
             format: `image/png`,
@@ -297,7 +299,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_AQ_X_VEGNAT.workspace}:${groupView.BURNED_AREA.children.CAR_AQ_X_VEGNAT.view}`,
             transparent: true,
             format: `image/png`,
@@ -317,7 +319,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: `numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado`,
             transparent: true,
             format: `image/png`,
@@ -335,7 +337,7 @@ module.exports = ConfigService = {
           description: null,
           carRegisterColumn: `numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado`,
             transparent: true,
             format: `image/png`,
@@ -358,7 +360,7 @@ module.exports = ConfigService = {
           },
           carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
           layerData: {
-            url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
             transparent: true,
             format: `image/png`,
@@ -381,7 +383,7 @@ module.exports = ConfigService = {
         },
         carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
         layerData: {
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
           transparent: true,
           format: `image/png`,
@@ -404,7 +406,7 @@ module.exports = ConfigService = {
         },
         carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
         layerData: {
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED.children.CAR_X_FOCOS.workspace}:${groupView.BURNED.children.CAR_X_FOCOS.view}`,
           transparent: true,
           format: `image/png`,
@@ -427,7 +429,7 @@ module.exports = ConfigService = {
         },
         carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
         layerData: {
-          url: `http://terrama2.dpi.inpe.br/mpmt/geoserver/wms?service=WMS&version=1.1.0&request=GetMap`,
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_X_AREA_Q.workspace}:${groupView.BURNED_AREA.children.CAR_X_AREA_Q.view}`,
           transparent: true,
           format: `image/png`,
