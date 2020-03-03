@@ -993,6 +993,7 @@ module.exports = FileReport = {
                     focus.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
                     car.${columnCarEstadualSemas} = '${carRegister}'
                     group by year
+                    ORDER BY year
                   `;
 
       const resultBurningSpotlights = await Report.sequelize.query(sqlBurningSpotlights, QUERY_TYPES_SELECT);
@@ -1007,6 +1008,7 @@ module.exports = FileReport = {
                     areaq.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
                     car.${columnCarEstadualSemas} = '${carRegister}'
                     group by date
+                    ORDER BY date
                   `;
 
       const resultBurnedAreas = await Report.sequelize.query(sqlBurnedAreas, QUERY_TYPES_SELECT);
