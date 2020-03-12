@@ -141,13 +141,6 @@ setReportFormat = async function(reportData, views, type) {
       burnlights: 0,
       burnAreas: 0
     });
-    propertyDeforestation.push({
-      affectedArea: 'Total',
-        recentDeforestation: totalRecentDeforestation,
-      pastDeforestation: totalPastDeforestation,
-      burnlights: totalBurnlights,
-      burnAreas: totalBurnAreas
-    });
 
     resultReportData['prodesTableData'] = prodesYear;
     prodesYear.push({date: 'Total', area: resultReportData.property.prodesTotalArea});
@@ -799,6 +792,23 @@ module.exports = FileReport = {
           type === 'prodes' ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code.data[0].code}` :
             type === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code.data[0].code}` :
               `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${code.data[0].year}`;
+
+      docDefinition.footer = function(pagenumber, pageCount) {
+        return {
+          table: {
+            body: [
+              [
+                {
+                  text: 'Página ' + pagenumber + ' de ' + pageCount,
+                  fontSize: 8,
+                  margin: [483, 0, 30, 0]
+                }
+              ],
+            ]
+          },
+          layout: 'noBorders'
+        };
+      };
 
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
       pdfDoc.pipe(await fs.createWriteStream(`${pathDoc}/${docName}`));
