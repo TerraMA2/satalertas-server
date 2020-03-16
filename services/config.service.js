@@ -381,7 +381,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em {year}: `,
           value: `{area}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `numero_do1;numero_do1;de_car_validado_sema_numero_do1`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_34:temporal_mosaic_legal_amazon_2000_2018,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
