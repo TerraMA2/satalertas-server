@@ -24,7 +24,7 @@ exports.delete = async (req, res) => {
 };
 
 exports.generatePdf = async (req, res) => {
-  res.json(await ReportService.generatePdf(req.body.params.docDefinition, req.body.params.type, req.body.params.carCode));
+  res.json(await ReportService.generatePdf(req.body.params.reportData));
 };
 
 exports.upload = async (req, res) => {
@@ -42,4 +42,8 @@ exports.getPointsAlerts = async (req, res) => {
 
 exports.getSynthesisCarData = async (req, res) => {
   res.json(await ReportService.getSynthesisCarData(req.query));
+};
+
+exports.createPdf = async (req, res) => {
+  res.json(await ReportService.createPdf(req.body.params.reportData));
 };
