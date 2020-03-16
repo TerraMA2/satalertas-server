@@ -390,6 +390,7 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           time: `{dateYear}/{year}`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `view34_Mod_style,view34_Mod_style,view35_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
