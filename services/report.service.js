@@ -29,7 +29,8 @@ getImageObject = function(image, fit, margin, alignment) {
       margin: [30, 100, 30, 0]
     };
   }
-}
+};
+
 setReportFormat = async function(reportData, views, type) {
   const resultReportData = {};
 
@@ -727,24 +728,7 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
   return await propertyData;
 };
 
-getImageObject = function(image, fit, margin, alignment) {
-  if (image && image[0] && !image[0].includes('vnd.ogc.sld+xml')) {
-    return {
-      image: image,
-      fit: fit,
-      margin: margin,
-      alignment: alignment
-    };
-  } else {
-    return {
-      text: 'Imagem não encontrada.',
-      alignment: 'center',
-      margin: [30, 100, 30, 0]
-    };
-  }
-}
-
-setDocDefinitions = async function(headerDocument, reportData, docDefinition) {
+setDocDefinitions = async function(reportData, docDefinition) {
   const ndviContext = [];
 
   if (reportData.type === 'prodes') {
@@ -768,7 +752,6 @@ setDocDefinitions = async function(headerDocument, reportData, docDefinition) {
           });
 
         ndviContext.push({text: '', pageBreak: 'after'});
-        ndviContext.push( { columns: headerDocument} );
         ndviContext.push(
           {
             columns: [ {
@@ -779,7 +762,6 @@ setDocDefinitions = async function(headerDocument, reportData, docDefinition) {
           });
       } else {
         ndviContext.push({text: '', pageBreak: 'after'});
-        ndviContext.push({columns: headerDocument});
       }
       ndviContext.push({ columns: [reportData.chartImages[i].geoserverImageNdvi]});
       ndviContext.push({ columns: [reportData.chartImages[i].myChart]});
@@ -1603,7 +1585,7 @@ module.exports = FileReport = {
 
       const docDefinitions = DocDefinitions[reportData['type']](headerDocument, reportData, title);
 
-      return { docDefinitions: await setDocDefinitions(headerDocument, reportData, docDefinitions), headerDocument: headerDocument };
+      return { docDefinitions: await setDocDefinitions(reportData, docDefinitions), headerDocument: headerDocument };
     } catch (e) {
       console.log(e)
     }
