@@ -10,8 +10,26 @@ const Result = require("../utils/result");
   confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
   ViewUtil = require("../utils/view.utils");
 
+
+const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
+getImageObject = function(image, fit, margin, alignment) {
+  if (image && image[0] && !image[0].includes('vnd.ogc.sld+xml')) {
+    return {
+      image: image,
+      fit: fit,
+      margin: margin,
+      alignment: alignment
+    };
+  } else {
+    return {
+      text: 'Imagem não encontrada.',
+      alignment: 'center',
+      margin: [30, 100, 30, 0]
+    };
+  }
+}
 setReportFormat = async function(reportData, views, type) {
   const resultReportData = {};
 
@@ -709,7 +727,70 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
   return await propertyData;
 };
 
+getImageObject = function(image, fit, margin, alignment) {
+  if (image && image[0] && !image[0].includes('vnd.ogc.sld+xml')) {
+    return {
+      image: image,
+      fit: fit,
+      margin: margin,
+      alignment: alignment
+    };
+  } else {
+    return {
+      text: 'Imagem não encontrada.',
+      alignment: 'center',
+      margin: [30, 100, 30, 0]
+    };
+  }
+}
 
+setDocDefinitions = async function(headerDocument, reportData, docDefinition) {
+  const ndviContext = [];
+
+  if (reportData.type === 'prodes') {
+    const startDate = new Date( reportData.date[0]).toLocaleDateString('pt-BR');
+    const endDate = new Date( reportData.date[1]).toLocaleDateString('pt-BR');
+
+    for (let i = 0; i < reportData.chartImages.length; ++i) {
+      if (i === 0) {
+        ndviContext.push( { text: '', pageBreak: 'after' });
+
+        ndviContext.push(
+          {
+            stack: [
+              'Anexo 4',
+              {text: 'NDVI das áreas de desmatamento - Prodes', fontSize: 14},
+            ],
+            fontSize: 25,
+            bold: true,
+            alignment: 'center',
+            margin: [0, 380, 0, 80]
+          });
+
+        ndviContext.push({text: '', pageBreak: 'after'});
+        ndviContext.push( { columns: headerDocument} );
+        ndviContext.push(
+          {
+            columns: [ {
+              text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no períoco de ${startDate} a ${endDate}.`,
+              margin: [30, 20, 30, 15],
+              style: 'body'
+            }]
+          });
+      } else {
+        ndviContext.push({text: '', pageBreak: 'after'});
+        ndviContext.push({columns: headerDocument});
+      }
+      ndviContext.push({ columns: [reportData.chartImages[i].geoserverImageNdvi]});
+      ndviContext.push({ columns: [reportData.chartImages[i].myChart]});
+    }
+    ndviContext.forEach(ndvi => {
+      docDefinition.content.push(ndvi);
+    });
+  }
+
+  return await docDefinition;
+}
 module.exports = FileReport = {
   async saveBase64(document, code, type, path, docName){
     const binaryData = new Buffer(document, 'base64').toString('binary')
@@ -770,7 +851,7 @@ module.exports = FileReport = {
       return Result.err(e);
     }
   },
-  async generatePdf(docDefinition, type, carCode) {
+  async generatePdf(reportData) {
     try {
       const fonts = {
         Roboto: {
@@ -783,38 +864,18 @@ module.exports = FileReport = {
 
       const pathDoc = `documentos/`;
 
-      const code = await this.newNumber(type.trim());
-      const docName = `${code.data[0].newnumber}_${code.data[0].year.toString()}_${code.data[0].type.trim()}.pdf`
+      reportData['code'] = await this.newNumber(reportData.type.trim());
+      const docName = `${reportData['code'].data[0].newnumber}_${reportData['code'].data[0].year.toString()}_${reportData['code'].data[0].type.trim()}.pdf`
 
       const printer = new PdfPrinter(fonts);
-      docDefinition.content[4].text =
-        type === 'deter' ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code.data[0].code}` :
-          type === 'prodes' ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code.data[0].code}` :
-            type === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code.data[0].code}` :
-              `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${code.data[0].year}`;
-
-      docDefinition.footer = function(pagenumber, pageCount) {
-        return {
-          table: {
-            body: [
-              [
-                {
-                  text: 'Página ' + pagenumber + ' de ' + pageCount,
-                  fontSize: 8,
-                  margin: [483, 0, 30, 0]
-                }
-              ],
-            ]
-          },
-          layout: 'noBorders'
-        };
-      };
-
-      const pdfDoc = printer.createPdfKitDocument(docDefinition);
+      const document = await this.getDocDefinitions(reportData);
+      const pdfDoc = printer.createPdfKitDocument(document.docDefinitions);
       pdfDoc.pipe(await fs.createWriteStream(`${pathDoc}/${docName}`));
       pdfDoc.end();
 
-      const report = await this.saveReport(docName, code.data[0].newnumber, carCode, pathDoc, type);
+      const report = await this.saveReport(docName, reportData['code'].data[0].newnumber, reportData['carRegister'], pathDoc, reportData['type']);
+      report['document'] = document; // await this.getDocDefinitions(reportData);
+
       return Result.ok(report)
     } catch (e) {
       return Result.err(e)
@@ -923,47 +984,6 @@ module.exports = FileReport = {
     }
   },
   async getSynthesisCarData(query) {
-    // const { carRegister, date } = query;
-    //
-    // let dateFrom = null;
-    // let dateTo = null;
-    //
-    // if (date) {
-    //   dateFrom = date[0];
-    //   dateTo = date[1];
-    // }
-    //
-    // try {
-    //   const views = await getViewsReport();
-    //
-    //   const columnCarEstadualSemas = 'numero_do1';
-    //   const columnCarFederalSemas = 'numero_do2';
-    //   const columnAreaHaCar = 'area_ha_';
-    //   const columnCarEstadual = 'de_car_validado_sema_numero_do1';
-    //   const columnCalculatedAreaHa = 'calculated_area_ha';
-    //   const columnExecutionDate = 'execution_date';
-    //
-    //   const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
-    //
-    //   let propertyData = await getCarData(
-    //     tableName,
-    //     views.STATIC.children.MUNICIPIOS.table_name,
-    //     columnCarEstadualSemas,
-    //     columnCarFederalSemas,
-    //     columnAreaHaCar,
-    //     carRegister);
-    //
-    //   const dateSql = ` and ${columnExecutionDate}::date >= '${dateFrom}' AND ${columnExecutionDate}::date <= '${dateTo}'`;
-    //
-    //   await setDeterData('deter', views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnExecutionDate, carRegister);
-    //   await setBurnedData('queimada', views, propertyData, dateSql, columnCarEstadual, columnCarEstadualSemas, columnExecutionDate, carRegister);
-    //   await setBurnedAreaData('queimada', views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnCarEstadualSemas, columnExecutionDate, carRegister);
-    //   await setProdesData('prodes', views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnExecutionDate, carRegister);
-    //   return Result.ok(propertyData);
-    // } catch (e) {
-    //   return Result.err(e)
-    // }
-
     const { carRegister, date } = query;
 
     let dateFrom = null;
@@ -1545,6 +1565,54 @@ module.exports = FileReport = {
       return Result.ok(points);
     } catch (e) {
       return Result.err(e)
+    }
+  },
+  async getDocDefinitions(reportData) {
+    try {
+      const code = reportData['code'] ? reportData['code'].data[0].code : `XXXXX/${reportData['currentYear']}`;
+      const title =
+        reportData['type'] === 'deter' ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code}` :
+          reportData['type'] === 'prodes' ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code}` :
+            reportData['type'] === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code}` :
+              `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
+
+      if (!reportData['images']) {
+        reportData.images = {};
+      }
+
+      reportData['images']['headerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logoHeaderMpmt.jpeg', 'base64')}`], [320, 50], [60, 25, 0, 20], 'left')
+      reportData['images']['headerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [320, 50], [0, 25, 30, 20], 'right')
+      reportData['images']['chartImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-1.png', 'base64')}`], [200, 200], [0, 10], 'center')
+      reportData['images']['chartImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-2.png', 'base64')}`], [250, 250], [3, 3], 'center');
+      reportData['images']['chartImage3'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-3.png', 'base64')}`], [250, 250], [3, 3], 'center');
+      reportData['images']['partnerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mpmt-small.png', 'base64')}`], [180, 50], [30, 0, 0, 0], 'left');
+      reportData['images']['partnerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/pjedaou-large.png', 'base64')}`], [100, 50], [30, 0, 0, 0], 'center');
+      reportData['images']['partnerImage3'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/caex.png', 'base64')}`], [80, 50], [30, 0, 25, 0], 'right');
+      reportData['images']['partnerImage4'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [130, 60], [80, 30, 0, 0], 'left');
+      reportData['images']['partnerImage5'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/dpi.png', 'base64')}`], [100, 60], [95, 30, 0, 0], 'center');
+      reportData['images']['partnerImage6'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/terrama2-large.png', 'base64')}`], [100, 60], [0, 30, 30, 0], 'right');
+      reportData['images']['partnerImage7'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mt.png', 'base64')}`], [100, 60], [80, 30, 0, 0], 'left');
+      reportData['images']['partnerImage8'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/sema.png', 'base64')}`], [100, 60], [130, 25, 0, 0], 'center');
+      reportData['images']['partnerImage9'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logo-patria-amada-brasil-horizontal.png', 'base64')}`], [100, 60], [0, 30, 25, 0], 'right');
+
+
+      const headerDocument = [
+        reportData.images.headerImage1,
+        reportData.images.headerImage2
+      ];
+
+      const docDefinitions = DocDefinitions[reportData['type']](headerDocument, reportData, title);
+
+      return { docDefinitions: await setDocDefinitions(headerDocument, reportData, docDefinitions), headerDocument: headerDocument };
+    } catch (e) {
+      console.log(e)
+    }
+  },
+  async createPdf(reportData) {
+    try {
+      return Result.ok(await ReportService.getDocDefinitions(reportData));
+    } catch (e) {
+      console.log(e)
     }
   }
 };
