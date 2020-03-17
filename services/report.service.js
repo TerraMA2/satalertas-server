@@ -868,12 +868,14 @@ module.exports = FileReport = {
       const docName = `${reportData['code'].data[0].newnumber}_${reportData['code'].data[0].year.toString()}_${reportData['code'].data[0].type.trim()}.pdf`
 
       const printer = new PdfPrinter(fonts);
-
-      const pdfDoc = printer.createPdfKitDocument((await this.getDocDefinitions(reportData)).docDefinition);
+      const document = await this.getDocDefinitions(reportData);
+      const pdfDoc = printer.createPdfKitDocument(document.docDefinitions);
       pdfDoc.pipe(await fs.createWriteStream(`${pathDoc}/${docName}`));
       pdfDoc.end();
 
       const report = await this.saveReport(docName, reportData['code'].data[0].newnumber, reportData['carRegister'], pathDoc, reportData['type']);
+      report['document'] = document; // await this.getDocDefinitions(reportData);
+
       return Result.ok(report)
     } catch (e) {
       return Result.err(e)
