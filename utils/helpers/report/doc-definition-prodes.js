@@ -79,7 +79,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'Trata-se de relatório técnico sobre desmatamentos ilegais identificados ',
+        text: 'Trata-se de relatório técnico sobre desmatamentos ilegais identificados',
         alignment: 'justify',
         margin: [154, 0, 30, 0],
         style: 'body'

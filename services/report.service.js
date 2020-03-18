@@ -15,7 +15,7 @@ const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definit
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
 getImageObject = function(image, fit, margin, alignment) {
-  if (image && image[0] && !image[0].includes('vnd.ogc.sld+xml')) {
+  if (image && image[0] && !image[0].includes('data:application/vnd.ogc.se_xml')) {
     return {
       image: image,
       fit: fit,
@@ -26,7 +26,10 @@ getImageObject = function(image, fit, margin, alignment) {
     return {
       text: 'Imagem não encontrada.',
       alignment: 'center',
-      margin: [30, 100, 30, 0]
+      color: '#ff0000',
+      fontSize: 9,
+      italics: true,
+      margin: [30, 60, 30, 60]
     };
   }
 };
@@ -161,10 +164,11 @@ setReportFormat = async function(reportData, views, type) {
       burnAreas: 0
     });
 
-    resultReportData['prodesTableData'] = prodesYear;
     prodesYear.push({date: 'Total', area: resultReportData.property.prodesTotalArea});
+    resultReportData['prodesTableData'] = prodesYear;
     resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
-    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_34:temporal_mosaic_legal_amazon_2000_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=fid>0;numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
+    //resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_34:temporal_mosaic_legal_amazon_2000_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=fid>0;numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
   }
 
