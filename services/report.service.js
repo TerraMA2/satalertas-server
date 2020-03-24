@@ -198,7 +198,7 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
                     ST_X(ST_Centroid(car.geom)) AS "long"
             FROM public.${carTableName} AS car
             INNER JOIN public.${municipiosTableName} munic ON
-                    car.${columnCarEstadualSemas} = '${carRegister}'
+                    car.${carRegister.length > 13 ? columnCarFederalSemas : columnCarEstadualSemas} = '${carRegister}'
                     AND munic.municipio = car.municipio1
             GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri`;
   const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
@@ -1522,7 +1522,7 @@ module.exports = FileReport = {
                extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
                main_table.execution_date
         FROM public.${groupViews[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
-        WHERE main_table.de_car_validado_sema_numero_do1 = '${carRegister}'
+        WHERE main_table.${carRegister.length < 14 ? 'de_car_validado_sema_numero_do1' : 'de_car_validado_sema_numero_do2'} = '${carRegister}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
           AND main_table.calculated_area_ha >= 12
     `;
@@ -1532,7 +1532,7 @@ module.exports = FileReport = {
             substring(ST_EXTENT(car.geom)::TEXT, 5,
             length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox
       FROM de_car_validado_sema AS car 
-      WHERE car.numero_do1 = '${carRegister}'
+      WHERE car.${carRegister.length < 14 ? 'numero_do1' : 'numero_do2'} = '${carRegister}'
       GROUP BY gid`;
 
     try {

@@ -14,7 +14,8 @@ exports.newNumber = async (req, res) => {
 };
 
 exports.getReportsByCARCod = async (req, res) => {
-  res.json(await ReportService.getReportsByCARCod(req.query.carCode.replace('_', '/')));
+  const register = req.query.carCode.length > 13 ? req.query.carCode : req.query.carCode.replace('_', '/');
+  res.json(await ReportService.getReportsByCARCod(register));
 };
 
 exports.delete = async (req, res) => {
