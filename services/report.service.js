@@ -9,30 +9,11 @@ const Result = require("../utils/result");
   env = process.env.NODE_ENV || 'development';
   confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
   ViewUtil = require("../utils/view.utils");
+  axios = require('axios');
 
 
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };
-
-getImageObject = function(image, fit, margin, alignment) {
-  if (image && image[0] && !image[0].includes('data:application/vnd.ogc.se_xml')) {
-    return {
-      image: image,
-      fit: fit,
-      margin: margin,
-      alignment: alignment
-    };
-  } else {
-    return {
-      text: 'Imagem não encontrada.',
-      alignment: 'center',
-      color: '#ff0000',
-      fontSize: 9,
-      italics: true,
-      margin: [30, 60, 30, 60]
-    };
-  }
-};
 
 setReportFormat = async function(reportData, views, type, carColumn, carColumnSema) {
   const resultReportData = {};
@@ -82,57 +63,57 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
 
 
   const totalRecentDeforestation = type === 'deter' ?
-    (app['recentDeforestation'] ? app['recentDeforestation'] : 0) +
-    (legalReserve['recentDeforestation'] ? legalReserve['recentDeforestation'] : 0) +
-    (conservationUnit['recentDeforestation'] ? conservationUnit['recentDeforestation'] : 0) +
-    (indigenousLand['recentDeforestation'] ? indigenousLand['recentDeforestation'] : 0) +
-    (consolidatedUse['recentDeforestation'] ? consolidatedUse['recentDeforestation'] : 0) +
-    (exploration['recentDeforestation'] ? exploration['recentDeforestation'] : 0) +
-    (deforestation['recentDeforestation'] ? deforestation['recentDeforestation'] : 0) +
-    (embargoedArea['recentDeforestation'] ? embargoedArea['recentDeforestation'] : 0) +
-    (restrictedUse['recentDeforestation'] ? restrictedUse['recentDeforestation'] : 0) +
-    (landArea['recentDeforestation'] ? landArea['recentDeforestation'] : 0) +
-    (burnAuthorization['recentDeforestation'] ? burnAuthorization['recentDeforestation'] : 0) : 0;
+      (app['recentDeforestation'] ? app['recentDeforestation'] : 0) +
+      (legalReserve['recentDeforestation'] ? legalReserve['recentDeforestation'] : 0) +
+      (conservationUnit['recentDeforestation'] ? conservationUnit['recentDeforestation'] : 0) +
+      (indigenousLand['recentDeforestation'] ? indigenousLand['recentDeforestation'] : 0) +
+      (consolidatedUse['recentDeforestation'] ? consolidatedUse['recentDeforestation'] : 0) +
+      (exploration['recentDeforestation'] ? exploration['recentDeforestation'] : 0) +
+      (deforestation['recentDeforestation'] ? deforestation['recentDeforestation'] : 0) +
+      (embargoedArea['recentDeforestation'] ? embargoedArea['recentDeforestation'] : 0) +
+      (restrictedUse['recentDeforestation'] ? restrictedUse['recentDeforestation'] : 0) +
+      (landArea['recentDeforestation'] ? landArea['recentDeforestation'] : 0) +
+      (burnAuthorization['recentDeforestation'] ? burnAuthorization['recentDeforestation'] : 0) : 0;
 
   const totalPastDeforestation = type === 'prodes' ?
-    app['pastDeforestation'] +
-    legalReserve['pastDeforestation'] +
-    conservationUnit['pastDeforestation'] +
-    indigenousLand['pastDeforestation'] +
-    consolidatedUse['pastDeforestation'] +
-    exploration['pastDeforestation'] +
-    deforestation['pastDeforestation'] +
-    embargoedArea['pastDeforestation'] +
-    restrictedUse['pastDeforestation'] +
-    landArea['pastDeforestation'] +
-    burnAuthorization['pastDeforestation'] +
-    radamProdes : 0;
+      app['pastDeforestation'] +
+      legalReserve['pastDeforestation'] +
+      conservationUnit['pastDeforestation'] +
+      indigenousLand['pastDeforestation'] +
+      consolidatedUse['pastDeforestation'] +
+      exploration['pastDeforestation'] +
+      deforestation['pastDeforestation'] +
+      embargoedArea['pastDeforestation'] +
+      restrictedUse['pastDeforestation'] +
+      landArea['pastDeforestation'] +
+      burnAuthorization['pastDeforestation'] +
+      radamProdes : 0;
 
   const totalBurnlights =  type === 'queimada' ?
-    app['burnlights'] +
-    legalReserve['burnlights'] +
-    conservationUnit['burnlights'] +
-    indigenousLand['burnlights'] +
-    consolidatedUse['burnlights'] +
-    exploration['burnlights'] +
-    deforestation['burnlights'] +
-    embargoedArea['burnlights'] +
-    restrictedUse['burnlights'] +
-    landArea['burnlights'] +
-    burnAuthorization['burnlights'] : 0;
+      app['burnlights'] +
+      legalReserve['burnlights'] +
+      conservationUnit['burnlights'] +
+      indigenousLand['burnlights'] +
+      consolidatedUse['burnlights'] +
+      exploration['burnlights'] +
+      deforestation['burnlights'] +
+      embargoedArea['burnlights'] +
+      restrictedUse['burnlights'] +
+      landArea['burnlights'] +
+      burnAuthorization['burnlights'] : 0;
 
   const totalBurnAreas =  type === 'queimada' ?
-    app['burnAreas'] +
-    legalReserve['burnAreas'] +
-    conservationUnit['burnAreas'] +
-    indigenousLand['burnAreas'] +
-    consolidatedUse['burnAreas'] +
-    exploration['burnAreas'] +
-    deforestation['burnAreas'] +
-    embargoedArea['burnAreas'] +
-    restrictedUse['burnAreas'] +
-    landArea['burnAreas'] +
-    burnAuthorization['burnAreas'] : 0;
+      app['burnAreas'] +
+      legalReserve['burnAreas'] +
+      conservationUnit['burnAreas'] +
+      indigenousLand['burnAreas'] +
+      consolidatedUse['burnAreas'] +
+      exploration['burnAreas'] +
+      deforestation['burnAreas'] +
+      embargoedArea['burnAreas'] +
+      restrictedUse['burnAreas'] +
+      landArea['burnAreas'] +
+      burnAuthorization['burnAreas'] : 0;
 
   const propertyDeforestation = [
     app,
@@ -148,12 +129,11 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
     burnAuthorization
   ];
 
-
   const currentYear = new Date().getFullYear();
-
+  carColumnSema= 'rid';
   resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=-61.6904258728027,-18.0950622558594,-50.1677627563477,-7.29556512832642&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
 
   if (type === 'prodes') {
     propertyDeforestation.push({
@@ -166,16 +146,43 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
 
     prodesYear.push({date: 'Total', area: resultReportData.property.prodesTotalArea});
     resultReportData['prodesTableData'] = prodesYear;
-    resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=${carColumnSema}='${resultReportData.property.register}';${carColumn}='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     //resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_34:temporal_mosaic_legal_amazon_2000_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=fid>0;numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
-    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=${carColumnSema}='${resultReportData.property.register}';${carColumn}='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
   }
 
   resultReportData['tableData'] = propertyDeforestation;
 
+  const httpOptions = {
+    headers: {
+      'Content-Type':  'application/xml',
+      'Authorization': 'jwt-token'
+    }
+  };
   return resultReportData;
 };
+
+getImageObject = function(image, fit, margin, alignment) {
+  if (image && image[0] && !image[0].includes('data:application/vnd.ogc.se_xml')) {
+    return {
+      image: image,
+      fit: fit,
+      margin: margin,
+      alignment: alignment
+    };
+  } else {
+    return {
+      text: 'Imagem não encontrada.',
+      alignment: 'center',
+      color: '#ff0000',
+      fontSize: 9,
+      italics: true,
+      margin: [30, 60, 30, 60]
+    };
+  }
+};
+
 
 getViewsReport = async function() {
   return await ViewUtil.getGrouped()
@@ -184,6 +191,7 @@ getViewsReport = async function() {
 getCarData = async function(carTableName, municipiosTableName, columnCarEstadualSemas, columnCarFederalSemas, columnAreaHaCar, carRegister){
   const sql = `
             SELECT
+                    car.gid AS gid,
                     car.${columnCarEstadualSemas} AS register,
                     car.${columnCarFederalSemas} AS federalregister,
                     COALESCE(car.${columnAreaHaCar}, 0) AS area,
@@ -198,9 +206,9 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
                     ST_X(ST_Centroid(car.geom)) AS "long"
             FROM public.${carTableName} AS car
             INNER JOIN public.${municipiosTableName} munic ON
-                    car.${carRegister.length > 13 ? columnCarFederalSemas : columnCarEstadualSemas} = '${carRegister}'
+                    car.gid = '${carRegister}'
                     AND munic.municipio = car.municipio1
-            GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri`;
+            GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri`;
   const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
 
   return result[0];
@@ -948,8 +956,8 @@ module.exports = FileReport = {
       const columnCalculatedAreaHa = 'calculated_area_ha';
       const columnExecutionDate = 'execution_date';
 
-      const columnCarSemas = carRegister.length < 14 ? columnCarEstadualSemas : columnCarFederalSemas;
-      const columnCar = carRegister.length < 14 ? columnCarEstadual : columnCarFederal;
+      const columnCarSemas = 'gid';
+      const columnCar = `de_car_validado_sema_gid`;
 
       const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
 
@@ -995,8 +1003,8 @@ module.exports = FileReport = {
       const columnCalculatedAreaHa = 'calculated_area_ha';
       const columnExecutionDate = 'execution_date';
 
-      const columnCarSemas = carRegister.length < 14 ? columnCarEstadualSemas : columnCarFederalSemas;
-      const columnCar = carRegister.length < 14 ? columnCarEstadual : columnCarFederal;
+      const columnCarSemas = 'gid';
+      const columnCar = `de_car_validado_sema_gid`;
 
       const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
 
@@ -1518,8 +1526,8 @@ module.exports = FileReport = {
     const {carRegister, date, type} = query;
     const groupViews = await ViewUtil.getGrouped();
 
-    const carColumn = carRegister.length < 14 ? 'numero_do1' : 'numero_do2';
-    const carColumnSemas = carRegister.length < 14 ? 'de_car_validado_sema_numero_do1' : 'de_car_validado_sema_numero_do2';
+    const carColumn = 'gid';
+    const carColumnSemas = 'de_car_validado_sema_gid';
 
     const groupType = {prodes: 'CAR_X_PRODES', deter: 'CAR_X_DETER', queimada: ''}
 
