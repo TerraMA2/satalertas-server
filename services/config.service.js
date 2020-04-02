@@ -94,7 +94,7 @@ module.exports = ConfigService = {
         {
           title: `Visão do alerta no Imóvel`,
           description: null,
-          carRegisterColumn: `numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1;${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_DETER_X_TI.workspace}:${groupView.DETER.children.CAR_DETER_X_TI.view},${groupView.PRODES.children.CAR_PRODES_X_UC.workspace}:${groupView.PRODES.children.CAR_PRODES_X_UC.view},${groupView.DETER.children.CAR_DETER_X_RESERVA.workspace}:${groupView.DETER.children.CAR_DETER_X_RESERVA.view},${groupView.DETER.children.CAR_DETER_X_APP.workspace}:${groupView.DETER.children.CAR_DETER_X_APP.view},${groupView.DETER.children.CAR_DETER_X_USOCON.workspace}:${groupView.DETER.children.CAR_DETER_X_USOCON.view},${groupView.DETER.children.CAR_DETER_X_USOANT.workspace}:${groupView.DETER.children.CAR_DETER_X_USOANT.view},${groupView.DETER.children.CAR_DETER_X_VEGNAT.workspace}:${groupView.DETER.children.CAR_DETER_X_VEGNAT.view}`,
@@ -112,7 +112,7 @@ module.exports = ConfigService = {
         {
           title: `Degradação Ambiental{break}{filterDate}`,
           description: null,
-          carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
@@ -130,7 +130,7 @@ module.exports = ConfigService = {
         {
           title: `Desmatamento{break}{filterDate}`,
           description: null,
-          carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
@@ -148,7 +148,7 @@ module.exports = ConfigService = {
         {
           title: `Queimadas{break}{filterDate}`,
           description: null,
-          carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -171,7 +171,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{indigenousLand}`
           },
-          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_TI.workspace}:${groupView.PRODES.children.CAR_PRODES_X_TI.view}`,
@@ -192,7 +192,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{conservationUnit}`
           },
-          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_UC.workspace}:${groupView.PRODES.children.CAR_PRODES_X_UC.view}`,
@@ -213,7 +213,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{legalReserve}`
           },
-          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_RESERVA.workspace}:${groupView.PRODES.children.CAR_PRODES_X_RESERVA.view}`,
@@ -234,7 +234,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{app}`
           },
-          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_APP.workspace}:${groupView.PRODES.children.CAR_PRODES_X_APP.view}`,
@@ -255,7 +255,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{consolidatedArea}`
           },
-          carRegisterColumn: `numero_do1;${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_USOCON.workspace}:${groupView.PRODES.children.CAR_PRODES_X_USOCON.view}`,
@@ -276,7 +276,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{anthropizedUse}`
           },
-          carRegisterColumn: `numero_do1;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_AQ_X_USOANT.workspace}:${groupView.BURNED_AREA.children.CAR_AQ_X_USOANT.view}`,
@@ -297,7 +297,7 @@ module.exports = ConfigService = {
             text: ``,
             value: `{nativeVegetation}`
           },
-          carRegisterColumn: `numero_do1;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_AQ_X_VEGNAT.workspace}:${groupView.BURNED_AREA.children.CAR_AQ_X_VEGNAT.view}`,
@@ -317,7 +317,7 @@ module.exports = ConfigService = {
         {
           title: `Desmatamento DETER sobre imagem SPOT 2008`,
           description: null,
-          carRegisterColumn: `numero_do1`,
+          carRegisterColumn: `rid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado`,
@@ -335,7 +335,7 @@ module.exports = ConfigService = {
         {
           title: `Desmatamento DETER sobre imagem 2019`,
           description: null,
-          carRegisterColumn: `numero_do1`,
+          carRegisterColumn: `rid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado`,
@@ -358,7 +358,7 @@ module.exports = ConfigService = {
             text: `Total de Área Desmatada em {year}: `,
             value: `{area}`
           },
-          carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+          carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
             layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
@@ -425,7 +425,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2000: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -860,7 +860,7 @@ module.exports = ConfigService = {
           text:``,
           value: `{spotlights}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED.children.CAR_X_FOCOS.workspace}:${groupView.BURNED.children.CAR_X_FOCOS.view}`,
@@ -883,7 +883,7 @@ module.exports = ConfigService = {
           text:``,
           value: `{burnedAreas}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_X_AREA_Q.workspace}:${groupView.BURNED_AREA.children.CAR_X_AREA_Q.view}`,
@@ -948,7 +948,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-        [`${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do1`]: {
+        [`${groupView.DETER.tableOwner}_de_car_validado_sema_gid`]: {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -1144,7 +1144,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Modelo'
         },
-        'de_autorizacao_desmate_sema_numero_do1': {
+        'de_autorizacao_desmate_sema_rid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -1216,7 +1216,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-        'de_car_validado_sema_numero_do1': {
+        'de_car_validado_sema_gid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -1442,7 +1442,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-         [`${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`]: {
+         [`${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`]: {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -1598,7 +1598,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Modelo'
         },
-        'de_autorizacao_desmate_sema_numero_do1': {
+        'de_autorizacao_desmate_sema_rid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -1670,7 +1670,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-        'de_car_validado_sema_numero_do1': {
+        'de_car_validado_sema_gid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -1916,7 +1916,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-         [`${groupView.BURNED.tableOwner}_de_car_validado_sema_numero_do1`]: {
+         [`${groupView.BURNED.tableOwner}_de_car_validado_sema_gid`]: {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -2072,7 +2072,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Modelo'
         },
-        'de_autorizacao_desmate_sema_numero_do1': {
+        'de_autorizacao_desmate_sema_rid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -2144,7 +2144,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-        'de_car_validado_sema_numero_do1': {
+        'de_car_validado_sema_gid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -2418,7 +2418,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-        [`${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_numero_do1`]: {
+        [`${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_gid`]: {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -2578,7 +2578,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Modelo'
         },
-        'de_autorizacao_desmate_sema_numero_do1': {
+        'de_autorizacao_desmate_sema_rid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -2650,7 +2650,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-        'de_car_validado_sema_numero_do1': {
+        'de_car_validado_sema_gid': {
           'show': true,
           'alias': 'CAR estadual'
         },
@@ -3152,7 +3152,7 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Nome TI'
         },
-        'numero_do1': {
+        'rid': {
           'show': true,
           'alias': 'CAR estadual'
         },
