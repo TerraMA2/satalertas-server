@@ -374,12 +374,56 @@ module.exports = ConfigService = {
           }
         }
       ],
-      deforestationHistoryProdes: [
+    //   deforestationHistoryProdes: [
+    //   {
+    //     title: `PRODES {year}`,
+    //     description: {
+    //       text: `Total de Área Desmatada em {year}: `,
+    //       value: `{area}`
+    //     },
+    //     carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+    //     layerData: {
+    //       url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+    //       layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+    //       transparent: true,
+    //       format: `image/png`,
+    //       version: `1.1.0`,
+    //       time: `{dateYear}/{year}`,
+    //       cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+    //       bbox: `{bbox}`,
+    //       width: `404`,
+    //       height: `431`,
+    //       srs: `EPSG:4326`
+    //     }
+    //   }
+    // ],
+    deforestationHistoryProdes: [
       {
-        title: `PRODES {year}`,
+        title: `PRODES 1999`,
         description: {
-          text: `Total de Área Desmatada em {year}: `,
-          value: `{area}`
+          text: `Total de Área Desmatada em 1999: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_5_1999,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2000`,
+        description: {
+          text: `Total de Área Desmatada em 2000: `,
+          value: `{prodesArea}`
         },
         carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
@@ -388,14 +432,426 @@ module.exports = ConfigService = {
           transparent: true,
           format: `image/png`,
           version: `1.1.0`,
-          time: `{dateYear}/{year}`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `view119_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2001`,
+        description: {
+          text: `Total de Área Desmatada em 2001: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
           srs: `EPSG:4326`
         }
+      },
+      {
+        title: `PRODES 2002`,
+        description: {
+          text: `Total de Área Desmatada em 2002: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2003`,
+        description: {
+          text: `Total de Área Desmatada em 2003: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2004`,
+        description: {
+          text: `Total de Área Desmatada em 2004: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2005`,
+        description: {
+          text: `Total de Área Desmatada em 2005: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2006`,
+        description: {
+          text: `Total de Área Desmatada em 2006: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2007`,
+        description: {
+          text: `Total de Área Desmatada em 2007: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2008`,
+        description: {
+          text: `Total de Área Desmatada em 2008: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_5_2008,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2009`,
+        description: {
+          text: `Total de Área Desmatada em 2009: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_5_2009,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2010`,
+        description: {
+          text: `Total de Área Desmatada em 2010: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_5_2010,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2011`,
+        description: {
+          text: `Total de Área Desmatada em 2011: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_5_2011,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2012`,
+        description: {
+          text: `Total de Área Desmatada em 2012: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2013`,
+        description: {
+          text: `Total de Área Desmatada em 2013: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_8_2013,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2014`,
+        description: {
+          text: `Total de Área Desmatada em 2014: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_8_2014,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2015`,
+        description: {
+          text: `Total de Área Desmatada em 2015: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_8_2015,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2016`,
+        description: {
+          text: `Total de Área Desmatada em 2016: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:LANDSAT_8_2016,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2017`,
+        description: {
+          text: `Total de Área Desmatada em 2017: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:SENTINEL_2_2017,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2018`,
+        description: {
+          text: `Total de Área Desmatada em 2018: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:SENTINEL_2_2018,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
+      },
+      {
+        title: `PRODES 2019`,
+        description: {
+          text: `Total de Área Desmatada em 2019: `,
+          value: `{prodesArea}`
+        },
+        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        layerData: {
+          url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+          layers: `terrama2_35:SENTINEL_2_2019,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+          transparent: true,
+          format: `image/png`,
+          version: `1.1.0`,
+          cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          bbox: `{bbox}`,
+          width: `404`,
+          height: `431`,
+          srs: `EPSG:4326`
+        }
       }
+      // {
+      //   title: `PRODES {year}`,
+      //   description: {
+      //     text: `Total de Área Desmatada em {year}: `,
+      //     value: `{area}`
+      //   },
+      //   carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+      //   layerData: {
+      //     url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+      //     layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+      //     transparent: true,
+      //     format: `image/png`,
+      //     version: `1.1.0`,
+      //     time: `{dateYear}/{year}`,
+      //     cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+      //     bbox: `{bbox}`,
+      //     width: `404`,
+      //     height: `431`,
+      //     srs: `EPSG:4326`
+      //   }
+      // }
     ],
       burningSpotlights: [
       {
