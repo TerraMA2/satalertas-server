@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       comment: "Code of the CAR"
     },
+    carGid: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      comment: "GID of the table CAR"
+    },
     path: {
       type: DataTypes.STRING,
       allowNull: false,

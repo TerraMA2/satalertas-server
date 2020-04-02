@@ -838,7 +838,7 @@ module.exports = FileReport = {
   },
   async getReportsByCARCod(carCode) {
     try {
-      const confWhere = {where: { carCode: carCode.trim() }};
+      const confWhere = {where: { carGid: carCode.trim() }};
 
       return Result.ok(await Report.findAll(confWhere));
     } catch (e) {
