@@ -867,7 +867,7 @@ module.exports = FileReport = {
       pdfDoc.pipe(await fs.createWriteStream(`${pathDoc}/${docName}`));
       pdfDoc.end();
 
-      const report = await this.saveReport(docName, reportData['code'].data[0].newnumber, reportData['carRegister'], pathDoc, reportData['type']);
+      const report = await this.saveReport(docName, reportData['code'].data[0].newnumber, reportData, pathDoc);
       report['document'] = document; // await this.getDocDefinitions(reportData);
 
       return Result.ok(report)
@@ -875,14 +875,15 @@ module.exports = FileReport = {
       return Result.err(e)
     }
   },
-  async saveReport(docName, newnumber, carCode, path, type) {
+  async saveReport(docName, newNumber, reportData, path) {
     try {
       const report = new Report({
         name: docName.trim(),
-        code: parseInt(newnumber),
-        carCode: carCode.trim(),
+        code: parseInt(newNumber),
+        carCode: reportData['property'].register.trim(),
+        carGid: reportData['property'].gid,
         path: path.trim(),
-        type: type.trim() })
+        type: reportData['type'].trim() })
 
       return await Report.create(report.dataValues).then(report => report.dataValues)
     } catch (e) {
