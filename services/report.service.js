@@ -1527,7 +1527,7 @@ module.exports = FileReport = {
     const {carRegister, date, type} = query;
     const groupViews = await ViewUtil.getGrouped();
 
-    const carColumn = 'gid';
+    const carColumn = 'rid';
     const carColumnSemas = 'de_car_validado_sema_gid';
 
     const groupType = {prodes: 'CAR_X_PRODES', deter: 'CAR_X_DETER', queimada: ''}
