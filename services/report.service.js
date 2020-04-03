@@ -183,7 +183,6 @@ getImageObject = function(image, fit, margin, alignment) {
   }
 };
 
-
 getViewsReport = async function() {
   return await ViewUtil.getGrouped()
 };
@@ -446,10 +445,13 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     if (!propertyData['foundProdes']){ propertyData['foundProdes'] = {}; }
     propertyData['foundProdes'] = prodesSumArea ? true : false
+
+    const sqlVegRadam = `SELECT * FROM car_x_vegradam WHERE gid = ${carRegister}`;
+    const resultVegRadam = await Report.sequelize.query(sqlVegRadam, QUERY_TYPES_SELECT);
+    propertyData['vegRadam'] = resultVegRadam;
   }
 
   return await propertyData;
-
 };
 
 setBurnedData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCarEstadualSemas, columnExecutionDate, carRegister) {
@@ -784,7 +786,8 @@ setDocDefinitions = async function(reportData, docDefinition) {
   }
 
   return await docDefinition;
-}
+};
+
 module.exports = FileReport = {
   async saveBase64(document, code, type, path, docName){
     const binaryData = new Buffer(document, 'base64').toString('binary')
@@ -880,7 +883,7 @@ module.exports = FileReport = {
       const report = new Report({
         name: docName.trim(),
         code: parseInt(newNumber),
-        carCode: reportData['property'].register.trim(),
+        carCode: reportData['property'].register ? reportData['property'].register.trim() : reportData['property'].federalregister,
         carGid: reportData['property'].gid,
         path: path.trim(),
         type: reportData['type'].trim() })

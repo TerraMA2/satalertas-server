@@ -1,3 +1,15 @@
+getInformationVegRadam = function(vegRadam){
+  let textRadam = '';
+  vegRadam.forEach(veg => {
+    if (textRadam.length === 0) {
+      textRadam = `${veg.area_ha_car_vegradam}ha em área da fisionomia ${veg.fisionomia}`
+    } else {
+      textRadam += `, ${veg.area_ha_car_vegradam}ha em área da fisionomia ${veg.fisionomia}`
+    }
+  })
+  return !vegRadam ? '0 ha de desmatamento' : textRadam;
+};
+
 module.exports = function (headerDocument, reportData, title) {
   return {
     info: {
@@ -26,6 +38,19 @@ module.exports = function (headerDocument, reportData, title) {
       };
     },
     content: [
+      {
+        text: [
+          {
+            text: 'SAT:',
+            bold: true
+          },
+          {
+            text: ` ${reportData.property.sat ? reportData.property.sat : 'XXXXXXXXXXXXX'}`,
+            bold: false
+          }
+        ],
+        style: 'headerBody'
+      },
       {
         text: [
           {
@@ -88,19 +113,16 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-              ' com o uso de Sistema de Informações Geográficas no imóvel rural ' + reportData.property.name +
-              ' (Figura 1), localizado no município de ' + reportData.property.city +
-              '-MT, pertencente a ' + reportData.property.owner + ', conforme informações declaradas no ' +
-              ' Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ' + reportData.property.register
+              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name}(Figura 1), com área igual a ${reportData.property.area}ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
             ),
           },
           {
-            text: ' (Anexo 1) ',
+            text: '(Anexo 1)',
             bold: true
           },
           {
             text: (
-              '/ acervo fundiário do Instituto Nacional de Colonização e Reforma Agrária (SIGEF/INCRA).'
+              '.'
             )
           }
         ],
@@ -933,6 +955,20 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 10
       },
       {
+        text: [
+          {
+            text: 'Observaçoes: ',
+            bold: true
+          },
+          {
+            text: `${reportData.property.comments ? reportData.property.comments : 'XXXXXXXXXXXXX'}`,
+            bold: false
+          }
+        ],
+        alignment: 'justify',
+        fontSize: 10
+      },
+      {
         text: '',
         pageBreak: 'after'
       },
@@ -964,7 +1000,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ' – Informações sobre o CAR-MT ' + reportData.property.register + ';',
+            text: ` – Informações sobre o CAR-MT ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};`,
             style: 'body'
           }
         ],
