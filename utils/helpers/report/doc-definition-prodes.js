@@ -113,7 +113,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name}(Figura 1), com área igual a ${reportData.property.area}ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
+              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name}(Figura 1), com área igual a ${reportData.property.area}ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
             ),
           },
           {
@@ -1000,7 +1000,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ` – Informações sobre o CAR-MT ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};`,
+            text: ` – Informações sobre o CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};`,
             style: 'body'
           }
         ],
@@ -1014,50 +1014,46 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ' – Relatório sobre o histórico de desmatamento no imóvel ',
-            style: 'body'
-          },
-          {
-            text: 'rural CAR-MT ' + reportData.property.register + ';',
+            text: ' – Relatório do SINESP-INFOSEG referente aos proprietários/posseiros do imóvel rural. ',
             style: 'body'
           }
         ],
         margin: [30, 0, 30, 0],
       },
-      {
-        text: [
-          {
-            text: 'Anexo 3.',
-            style: 'body',
-            bold: true
-          },
-          {
-            text: ' – Relatório do SINESP-IFOSEG referente aos ',
-            alignment: 'right',
-            style: 'body'
-          },
-          {
-            text: 'proprietários/posseiros do imóvel rural;',
-            style: 'body'
-          }
-        ],
-        margin: [30, 0, 30, 0],
-      },
-      {
-        text: [
-          {
-            text: 'Anexo 4.',
-            style: 'body',
-            bold: true
-          },
-          {
-            text: ' – NDVI das áreas de desmadamento do Prodes.',
-            alignment: 'right',
-            style: 'body'
-          }
-        ],
-        margin: [30, 0, 30, 0],
-      },
+      // {
+      //   text: [
+      //     {
+      //       text: 'Anexo 3.',
+      //       style: 'body',
+      //       bold: true
+      //     },
+      //     {
+      //       text: ' – Relatório do SINESP-IFOSEG referente aos ',
+      //       alignment: 'right',
+      //       style: 'body'
+      //     },
+      //     {
+      //       text: 'proprietários/posseiros do imóvel rural;',
+      //       style: 'body'
+      //     }
+      //   ],
+      //   margin: [30, 0, 30, 0],
+      // },
+      // {
+      //   text: [
+      //     {
+      //       text: 'Anexo 4.',
+      //       style: 'body',
+      //       bold: true
+      //     },
+      //     {
+      //       text: ' – NDVI das áreas de desmadamento do Prodes.',
+      //       alignment: 'right',
+      //       style: 'body'
+      //     }
+      //   ],
+      //   margin: [30, 0, 30, 0],
+      // },
       {
         text: '6 VALIDAÇÃO',
         margin: [30, 20, 30, 0],
