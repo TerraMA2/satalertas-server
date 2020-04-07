@@ -937,9 +937,15 @@ module.exports = function (headerDocument, reportData, title) {
       {
         columns: [
           reportData.images.geoserverImage4,
-          reportData.images.geoserverImage5,
+          reportData.images.geoserverImage5
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        columns: [
           reportData.images.geoserverImage6
-        ]
+        ],
+        margin: [30, 0, 30, 0]
       },
       {
         text: [
@@ -967,6 +973,7 @@ module.exports = function (headerDocument, reportData, title) {
           }
         ],
         alignment: 'justify',
+        margin: [30, 30, 30, 0],
         fontSize: 10
       },
       {
@@ -1021,40 +1028,6 @@ module.exports = function (headerDocument, reportData, title) {
         ],
         margin: [30, 0, 30, 0],
       },
-      // {
-      //   text: [
-      //     {
-      //       text: 'Anexo 3.',
-      //       style: 'body',
-      //       bold: true
-      //     },
-      //     {
-      //       text: ' – Relatório do SINESP-IFOSEG referente aos ',
-      //       alignment: 'right',
-      //       style: 'body'
-      //     },
-      //     {
-      //       text: 'proprietários/posseiros do imóvel rural;',
-      //       style: 'body'
-      //     }
-      //   ],
-      //   margin: [30, 0, 30, 0],
-      // },
-      // {
-      //   text: [
-      //     {
-      //       text: 'Anexo 4.',
-      //       style: 'body',
-      //       bold: true
-      //     },
-      //     {
-      //       text: ' – NDVI das áreas de desmadamento do Prodes.',
-      //       alignment: 'right',
-      //       style: 'body'
-      //     }
-      //   ],
-      //   margin: [30, 0, 30, 0],
-      // },
       {
         text: '6 VALIDAÇÃO',
         margin: [30, 20, 30, 0],
