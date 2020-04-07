@@ -937,7 +937,8 @@ module.exports = function (headerDocument, reportData, title) {
       {
         columns: [
           reportData.images.geoserverImage4,
-          reportData.images.geoserverImage5
+          reportData.images.geoserverImage5,
+          reportData.images.geoserverImage6
         ]
       },
       {

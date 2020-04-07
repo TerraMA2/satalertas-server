@@ -147,8 +147,8 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
     prodesYear.push({date: 'Total', area: resultReportData.property.prodesTotalArea});
     resultReportData['prodesTableData'] = prodesYear;
     resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
-    //resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_34:temporal_mosaic_legal_amazon_2000_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=fid>0;numero_do1='${resultReportData.property.register}';de_car_validado_sema_numero_do1='${resultReportData.property.register}'&srs=EPSG:4674&format=image/png`;
-    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
   }
 
@@ -762,6 +762,7 @@ setDocDefinitions = async function(reportData, docDefinition) {
 
     for (let i = 0; i < reportData.chartImages.length; ++i) {
       if (i === 0) {
+
         // ndviContext.push( { text: '', pageBreak: 'after' });
         //
         // ndviContext.push(
@@ -775,7 +776,7 @@ setDocDefinitions = async function(reportData, docDefinition) {
         //     alignment: 'center',
         //     margin: [0, 380, 0, 80]
         //   });
-        //
+
         ndviContext.push({text: '', pageBreak: 'after'});
         ndviContext.push(
           {
