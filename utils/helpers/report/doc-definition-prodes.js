@@ -973,7 +973,7 @@ module.exports = function (headerDocument, reportData, title) {
           }
         ],
         alignment: 'justify',
-        margin: [30, 30, 30, 0],
+        margin: [30, 30, 30, 30],
         fontSize: 10
       },
       {
