@@ -41,9 +41,9 @@ const themeSelected = {
                         others: async function() {
                                 sql.secondaryTables += ' , public.de_biomas_mt biome ';
 
-                                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
                                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_biomas_mt LIMIT 1`, QUERY_TYPES_SELECT);
-                                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? 'biome.geom' : ` st_transform(biome.geom, ${srid.rows[0].srid}) ` ;
+                                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'biome.geom' : ` st_transform(biome.geom, ${srid[0].srid}) ` ;
 
                                 sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
                                 sql.sqlWhere += ` AND biome.gid = ${filter.themeSelected.value.gid} `;
@@ -60,9 +60,9 @@ const themeSelected = {
                                 sql.sqlWhere += ` AND ${columns.filterColumns.columnsTheme.geocod} = cast(county.geocodigo AS integer) `;
                         },
                         others: async function() {
-                                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
                                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
-                                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? ' county.geom ' : ` st_transform(county.geom, ${srid.rows[0].srid}) ` ;
+                                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? ' county.geom ' : ` st_transform(county.geom, ${srid[0].srid}) ` ;
 
                                 sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
                                 sql.sqlWhere += ` AND county.comarca = '${filter.themeSelected.value.name}'  `;
@@ -79,9 +79,9 @@ const themeSelected = {
                                 sql.sqlWhere += ` AND ${columns.filterColumns.columnsTheme.geocod} = cast(county.geocodigo AS integer) `;
                         },
                         others: async function() {
-                                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
                                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
-                                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid.rows[0].srid}) ` ;
+                                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid[0].srid}) ` ;
 
                                 sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
                                 sql.sqlWhere += ` AND county.nm_meso = '${filter.themeSelected.value.name}' `;
@@ -98,9 +98,9 @@ const themeSelected = {
                                 sql.sqlWhere += ` AND ${columns.filterColumns.columnsTheme.geocod} = cast(county.geocodigo AS integer) `;
                         },
                         others: async function() {
-                                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
                                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
-                                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid.rows[0].srid}) ` ;
+                                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid[0].srid}) ` ;
 
                                 sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
                                 sql.sqlWhere += ` AND county.nm_micro = '${filter.themeSelected.value.name}'  `;
@@ -115,10 +115,10 @@ const themeSelected = {
                         },
                         others: async function() {
                                 sql.secondaryTables += ' , public.de_municipios_sema county ';
-                                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
 
                                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
-                                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid.rows[0].srid}) ` ;
+                                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid[0].srid}) ` ;
 
                                 sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
                                 sql.sqlWhere += ` AND county.gid = ${filter.themeSelected.value.gid} `;
@@ -128,10 +128,10 @@ const themeSelected = {
         },
         uc: async function(conn, sql, filter, columns, cod, aliasTablePrimary, srid){
                 sql.secondaryTables += ' , public.de_unidade_cons_sema uc ';
-                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
 
                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_unidade_cons_sema LIMIT 1`, QUERY_TYPES_SELECT);
-                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? 'uc.geom' : ` st_transform(uc.geom, ${srid.rows[0].srid}) ` ;
+                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'uc.geom' : ` st_transform(uc.geom, ${srid[0].srid}) ` ;
 
                 sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
 
@@ -141,10 +141,10 @@ const themeSelected = {
         },
         ti: async function(conn, sql, filter, columns, cod, aliasTablePrimary, srid){
                 sql.secondaryTables += ' , public.de_terra_indigena_sema ti ';
-                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
 
                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_terra_indigena_sema LIMIT 1`, QUERY_TYPES_SELECT);
-                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? 'ti.geom' : ` st_transform(ti.geom, ${srid.rows[0].srid}) ` ;
+                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'ti.geom' : ` st_transform(ti.geom, ${srid[0].srid}) ` ;
 
                 sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
 
@@ -154,10 +154,10 @@ const themeSelected = {
         },
         projus: async function(conn, sql, filter, columns, cod, aliasTablePrimary, srid){
                 sql.secondaryTables += ' , public.de_projus_bacias_sema projus ';
-                srid = srid && srid.rows[0] && srid.rows[0].srid ? srid : { rows: [{srid: 4326}]};
+                srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
 
                 const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_projus_bacias_sema LIMIT 1`, QUERY_TYPES_SELECT);
-                const fieldIntersects =(srid.rows[0].srid === sridSec.rows[0].srid) ? 'projus.geom' : ` st_transform(projus.geom, ${srid.rows[0].srid}) ` ;
+                const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'projus.geom' : ` st_transform(projus.geom, ${srid[0].srid}) ` ;
 
                 sql.sqlWhere += ` ${addAND(sql.sqlWhere)} ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
 
@@ -204,9 +204,9 @@ const setFilter = {
         },
         others: async function(conn, sql, filter, columns, cod, table, view) {
                 if (filter.themeSelected && filter.themeSelected.type) {
-                        const srid = await conn.sequelize.query(sql, QUERY_TYPES_SELECT);(
-                          ` SELECT ST_SRID(${table.alias}.intersection_geom) AS srid 
-              FROM public.${table.name} AS ${table.alias} LIMIT 1`);
+                        const srid = await conn.sequelize.query(
+                          ` SELECT ST_SRID(${table.alias}.intersection_geom) AS srid FROM public.${table.name} AS ${table.alias} LIMIT 1`,
+                          QUERY_TYPES_SELECT);
 
                         await themeSelected[filter.themeSelected.type](conn, sql, filter, columns, cod, table.alias, srid);
                 }
