@@ -762,21 +762,6 @@ setDocDefinitions = async function(reportData, docDefinition) {
 
     for (let i = 0; i < reportData.chartImages.length; ++i) {
       if (i === 0) {
-
-        // ndviContext.push( { text: '', pageBreak: 'after' });
-        //
-        // ndviContext.push(
-        //   {
-        //     stack: [
-        //       'Anexo 4',
-        //       {text: 'NDVI das áreas de desmatamento - Prodes', fontSize: 14},
-        //     ],
-        //     fontSize: 25,
-        //     bold: true,
-        //     alignment: 'center',
-        //     margin: [0, 380, 0, 80]
-        //   });
-
         ndviContext.push({text: '', pageBreak: 'after'});
         ndviContext.push(
           {

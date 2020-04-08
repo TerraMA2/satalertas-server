@@ -12,6 +12,7 @@ const reportRouter = require('./routes/report')
 const configRouter = require('./routes/config')
 const satVegRouter = require('./routes/sat-veg')
 const carRouter = require('./routes/car.router')
+const dashboardRouter = require('./routes/dashboard.router')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
@@ -32,8 +33,8 @@ app.use(basePath+'/geoserver', geoserverRouter)
 app.use(basePath+'/report', reportRouter)
 app.use(basePath+'/config', configRouter)
 app.use(basePath+'/satveg', satVegRouter)
-app.use(basePath+'car-router', carRouter)
-
+app.use(basePath+'/car', carRouter)
+app.use(basePath+'/dashboard', dashboardRouter)
 // Error handler
 app.use(errorController.show404)
 app.use(errorController.show500)
