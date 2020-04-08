@@ -13,6 +13,7 @@ const configRouter = require('./routes/config')
 const satVegRouter = require('./routes/sat-veg')
 const carRouter = require('./routes/car.router')
 const dashboardRouter = require('./routes/dashboard.router')
+const mapRouter = require('./routes/map.router')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
@@ -35,6 +36,8 @@ app.use(basePath+'/config', configRouter)
 app.use(basePath+'/satveg', satVegRouter)
 app.use(basePath+'/car', carRouter)
 app.use(basePath+'/dashboard', dashboardRouter)
+app.use(basePath+'/map', mapRouter)
+
 // Error handler
 app.use(errorController.show404)
 app.use(errorController.show500)
