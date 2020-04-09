@@ -14,6 +14,8 @@ const satVegRouter = require('./routes/sat-veg')
 const carRouter = require('./routes/car.router')
 const dashboardRouter = require('./routes/dashboard.router')
 const mapRouter = require('./routes/map.router')
+const biomeRouter = require('./routes/biome.router')
+const projusRouter = require('./routes/projus.router')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
@@ -37,6 +39,8 @@ app.use(basePath+'/satveg', satVegRouter)
 app.use(basePath+'/car', carRouter)
 app.use(basePath+'/dashboard', dashboardRouter)
 app.use(basePath+'/map', mapRouter)
+app.use(basePath+'/biome', biomeRouter)
+app.use(basePath+'/projus', projusRouter)
 
 // Error handler
 app.use(errorController.show404)
