@@ -4,6 +4,6 @@ const express = require('express');
 
 router.get('/getAllSimplified', carController.getAllSimplified);
 router.get('/getAll', carController.getAll);
-router.get('/getByCpf', carController.getByCpf);
+router.get('/getByCpf?:cpfCnpj*', carController.getByCpf);
 
 module.exports = router;
