@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    findPromot: {
+    fidPromot: {
       type: DataTypes.INTEGER,
       allowNull: false
     },

@@ -80,7 +80,6 @@ module.exports = mapService = {
       result = await View.sequelize.query(sql, QUERY_TYPES_SELECT);
       let dataJson = result;
 
-
       if (params.countTotal) {
         const sqlCount =
           ` SELECT COUNT(1) AS count FROM public.${table.name} AS ${table.alias}
