@@ -1,11 +1,15 @@
-const axios = require('axios');
-const Result = require(__dirname + '/../utils/result');
+const carService = require(__dirname + '/../services/car.service');
 
 
 exports.getAllSimplified = async (req, res) => {
+    const params = {
+        specificParameters,
+        date,
+        filter
+    } = req.query;
 
     try {
-        res.json(Result.ok('OK'));
+        res.json(await carService.getAllSimplified(params));
     } catch (e) {
         res.json(Result.err(e));
     }
@@ -14,7 +18,7 @@ exports.getAllSimplified = async (req, res) => {
 exports.getAll = async (req, res) => {
 
     try {
-        res.json(Result.ok('OK'));
+        res.json(await carService.getAll());
     } catch (e) {
         res.json(Result.err(e));
     }
@@ -23,7 +27,7 @@ exports.getAll = async (req, res) => {
 exports.getByCpf = async (req, res) => {
 
     try {
-        res.json(Result.ok('OK'));
+        res.json(await carService.getByCpf(req.query.cpfCnpj));
     } catch (e) {
         res.json(Result.err(e));
     }
