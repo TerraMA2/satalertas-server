@@ -16,6 +16,9 @@ exports.getAllSimplified = async (req, res) => {
           'gid',
           'name'
         ],
+        order: [
+            ['name']
+        ]
     };
     try {
         res.json(await Biome.findAll(options));

@@ -16,6 +16,9 @@ const dashboardRouter = require('./routes/dashboard.router')
 const mapRouter = require('./routes/map.router')
 const biomeRouter = require('./routes/biome.router')
 const projusRouter = require('./routes/projus.router')
+const indigenousLandRouter = require('./routes/indigenous-land.router')
+const conservationUnitRouter = require('./routes/conservation-unit.router')
+const cityRouter = require('./routes/city.router')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
@@ -41,6 +44,9 @@ app.use(basePath+'/dashboard', dashboardRouter)
 app.use(basePath+'/map', mapRouter)
 app.use(basePath+'/biome', biomeRouter)
 app.use(basePath+'/projus', projusRouter)
+app.use(basePath+'/indigenousLand', indigenousLandRouter)
+app.use(basePath+'/conservationUnit', conservationUnitRouter)
+app.use(basePath+'/city', cityRouter)
 
 // Error handler
 app.use(errorController.show404)

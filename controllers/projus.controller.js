@@ -16,6 +16,9 @@ exports.getAllSimplified = async (req, res) => {
           'gid',
           ['promotoria', 'name']
         ],
+        order: [
+            ['name']
+        ]
     };
     try {
         res.json(await Projus.findAll(options));
