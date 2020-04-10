@@ -4,8 +4,8 @@ const express = require('express');
 
 router.get('/getAll', cityController.getAll);
 router.get('/getAllSimplified', cityController.getAllSimplified);
-router.get('/getAllRegions', cityController.getAllRegions);
-router.get('/getAllMesoregions', cityController.getAllMesoregions);
-router.get('/getAllMicroregions', cityController.getAllMicroregions);
+router.get('/getAllRegionsSimplified', cityController.getAllRegionsSimplified);
+router.get('/getAllMesoregionsSimplified', cityController.getAllMesoregionsSimplified);
+router.get('/getAllMicroregionsSimplified', cityController.getAllMicroregionsSimplified);
 
 module.exports = router;
