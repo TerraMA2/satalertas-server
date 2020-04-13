@@ -17,7 +17,7 @@ exports.getAllSimplified = async (req, res) => {
           ['promotoria', 'name']
         ],
         order: [
-            ['name']
+            ['promotoria']
         ]
     };
     try {
