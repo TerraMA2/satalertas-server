@@ -381,7 +381,7 @@ module.exports = ConfigService = {
     //       text: `Total de Área Desmatada em {year}: `,
     //       value: `{area}`
     //     },
-    //     carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+    //     carRegisterColumn: `rid;de_car_validado_sema_gid`,
     //     layerData: {
     //       url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
     //       layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -404,7 +404,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 1999: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_5_1999,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -446,7 +446,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2001: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -466,7 +466,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2002: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -486,7 +486,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2003: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -506,7 +506,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2004: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -526,7 +526,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2005: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -546,7 +546,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2006: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -566,7 +566,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2007: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -586,7 +586,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2008: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_5_2008,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -607,7 +607,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2009: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_5_2009,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -628,7 +628,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2010: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_5_2010,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -649,7 +649,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2011: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_5_2011,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -670,7 +670,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2012: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -690,7 +690,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2013: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_8_2013,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -711,7 +711,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2014: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_8_2014,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -732,7 +732,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2015: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_8_2015,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -753,7 +753,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2016: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:LANDSAT_8_2016,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -774,7 +774,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2017: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:SENTINEL_2_2017,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -795,7 +795,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2018: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:SENTINEL_2_2018,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -816,7 +816,7 @@ module.exports = ConfigService = {
           text: `Total de Área Desmatada em 2019: `,
           value: `{prodesArea}`
         },
-        carRegisterColumn: `RED_BAND;numero_do1;de_car_validado_sema_numero_do1`,
+        carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
         layerData: {
           url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
           layers: `terrama2_35:SENTINEL_2_2019,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
@@ -837,7 +837,7 @@ module.exports = ConfigService = {
       //     text: `Total de Área Desmatada em {year}: `,
       //     value: `{area}`
       //   },
-      //   carRegisterColumn: `numero_do1;de_car_validado_sema_numero_do1`,
+      //   carRegisterColumn: `rid;de_car_validado_sema_gid`,
       //   layerData: {
       //     url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
       //     layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
