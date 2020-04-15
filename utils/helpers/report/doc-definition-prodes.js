@@ -2,9 +2,9 @@ getInformationVegRadam = function(vegRadam){
   let textRadam = '';
   vegRadam.forEach(veg => {
     if (textRadam.length === 0) {
-      textRadam = `${veg.area_ha_car_vegradam}ha em área da fisionomia ${veg.fisionomia}`
+      textRadam = `${veg.area_ha_car_vegradam} ha em área da fisionomia ${veg.fisionomia}`
     } else {
-      textRadam += `, ${veg.area_ha_car_vegradam}ha em área da fisionomia ${veg.fisionomia}`
+      textRadam += `, ${veg.area_ha_car_vegradam} ha em área da fisionomia ${veg.fisionomia}`
     }
   })
   return !vegRadam ? '0 ha de desmatamento' : textRadam;
@@ -105,15 +105,15 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: 'Trata-se de relatório técnico sobre desmatamentos ilegais identificados',
-        alignment: 'justify',
-        margin: [154, 0, 30, 0],
+        alignment: 'right',
+        margin: [152, 0, 30, 0],
         style: 'body'
       },
       {
         text: [
           {
             text: (
-              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name}(Figura 1), com área igual a ${reportData.property.area}ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
+              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name}(Figura 1), com área igual a ${reportData.property.area} ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
             ),
           },
           {
@@ -157,24 +157,20 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'As informações sobre os desmatamentos foram integradas no âmbito do',
+        text: 'As informações  sobre os desmatamentos  foram integradas no âmbito',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          'Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
+          'do Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
           'e Instituto Nacional de Pesquisas Espaciais (INPE), cujo objeto consiste na coleta automática, armazenamento ' +
           'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
           'INPE, com os dados de fontes estatais oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.'
         ),
         margin: [30, 0, 30, 15],
         style: 'body'
-      },
-      {
-        text: '',
-        pageBreak: 'after'
       },
       {
         text: '2.1 Dados utilizados',
@@ -374,9 +370,9 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'Todas as informações acima descritas foram integradas utilizando a ',
+        text: 'Todas as  informações acima  descritas foram  integradas  utilizando a ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
@@ -392,7 +388,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Os dados de desmatamentos (polígonos) do PRODES foram cruzados ',
+        text: 'Os dados de  desmatamentos (polígonos) do  PRODES foram cruzados ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
@@ -408,9 +404,9 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'As informações sobre o imóvel rural onde incidiu o desmatamento e',
+        text: 'As  informações  sobre  o imóvel  rural onde incidiu  o desmatamento e',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [152, 0, 30, 0],
         style: 'body'
       },
       {
@@ -419,27 +415,27 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Para qualificação da área desmatada, o tipo de vegetação foi ',
+        text: 'Para   qualificação   da   área   desmatada,   o   tipo   de   vegetação   foi',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [147, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          'identificado utilizando o mapa de vegetação do Projeto RadamBrasil.'
+          ' identificado utilizando o mapa de vegetação do Projeto RadamBrasil.'
         ),
         margin: [30, 0, 30, 5],
         style: 'body'
       },
       {
-        text: 'Os dados geoespaciais do SIMGEO, MMA e FUNAI foram cruzados ',
+        text: 'Os  dados geoespaciais  do   SIMGEO,  MMA e  FUNAI  foram  cruzados',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          'com os dados do INPE para identificação e quantificação dos desmatamentos ao longo dos anos ' +
+          ' com os dados do INPE para identificação e quantificação dos desmatamentos ao longo dos anos ' +
           'em áreas protegidas (APP, ARL, AUR, UC e TI), bem como para identificar ilícitos ambientais, mediante ' +
           'o cruzamento com dados das Autorizações de Exploração (AUTEX) e de Desmatamento (AD) emitidas pela SEMA. ' +
           'Ainda, verificou-se se as áreas desmatadas já haviam sido autuadas ou embargadas pela SEMA.'
@@ -448,14 +444,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Por fim, foi gerado um relatório com o histórico de imagens de ',
+        text: 'Por fim, foi gerado um relatório com o histórico de imagens de satélites',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          'satélites e dos desmatamentos e queimadas ocorridos no imóvel rural, contendo ainda, o perfil ' +
+          ' e dos desmatamentos e queimadas ocorridos no imóvel rural, contendo ainda, o perfil ' +
           'histórico de NDVI e EVI das áreas desmatadas, a fim de melhorar a interpretação das intervenções ' +
           'antrópicas ocorridas. As séries temporais de índices vegetativos representam as variações de biomassa, sendo ' +
           'que o perfil ao longo de um ciclo hidrológico varia dependendo do tipo de vegetação, impactos ou uso alternativo da área.'
@@ -464,18 +460,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
-        text: 'De acordo com o Sistema de Análise Temporal da Vegetação ',
+        text: 'De acordo com o Sistema de Análise Temporal da Vegetação (SATVeg)',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          '(SATVeg) da Empresa Brasileira de Pesquisa Agropecuária (EMBRAPA), os índices vegetativos ' +
+          ' da Empresa Brasileira de Pesquisa Agropecuária (EMBRAPA), os índices vegetativos ' +
           'NDVI e EVI são derivados das imagens do sensor MODIS, a bordo dos satélites Terra e Aqua. ' +
           'As imagens são adquiridas do Land Processes Distributed Active Center (LP-DAAC), que está ' +
           'vinculada a NASA\'s Earth Observing System (NASA EOS). As séries temporais dos índices vegetativos ' +
@@ -510,10 +502,6 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       reportData.images.chartImage2,
-      {
-        text: '',
-        pageBreak: 'after'
-      },
       {
         text: [
           {
@@ -559,21 +547,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'Os projetos PRODES e DETER, utilizados para identificação e ',
+        text: 'Os   projetos    PRODES    e    DETER,   utilizados   para   identificação   e',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [141, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          'quantificação dos desmatamentos, fazem parte do Programa de Monitoramento da Amazônia e '
-        ),
-        margin: [30, 0, 30, 5],
-        style: 'body'
-      },
-      {
-        text: (
-          'Demais Biomas (PAMZ+)' +
+          ' quantificação dos desmatamentos, fazem parte do Programa de Monitoramento da Amazônia e Demais Biomas (PAMZ+)' +
           'desenvolvido pela Coordenação-geral de Observação da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
           'Além do PRODES e DETER, o PAMZ+ conta também com o Sistema de Mapeamento do Uso e Ocupação da Terra (TerraClass). ' +
           'Estes três projetos são complementares e concebidos para atender diferentes objetivos.'
@@ -582,7 +563,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'O objetivo do PRODES é estimar a taxa anual de desmatamento por ',
+        text: 'O  objetivo do  PRODES é estimar  a taxa anual  de  desmatamento  por ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
@@ -598,11 +579,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
-        text: 'O PRODES utiliza imagens de satélite geradas pela série Landsat da ',
+        text: 'O PRODES  utiliza  imagens  de  satélite  geradas  pela  série Landsat da ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
@@ -622,7 +599,11 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'O detalhamento da metodologia PRODES pode ser consultado em ',
+        text: '',
+        pageBreak: 'after'
+      },
+      {
+        text: 'O  detalhamento   da  metodologia  PRODES  pode  ser   consultado  em ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
@@ -646,7 +627,7 @@ module.exports = function (headerDocument, reportData, title) {
           {
             text: (
               '“O PRODES só identifica polígonos de desmatamento por corte raso (remoção completa da cobertura florestal primária) ' +
-              'cuja área for superior a 6,25 haO PRODES só identifica polígonos de desmatamento por corte raso (remoção completa da ' +
+              'cuja área for superior a 6,25 ha. O PRODES só identifica polígonos de desmatamento por corte raso (remoção completa da ' +
               'cobertura florestal primária) cuja área for superior a 6,25 ha.'
             ),
             margin: [20, 0, 30, 5],
@@ -745,11 +726,7 @@ module.exports = function (headerDocument, reportData, title) {
         ]
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
-        text: 'Os dados do INPE constituem fonte de acentuada importância para a ',
+        text: 'Os dados do  INPE constituem  fonte de acentuada  importância para a ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
@@ -771,7 +748,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'O INPE, a partir dos dados do PRODES, identificou desmatamento de ',
+        text: 'O  INPE,  a partir  dos dados  do PRODES, identificou  desmatamento de ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
@@ -786,10 +763,6 @@ module.exports = function (headerDocument, reportData, title) {
         ),
         margin: [30, 0, 30, 15],
         style: 'body'
-      },
-      {
-        text: '',
-        pageBreak: 'after'
       },
       {
         text: [
@@ -844,10 +817,6 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
         columns: [
           reportData.images.geoserverLegend,
           reportData.images.geoserverImage3
@@ -896,14 +865,14 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 12
       },
       {
-        text: 'Anota-se que os dados acima indicados indicam extreme de dúvidas, com grau ',
+        text: 'Anota-se que os  dados acima  indicados  indicam  extreme de  dúvidas,',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          'de acurácia com mais de 90% de acerto, no entanto, alterações nos valores poderão ocorrer ' +
+          ' com grau de acurácia com mais de 90% de acerto, no entanto, alterações nos valores poderão ocorrer ' +
           'em decorrência de trabalhos de campo, pelo uso de outras imagens de satélite com diferentes ' +
           'resoluções espaciais, radiométricas e temporais, bem como pela fotointerpretação do analista durante a vetorização das áreas.'
         ),
@@ -913,9 +882,10 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: [
           {
-            text: 'Na representação cartográfica abaixo ',
+            text: 'Na  representação  cartográfica  abaixo ',
             alignment: 'right',
-            style: 'body'
+            style: 'body',
+            margin: [150, 0, 30, 0]
           },
           {
             text: '(Figura 6)',
@@ -923,8 +893,17 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
+            text: ' é  possível  visualizar,',
+            style: 'body'
+          }
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        text: [
+          {
             text: (
-              ' é possível visualizar, com imagens de alta resolução (Spot-2,5m e Planet-3m) como estava a cobertura ' +
+              ' com imagens de alta resolução (Spot-2,5m, Landsat e Sentinel) como estava a cobertura ' +
               'do imóvel em ' + reportData.prodesStartYear + ' e como se encontra atualmente (' + reportData.currentYear + '), indicando ' +
               'a ocorrência de desmatamento ilegal no imóvel rural.'
             ),
@@ -937,13 +916,28 @@ module.exports = function (headerDocument, reportData, title) {
       {
         columns: [
           reportData.images.geoserverImage4,
-          reportData.images.geoserverImage5
+          reportData.images.geoserverImage5,
+          reportData.images.geoserverImage6
         ],
         margin: [30, 0, 30, 0]
       },
       {
         columns: [
-          reportData.images.geoserverImage6
+          {
+            text: "a",
+            style: "body",
+            alignment: "center"
+          },
+          {
+            text: "b",
+            style: "body",
+            alignment: "center"
+          },
+          {
+            text: "c",
+            style: "body",
+            alignment: "center"
+          }
         ],
         margin: [30, 0, 30, 0]
       },
@@ -954,7 +948,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: `Comparativo de imagens de satélite do ano ${reportData.prodesStartYear} e ${reportData.currentYear}`,
+            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Sentinel de 2019 e (c) Landsat de 2018`,
             bold: false
           }
         ],
@@ -977,22 +971,18 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 10
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
         text: '4 CONCLUSÃO',
         margin: [30, 20, 30, 0],
         style: 'listItem'
       },
       {
-        text: `${reportData.property.foundProdes ? 'Houve' : 'Não houve'} desmatamento ilegal no imóvel rural objeto deste Relatório `,
+        text: `${reportData.property.foundProdes ? 'Houve' : 'Não houve'} desmatamento ilegal no imóvel rural objeto deste Relatório Técnico, conforme`,
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
-        text: 'Técnico, conforme descrito no Quadro 01 (vide item 3. Análise Técnica).',
+        text: 'descrito no Quadro 01 (vide item 3. Análise Técnica).',
         margin: [30, 0, 30, 15],
         style: 'body'
       },
@@ -1042,6 +1032,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: 'Relatório técnico produzido em parceria com: ',
         margin: [30, 20, 30, 15],
+        alignment: 'center',
         style: 'body'
       },
       {
