@@ -51,7 +51,7 @@ module.exports = ConfigService = {
         }
       ],
       propertyData: {
-        url: `/api/report/getCarData`,
+        url: `/report/getCarData`,
           viewId: `${groupView.STATIC.children.CAR_VALIDADO.value}`
       },
       visions: [
@@ -92,17 +92,17 @@ module.exports = ConfigService = {
           }
         },
         {
-          title: `Visão do alerta no Imóvel`,
+          title: `Visão do alerta no Imóvel (DETER){break}{filterDate}`,
           description: null,
-          carRegisterColumn: `rid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid;${groupView.DETER.tableOwner}_de_car_validado_sema_gid`,
+          carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_DETER_X_TI.workspace}:${groupView.DETER.children.CAR_DETER_X_TI.view},${groupView.PRODES.children.CAR_PRODES_X_UC.workspace}:${groupView.PRODES.children.CAR_PRODES_X_UC.view},${groupView.DETER.children.CAR_DETER_X_RESERVA.workspace}:${groupView.DETER.children.CAR_DETER_X_RESERVA.view},${groupView.DETER.children.CAR_DETER_X_APP.workspace}:${groupView.DETER.children.CAR_DETER_X_APP.view},${groupView.DETER.children.CAR_DETER_X_USOCON.workspace}:${groupView.DETER.children.CAR_DETER_X_USOCON.view},${groupView.DETER.children.CAR_DETER_X_USOANT.workspace}:${groupView.DETER.children.CAR_DETER_X_USOANT.view},${groupView.DETER.children.CAR_DETER_X_VEGNAT.workspace}:${groupView.DETER.children.CAR_DETER_X_VEGNAT.view}`,
+            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
             time: `{filterDate}`,
-            cql_filter: `{propertyCqlFilter};{propertyCqlFilter};{propertyCqlFilter};{propertyCqlFilter};{propertyCqlFilter};{propertyCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+            cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
             width: `404`,
             height: `431`,
@@ -110,7 +110,7 @@ module.exports = ConfigService = {
           }
         },
         {
-          title: `Degradação Ambiental{break}{filterDate}`,
+          title: `Degradação Ambiental (DETER){break}{filterDate}`,
           description: null,
           carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
@@ -133,7 +133,7 @@ module.exports = ConfigService = {
           carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.DETER.children.CAR_X_DETER.workspace}:${groupView.DETER.children.CAR_X_DETER.view}`,
+            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
@@ -151,7 +151,7 @@ module.exports = ConfigService = {
           carRegisterColumn: `rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_X_AREA_Q.workspace}:${groupView.BURNED_AREA.children.CAR_X_AREA_Q.view}`,
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
@@ -276,10 +276,10 @@ module.exports = ConfigService = {
             text: ``,
             value: `{anthropizedUse}`
           },
-          carRegisterColumn: `rid;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_gid`,
+          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_AQ_X_USOANT.workspace}:${groupView.BURNED_AREA.children.CAR_AQ_X_USOANT.view}`,
+            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_USOANT.workspace}:${groupView.PRODES.children.CAR_PRODES_X_USOANT.view}`,
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
@@ -297,10 +297,10 @@ module.exports = ConfigService = {
             text: ``,
             value: `{nativeVegetation}`
           },
-          carRegisterColumn: `rid;${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_gid`,
+          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.BURNED_AREA.children.CAR_AQ_X_VEGNAT.workspace}:${groupView.BURNED_AREA.children.CAR_AQ_X_VEGNAT.view}`,
+            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_VEGNAT.workspace}:${groupView.PRODES.children.CAR_PRODES_X_VEGNAT.view}`,
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
@@ -315,7 +315,7 @@ module.exports = ConfigService = {
       ],
       deforestations: [
         {
-          title: `Desmatamento DETER sobre imagem SPOT 2008`,
+          title: `SPOT de 2008`,
           description: null,
           carRegisterColumn: `rid`,
           layerData: {
@@ -333,12 +333,12 @@ module.exports = ConfigService = {
           }
         },
         {
-          title: `Desmatamento DETER sobre imagem 2019`,
+          title: `LANDSAT de 2018`,
           description: null,
-          carRegisterColumn: `rid`,
+          carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado`,
+            layers: `terrama2_35:LANDSAT_8_2018,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
@@ -346,7 +346,27 @@ module.exports = ConfigService = {
             bbox: `{bbox}`,
             width: `404`,
             height: `431`,
-            cql_filter: `{propertyCqlFilter}`,
+            styles:`raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
+            cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
+            srs: `EPSG:4326`
+          }
+        },
+        {
+          title: `SENTINEL de 2019`,
+          description: null,
+          carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
+          layerData: {
+            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+            layers: `terrama2_35:SENTINEL_2_2019,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
+            transparent: true,
+            format: `image/png`,
+            version: `1.1.0`,
+            time: `2008/P1Y`,
+            bbox: `{bbox}`,
+            width: `404`,
+            height: `431`,
+            styles:`raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
+            cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
             srs: `EPSG:4326`
           }
         }
@@ -374,29 +394,6 @@ module.exports = ConfigService = {
           }
         }
       ],
-    //   deforestationHistoryProdes: [
-    //   {
-    //     title: `PRODES {year}`,
-    //     description: {
-    //       text: `Total de Área Desmatada em {year}: `,
-    //       value: `{area}`
-    //     },
-    //     carRegisterColumn: `rid;de_car_validado_sema_gid`,
-    //     layerData: {
-    //       url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-    //       layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
-    //       transparent: true,
-    //       format: `image/png`,
-    //       version: `1.1.0`,
-    //       time: `{dateYear}/{year}`,
-    //       cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
-    //       bbox: `{bbox}`,
-    //       width: `404`,
-    //       height: `431`,
-    //       srs: `EPSG:4326`
-    //     }
-    //   }
-    // ],
     deforestationHistoryProdes: [
       {
         title: `PRODES 1999`,
@@ -415,7 +412,7 @@ module.exports = ConfigService = {
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles:`raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           srs: `EPSG:4326`
         }
       },
@@ -433,7 +430,6 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `view119_style,view35_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -594,7 +590,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -615,7 +611,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -636,7 +632,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -657,7 +653,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -698,7 +694,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -719,7 +715,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -740,7 +736,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -761,7 +757,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -782,7 +778,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -803,7 +799,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
@@ -824,34 +820,13 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `raster,view119_Mod_style,view35_Mod_style`,
+          styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_Mod_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `404`,
           height: `431`,
           srs: `EPSG:4326`
         }
       }
-      // {
-      //   title: `PRODES {year}`,
-      //   description: {
-      //     text: `Total de Área Desmatada em {year}: `,
-      //     value: `{area}`
-      //   },
-      //   carRegisterColumn: `rid;de_car_validado_sema_gid`,
-      //   layerData: {
-      //     url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-      //     layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
-      //     transparent: true,
-      //     format: `image/png`,
-      //     version: `1.1.0`,
-      //     time: `{dateYear}/{year}`,
-      //     cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
-      //     bbox: `{bbox}`,
-      //     width: `404`,
-      //     height: `431`,
-      //     srs: `EPSG:4326`
-      //   }
-      // }
     ],
       burningSpotlights: [
       {
