@@ -891,7 +891,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: `7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.`,
         fontSize: 8,
-        margin: [30, 80, 30, 0]
+        margin: [30, 100, 30, 0]
       },
       {
         text: `8     Disponível em https://scholar.google.com.br/, acessado em 13.01.2020.`,
