@@ -9,6 +9,7 @@ const Result = require("../utils/result");
   env = process.env.NODE_ENV || 'development';
   confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
   ViewUtil = require("../utils/view.utils");
+  SatVegService = require("../services/sat-veg.service");
   axios = require('axios');
 
 
@@ -58,7 +59,7 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
 
   reportData.bbox = resultReportData.bbox;
 
-  const bboxState = setBoundingBox(propertyData['statebbox']);
+  const bboxState = setBoundingBox(reportData['statebbox']);
 
   resultReportData['property'] = reportData;
 
@@ -1577,7 +1578,7 @@ module.exports = FileReport = {
       `
         SELECT
                CAST(main_table.monitored_id AS integer),
-               main_table.intersect_id,
+               main_table.a_carprodes_1_id,
                ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
                ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
                extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
@@ -1585,13 +1586,12 @@ module.exports = FileReport = {
         FROM public.${groupViews[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
         WHERE main_table.${carColumnSemas} = '${carRegister}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
-          AND main_table.calculated_area_ha >= 12
+          AND main_table.calculated_area_ha > 12
     `;
 
     const sqlBbox = `
       SELECT
-            substring(ST_EXTENT(car.geom)::TEXT, 5,
-            length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox
+            substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox
       FROM de_car_validado_sema AS car 
       WHERE car.${carColumn} = '${carRegister}'
       GROUP BY gid`;
@@ -1600,14 +1600,39 @@ module.exports = FileReport = {
       const carBbox = await Report.sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
       const points = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
 
-      const bboxArray = carBbox[0].bbox.split(',');
-
-      let bbox = bboxArray[0].split(' ').join(',') + ',' + bboxArray[1].split(' ').join(',');
+      let bbox = setBoundingBox((carBbox[0].bbox));
 
       const currentYear = new Date().getFullYear();
-      points.forEach(point => {
-        point['url'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view},${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}&styles=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view}_style,${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}_style&bbox=${bbox}&width=404&height=431&time=${point.startyear}/${currentYear}&cql_filter=${carColumn}='${carRegister}';intersect_id=${point.intersect_id}&srs=EPSG:4674&format=image/png`;
-      });
+      for (let index = 0 ; index < points.length; index++) {
+        points[index]['url'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view},${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}&styles=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view}_style,${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}_style&bbox=${bbox}&width=404&height=431&time=${points[index].startyear}/${currentYear}&cql_filter=${carColumn}='${carRegister}';${groupViews[type.toUpperCase()].children[groupType[type]].table_name}_id=${points[index].a_carprodes_1_id}&srs=EPSG:4674&format=image/png`;
+
+        points[index]['options'] = await SatVegService.get({long: points[index].long, lat: points[index].lat },'ndvi', 3, 'wav', '', 'aqua').then( async resp => {
+          console.log(resp['listaDatas'])
+          console.log(resp['listaSerie'])
+          return await {
+            type: 'line',
+            data: {
+              labels: resp['listaDatas'],
+              lineColor: 'rgb(10,5,109)',
+              datasets: [{
+                label: 'NDVI',
+                data: resp['listaSerie'],
+                backgroundColor: 'rgba(17,17,177,0)',
+                borderColor: 'rgba(5,177,0,1)',
+                showLine: true,
+                borderWidth: 2,
+                pointRadius: 0
+              }]
+            },
+            options: {
+              responsive: false,
+              legend: {
+                display: false
+              }
+            }
+          };
+        });
+      };
 
       return Result.ok(points);
     } catch (e) {

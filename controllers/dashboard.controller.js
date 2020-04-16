@@ -10,7 +10,7 @@ exports.getAnalysisTotals = async (req, res) => {
 
         res.json(await DashboardService.getAnalysisTotals(params));
     } catch (e) {
-        res.json(Result.err(e));
+        res.json(e);
     }
 };
 
@@ -24,6 +24,6 @@ exports.getDetailsAnalysisTotals = async (req, res) => {
 
         res.json(await DashboardService.getDetailsAnalysisTotals(params));
     } catch (e) {
-        res.json(Result.err(e));
+        res.json(e);
     }
 };
