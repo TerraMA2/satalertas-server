@@ -21,9 +21,11 @@ module.exports = function (headerDocument, reportData, title) {
         table: {
           body: [
             [
+              contact,
               {
                 text: 'Página ' + pagenumber + ' de ' + pageCount,
-                fontSize: 8,
+                fontSize: 6,
+                bold: true,
                 margin: [483, 0, 30, 0]
               }
             ],
@@ -113,11 +115,11 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name}(Figura 1), com área igual a ${reportData.property.area} ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
+              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1), com área igual a ${reportData.property.area} ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
             ),
           },
           {
-            text: '(Anexo 1)',
+            text: ' (Anexo 1)',
             bold: true
           },
           {
@@ -149,8 +151,35 @@ module.exports = function (headerDocument, reportData, title) {
           }
         ],
         alignment: 'center',
-        fontSize: 10,
+        fontSize: 9,
         margin: [30, 0, 30, 15]
+      },
+      {
+        columns: [
+          {
+            text: `Edifício Sede das Promotorias de Justiça da Capital
+                  Av. Desembargador Milton Figueiredo Ferreira Mendes, s/nº
+                  Setor D - Centro Político e Administrativo • Cuiabá/MT
+                  CEP: 78049-928`,
+            fontSize: 7,
+            alignment: 'left'
+          },
+          {
+            text: `Telefone: (65) 3611-2664`,
+            fontSize: 7,
+            alignment: 'center'
+          },
+          {
+            text: `caop@mpmt.mp.br`,
+            fontSize: 7,
+            alignment: 'right'
+          }
+        ],
+        margin: [30, 45, 30, 15]
+      },
+      {
+        text: '',
+        pageBreak: 'after'
       },
       {
         text: '2 HISTÓRICO',
@@ -362,10 +391,6 @@ module.exports = function (headerDocument, reportData, title) {
         ]
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
         text: '2.2 Método utilizado',
         style: 'listItem'
       },
@@ -377,8 +402,8 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: (
-          'plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
-          'análise e emissão de alertas sobre extremos ambientais1. Assim, utilizando esta base tecnológica inovadora, ' +
+          'plataforma computacional TerraMA². Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
+          'análise e emissão de alertas sobre extremos ambientais(1). Assim, utilizando esta base tecnológica inovadora, ' +
           'no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, ' +
           'analisar (intersecção de geometrias dos mapas), visualizar e consultar dados sobre danos ambientais causados ' +
           'por desmatamentos e queimadas. Para isso, dados dinâmicos e estáticos foram processados para produzirem as informações ' +
@@ -460,6 +485,15 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
+        text: `1    Informações mais detalhadas sobre o funcionamento do TerraMA² podem ser obtidas em http://www.TerraMA2.dpi.inpe.br/sobre. Acessado em 07.10.2019.`,
+        fontSize: 8,
+        margin: [30, 20, 30, 0]
+      },
+      {
+        text: '',
+        pageBreak: 'after'
+      },
+      {
         text: 'De acordo com o Sistema de Análise Temporal da Vegetação (SATVeg)',
         alignment: 'right',
         margin: [30, 0, 30, 0],
@@ -476,7 +510,7 @@ module.exports = function (headerDocument, reportData, title) {
           'em composições máximas de 16 dias, com resolução espacial de aproximadamente 250m. Como exemplo, nas figuras ' +
           'abaixo podem ser observados os padrões gráficos do NDVI para floresta ombrófila densa, cerrado e quando da ' +
           'ocorrência de desmatamento. Mais informações sobre os padrões de perfis gráficos dos índices de vegetação, incluindo ' +
-          'os padrões de culturas agrícolas, podem ser consultadas no sítio eletrônico do SATVeg¹.'
+          'os padrões de culturas agrícolas, podem ser consultadas no sítio eletrônico do SATVeg(2).'
         ),
         margin: [30, 0, 30, 0],
         style: 'body'
@@ -498,7 +532,7 @@ module.exports = function (headerDocument, reportData, title) {
           }
         ],
         margin: [30, 0, 30, 0],
-        fontSize: 10,
+        fontSize: 9,
         style: 'body'
       },
       reportData.images.chartImage2,
@@ -519,8 +553,13 @@ module.exports = function (headerDocument, reportData, title) {
           }
         ],
         margin: [30, 0, 30, 0],
-        fontSize: 10,
+        fontSize: 9,
         style: 'body'
+      },
+      {
+        text: `2   Disponível em: https://www.satveg.cnptia.embrapa.br/satveg/login.html?faces-redirect=true. Acessado em 07.01.2020.`,
+        fontSize: 8,
+        margin: [30, 20, 30, 0]
       },
       reportData.images.chartImage3,
       {
@@ -538,8 +577,8 @@ module.exports = function (headerDocument, reportData, title) {
             bold: false
           }
         ],
-        margin: [30, 0, 30, 0],
-        fontSize: 10,
+        margin: [30, 0, 30, 15],
+        fontSize: 9,
         style: 'body'
       },
       {
@@ -555,7 +594,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: (
           ' quantificação dos desmatamentos, fazem parte do Programa de Monitoramento da Amazônia e Demais Biomas (PAMZ+)' +
-          'desenvolvido pela Coordenação-geral de Observação da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
+          ' desenvolvido pela Coordenação-geral de Observação da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
           'Além do PRODES e DETER, o PAMZ+ conta também com o Sistema de Mapeamento do Uso e Ocupação da Terra (TerraClass). ' +
           'Estes três projetos são complementares e concebidos para atender diferentes objetivos.'
         ),
@@ -572,7 +611,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: (
           'corte raso da floresta primária, excluídas as áreas de “não florestas”. Importante ressaltar que ' +
           'o termo “desmatamento” é definido como “a supressão de áreas de fisionomia florestal primária por ações ' +
-          'antropogênicas” (SOUZA et al., 2019)1, ou seja, tratam-se de áreas sem histórico de intervenções pelo Homem ' +
+          'antropogênicas” (SOUZA et al., 2019)(3), ou seja, tratam-se de áreas sem histórico de intervenções pelo Homem ' +
           'que foram suprimidas a partir de 1988 por ação antrópica.'
         ),
         margin: [30, 0, 30, 5],
@@ -591,16 +630,28 @@ module.exports = function (headerDocument, reportData, title) {
           '(União Europeia) ou CBERS-4 (Brasil/China). As imagens desses satélites são disponibilizadas pelos ' +
           'seus provedores já ortorretificadas, com correção geométrica de sistema refinada pelo uso de pontos de ' +
           'controle e de modelos digitais de elevação do terreno, o que confere um nível mais alto de qualidade das ' +
-          'informações, em concordância com as normas cartográficas vigentes. A avaliação da acurácia da metodologia do ' +
-          'PRODES foi feita por Adami et al. (2017)1 para o Estado de Mato Grosso e por Maurano et al. (2019)2 para a Amazônia ' +
-          'Legal, ambas para o ano 2014, resultando em uma precisão global de 94,5%±2,05 e exatidão global de 93%, respectivamente.'
+          'informações, em concordância com as normas cartográficas  vigentes. A  avaliação da  acurácia da  metodologia ' +
+          'do PRODES  foi feita por Adami'
         ),
         margin: [30, 0, 30, 5],
         style: 'body'
       },
       {
+        text: `3    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf. Acessado em 13.10.2019.`,
+        fontSize: 8,
+        margin: [30, 55, 30, 0]
+      },
+      {
         text: '',
         pageBreak: 'after'
+      },
+      {
+        text: (
+          'et al. (2017)(4) para o Estado de Mato Grosso e por Maurano et al. (2019)(5) para a Amazônia ' +
+          'Legal, ambas para o ano 2014, resultando em uma precisão global de 94,5%±2,05 e exatidão global de 93%, respectivamente.'
+        ),
+        margin: [30, 0, 30, 5],
+        style: 'body'
       },
       {
         text: 'O  detalhamento   da  metodologia  PRODES  pode  ser   consultado  em ',
@@ -610,7 +661,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: (
-          'Souza et al. (2019)1. Em suma, a metodologia do PRODES parte dos seguintes pressupostos: '
+          'Souza et al. (2019)(6). Em suma, a metodologia do PRODES parte dos seguintes pressupostos: '
         ),
         margin: [30, 0, 30, 5],
         style: 'body'
@@ -733,12 +784,38 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: (
-          'gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o ' +
-          'Termo de Ajustamento de Conduta (TAC) da carne, Moratória da Soja e outros acordos intergovernamentais, como ' +
-          'o feito na Conferência das Nações Unidas Sobre Mudanças Climáticas (COP21) para a redução das emissões de gases ' +
-          'de efeito estufa por desflorestamento e degradação florestal1. Ainda, a importância e credibilidade dos dados gerados ' +
-          'pelo INPE é refletida pelas milhares de publicações científicas que utilizaram essas informações para realização de ' +
-          'pesquisas, que podem ser encontrada no Google Scholar².'
+          'gestão  ambiental, e já  embasaram  importantes acordos com setores ligados ao agronegócio, como o ' +
+          'Termo de Ajustamento de Conduta (TAC)  da carne, Moratória  da Soja e outros  acordos  intergovernamentais, como ' +
+          'o feito  na  Conferência  das  Nações  Unidas  Sobre  Mudanças  Climáticas    (COP21)   para    a   redução   das    emissões    de    gases    ' +
+          'de    efeito    estufa   por'
+        ),
+        margin: [30, 0, 30, 5],
+        style: 'body'
+      },
+      {
+        text: `4    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.`,
+        fontSize: 8,
+        margin: [30, 5, 30, 0]
+      },
+      {
+        text: `5    MAURANO, L.E.P.; ESCADA, M.I.S.; RENNO, C.D. Padrões espaciais de desmatamento e a estimativa da exatidão dos mapas do PRODES para Amazônia Legal Brasileira. Ciência Florestal, Santa Maria-RS, v.29, n.4, p.1763-1775, 2019.`,
+        fontSize: 8,
+        margin: [30, 5, 30, 0]
+      },
+      {
+        text: `6    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf. Acessado em 13.10.2019.`,
+        fontSize: 8,
+        margin: [30, 5, 30, 0]
+      },
+      {
+        text: '',
+        pageBreak: 'after'
+      },
+      {
+        text: (
+          'desflorestamento e degradação florestal(7). Ainda, a importância e credibilidade dos dados gerados pelo INPE é refletida pelas milhares de publicações científicas ' +
+          'que utilizaram essas informações para realização de ' +
+          'pesquisas, que podem ser encontrada no Google Scholar(8)'
         ),
         margin: [30, 0, 30, 5],
         style: 'body'
@@ -812,6 +889,20 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 12
       },
       {
+        text: `7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.`,
+        fontSize: 8,
+        margin: [30, 100, 30, 0]
+      },
+      {
+        text: `8     Disponível em https://scholar.google.com.br/, acessado em 13.01.2020.`,
+        fontSize: 8,
+        margin: [30, 5, 30, 0]
+      },
+      {
+        text: '',
+        pageBreak: 'after'
+      },
+      {
         text: 'A Figura 5 apresenta a dinâmica de desmatamento em todos os anos do PRODES disponível da base do INPE.',
         margin: [30, 0, 30, 15],
         style: 'body'
@@ -835,7 +926,7 @@ module.exports = function (headerDocument, reportData, title) {
         ],
         margin: [30, 0, 30, 0],
         alignment: 'center',
-        fontSize: 10,
+        fontSize: 9,
         style: 'body'
       },
       {
@@ -953,7 +1044,7 @@ module.exports = function (headerDocument, reportData, title) {
           }
         ],
         alignment: 'center',
-        fontSize: 10
+        fontSize: 9
       },
       {
         text: [
