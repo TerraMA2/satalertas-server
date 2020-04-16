@@ -1005,6 +1005,10 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 0]
       },
       {
+        text: '',
+        pageBreak: 'after'
+      },
+      {
         columns: [
           reportData.images.geoserverImage4,
           reportData.images.geoserverImage5,
