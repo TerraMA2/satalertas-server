@@ -847,19 +847,12 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: `- Classes e quantitativos de áreas desmatadas e queimadas no imóvel`,
-            bold: false
-          }
+            text: ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' + reportData.property.name + ' a  partir da análise do PRODES, no período ' + reportData.formattedFilterDate + '.'
+          },
         ],
-        margin: [30, 0, 30, 0],
-        alignment: 'right',
-        fontSize: 10,
-        style: 'body'
-      },
-      {
-        text: ' rural denominado ' + reportData.property.name + ' a  partir da análise do PRODES, no período ' + reportData.formattedFilterDate + '.',
         margin: [30, 0, 30, 15],
-        style: 'body'
+        style: 'body',
+        fontSize: 9
       },
       {
         style: 'tableStyle',
