@@ -67,7 +67,7 @@ module.exports = ConfigService = {
             version: `1.1.0`,
             time: `{filterDate}`,
             cql_filter: `id_munic>0;{cityCqlFilter}`,
-            bbox: `-61.6904258728027,-18.0950622558594,-50.1677627563477,-7.29556512832642`,
+            bbox: `{statebbox}`,
             width: `404`,
             height: `431`,
             srs: `EPSG:4674`

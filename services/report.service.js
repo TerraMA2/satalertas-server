@@ -15,6 +15,35 @@ const Result = require("../utils/result");
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
+
+setBoundingBox = function(bBox) {
+
+  const bboxArray = bBox.split(',');
+  const bbox1 = bboxArray[0].split(' ')
+  const bbox2 = bboxArray[1].split(' ')
+
+  let Xmax = parseFloat(bbox2[0]);
+  let Xmin = parseFloat(bbox1[0]);
+
+  let Ymax = parseFloat(bbox2[1]);
+  let Ymin = parseFloat(bbox1[1]);
+
+  let difX = Math.abs(Math.abs(Xmax) - Math.abs(Xmin));
+  let difY = Math.abs( Math.abs(Ymax) - Math.abs(Ymin));
+
+  if(difX > difY) {
+    const fac = difX - difY;
+    Ymin -= fac/2;
+    Ymax += fac/2;
+  } else if(difX < difY) {
+    const fac = difY - difX;
+    Xmin -= fac/2;
+    Xmax += fac/2;
+  }
+
+  return `${Xmin}, ${Ymin}, ${Xmax}, ${Ymax}`;
+}
+
 setReportFormat = async function(reportData, views, type, carColumn, carColumnSema) {
   const resultReportData = {};
 
@@ -25,11 +54,11 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
 
   resultReportData['prodesStartYear'] = prodesStartYear[0]['start_year'];
 
-  const bboxArray = reportData.bbox.split(',');
-
-  resultReportData['bbox'] = bboxArray[0].split(' ').join(',') + ',' + bboxArray[1].split(' ').join(',');
+  resultReportData['bbox'] = setBoundingBox(reportData.bbox);
 
   reportData.bbox = resultReportData.bbox;
+
+  const bboxState = setBoundingBox(propertyData['statebbox']);
 
   resultReportData['property'] = reportData;
 
@@ -131,7 +160,7 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
 
   const currentYear = new Date().getFullYear();
   carColumnSema= 'rid';
-  resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=-61.6904258728027,-18.0950622558594,-50.1677627563477,-7.29556512832642&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${bboxState}&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
   resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
   resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
 
@@ -200,6 +229,7 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
                     car.nomepropri AS owner,
                     munic.comarca AS county,
                     substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) as citybbox,
+                    substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) as statebbox,
                     substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox,
                     ST_Y(ST_Centroid(car.geom)) AS "lat",
                     ST_X(ST_Centroid(car.geom)) AS "long"
@@ -207,6 +237,7 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
             INNER JOIN public.${municipiosTableName} munic ON
                     car.gid = '${carRegister}'
                     AND munic.municipio = car.municipio1
+            INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
             GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri`;
   const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
 
@@ -1522,6 +1553,10 @@ module.exports = FileReport = {
           propertyData['analysisPeriod'][years.key]['startYear'] = years.start_year;
           propertyData['analysisPeriod'][years.key]['endYear'] = years.end_year;
         });
+
+        propertyData['bbox'] = setBoundingBox(propertyData['bbox']);
+        propertyData['citybbox'] = setBoundingBox(propertyData['citybbox']);
+        propertyData['statebbox'] = setBoundingBox(propertyData['statebbox']);
 
         return Result.ok(propertyData);
       }
