@@ -21,7 +21,6 @@ module.exports = function (headerDocument, reportData, title) {
         table: {
           body: [
             [
-              contact,
               {
                 text: 'Página ' + pagenumber + ' de ' + pageCount,
                 fontSize: 6,
@@ -1003,6 +1002,10 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
         margin: [30, 0, 30, 0]
+      },
+      {
+        text: '',
+        pageBreak: 'after'
       },
       {
         columns: [
