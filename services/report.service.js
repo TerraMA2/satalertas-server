@@ -789,37 +789,45 @@ setDocDefinitions = async function(reportData, docDefinition) {
   const content = [];
 
   if (reportData.type === 'prodes') {
-    const startDate = new Date( reportData.date[0]).toLocaleDateString('pt-BR');
-    const endDate = new Date( reportData.date[1]).toLocaleDateString('pt-BR');
+    const startDate = new Date(reportData.date[0]).toLocaleDateString('pt-BR');
+    const endDate = new Date(reportData.date[1]).toLocaleDateString('pt-BR');
 
-    for (let i = 0; i < reportData.chartImages.length; ++i) {
-      if (i === 0) {
-        ndviContext.push({text: '', pageBreak: 'after'});
-        ndviContext.push(
-          {
-            columns: [ {
-              text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no períoco de ${startDate} a ${endDate}.`,
-              margin: [30, 20, 30, 15],
-              style: 'body'
-            }]
+    if (reportData.chartImages && (reportData.chartImages.length > 0)) {
+      for (let i = 0; i < reportData.chartImages.length; ++i) {
+        if (i === 0) {
+          ndviContext.push({text: '', pageBreak: 'after'});
+          ndviContext.push(
+            {
+              columns: [{
+                text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no períoco de ${startDate} a ${endDate}.`,
+                margin: [30, 20, 30, 15],
+                style: 'body'
+              }]
+            });
+        } else {
+          ndviContext.push({text: '', pageBreak: 'after'});
+        }
+        ndviContext.push({columns: [reportData.chartImages[i].geoserverImageNdvi]});
+        ndviContext.push({columns: [reportData.chartImages[i].myChart]});
+      }
+      for (let j = 0; j < docDefinition.content.length; j++) {
+        if (j === 96) {
+          ndviContext.forEach(ndvi => {
+            content.push(ndvi);
           });
-      } else {
-        ndviContext.push({text: '', pageBreak: 'after'});
+          content.push(
+            {
+              text: '',
+              pageBreak: 'after'
+            }
+          )
+        }
+        content.push(docDefinition.content[j]);
       }
-      ndviContext.push({ columns: [reportData.chartImages[i].geoserverImageNdvi]});
-      ndviContext.push({ columns: [reportData.chartImages[i].myChart]});
     }
-    for (let j = 0; j < docDefinition.content.length; j++) {
-      if (j === 96) {
-        ndviContext.forEach(ndvi => {
-          content.push(ndvi);
-        });
-      }
-      content.push(docDefinition.content[j]);
-    }
-  }
-  docDefinition.content = content;
 
+    docDefinition.content = content;
+  }
   return await docDefinition;
 };
 

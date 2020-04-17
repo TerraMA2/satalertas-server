@@ -906,22 +906,6 @@ module.exports = function (headerDocument, reportData, title) {
         ]
       },
       {
-        text: [
-          {
-            text: 'Figura 5. ',
-            bold: true
-          },
-          {
-            text: 'Dinâmica de desmatamento - ' + reportData.prodesStartYear + '/' + reportData.currentYear,
-            bold: false
-          }
-        ],
-        margin: [30, 0, 30, 0],
-        alignment: 'center',
-        fontSize: 9,
-        style: 'body'
-      },
-      {
         style: 'tableStyle',
         table: {
           widths: ['*', '*'],
@@ -946,6 +930,26 @@ module.exports = function (headerDocument, reportData, title) {
           ]
         },
         fontSize: 12
+      },
+      {
+        text: [
+          {
+            text: 'Figura 5. ',
+            bold: true
+          },
+          {
+            text: 'Dinâmica de desmatamento - ' + reportData.prodesStartYear + '/' + reportData.currentYear,
+            bold: false
+          }
+        ],
+        margin: [30, 0, 30, 5],
+        alignment: 'center',
+        fontSize: 9,
+        style: 'body'
+      },
+      {
+        text: '',
+        pageBreak: 'after'
       },
       {
         text: 'Anota-se que os  dados acima  indicados  indicam  extreme de  dúvidas,',
@@ -995,10 +999,6 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
         margin: [30, 0, 30, 0]
-      },
-      {
-        text: '',
-        pageBreak: 'after'
       },
       {
         columns: [
@@ -1112,7 +1112,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: `Este relatório técnico foi validado em ${reportData.currentDate} por: `,
-        margin: [30, 0, 30, 100],
+        margin: [30, 0, 30, 60],
         alignment: 'center',
         style: 'body'
       },
