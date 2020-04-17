@@ -366,7 +366,7 @@ const filterUtils = {
     return {column1, column2, column3, column4, column5, filterColumns, columnArea, columnCpfCnpj, columnCarFederal};
   },
   async setFilter(conn, params, table, view) {    
-    const columns = this.getColumns(view, table.owner, table.alias);
+    const columns = await this.getColumns(view, table.owner, table.alias);
     
     let paramsFilter = {};
     if (params.specificParameters) {
