@@ -810,7 +810,7 @@ setDocDefinitions = async function(reportData, docDefinition) {
       ndviContext.push({ columns: [reportData.chartImages[i].myChart]});
     }
     for (let j = 0; j < docDefinition.content.length; j++) {
-      if (j === 87) {
+      if (j === 96) {
         ndviContext.forEach(ndvi => {
           content.push(ndvi);
         });
