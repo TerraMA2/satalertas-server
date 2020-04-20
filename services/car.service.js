@@ -93,18 +93,14 @@ module.exports = carService = {
       const carResult = await Car.sequelize.query(sql, QUERY_TYPES_SELECT);
 
       const resultCount = await Car.sequelize.query(
-        ` SELECT count(1) AS count FROM (
-                  SELECT count(1) AS count
-                  ${sqlFrom} 
-                  ${filter.secondaryTables}
-                  ${sqlWhere} 
-                  ${sqlGroupBy}
-        ) AS new_table `,
-        QUERY_TYPES_SELECT);
+                                              ` SELECT 1
+                                                    ${sqlFrom} 
+                                                    ${filter.secondaryTables}
+                                                    ${sqlWhere} 
+                                                    ${sqlGroupBy} `,
+                                                  QUERY_TYPES_SELECT);
 
-      const count = resultCount[0] ? resultCount[0]['count'] : 0;
-
-      carResult.push(count);
+      carResult.push(resultCount && resultCount.length ? resultCount.length : 0);
 
       return carResult;
 
