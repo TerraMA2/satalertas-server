@@ -51,7 +51,7 @@ module.exports = carService = {
       const sqlOrderBy = ` ORDER BY ${layer.codgroup === 'BURNED' ? specificParameters.countAlias : specificParameters.sortField} DESC `;
 
 
-      const column = layer.isPrimary ? 'de_car_validado_sema_numero_do1' : 'a_carfocos_20_de_car_validado_sema_numero_do1';
+      const column = layer.isPrimary ? 'de_car_validado_sema_gid' : 'a_carfocos_20_de_car_validado_sema_gid';
 
 
       filter.secondaryTables += specificParameters.isDynamic ?
@@ -59,15 +59,15 @@ module.exports = carService = {
         '';
 
       filter.sqlWhere += specificParameters.isDynamic ?
-        ` AND property.numero_do1 = ${specificParameters.tableAlias}.de_car_validado_sema_numero_do1 ` : '';
+        ` AND property.gid = ${specificParameters.tableAlias}.de_car_validado_sema_gid ` : '';
 
       const sqlWhere =
         filter.sqlHaving ?
           ` ${filter.sqlWhere}
-                        AND ${specificParameters.tableAlias}.de_car_validado_sema_numero_do1 IN
+                        AND ${specificParameters.tableAlias}.de_car_validado_sema_gid IN
                           ( SELECT tableWhere.${column} AS subtitle
                             FROM public.${table.name} AS tableWhere
-                            GROUP BY tableWhere.de_car_validado_sema_numero_do1
+                            GROUP BY tableWhere.de_car_validado_sema_gid
                             ${filter.sqlHaving}) ` :
           filter.sqlWhere;
 

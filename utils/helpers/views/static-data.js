@@ -36,7 +36,7 @@ module.exports ={
     shortLabel: 'Uso Consolidado',
     isChild: true
   },
-  CV_AREA_VEGETECAO_NATIVA:{
+  CV_AREA_VEGETACAO_NATIVA:{
     shortLabel: 'Vegetação Nativa',
     isChild: true
   },

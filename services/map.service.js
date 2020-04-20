@@ -60,8 +60,8 @@ module.exports = mapService = {
 
       const select =
         ` SELECT  ${columnsTable}
-                  , ST_Y(ST_Transform (ST_Centroid(${table.alias}.intersection_geom), 4326)) AS "lat"
-                  , ST_X(ST_Transform (ST_Centroid(${table.alias}.intersection_geom), 4326)) AS "long"
+                  , ST_Y(ST_Centroid(${table.alias}.intersection_geom)) AS "lat"
+                  , ST_X(ST_Centroid(${table.alias}.intersection_geom)) AS "long"
           `;
 
       const from = ` FROM public.${table.name} AS ${table.alias} `;
