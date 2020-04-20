@@ -28,7 +28,7 @@ module.exports = carService = {
           };
 
       const sqlSelectCount = specificParameters.count ? `,COUNT(1) AS ${specificParameters.countAlias}` : '';
-      const sqlSelectSum = specificParameters.sum ? `,SUM(${specificParameters.tableAlias}.${specificParameters.sumField}) AS ${specificParameters.sumAlias}` : '';
+      const sqlSelectSum = specificParameters.sum && layer.codgroup !== 'BURNED' ? `,SUM(${specificParameters.tableAlias}.${specificParameters.sumField}) AS ${specificParameters.sumAlias}` : '';
       const sqlSelect =
         ` SELECT 
                         property.gid AS gid,
@@ -38,26 +38,17 @@ module.exports = carService = {
                         property.municipio1 AS municipio,
                         property.area_ha_ AS area,
                         property.situacao_1 AS situacao,
-                        ST_Y(ST_Transform (ST_Centroid(property.geom), 4326)) AS "lat",
-                        ST_X(ST_Transform (ST_Centroid(property.geom), 4326)) AS "long",
+                        ST_Y(ST_Centroid(property.geom)) AS "lat",
+                        ST_X(ST_Centroid(property.geom)) AS "long",
                         (SELECT count(1) > 0 FROM alertas.reports rep WHERE property.gid = rep.car_gid) AS has_pdf
                         ${sqlSelectSum}
                         ${sqlSelectCount} `;
 
       const sqlFrom = ` FROM public.${table.name} AS ${specificParameters.tableAlias}`;
 
-      const sqlGroupBy =
-        ` GROUP BY property.numero_do1,
-                            property.numero_do2,
-                            property.gid,
-                            property.nome_da_p1,
-                            property.municipio1,
-                            property.area_ha_,
-                            property.situacao_1,
-                            ST_Y(ST_Transform (ST_Centroid(property.geom), 4326)),
-                            ST_X(ST_Transform (ST_Centroid(property.geom), 4326)) `;
+      const sqlGroupBy = layer && layer.codgroup && layer.codgroup === 'CAR' ? '' : ` GROUP BY property.gid `;
 
-      const sqlOrderBy = ` ORDER BY ${specificParameters.sortField} DESC `;
+      const sqlOrderBy = ` ORDER BY ${layer.codgroup === 'BURNED' ? specificParameters.countAlias : specificParameters.sortField} DESC `;
 
 
       const column = layer.isPrimary ? 'de_car_validado_sema_numero_do1' : 'a_carfocos_20_de_car_validado_sema_numero_do1';
