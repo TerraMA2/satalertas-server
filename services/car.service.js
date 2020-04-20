@@ -27,7 +27,7 @@ module.exports = carService = {
             offset: specificParameters.offset ? ` OFFSET ${specificParameters.offset}` : ''
           };
 
-      const sqlSelectCount = specificParameters.count ? `,COUNT(${specificParameters.tableAlias}.*) AS ${specificParameters.countAlias}` : '';
+      const sqlSelectCount = specificParameters.count ? `,COUNT(1) AS ${specificParameters.countAlias}` : '';
       const sqlSelectSum = specificParameters.sum ? `,SUM(${specificParameters.tableAlias}.${specificParameters.sumField}) AS ${specificParameters.sumAlias}` : '';
       const sqlSelect =
         ` SELECT 
