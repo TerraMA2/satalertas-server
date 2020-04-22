@@ -1417,11 +1417,31 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Proprietário'
         },
-         [`${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`]: {
+        [`${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`]: {
+          'show': false,
+          'alias': 'Id. Car'
+        },
+        [`${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`]: {
           'show': true,
           'alias': 'CAR estadual'
         },
-         [`${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do2`]: {
+        [`de_car_validado_sema_numero_do1`]: {
+          'show': true,
+          'alias': 'CAR estadual'
+        },
+        [`${groupView.PRODES.tableOwner}_de_car_validado_sema_nomes_prop`]: {
+          'show': false,
+          'alias': 'CPF/Proprietário'
+        },
+        [`de_car_validado_sema_nomes_prop`]: {
+          'show': false,
+          'alias': 'CPF/Proprietário'
+        },
+        [`de_car_validado_sema_numero_do2`]: {
+          'show': true,
+          'alias': 'CAR federal'
+        },
+        [`${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do2`]: {
           'show': true,
           'alias': 'CAR federal'
         },
@@ -1646,12 +1666,8 @@ module.exports = ConfigService = {
           'alias': 'Proprietário'
         },
         'de_car_validado_sema_gid': {
-          'show': true,
-          'alias': 'CAR estadual'
-        },
-        'de_car_validado_sema_numero_do2': {
-          'show': true,
-          'alias': 'CAR federal'
+          'show': false,
+          'alias': 'I. CAR'
         },
         'de_car_validado_sema_situacao_1': {
           'show': true,
@@ -1852,6 +1868,22 @@ module.exports = ConfigService = {
         'view_date': {
           'show': true,
           'alias': 'Data'
+        },
+        [`${groupView.PRODES.tableOwner}_de_car_validado_sema_geocodigo`]: {
+          'show': false,
+          'alias': 'Cod. IBGE'
+        },
+        [`de_car_validado_sema_geocodigo`]: {
+          'show': false,
+          'alias': 'Cod. IBGE'
+        },
+        [`${groupView.PRODES.tableOwner}_dd_prodes_inpe_pathrow`]: {
+          'show': false,
+          'alias': 'dd_prodes_inpe_pathrow'
+        },
+        [`dd_prodes_inpe_pathrow`]: {
+          'show': false,
+          'alias': 'dd_prodes_inpe_pathrow'
         }
       } : '',
       'BURNED': groupView.BURNED ?  {
