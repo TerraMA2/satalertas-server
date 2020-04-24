@@ -32,9 +32,12 @@ module.exports ={
     shortLabel: 'Uso Antropizado do Solo',
     isChild: true
   },
-  CV_AREA_USO_CONSOLIDADO:{
+  CAR_X_USOCON:{
     shortLabel: 'Uso Consolidado',
     isChild: true
+  },
+  CV_AREA_USO_CONSOLIDADO:{
+    shortLabel: 'Uso Consolidado'
   },
   CV_AREA_VEGETACAO_NATIVA:{
     shortLabel: 'Vegetação Nativa',

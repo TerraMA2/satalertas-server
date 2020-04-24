@@ -249,27 +249,27 @@ module.exports = ConfigService = {
             srs: `EPSG:4674`
           }
         },
-        {
-          title: `Área Consolidada`,
-          description: {
-            text: ``,
-            value: `{consolidatedArea}`
-          },
-          carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
-          layerData: {
-            url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_USOCON.workspace}:${groupView.PRODES.children.CAR_PRODES_X_USOCON.view}`,
-            transparent: true,
-            format: `image/png`,
-            version: `1.1.0`,
-            time: `{filterDate}`,
-            cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
-            bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
-            srs: `EPSG:4674`
-          }
-        },
+        // {
+        //   title: `Área Consolidada`,
+        //   description: {
+        //     text: ``,
+        //     value: `{consolidatedArea}`
+        //   },
+        //   carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
+        //   layerData: {
+        //     url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
+        //     layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_USOCON.workspace}:${groupView.PRODES.children.CAR_PRODES_X_USOCON.view}`,
+        //     transparent: true,
+        //     format: `image/png`,
+        //     version: `1.1.0`,
+        //     time: `{filterDate}`,
+        //     cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
+        //     bbox: `{bbox}`,
+        //     width: `404`,
+        //     height: `431`,
+        //     srs: `EPSG:4674`
+        //   }
+        // },
         {
           title: `Uso antropizado`,
           description: {
@@ -1355,10 +1355,6 @@ module.exports = ConfigService = {
           'show': false,
           'alias': 'pid_a_cardeter_usoant'
         },
-        'pid_a_cardeter_usocon': {
-          'show': false,
-          'alias': 'pid_a_cardeter_usocon'
-        },
         'pid_a_cardeter_veg': {
           'show': false,
           'alias': 'pid_a_cardeter_veg'
@@ -1848,10 +1844,6 @@ module.exports = ConfigService = {
         'pid_a_carprodes_usoant': {
           'show': false,
           'alias': 'pid_a_carprodes_usoant'
-        },
-        'pid_a_carprodes_usocon': {
-          'show': false,
-          'alias': 'pid_a_carprodes_usocon'
         },
         'pid_a_carprodes_veg': {
           'show': false,
@@ -2355,10 +2347,6 @@ module.exports = ConfigService = {
           'show': false,
           'alias': 'pid_a_carfocos_usoant'
         },
-        'pid_a_carfocos_usocon': {
-          'show': false,
-          'alias': 'pid_a_carfocos_usocon'
-        },
         'pid_a_carfocos_veg': {
           'show': false,
           'alias': 'pid_a_carfocos_veg'
@@ -2808,10 +2796,6 @@ module.exports = ConfigService = {
         'pid_a_caraq_usoant': {
           'show': false,
           'alias': 'pid_a_caraq_usoant'
-        },
-        'pid_a_caraq_usocon': {
-          'show': false,
-          'alias': 'pid_a_caraq_usocon'
         },
         'pid_a_caraq_veg': {
           'show': false,
