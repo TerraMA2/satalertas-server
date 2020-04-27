@@ -174,7 +174,7 @@ module.exports = function (headerDocument, reportData, title) {
             alignment: 'right'
           }
         ],
-        margin: [30, 45, 30, 15]
+        margin: [30, 25, 30, 15]
       },
       {
         text: '',
