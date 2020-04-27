@@ -11,7 +11,7 @@ exports.getAllSimplified = async (req, res) => {
     try {
         res.json(await carService.getAllSimplified(params));
     } catch (e) {
-        res.json(Result.err(e));
+        res.json(e);
     }
 };
 
@@ -20,7 +20,7 @@ exports.getAll = async (req, res) => {
     try {
         res.json(await carService.getAll());
     } catch (e) {
-        res.json(Result.err(e));
+        res.json(e);
     }
 };
 
@@ -29,6 +29,6 @@ exports.getByCpf = async (req, res) => {
     try {
         res.json(await carService.getByCpf(req.query.cpfCnpj));
     } catch (e) {
-        res.json(Result.err(e));
+        res.json(e);
     }
 };
