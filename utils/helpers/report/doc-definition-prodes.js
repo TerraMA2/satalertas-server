@@ -850,7 +850,7 @@ module.exports = function (headerDocument, reportData, title) {
             text: ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' + reportData.property.name + ' a  partir da análise do PRODES, no período ' + reportData.formattedFilterDate + '.'
           },
         ],
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 5],
         style: 'body',
         fontSize: 9
       },
@@ -862,11 +862,37 @@ module.exports = function (headerDocument, reportData, title) {
           body: [
             [
               {
+                border: [false, false, false, false],
+                text: ''
+
+              },
+              {
+                border: [false, false, false, false],
+                text: ''
+
+              },
+            ],
+            [
+              {
+                colSpan: 2,
+                style: 'tableHeader',
+                text: 'Área de Uso Consolidado (ha)'
+              }
+            ],
+            [
+              {
+                colSpan: 2,
+                alignment: 'center',
+                text: `${reportData.property.areaUsoCon}`
+              }
+            ],
+            [
+              {
                 text: 'Área atingida',
                 style: 'tableHeader'
               },
               {
-                text: 'Desmatamento pretérito\n(em ha)',
+                text: 'Desmatamento no período (ha)',
                 style: 'tableHeader'
               }
             ],
@@ -875,15 +901,47 @@ module.exports = function (headerDocument, reportData, title) {
                 rel.affectedArea,
                 rel.pastDeforestation
               ];
-            })
+            }),
+            [
+              {
+                colSpan: 2,
+                style: 'tableHeader',
+                text: 'Desmatamento por tipologia vegetal (ha)'
+              }
+            ],
+            [
+              {
+                alignment: 'center',
+                text: `${reportData.property.tableVegRadam.affectedArea}`
+              },
+              {
+                alignment: 'center',
+                text: `${reportData.property.tableVegRadam.pastDeforestation}`
+              }
+            ],
+            [
+              {
+                colSpan: 2,
+                style: 'tableHeader',
+                text: 'Desmatamento Total (ha)'
+              }
+            ],
+            [
+              {
+                colSpan: 2,
+                alignment: 'center',
+                text: `${reportData.property.areaPastDeforestation}`
+              }
+            ],
+
           ]
         },
-        fontSize: 12
+        fontSize: 9
       },
       {
         text: `7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.`,
         fontSize: 8,
-        margin: [30, 100, 30, 0]
+        margin: [30, 65, 30, 0]
       },
       {
         text: `8     Disponível em https://scholar.google.com.br/, acessado em 13.01.2020.`,
@@ -1163,10 +1221,12 @@ module.exports = function (headerDocument, reportData, title) {
     styles: {
       tableStyle: {
         alignment: 'center',
+        fontSize: 9,
         margin: [30, 0, 30, 5]
       },
       tableHeader: {
         fontSize: 10,
+        fillColor: '#eeeeff',
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 0]
