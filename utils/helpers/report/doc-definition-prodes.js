@@ -870,7 +870,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'tableHeader'
               }
             ],
-            ...reportData.tableData.map(rel => {
+            ...reportData.property.tableData.map(rel => {
               return [
                 rel.affectedArea,
                 rel.pastDeforestation

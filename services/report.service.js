@@ -48,136 +48,32 @@ setBoundingBox = function(bBox) {
 setReportFormat = async function(reportData, views, type, carColumn, carColumnSema) {
   const resultReportData = {};
 
-  const prodesYear = reportData.prodesYear;
-
-  const sqlProdesStartYear = `SELECT MIN(prodes.ano) AS start_year FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes`;
-  const prodesStartYear = await Report.sequelize.query(sqlProdesStartYear, QUERY_TYPES_SELECT);
-
-  resultReportData['prodesStartYear'] = prodesStartYear[0]['start_year'];
-
   resultReportData['bbox'] = setBoundingBox(reportData.bbox);
 
   reportData.bbox = resultReportData.bbox;
 
-  const bboxState = setBoundingBox(reportData['statebbox']);
 
   resultReportData['property'] = reportData;
 
-  const app = reportData.tableData;
-  const legalReserve = reportData.prodesLegalReserve;
-  const restrictedUse = reportData.prodesRestrictedUse;
-  const indigenousLand = reportData.prodesIndigenousLand;
-  const exploration = reportData.prodesExploration;
-  const deforestation = reportData.prodesDeforestation;
-  const embargoedArea = reportData.prodesEmbargoedArea;
-  const landArea = reportData.prodesLandArea;
-  const burnAuthorization = reportData.prodesBurnAuthorization;
-  const radamClasses = reportData.prodesRadam;
-
-  let radamProdes = 0;
-  let radamText = '';
-  if (radamClasses && radamClasses.length > 0) {
-    for (const radam of radamClasses) {
-      const area = radam['area'];
-      const cls = radam['class'];
-      if (cls !== null) {
-        radamText += `
-              ${cls}: ${area}
-          `;
-        radamProdes += area;
-      }
-    }
-  }
-
-
-  const totalRecentDeforestation = type === 'deter' ?
-      (app['recentDeforestation'] ? app['recentDeforestation'] : 0) +
-      (legalReserve['recentDeforestation'] ? legalReserve['recentDeforestation'] : 0) +
-      (indigenousLand['recentDeforestation'] ? indigenousLand['recentDeforestation'] : 0) +
-      (exploration['recentDeforestation'] ? exploration['recentDeforestation'] : 0) +
-      (deforestation['recentDeforestation'] ? deforestation['recentDeforestation'] : 0) +
-      (embargoedArea['recentDeforestation'] ? embargoedArea['recentDeforestation'] : 0) +
-      (restrictedUse['recentDeforestation'] ? restrictedUse['recentDeforestation'] : 0) +
-      (landArea['recentDeforestation'] ? landArea['recentDeforestation'] : 0) +
-      (burnAuthorization['recentDeforestation'] ? burnAuthorization['recentDeforestation'] : 0) : 0;
-
-  const totalPastDeforestation = type === 'prodes' ?
-      app['pastDeforestation'] +
-      legalReserve['pastDeforestation'] +
-      indigenousLand['pastDeforestation'] +
-      exploration['pastDeforestation'] +
-      deforestation['pastDeforestation'] +
-      embargoedArea['pastDeforestation'] +
-      restrictedUse['pastDeforestation'] +
-      landArea['pastDeforestation'] +
-      burnAuthorization['pastDeforestation'] +
-      radamProdes : 0;
-
-  const totalBurnlights =  type === 'queimada' ?
-      app['burnlights'] +
-      legalReserve['burnlights'] +
-      indigenousLand['burnlights'] +
-      exploration['burnlights'] +
-      deforestation['burnlights'] +
-      embargoedArea['burnlights'] +
-      restrictedUse['burnlights'] +
-      landArea['burnlights'] +
-      burnAuthorization['burnlights'] : 0;
-
-  const totalBurnAreas =  type === 'queimada' ?
-      app['burnAreas'] +
-      legalReserve['burnAreas'] +
-      indigenousLand['burnAreas'] +
-      exploration['burnAreas'] +
-      deforestation['burnAreas'] +
-      embargoedArea['burnAreas'] +
-      restrictedUse['burnAreas'] +
-      landArea['burnAreas'] +
-      burnAuthorization['burnAreas'] : 0;
-
-  const propertyDeforestation = [
-    app,
-    legalReserve,
-    indigenousLand,
-    exploration,
-    deforestation,
-    embargoedArea,
-    restrictedUse,
-    landArea,
-    burnAuthorization
-  ];
-
   const currentYear = new Date().getFullYear();
+  const bboxState = setBoundingBox(reportData['statebbox']);
   carColumnSema= 'rid';
   resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${bboxState}&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
   resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
   resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
 
   if (type === 'prodes') {
-    propertyDeforestation.push({
-      affectedArea: 'Vegetação RADAM BR',
-      recentDeforestation: 0,
-      pastDeforestation: radamText,
-      burnlights: 0,
-      burnAreas: 0
-    });
+    resultReportData['prodesStartYear'] = reportData['prodesStartYear'];
 
-    prodesYear.push({date: 'Total', area: resultReportData.property.prodesTotalArea});
-    resultReportData['prodesTableData'] = prodesYear;
+    resultReportData['prodesTableData'] = reportData.analyzesYear;
+    resultReportData['prodesTableData'].push({date: 'Total', area: resultReportData.property.prodesTotalArea});
+
     resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
   }
 
-  resultReportData['tableData'] = propertyDeforestation;
-
-  const httpOptions = {
-    headers: {
-      'Content-Type':  'application/xml',
-      'Authorization': 'jwt-token'
-    }
-  };
   return resultReportData;
 };
 
@@ -293,145 +189,20 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
 
 setProdesData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnExecutionDate, carRegister) {
   if (propertyData && views.PRODES && type === 'prodes') {
-    const sqlProdesYear = `SELECT
-                              extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
-                              ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as area
-                              FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS cp
-                              WHERE cp.${columnCarEstadual} = '${carRegister}'
-                              GROUP BY date
-                              ORDER BY date`;
-    const sqlProdesArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    // --- Prodes area grouped by year ---------------------------------------------------------------------------------
+    const sqlProdesYear =
+      `SELECT
+        extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
+        ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as area
+      FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS cp
+      WHERE cp.${columnCarEstadual} = '${carRegister}'
+      GROUP BY date
+      ORDER BY date `;
 
-    const sqlProdesTotalArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}'`;
+     propertyData['analyzesYear'] = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
+    // -----------------------------------------------------------------------------------------------------------------
 
-    const sqlIndigenousLand = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_TI.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlLegalReserve = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_RESERVA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlAPP = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_APP.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlAnthropizedUse = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USOANT.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlNativeVegetation = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEGNAT.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-
-    const sqlAPPPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_APP.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlLegalReservePRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_RESERVA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlIndigenousLandPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_TI.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlExploraPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EXPLORA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlDesmatePRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESMATE.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlEmbargoedAreaPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EMB.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlLandAreaPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESEMB.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlRestrictUsePRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USO_RESTRITO.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlBurnAuthorizationPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_QUEIMA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-
-    const sqlFisionomiaPRODESSum = `SELECT de_veg_radambr_fisionomia AS class, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEG_RADAM.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
-
-    const resultRestrictUsePRODESSum = await Report.sequelize.query(sqlRestrictUsePRODESSum, QUERY_TYPES_SELECT);
-    const restrictUsePRODESSum = resultRestrictUsePRODESSum;
-
-    const resultBurnAuthorizationPRODESSum = await Report.sequelize.query(sqlBurnAuthorizationPRODESSum, QUERY_TYPES_SELECT);
-    const burnAuthorizationPRODESSum = resultBurnAuthorizationPRODESSum;
-
-    const resultFisionomiaPRODESSum = await Report.sequelize.query(sqlFisionomiaPRODESSum, QUERY_TYPES_SELECT);
-    const fisionomiaPRODESSum = resultFisionomiaPRODESSum;
-
-    const resultAPPPRODESSum = await Report.sequelize.query(sqlAPPPRODESSum, QUERY_TYPES_SELECT);
-    const aPPPRODESSum = resultAPPPRODESSum;
-
-    const resultLegalReservePRODESSum = await Report.sequelize.query(sqlLegalReservePRODESSum, QUERY_TYPES_SELECT);
-    const legalReservePRODESSum = resultLegalReservePRODESSum;
-
-    const resultIndigenousLandPRODESSum = await Report.sequelize.query(sqlIndigenousLandPRODESSum, QUERY_TYPES_SELECT);
-    const indigenousLandPRODESSum = resultIndigenousLandPRODESSum;
-
-    const resultExploraPRODESSum = await Report.sequelize.query(sqlExploraPRODESSum, QUERY_TYPES_SELECT);
-    const explorationPRODESSum = resultExploraPRODESSum;
-
-    const resultDesmatePRODESSum = await Report.sequelize.query(sqlDesmatePRODESSum, QUERY_TYPES_SELECT);
-    const deforestationPRODESSum = resultDesmatePRODESSum;
-
-    const resultEmbargoedAreaPRODESSum = await Report.sequelize.query(sqlEmbargoedAreaPRODESSum, QUERY_TYPES_SELECT);
-    const embargoedAreaPRODESSum = resultEmbargoedAreaPRODESSum;
-
-    const resultLandAreaPRODESSum = await Report.sequelize.query(sqlLandAreaPRODESSum, QUERY_TYPES_SELECT);
-    const landAreaPRODESSum = resultLandAreaPRODESSum;
-
-    const resultProdesArea = await Report.sequelize.query(sqlProdesArea, QUERY_TYPES_SELECT);
-    const prodesArea = resultProdesArea;
-
-    const resultProdesTotalArea = await Report.sequelize.query(sqlProdesTotalArea, QUERY_TYPES_SELECT);
-    const prodesTotalArea = resultProdesTotalArea;
-
-    const resultIndigenousLand = await Report.sequelize.query(sqlIndigenousLand, QUERY_TYPES_SELECT);
-    const indigenousLand = resultIndigenousLand;
-
-    const resultLegalReserve = await Report.sequelize.query(sqlLegalReserve, QUERY_TYPES_SELECT);
-    const legalReserve = resultLegalReserve;
-
-    const resultAPP = await Report.sequelize.query(sqlAPP, QUERY_TYPES_SELECT);
-    const app = resultAPP;
-
-    const resultAnthropizedUse = await Report.sequelize.query(sqlAnthropizedUse, QUERY_TYPES_SELECT);
-    const anthropizedUse = resultAnthropizedUse;
-
-    const resultNativeVegetation = await Report.sequelize.query(sqlNativeVegetation, QUERY_TYPES_SELECT);
-    const nativeVegetation = resultNativeVegetation;
-
-    const resultProdesYear = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
-    const prodesYear = resultProdesYear;
-
-
-    propertyData['prodesArea'] = prodesArea[0]['area'];
-    propertyData['prodesTotalArea'] = prodesTotalArea[0]['area'];
-    propertyData['prodesYear'] = prodesYear;
-
-    let prodesSumArea = 0;
-
-    prodesSumArea += aPPPRODESSum[0]['area'] ? aPPPRODESSum[0]['area'] : 0;
-    prodesSumArea += legalReservePRODESSum[0]['area'] ? legalReservePRODESSum[0]['area'] : 0;
-    prodesSumArea += indigenousLandPRODESSum[0]['area'] ? indigenousLandPRODESSum[0]['area'] : 0;
-    prodesSumArea += deforestationPRODESSum[0]['area'] ? deforestationPRODESSum[0]['area'] : 0;
-    prodesSumArea += embargoedAreaPRODESSum[0]['area'] ? embargoedAreaPRODESSum[0]['area'] : 0;
-    prodesSumArea += landAreaPRODESSum[0]['area'] ? landAreaPRODESSum[0]['area'] : 0;
-
-    if (!propertyData['tableData']){ propertyData['tableData'] = {}; }
-    propertyData['tableData']['affectedArea'] = 'APP';
-    propertyData['tableData']['pastDeforestation'] = aPPPRODESSum[0]['area'];
-
-    if (!propertyData['prodesLegalReserve']){ propertyData['prodesLegalReserve'] = {}; }
-    propertyData['prodesLegalReserve']['affectedArea'] = 'ARL';
-    propertyData['prodesLegalReserve']['pastDeforestation'] = legalReservePRODESSum[0]['area'];
-
-    if (!propertyData['prodesRestrictedUse']){ propertyData['prodesRestrictedUse'] = {}; }
-    propertyData['prodesRestrictedUse']['affectedArea'] = 'AUR';
-    propertyData['prodesRestrictedUse']['pastDeforestation'] = restrictUsePRODESSum[0]['area'];
-
-    if (!propertyData['prodesIndigenousLand']){ propertyData['prodesIndigenousLand'] = {}; }
-    propertyData['prodesIndigenousLand']['affectedArea'] = 'TI';
-    propertyData['prodesIndigenousLand']['pastDeforestation'] = indigenousLandPRODESSum[0]['area'];
-
-    if (!propertyData['prodesExploration']){ propertyData['prodesExploration'] = {}; }
-    propertyData['prodesExploration']['affectedArea'] = 'AUTEX';
-    propertyData['prodesExploration']['pastDeforestation'] = explorationPRODESSum[0]['area'];
-
-    if (!propertyData['prodesDeforestation']){ propertyData['prodesDeforestation'] = {}; }
-    propertyData['prodesDeforestation']['affectedArea'] = 'AD';
-    propertyData['prodesDeforestation']['pastDeforestation'] = deforestationPRODESSum[0]['area'];
-
-    if (!propertyData['prodesEmbargoedArea']){ propertyData['prodesEmbargoedArea'] = {}; }
-    propertyData['prodesEmbargoedArea']['affectedArea'] = 'Área embargada';
-    propertyData['prodesEmbargoedArea']['pastDeforestation'] = embargoedAreaPRODESSum[0]['area'];
-
-    if (!propertyData['prodesLandArea']){ propertyData['prodesLandArea'] = {}; }
-    propertyData['prodesLandArea']['affectedArea'] = 'Área desembargada';
-    propertyData['prodesLandArea']['pastDeforestation'] = landAreaPRODESSum[0]['area'];
-
-    if (!propertyData['prodesBurnAuthorization']){ propertyData['prodesBurnAuthorization'] = {}; }
-    propertyData['prodesBurnAuthorization']['affectedArea'] = 'AQ';
-    propertyData['prodesBurnAuthorization']['pastDeforestation'] = burnAuthorizationPRODESSum[0]['area'];
-
-    if (!propertyData['prodesRadam']){ propertyData['prodesRadam'] = {}; }
-    propertyData['prodesRadam'] = fisionomiaPRODESSum;
-
-    if (!propertyData['foundProdes']){ propertyData['foundProdes'] = {}; }
-    propertyData['foundProdes'] = prodesSumArea ? true : false
-
+    // --- Radam View vegetation of area grouped by physiognomy --------------------------------------------------------
     const sqlVegRadam =
       ` SELECT 
              gid,
@@ -440,10 +211,95 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
              fisionomia,
              ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_,
              ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam 
-        FROM car_x_vegradam WHERE gid = ${carRegister}
-       `;
-    const resultVegRadam = await Report.sequelize.query(sqlVegRadam, QUERY_TYPES_SELECT);
-    propertyData['vegRadam'] = resultVegRadam;
+        FROM car_x_vegradam WHERE gid = ${carRegister} `;
+
+    propertyData['vegRadam']  = await Report.sequelize.query(sqlVegRadam, QUERY_TYPES_SELECT);
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // --- Year start --------------------------------------------------------------------------------------------------
+    const sqlProdesStartYear = `SELECT MIN(prodes.ano) AS start_year FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes`;
+    const prodesStartYear = await Report.sequelize.query(sqlProdesStartYear, QUERY_TYPES_SELECT);
+    propertyData['prodesStartYear'] = prodesStartYear[0]['start_year'];
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // --- Fisionomia of prodes radam ----------------------------------------------------------------------------------
+    const sqlFisionomiaPRODESSum = `SELECT de_veg_radambr_fisionomia AS class, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEG_RADAM.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
+    propertyData['prodesRadam'] = await Report.sequelize.query(sqlFisionomiaPRODESSum, QUERY_TYPES_SELECT);
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // --- Total area of prodes ----------------------------------------------------------------------------------------
+    const sqlProdesTotalArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}'`;
+    const resultProdesTotalArea = await Report.sequelize.query(sqlProdesTotalArea, QUERY_TYPES_SELECT);
+    propertyData['prodesTotalArea'] = resultProdesTotalArea[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // --- Prodes area by period ---------------------------------------------------------------------------------------
+    const sqlProdesArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    const resultProdesArea = await Report.sequelize.query(sqlProdesArea, QUERY_TYPES_SELECT);
+    propertyData['prodesArea'] = resultProdesArea[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // ---- Values of table --------------------------------------------------------------------------------------------
+    const sqlCrossings =
+      ` SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_TI.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_RESERVA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'app' AS relationship, 'APP' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_APP.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EXPLORA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'deforestation' AS relationship, 'AD' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESMATE.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL 
+        SELECT 'restrictedUse' AS relationship, 'AUR' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USO_RESTRITO.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EMB.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESEMB.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_QUEIMA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
+        UNION ALL
+        SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_UC.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} and de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
+        UNION ALL 
+        SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_UC.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} and de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
+      `;
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const resCrossings = await Report.sequelize.query(sqlCrossings, QUERY_TYPES_SELECT);
+    let prodesSumArea = 0;
+    resCrossings.forEach(crossing => {
+      if (!propertyData['tableData']){ propertyData['tableData'] = []; }
+      propertyData['tableData'].push({ affectedArea: crossing['affected_area'], pastDeforestation: crossing['area'] });
+
+      prodesSumArea += parseFloat(crossing['area']) ? parseFloat(crossing['area']) : 0.0000;
+    });
+
+    if (!propertyData['foundProdes']){ propertyData['foundProdes'] = {}; }
+    propertyData['foundProdes'] = prodesSumArea ? true : false;
+
+
+    let radamProdes = 0;
+    let radamText = '';
+    if (propertyData['prodesRadam'] && propertyData['prodesRadam'].length > 0) {
+      for (const radam of propertyData['prodesRadam']) {
+        const area = radam['area'];
+        const cls = radam['class'];
+        if (cls !== null) {
+          radamText += `
+              ${cls}: ${area}
+          `;
+          radamProdes += area;
+        }
+      }
+    }
+
+    propertyData['tableData'].push({
+      affectedArea: 'Vegetação RADAM BR',
+      recentDeforestation: 0,
+      pastDeforestation: radamText,
+      burnlights: 0,
+      burnAreas: 0
+    });
   }
 
   return await propertyData;
