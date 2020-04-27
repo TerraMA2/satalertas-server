@@ -1048,8 +1048,8 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-              ' com imagens de alta resolução (Spot-2,5m, Landsat e Sentinel) como estava a cobertura ' +
-              'do imóvel em ' + reportData.prodesStartYear + ' e como se encontra atualmente (' + reportData.currentYear + '), indicando ' +
+              ' com imagens de alta resolução (Spot-2,5m, Landsat-30m, Sentinel-10m e Planet-3m) como estava a cobertura ' +
+              'do imóvel em 2008 e como se encontra atualmente (' + reportData.currentYear + '), indicando ' +
               'a ocorrência de desmatamento ilegal no imóvel rural.'
             ),
             margin: [30, 0, 30, 15],
@@ -1109,10 +1109,11 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Sentinel de 2019 e (c) Landsat de 2018`,
+            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Sentinel de 2019, (c) Landsat de 2018 e (d) Planet de ${reportData.currentYear}`,
             bold: false
           }
         ],
+        margin: [30, 0, 30, 0],
         alignment: 'center',
         fontSize: 9
       },
