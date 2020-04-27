@@ -45,25 +45,10 @@ setBoundingBox = function(bBox) {
   return `${Xmin}, ${Ymin}, ${Xmax}, ${Ymax}`;
 }
 
-setReportFormat = async function(reportData, views, type, carColumn, carColumnSema) {
-  const resultReportData = {};
-
-  resultReportData['bbox'] = setBoundingBox(reportData.bbox);
-
-  reportData.bbox = resultReportData.bbox;
-
-
-  resultReportData['property'] = reportData;
-
-  const currentYear = new Date().getFullYear();
-  const bboxState = setBoundingBox(reportData['statebbox']);
-  carColumnSema= 'rid';
-  resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${bboxState}&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${reportData['prodesStartYear']}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${reportData['prodesStartYear']}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
-
-  if (type === 'prodes') {
-    resultReportData['prodesStartYear'] = reportData['prodesStartYear'];
+const analysisReportFormat = {
+  prodes(reportData, views, resultReportData, carColumn, carColumnSema) {
+    const currentYear = new Date().getFullYear();
+    resultReportData['prodesStartYear'] = reportData['startYear'];
 
     resultReportData['prodesTableData'] = reportData.analyzesYear;
     resultReportData['prodesTableData'].push({date: 'Total', area: resultReportData.property.prodesTotalArea});
@@ -73,7 +58,28 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
     resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsImage6'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_119:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;layout:vertical&LAYER=${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}`;
+  },
+  deter (reportData, resultReportData) {
+
   }
+}
+
+setReportFormat = async function(reportData, views, type, carColumn, carColumnSema) {
+  const resultReportData = {};
+
+  resultReportData['bbox'] = setBoundingBox(reportData.bbox);
+
+  reportData.bbox = resultReportData.bbox;
+
+  resultReportData['property'] = reportData;
+
+  reportData['statebbox'] = setBoundingBox(reportData['statebbox']);
+  carColumnSema= 'rid';
+  resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${reportData['startYear']}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${reportData['startYear']}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+
+  analysisReportFormat[type](reportData, views, resultReportData, carColumn, carColumnSema);
 
   return resultReportData;
 };
@@ -199,7 +205,6 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
       WHERE cp.${columnCarEstadual} = '${carRegister}'
       GROUP BY date
       ORDER BY date `;
-
      propertyData['analyzesYear'] = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -213,14 +218,13 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
              ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_,
              ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam 
         FROM car_x_vegradam WHERE gid = ${carRegister} `;
-
     propertyData['vegRadam']  = await Report.sequelize.query(sqlVegRadam, QUERY_TYPES_SELECT);
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Year start --------------------------------------------------------------------------------------------------
     const sqlProdesStartYear = `SELECT MIN(prodes.ano) AS start_year FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes`;
     const prodesStartYear = await Report.sequelize.query(sqlProdesStartYear, QUERY_TYPES_SELECT);
-    propertyData['prodesStartYear'] = prodesStartYear[0]['start_year'];
+    propertyData['startYear'] = prodesStartYear[0]['start_year'];
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Fisionomia of prodes radam ----------------------------------------------------------------------------------
@@ -232,6 +236,18 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     const sqlProdesTotalArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}'`;
     const resultProdesTotalArea = await Report.sequelize.query(sqlProdesTotalArea, QUERY_TYPES_SELECT);
     propertyData['prodesTotalArea'] = resultProdesTotalArea[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // --- Total area of prodes period ----------------------------------------------------------------------------------------
+    const sqlProdesAreaPastDeforestation = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}' ${dateSql} `;
+    const resultProdesAreaPastDeforestation = await Report.sequelize.query(sqlProdesAreaPastDeforestation, QUERY_TYPES_SELECT);
+    propertyData['areaPastDeforestation'] = resultProdesAreaPastDeforestation[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // --- Total area of UsoCon ----------------------------------------------------------------------------------------
+    const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${views.STATIC.children.CAR_X_USOCON.table_name} where gid_car = '${carRegister}'`;
+    const resultUsoConArea = await Report.sequelize.query(sqlUsoConArea, QUERY_TYPES_SELECT);
+    propertyData['areaUsoCon'] = resultUsoConArea[0]['area'];
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Prodes area by period ---------------------------------------------------------------------------------------
@@ -278,7 +294,6 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     if (!propertyData['foundProdes']){ propertyData['foundProdes'] = {}; }
     propertyData['foundProdes'] = prodesSumArea ? true : false;
 
-
     let radamProdes = 0;
     let radamText = '';
     if (propertyData['prodesRadam'] && propertyData['prodesRadam'].length > 0) {
@@ -286,21 +301,16 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
         const area = radam['area'];
         const cls = radam['class'];
         if (cls !== null) {
-          radamText += `
-              ${cls}: ${area}
-          `;
+          radamText += radamText === '' ? `${cls}: ${area}` : `\n ${cls}: ${area}`;
           radamProdes += area;
         }
       }
     }
 
-    propertyData['tableData'].push({
+    propertyData['tableVegRadam'] = {
       affectedArea: 'Vegetação RADAM BR',
-      recentDeforestation: 0,
-      pastDeforestation: radamText,
-      burnlights: 0,
-      burnAreas: 0
-    });
+      pastDeforestation: radamText
+    };
   }
 
   return await propertyData;
