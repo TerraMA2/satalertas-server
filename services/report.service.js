@@ -59,8 +59,8 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
   const bboxState = setBoundingBox(reportData['statebbox']);
   carColumnSema= 'rid';
   resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${bboxState}&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.prodesStartYear}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${reportData['prodesStartYear']}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${reportData['prodesStartYear']}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
 
   if (type === 'prodes') {
     resultReportData['prodesStartYear'] = reportData['prodesStartYear'];
@@ -586,7 +586,7 @@ setDocDefinitions = async function(reportData, docDefinition) {
         ndviContext.push({columns: [reportData.chartImages[i].myChart]});
       }
       for (let j = 0; j < docDefinition.content.length; j++) {
-        if (j === 96) {
+        if (j === 98) {
           ndviContext.forEach(ndvi => {
             content.push(ndvi);
           });
