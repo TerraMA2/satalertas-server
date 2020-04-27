@@ -1004,7 +1004,6 @@ module.exports = function (headerDocument, reportData, title) {
         columns: [
           reportData.images.geoserverImage4,
           reportData.images.geoserverImage5,
-          reportData.images.geoserverImage6
         ],
         margin: [30, 0, 30, 0]
       },
@@ -1019,9 +1018,26 @@ module.exports = function (headerDocument, reportData, title) {
             text: "b",
             style: "body",
             alignment: "center"
-          },
+          }
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        columns: [
+          reportData.images.geoserverImage6,
+          reportData.images.geoserverImage7
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        columns: [
           {
             text: "c",
+            style: "body",
+            alignment: "center"
+          },
+          {
+            text: "d",
             style: "body",
             alignment: "center"
           }
