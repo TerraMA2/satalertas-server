@@ -562,15 +562,12 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
 };
 
 setDocDefinitions = async function(reportData, docDefinition) {
-  const ndviContext = [];
-
-  const content = [];
-
   if (reportData.type === 'prodes') {
     const startDate = new Date(reportData.date[0]).toLocaleDateString('pt-BR');
     const endDate = new Date(reportData.date[1]).toLocaleDateString('pt-BR');
 
     if (reportData.chartImages && (reportData.chartImages.length > 0)) {
+      const ndviContext = [];
       for (let i = 0; i < reportData.chartImages.length; ++i) {
         if (i === 0) {
           ndviContext.push({text: '', pageBreak: 'after'});
@@ -588,6 +585,8 @@ setDocDefinitions = async function(reportData, docDefinition) {
         ndviContext.push({columns: [reportData.chartImages[i].geoserverImageNdvi]});
         ndviContext.push({columns: [reportData.chartImages[i].myChart]});
       }
+
+      const content = [];
       for (let j = 0; j < docDefinition.content.length; j++) {
         if (j === 98) {
           ndviContext.forEach(ndvi => {
