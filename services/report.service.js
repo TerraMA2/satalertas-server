@@ -206,7 +206,7 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
       WHERE cp.${columnCarEstadual} = '${carRegister}'
       GROUP BY date
       ORDER BY date `;
-     propertyData['analyzesYear'] = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
+      propertyData['analyzesYear'] = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Radam View vegetation of area grouped by physiognomy --------------------------------------------------------
@@ -602,9 +602,9 @@ setDocDefinitions = async function(reportData, docDefinition) {
         }
         content.push(docDefinition.content[j]);
       }
-    }
 
-    docDefinition.content = content;
+      docDefinition.content = content;
+    }
   }
   return await docDefinition;
 };
