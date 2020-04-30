@@ -56,20 +56,6 @@
         "addParameter": true
     },
     {
-        "name": "view102",
-        "title": "CAR_FOCOS x UsoCon",
-        "workspace": "terrama2_102",
-        "sql": "SELECT main_table.* FROM public.a_carfocos_usocon_79 AS main_table WHERE a_carfocos_74_de_car_validado_sema_numero_do1 IN (SELECT tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 AS subtitle FROM public.a_carfocos_usocon_79 AS tableWhere GROUP BY tableWhere.a_carfocos_74_de_car_validado_sema_numero_do1 HAVING count(1) BETWEEN %min% AND %max%)",
-        "keyColumn": "monitored_id",
-        "geometry": {
-            "name":"intersection_geom",
-            "type": "Geometry",
-            "srid": 4326
-        },
-        "dataStore": "102_103_datastore",
-        "addParameter": true
-    },
-    {
         "name": "view101",
         "title": "CAR_FOCOS x VegNat",
         "workspace": "terrama2_101",

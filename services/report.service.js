@@ -17,6 +17,14 @@ const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definit
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
 
+setAnalysisYear = function(data, period, variable) {
+  const analysisYears = [];
+  for (year = period['startYear']; year <= period['endYear']; year++){
+    analysisYears.push( {date: year, [`${variable}`] : data.find(analise => analise.date === year) ? (data.find(analise => analise.date === year)[variable]) : '0.0000'} );
+  }
+  return analysisYears;
+}
+
 setBoundingBox = function(bBox) {
 
   const bboxArray = bBox.split(',');
@@ -326,7 +334,7 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     const sqlSpotlightsYear = `SELECT
                               extract(year from date_trunc('year', cf.${columnExecutionDate})) AS date,
-                              COUNT(cf.*) as spotlights
+                              COUNT(1) as spotlights
                               FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} cf
                               WHERE cf.${columnCarEstadual} = '${carRegister}'
                               GROUP BY date
@@ -840,429 +848,132 @@ module.exports = FileReport = {
         columnAreaHaCar,
         carRegister);
 
-      const sqlBurningSpotlights = `
-                  SELECT
-                  count(1) as focuscount,
-                  extract('YEAR' FROM focus.${columnExecutionDate}) as year
-                  FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} as focus
-                  INNER JOIN public.${tableName} AS car on
-                  focus.${columnCar} = car.${columnCarSemas} AND
-                  car.${columnCarSemas} = '${carRegister}'
-                  group by year
-                  ORDER BY year
-                `;
+      // // ----- Burning spot lights -------------------------------------------------------------------------------------
+      // const sqlBurningSpotlights =
+      //     `
+      //       SELECT
+      //               count(1) as focuscount,
+      //               extract('YEAR' FROM focus.${columnExecutionDate}) as year
+      //       FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} as focus
+      //       INNER JOIN public.${tableName} AS car on
+      //                                   focus.${columnCar} = car.${columnCarSemas} AND
+      //                                   car.${columnCarSemas} = '${carRegister}'
+      //       group by year
+      //       ORDER BY year
+      //     `;
+      //
+      // const resultBurningSpotlights = await Report.sequelize.query(sqlBurningSpotlights, QUERY_TYPES_SELECT);
+      // const burningSpotlights = resultBurningSpotlights;
+      // // ---------------------------------------------------------------------------------------------------------------
 
-      const resultBurningSpotlights = await Report.sequelize.query(sqlBurningSpotlights, QUERY_TYPES_SELECT);
-      const burningSpotlights = resultBurningSpotlights;
+      // --- Implements vision of Burned -------------------------------------------------------------------------------
+      // const sqlBurnedAreas = `
+      //             SELECT
+      //                   ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as burnedAreas,
+      //                   extract('YEAR' FROM areaq.${columnExecutionDate}) as date
+      //             FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} as areaq
+      //             group by date
+      //             ORDER BY date
+      //           `;
+      //
+      // const resultBurnedAreas = await Report.sequelize.query(sqlBurnedAreas, QUERY_TYPES_SELECT);
+      // const burnedAreas = resultBurnedAreas;
+      // ---------------------------------------------------------------------------------------------------------------
 
-      const sqlBurnedAreas = `
-                  SELECT
-                  ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as burnedAreas,
-                  extract('YEAR' FROM areaq.${columnExecutionDate}) as date
-                  FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} as areaq
-                  INNER JOIN public.${tableName} AS car on
-                  areaq.${columnCar} = car.${columnCarSemas} AND
-                  car.${columnCarSemas} = '${carRegister}'
-                  group by date
-                  ORDER BY date
-                `;
-
-      const resultBurnedAreas = await Report.sequelize.query(sqlBurnedAreas, QUERY_TYPES_SELECT);
-      const burnedAreas = resultBurnedAreas;
-
-      const sqlBurnedAreasYear = `SELECT
-                            extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
-                            ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as burnedAreas
-                            FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} areaq
-                            WHERE areaq.${columnCar} = '${carRegister}'
-                            GROUP BY date
-                            ORDER BY date;`;
+      // --- Implements vision of Burned Area of CAR for year ----------------------------------------------------------
+      const sqlBurnedAreasYear =
+          ` SELECT
+                  extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
+                  ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as area
+            FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} areaq
+            WHERE areaq.${columnCar} = '${carRegister}'
+            GROUP BY date
+            ORDER BY date`;
       const resultBurnedAreasYear = await Report.sequelize.query(sqlBurnedAreasYear, QUERY_TYPES_SELECT);
       const burnedAreasYear = resultBurnedAreasYear;
+      // ---------------------------------------------------------------------------------------------------------------
 
-      const sqlProdesYear = `SELECT
+      // ----- Area of Prodes for year---------------------------------------------------------------------------------------------------
+      const sqlProdesYear =
+          ` SELECT
                             extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
                             ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0),4) as area
-                            FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} cp
-                            WHERE cp.${columnCar} = '${carRegister}'
-                            GROUP BY date
-                            ORDER BY date;`;
+            FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} cp
+            WHERE cp.${columnCar} = '${carRegister}'
+            GROUP BY date
+            ORDER BY date`;
+      const prodesYear = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
+      // ---------------------------------------------------------------------------------------------------------------
 
-      const sqlDeterYear = `SELECT
+      // ---------------------------------------------------------------------------------------------------------------
+      const sqlDeterYear =
+          ` SELECT
                             extract(year from date_trunc('year', cd.${columnExecutionDate})) AS date,
                             ROUND(COALESCE(SUM(CAST(cd.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as area
-                            FROM public.${views.DETER.children.CAR_X_DETER.table_name} cd
-                            WHERE cd.${columnCar} = '${carRegister}'
-                            GROUP BY date
-                            ORDER BY date;`;
+            FROM public.${views.DETER.children.CAR_X_DETER.table_name} cd
+            WHERE cd.${columnCar} = '${carRegister}'
+            GROUP BY date
+            ORDER BY date`;
+      const deterYear = await Report.sequelize.query(sqlDeterYear, QUERY_TYPES_SELECT);
+      // ---------------------------------------------------------------------------------------------------------------
 
-      const sqlSpotlightsYear = `SELECT
-                            extract(year from date_trunc('year', cf.${columnExecutionDate})) AS date,
-                            COUNT(cf.*) as spotlights
-                            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} cf
-                            WHERE cf.${columnCar} = '${carRegister}'
-                            GROUP BY date
-                            ORDER BY date;`;
+      // ---------------------------------------------------------------------------------------------------------------
+      const sqlSpotlightsYear =
+          ` SELECT
+                  extract(year from date_trunc('year', cf.${columnExecutionDate})) AS date,
+                  COUNT(cf.*) as spotlights
+            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} cf
+            WHERE cf.${columnCar} = '${carRegister}'
+            GROUP BY date
+            ORDER BY date`;
+      const spotlightsYear = await Report.sequelize.query(sqlSpotlightsYear, QUERY_TYPES_SELECT);
+      // ---------------------------------------------------------------------------------------------------------------
 
       const dateSql = ` and ${columnExecutionDate}::date >= '${dateFrom}' AND ${columnExecutionDate}::date <= '${dateTo}'`;
-
+      // ---------------------------------------------------------------------------------------------------------------
       const sqlProdesArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCar} = '${carRegister}' ${dateSql}`;
+      const prodesArea = await Report.sequelize.query(sqlProdesArea, QUERY_TYPES_SELECT);
 
       const sqlProdesTotalArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCar} = '${carRegister}'`;
+      const prodesTotalArea = await Report.sequelize.query(sqlProdesTotalArea, QUERY_TYPES_SELECT);
+      // ---------------------------------------------------------------------------------------------------------------
 
+      // ---- Detailed view of the property ----------------------------------------------------------------------------
       const sqlIndigenousLand = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_TI.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
+      const sqlConservationUnit= `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_UC.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
       const sqlLegalReserve = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_RESERVA.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
       const sqlAPP = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_APP.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
       const sqlAnthropizedUse = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USOANT.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
       const sqlNativeVegetation = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEGNAT.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
 
-      const sqlAPPDETERCount = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS count FROM public.${views.DETER.children.CAR_DETER_X_APP.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLegalReserveDETERCount = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS count FROM public.${views.DETER.children.CAR_DETER_X_RESERVA.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlIndigenousLandDETERCount = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS count FROM public.${views.DETER.children.CAR_DETER_X_TI.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlExploraDETERCount = `SELECT SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS count FROM public.${views.DETER.children.CAR_DETER_X_EXPLORA.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlDesmateDETERCount = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS count FROM public.${views.DETER.children.CAR_DETER_X_DESMATE.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlEmbargoedAreaDETERCount = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS count FROM public.${views.DETER.children.CAR_DETER_X_EMB.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLandAreaDETERCount = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS count FROM public.${views.DETER.children.CAR_DETER_X_DESEMB.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-
-      const sqlRestrictUseDETERCount = `SELECT COUNT(1) AS count FROM public.${views.DETER.children.CAR_DETER_X_USO_RESTRITO.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlBurnAuthorizationDETERCount = `SELECT COUNT(1) AS count FROM public.${views.DETER.children.CAR_DETER_X_QUEIMA.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlFisionomiaDETERCount = `SELECT de_veg_radambr_fisionomia AS class, COUNT(1) AS count FROM public.${views.DETER.children.CAR_DETER_X_VEG_RADAM.table_name} where ${views.DETER.tableOwner}_${columnCar} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
-
-      const resultRestrictUseDETERCount = await Report.sequelize.query(sqlRestrictUseDETERCount, QUERY_TYPES_SELECT);
-      const restrictUseDETERCount = resultRestrictUseDETERCount;
-
-      const resultBurnAuthorizationDETERCount = await Report.sequelize.query(sqlBurnAuthorizationDETERCount, QUERY_TYPES_SELECT);
-      const burnAuthorizationDETERCount = resultBurnAuthorizationDETERCount;
-
-      const resultFisionomiaDETERCount = await Report.sequelize.query(sqlFisionomiaDETERCount, QUERY_TYPES_SELECT);
-      const fisionomiaDETERCount = resultFisionomiaDETERCount;
-
-      const resultAPPDETERCount = await Report.sequelize.query(sqlAPPDETERCount, QUERY_TYPES_SELECT);
-      const aPPDETERCount = resultAPPDETERCount;
-
-      const resultLegalReserveDETERCount = await Report.sequelize.query(sqlLegalReserveDETERCount, QUERY_TYPES_SELECT);
-      const legalReserveDETERCount = resultLegalReserveDETERCount;
-
-      const resultIndigenousLandDETERCount = await Report.sequelize.query(sqlIndigenousLandDETERCount, QUERY_TYPES_SELECT);
-      const indigenousLandDETERCount = resultIndigenousLandDETERCount;
-
-      const resultExploraDETERCount = await Report.sequelize.query(sqlExploraDETERCount, QUERY_TYPES_SELECT);
-      const explorationDETERCount = resultExploraDETERCount;
-
-      const resultDesmateDETERCount = await Report.sequelize.query(sqlDesmateDETERCount, QUERY_TYPES_SELECT);
-      const deforestationDETERCount = resultDesmateDETERCount;
-
-      const resultEmbargoedAreaDETERCount = await Report.sequelize.query(sqlEmbargoedAreaDETERCount, QUERY_TYPES_SELECT);
-      const embargoedAreaDETERCount = resultEmbargoedAreaDETERCount;
-
-      const resultLandAreaDETERCount = await Report.sequelize.query(sqlLandAreaDETERCount, QUERY_TYPES_SELECT);
-      const landAreaDETERCount = resultLandAreaDETERCount;
-
-      const sqlAPPPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_APP.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLegalReservePRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_RESERVA.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlIndigenousLandPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_TI.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlExploraPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EXPLORA.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlDesmatePRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESMATE.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlEmbargoedAreaPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EMB.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLandAreaPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESEMB.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlRestrictUsePRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USO_RESTRITO.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlBurnAuthorizationPRODESSum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_QUEIMA.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-
-      const sqlFisionomiaPRODESSum = `SELECT de_veg_radambr_fisionomia AS class, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEG_RADAM.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
-
-      const resultRestrictUsePRODESSum = await Report.sequelize.query(sqlRestrictUsePRODESSum, QUERY_TYPES_SELECT);
-      const restrictUsePRODESSum = resultRestrictUsePRODESSum;
-
-      const resultBurnAuthorizationPRODESSum = await Report.sequelize.query(sqlBurnAuthorizationPRODESSum, QUERY_TYPES_SELECT);
-      const burnAuthorizationPRODESSum = resultBurnAuthorizationPRODESSum;
-
-      const resultFisionomiaPRODESSum = await Report.sequelize.query(sqlFisionomiaPRODESSum, QUERY_TYPES_SELECT);
-      const fisionomiaPRODESSum = resultFisionomiaPRODESSum;
-
-      const resultAPPPRODESSum = await Report.sequelize.query(sqlAPPPRODESSum, QUERY_TYPES_SELECT);
-      const aPPPRODESSum = resultAPPPRODESSum;
-
-      const resultLegalReservePRODESSum = await Report.sequelize.query(sqlLegalReservePRODESSum, QUERY_TYPES_SELECT);
-      const legalReservePRODESSum = resultLegalReservePRODESSum;
-
-      const resultIndigenousLandPRODESSum = await Report.sequelize.query(sqlIndigenousLandPRODESSum, QUERY_TYPES_SELECT);
-      const indigenousLandPRODESSum = resultIndigenousLandPRODESSum;
-
-      const resultExploraPRODESSum = await Report.sequelize.query(sqlExploraPRODESSum, QUERY_TYPES_SELECT);
-      const explorationPRODESSum = resultExploraPRODESSum;
-
-      const resultDesmatePRODESSum = await Report.sequelize.query(sqlDesmatePRODESSum, QUERY_TYPES_SELECT);
-      const deforestationPRODESSum = resultDesmatePRODESSum;
-
-      const resultEmbargoedAreaPRODESSum = await Report.sequelize.query(sqlEmbargoedAreaPRODESSum, QUERY_TYPES_SELECT);
-      const embargoedAreaPRODESSum = resultEmbargoedAreaPRODESSum;
-
-      const resultLandAreaPRODESSum = await Report.sequelize.query(sqlLandAreaPRODESSum, QUERY_TYPES_SELECT);
-      const landAreaPRODESSum = resultLandAreaPRODESSum;
-
-      const sqlAPPFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_APP.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLegalReserveFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_RESERVA.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlIndigenousLandFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_TI.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlExploraFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_EXPLORA.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlDesmateFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_DESMATE.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlEmbFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_EMB.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLandAreaFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_DESEMB.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlRestrictUseFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_USO_RESTRITO.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlBurnAuthorizationFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlFisionomiaFOCOSCount = `SELECT de_veg_radambr_fisionomia AS class, COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_VEG_RADAM.table_name} where ${views.BURNED.tableOwner}_${columnCar} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
-
-      const resultRestrictUseFOCOSCount = await Report.sequelize.query(sqlRestrictUseFOCOSCount, QUERY_TYPES_SELECT);
-      const restrictUseFOCOSCount = resultRestrictUseFOCOSCount;
-
-      const resultBurnAuthorizationFOCOSCount = await Report.sequelize.query(sqlBurnAuthorizationFOCOSCount, QUERY_TYPES_SELECT);
-      const burnAuthorizationFOCOSCount = resultBurnAuthorizationFOCOSCount;
-
-      const resultFisionomiaFOCOSCount = await Report.sequelize.query(sqlFisionomiaFOCOSCount, QUERY_TYPES_SELECT);
-      const fisionomiaFOCOSCount = resultFisionomiaFOCOSCount;
-
-      const resultAPPFOCOSCount = await Report.sequelize.query(sqlAPPFOCOSCount, QUERY_TYPES_SELECT);
-      const aPPFOCOSCount = resultAPPFOCOSCount;
-
-      const resultLegalReserveFOCOSCount = await Report.sequelize.query(sqlLegalReserveFOCOSCount, QUERY_TYPES_SELECT);
-      const legalReserveFOCOSCount = resultLegalReserveFOCOSCount;
-
-      const resultIndigenousLandFOCOSCount = await Report.sequelize.query(sqlIndigenousLandFOCOSCount, QUERY_TYPES_SELECT);
-      const indigenousLandFOCOSCount = resultIndigenousLandFOCOSCount;
-
-      const resultExploraFOCOSCount = await Report.sequelize.query(sqlExploraFOCOSCount, QUERY_TYPES_SELECT);
-      const explorationFOCOSCount = resultExploraFOCOSCount;
-
-      const resultDesmateFOCOSCount = await Report.sequelize.query(sqlDesmateFOCOSCount, QUERY_TYPES_SELECT);
-      const deforestationFOCOSCount = resultDesmateFOCOSCount;
-
-      const resultEmbFOCOSCount = await Report.sequelize.query(sqlEmbFOCOSCount, QUERY_TYPES_SELECT);
-      const embargoedAreaFOCOSCount = resultEmbFOCOSCount;
-
-      const resultLandAreaFOCOSCount = await Report.sequelize.query(sqlLandAreaFOCOSCount, QUERY_TYPES_SELECT);
-      const landAreaFOCOSCount = resultLandAreaFOCOSCount;
-
-
-      const sqlAPPBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_APP.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLegalReserveBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_RESERVA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-
-      const sqlIndigenousLandBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_TI.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-
-      const sqlExploraBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_EXPLORA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-
-      const sqlDesmateBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_DESMATE.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlEmbargoedAreaBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_EMB.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLandAreaBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_DESEMB.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-
-      const sqlRestrictUseBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_USO_RESTRITO.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlBurnAuthorizationBURNEDAREASum = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_QUEIMA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class,  ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCar} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
-
-      const resultRestrictUseBURNEDAREASum = await Report.sequelize.query(sqlRestrictUseBURNEDAREASum, QUERY_TYPES_SELECT);
-      const restrictUseBURNEDAREASum = resultRestrictUseBURNEDAREASum;
-
-      const resultBurnAuthorizationBURNEDAREASum = await Report.sequelize.query(sqlBurnAuthorizationBURNEDAREASum, QUERY_TYPES_SELECT);
-      const burnAuthorizationBURNEDAREASum = resultBurnAuthorizationBURNEDAREASum;
-
-      const resultFisionomiaBURNEDAREASum = await Report.sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
-      const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
-
-      const resultAPPBURNEDAREASum = await Report.sequelize.query(sqlAPPBURNEDAREASum, QUERY_TYPES_SELECT);
-      const aPPBURNEDAREASum = resultAPPBURNEDAREASum;
-
-      const resultLegalReserveBURNEDAREASum = await Report.sequelize.query(sqlLegalReserveBURNEDAREASum, QUERY_TYPES_SELECT);
-      const legalReserveBURNEDAREASum = resultLegalReserveBURNEDAREASum;
-
-      const resultIndigenousLandBURNEDAREASum = await Report.sequelize.query(sqlIndigenousLandBURNEDAREASum, QUERY_TYPES_SELECT);
-      const indigenousLandBURNEDAREASum = resultIndigenousLandBURNEDAREASum;
-
-      const resultExploraBURNEDAREASum = await Report.sequelize.query(sqlExploraBURNEDAREASum, QUERY_TYPES_SELECT);
-      const explorationBURNEDAREASum = resultExploraBURNEDAREASum;
-
-      const resultDesmateBURNEDAREASum = await Report.sequelize.query(sqlDesmateBURNEDAREASum, QUERY_TYPES_SELECT);
-      const deforestationBURNEDAREASum = resultDesmateBURNEDAREASum;
-
-      const resultEmbargoedAreaBURNEDAREASum = await Report.sequelize.query(sqlEmbargoedAreaBURNEDAREASum, QUERY_TYPES_SELECT);
-      const embargoedAreaBURNEDAREASum = resultEmbargoedAreaBURNEDAREASum;
-
-      const resultLandAreaBURNEDAREASum = await Report.sequelize.query(sqlLandAreaBURNEDAREASum, QUERY_TYPES_SELECT);
-      const landAreaBURNEDAREASum = resultLandAreaBURNEDAREASum;
-
-      const resultProdesArea = await Report.sequelize.query(sqlProdesArea, QUERY_TYPES_SELECT);
-      const prodesArea = resultProdesArea;
-
-      const resultProdesTotalArea = await Report.sequelize.query(sqlProdesTotalArea, QUERY_TYPES_SELECT);
-      const prodesTotalArea = resultProdesTotalArea;
-
-      const resultIndigenousLand = await Report.sequelize.query(sqlIndigenousLand, QUERY_TYPES_SELECT);
-      const indigenousLand = resultIndigenousLand;
-
-      const resultLegalReserve = await Report.sequelize.query(sqlLegalReserve, QUERY_TYPES_SELECT);
-      const legalReserve = resultLegalReserve;
-
-      const resultAPP = await Report.sequelize.query(sqlAPP, QUERY_TYPES_SELECT);
-      const app = resultAPP;
-
-      const resultAnthropizedUse = await Report.sequelize.query(sqlAnthropizedUse, QUERY_TYPES_SELECT);
-      const anthropizedUse = resultAnthropizedUse;
-
-      const resultNativeVegetation = await Report.sequelize.query(sqlNativeVegetation, QUERY_TYPES_SELECT);
-      const nativeVegetation = resultNativeVegetation;
-
-      const resultDeterYear = await Report.sequelize.query(sqlDeterYear, QUERY_TYPES_SELECT);
-      const deterYear = resultDeterYear;
-
-      const resultProdesYear = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
-      const prodesYear = resultProdesYear;
-
-      const resultSpotlightsYear = await Report.sequelize.query(sqlSpotlightsYear, QUERY_TYPES_SELECT);
-      const spotlightsYear = resultSpotlightsYear;
+      const indigenousLand = await Report.sequelize.query(sqlIndigenousLand, QUERY_TYPES_SELECT);
+      const conservationUnit = await Report.sequelize.query(sqlConservationUnit, QUERY_TYPES_SELECT);
+      const legalReserve = await Report.sequelize.query(sqlLegalReserve, QUERY_TYPES_SELECT);
+      const app = await Report.sequelize.query(sqlAPP, QUERY_TYPES_SELECT);
+      const anthropizedUse = await Report.sequelize.query(sqlAnthropizedUse, QUERY_TYPES_SELECT);
+      const nativeVegetation = await Report.sequelize.query(sqlNativeVegetation, QUERY_TYPES_SELECT);
 
       if (propertyData) {
-        propertyData.burningSpotlights = burningSpotlights;
-        propertyData.burnedAreas = burnedAreas;
-        // propertyData.deter = deter[0]
-        propertyData.prodesArea = prodesArea[0]['area'];
-        propertyData.prodesTotalArea = prodesTotalArea[0]['area'];
-        propertyData.prodesYear = prodesYear;
-        propertyData.deterYear = deterYear;
-        propertyData.spotlightsYear = spotlightsYear;
-        propertyData.burnedAreasYear = burnedAreasYear;
-        propertyData.indigenousLand = indigenousLand[0];
-        propertyData.legalReserve = legalReserve[0];
-        propertyData.app = app[0];
-        propertyData.anthropizedUse = anthropizedUse[0];
-        propertyData.nativeVegetation = nativeVegetation[0];
-
-        let prodesSumArea = 0;
-
-        prodesSumArea += aPPPRODESSum[0]['area'] ? aPPPRODESSum[0]['area'] : 0;
-        prodesSumArea += legalReservePRODESSum[0]['area'] ? legalReservePRODESSum[0]['area'] : 0;
-        prodesSumArea += indigenousLandPRODESSum[0]['area'] ? indigenousLandPRODESSum[0]['area'] : 0;
-        prodesSumArea += deforestationPRODESSum[0]['area'] ? deforestationPRODESSum[0]['area'] : 0;
-        prodesSumArea += embargoedAreaPRODESSum[0]['area'] ? embargoedAreaPRODESSum[0]['area'] : 0;
-        prodesSumArea += landAreaPRODESSum[0]['area'] ? landAreaPRODESSum[0]['area'] : 0
-
-        let deterSumArea = 0;
-        deterSumArea += aPPDETERCount[0]['count'] ? aPPDETERCount[0]['count'] : 0
-        deterSumArea += legalReserveDETERCount[0]['count'] ? legalReserveDETERCount[0]['count'] : 0
-        deterSumArea += indigenousLandDETERCount[0]['count'] ? indigenousLandDETERCount[0]['count'] : 0
-        deterSumArea += deforestationDETERCount[0]['count'] ? deforestationDETERCount[0]['count'] : 0
-        deterSumArea += embargoedAreaDETERCount[0]['count'] ? embargoedAreaDETERCount[0]['count'] : 0
-        deterSumArea += landAreaDETERCount[0]['count'] ? landAreaDETERCount[0]['count'] : 0
-
-        let burnlightCount = 0
-        burnlightCount += aPPFOCOSCount[0]['count'] ? aPPFOCOSCount[0]['count'] : 0
-        burnlightCount += legalReserveFOCOSCount[0]['count'] ? legalReserveFOCOSCount[0]['count'] : 0
-        burnlightCount += indigenousLandFOCOSCount[0]['count'] ? indigenousLandFOCOSCount[0]['count'] : 0
-        burnlightCount += deforestationFOCOSCount[0]['count'] ? deforestationFOCOSCount[0]['count'] : 0
-        burnlightCount += embargoedAreaFOCOSCount[0]['count'] ? embargoedAreaFOCOSCount[0]['count'] : 0
-        burnlightCount += landAreaFOCOSCount[0]['count'] ? landAreaFOCOSCount[0]['count'] : 0
-
-        let burnedAreaSum = 0
-        burnedAreaSum += aPPBURNEDAREASum[0]['area'] ? aPPBURNEDAREASum[0]['area'] : 0
-        burnedAreaSum += legalReserveBURNEDAREASum[0]['area'] ? legalReserveBURNEDAREASum[0]['area'] : 0
-        burnedAreaSum += indigenousLandBURNEDAREASum[0]['area'] ? indigenousLandBURNEDAREASum[0]['area'] : 0
-        burnedAreaSum += deforestationBURNEDAREASum[0]['area'] ? deforestationBURNEDAREASum[0]['area'] : 0
-        burnedAreaSum += embargoedAreaBURNEDAREASum[0]['area'] ? embargoedAreaBURNEDAREASum[0]['area'] : 0
-        burnedAreaSum += landAreaBURNEDAREASum[0]['area'] ? landAreaBURNEDAREASum[0]['area'] : 0
-
-        propertyData.prodesApp = {
-          affectedArea: 'APP',
-          recentDeforestation: aPPDETERCount[0]['count'] | '',
-          pastDeforestation: aPPPRODESSum[0]['area'],
-          burnlights: 0, //aPPFOCOSCount[0]['count'] | '',
-          burnAreas: aPPBURNEDAREASum[0]['area']
-        }
-
-        propertyData.prodesLegalReserve = {
-          affectedArea: 'ARL',
-          recentDeforestation: legalReserveDETERCount[0]['count'] | '',
-          pastDeforestation: legalReservePRODESSum[0]['area'],
-          burnlights: legalReserveFOCOSCount[0]['count'] | '',
-          burnAreas: legalReserveBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesRestrictedUse = {
-          affectedArea: 'AUR',
-          recentDeforestation: restrictUseDETERCount[0]['count'] | '',
-          pastDeforestation: restrictUsePRODESSum[0]['area'],
-          burnlights: restrictUseFOCOSCount[0]['count'] | '',
-          burnAreas: restrictUseBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesIndigenousLand = {
-          affectedArea: 'TI',
-          recentDeforestation: indigenousLandDETERCount[0]['count'] | '',
-          pastDeforestation: indigenousLandPRODESSum[0]['area'],
-          burnlights: indigenousLandFOCOSCount[0]['count'] | '',
-          burnAreas: indigenousLandBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesExploration = {
-          affectedArea: 'AUTEX',
-          recentDeforestation: explorationDETERCount[0]['count'],
-          pastDeforestation: explorationPRODESSum[0]['area'],
-          burnlights: explorationFOCOSCount[0]['count'],
-          burnAreas: explorationBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesDeforestation = {
-          affectedArea: 'AD',
-          recentDeforestation: deforestationDETERCount[0]['count'] | '',
-          pastDeforestation: deforestationPRODESSum[0]['area'],
-          burnlights: deforestationFOCOSCount[0]['count'] | '',
-          burnAreas: deforestationBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesEmbargoedArea = {
-          affectedArea: 'Área embargada',
-          recentDeforestation: embargoedAreaDETERCount[0]['count'] | '',
-          pastDeforestation: embargoedAreaPRODESSum[0]['area'],
-          burnlights: embargoedAreaFOCOSCount[0]['count'] | '',
-          burnAreas: embargoedAreaBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesLandArea = {
-          affectedArea: 'Área desembargada',
-          recentDeforestation: landAreaDETERCount[0]['count'] | '',
-          pastDeforestation: landAreaPRODESSum[0]['area'],
-          burnlights: landAreaFOCOSCount[0]['count'] | '',
-          burnAreas: landAreaBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesBurnAuthorization = {
-          affectedArea: 'AQ',
-          recentDeforestation: burnAuthorizationDETERCount[0]['count'] | '',
-          pastDeforestation: burnAuthorizationPRODESSum[0]['area'],
-          burnlights: burnAuthorizationFOCOSCount[0]['count'] | '',
-          burnAreas: burnAuthorizationBURNEDAREASum[0]['area'],
-        }
-
-        propertyData.prodesRadam = fisionomiaPRODESSum
-
-        propertyData.foundProdes = prodesSumArea ? true : false
-        propertyData.foundDeter = deterSumArea ? true : false
-        propertyData.foundBurnlight = burnlightCount || burnedAreaSum ? true : false
-
+        //---- Year of beginning and end of each analysis --------------------------------------------------------------
         const sqlDatesSynthesis = `
-        SELECT 'prodesYear' AS key, MIN(prodes.ano) AS start_year, MAX(prodes.ano) AS end_year
-        FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes
-        UNION ALL
-        SELECT 'deterYear'                                                    AS key,
-               MIN(extract(year from date_trunc('year', deter.date))) AS start_year,
-               MAX(extract(year from date_trunc('year', deter.date))) AS end_year
-        FROM ${views.DYNAMIC.children.DETER.table_name} AS deter
-        UNION ALL
-        SELECT 'spotlightsYear'                                                        AS key,
-               MIN(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS start_year,
-               MAX(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS end_year
-        FROM ${views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name}  AS spotlights
-        UNION ALL
-        SELECT 'burnedAreaYear'                                                           AS key,
-               MIN(extract(year from date_trunc('year', burnedarea.data_pas))) AS start_year,
-               MAX(extract(year from date_trunc('year', burnedarea.data_pas))) AS end_year
-        FROM ${views.DYNAMIC.children.AREAS_QUEIMADAS.table_name}  AS burnedarea;
-      `;
+          SELECT 'prodesYear' AS key, MIN(prodes.ano) AS start_year, MAX(prodes.ano) AS end_year
+          FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes
+          UNION ALL
+          SELECT 'deterYear'                                                    AS key,
+                 MIN(extract(year from date_trunc('year', deter.date))) AS start_year,
+                 MAX(extract(year from date_trunc('year', deter.date))) AS end_year
+          FROM ${views.DYNAMIC.children.DETER.table_name} AS deter
+          UNION ALL
+          SELECT 'spotlightsYear'                                                        AS key,
+                 MIN(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS start_year,
+                 MAX(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS end_year
+          FROM ${views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name}  AS spotlights
+          UNION ALL
+          SELECT 'burnedAreaYear'                                                           AS key,
+                 MIN(extract(year from date_trunc('year', burnedarea.data_pas))) AS start_year,
+                 MAX(extract(year from date_trunc('year', burnedarea.data_pas))) AS end_year
+          FROM ${views.DYNAMIC.children.AREAS_QUEIMADAS.table_name}  AS burnedarea;
+        `;
 
         const datesSynthesis = await Report.sequelize.query(sqlDatesSynthesis, QUERY_TYPES_SELECT);
 
@@ -1273,10 +984,32 @@ module.exports = FileReport = {
           propertyData['analysisPeriod'][years.key]['startYear'] = years.start_year;
           propertyData['analysisPeriod'][years.key]['endYear'] = years.end_year;
         });
+        //--------------------------------------------------------------------------------------------------------------
 
+        // propertyData.burningSpotlights = burningSpotlights;
+        // propertyData.burnedAreas = burnedAreas;
+
+        propertyData.prodesArea = prodesArea[0]['area'];
+        propertyData.prodesTotalArea = prodesTotalArea[0]['area'];
+
+        propertyData.deterYear = setAnalysisYear(deterYear, propertyData['analysisPeriod']['deterYear'], 'area');
+        propertyData.prodesYear = setAnalysisYear(prodesYear, { startYear: 1999, endYear: propertyData['analysisPeriod']['prodesYear']['endYear'] }, 'area');
+        propertyData.spotlightsYear = setAnalysisYear(spotlightsYear, propertyData['analysisPeriod']['spotlightsYear'], 'spotlights');
+        propertyData.burnedAreasYear = setAnalysisYear(burnedAreasYear, propertyData['analysisPeriod']['burnedAreaYear'], 'area');
+
+        propertyData.indigenousLand = indigenousLand[0];
+        propertyData.conservationUnit = conservationUnit[0];
+        propertyData.legalReserve = legalReserve[0];
+        propertyData.app = app[0];
+        propertyData.anthropizedUse = anthropizedUse[0];
+        propertyData.nativeVegetation = nativeVegetation[0];
+        // -------------------------------------------------------------------------------------------------------------
+
+        //---- Focus and standardization of the bbox to display a square image -----------------------------------------
         propertyData['bbox'] = setBoundingBox(propertyData['bbox']);
         propertyData['citybbox'] = setBoundingBox(propertyData['citybbox']);
         propertyData['statebbox'] = setBoundingBox(propertyData['statebbox']);
+        //--------------------------------------------------------------------------------------------------------------
 
         return Result.ok(propertyData);
       }
