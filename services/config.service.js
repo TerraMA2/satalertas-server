@@ -249,27 +249,6 @@ module.exports = ConfigService = {
             srs: `EPSG:4674`
           }
         },
-        // {
-        //   title: `Área Consolidada`,
-        //   description: {
-        //     text: ``,
-        //     value: `{consolidatedArea}`
-        //   },
-        //   carRegisterColumn: `rid;${groupView.PRODES.tableOwner}_de_car_validado_sema_gid`,
-        //   layerData: {
-        //     url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-        //     layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_PRODES_X_USOCON.workspace}:${groupView.PRODES.children.CAR_PRODES_X_USOCON.view}`,
-        //     transparent: true,
-        //     format: `image/png`,
-        //     version: `1.1.0`,
-        //     time: `{filterDate}`,
-        //     cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
-        //     bbox: `{bbox}`,
-        //     width: `404`,
-        //     height: `431`,
-        //     srs: `EPSG:4674`
-        //   }
-        // },
         {
           title: `Uso antropizado`,
           description: {
@@ -394,7 +373,7 @@ module.exports = ConfigService = {
           }
         }
       ],
-    deforestationHistoryProdes: [
+      deforestationHistoryProdes: [
       {
         title: `PRODES 1999`,
         description: {
@@ -851,12 +830,12 @@ module.exports = ConfigService = {
         }
       }
     ],
-      burnedAreas: [
+      burnedAreasYear: [
       {
         title: `{year}`,
         description: {
           text:``,
-          value: `{burnedAreas}`
+          value: `{area}`
         },
         carRegisterColumn: `rid;de_car_validado_sema_gid`,
         layerData: {

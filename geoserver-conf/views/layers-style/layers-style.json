@@ -20,10 +20,6 @@
       "name": "view75_style",
       "workspace": "terrama2_75"
     },
-    "usocon": {
-      "name": "view79_style",
-      "workspace": "terrama2_79"
-    },
     "veg": {
       "name": "view77_style",
       "workspace": "terrama2_77"
@@ -74,10 +70,6 @@
       "name": "view88_style",
       "workspace": "terrama2_88"
     },
-    "usocon": {
-      "name": "view91_style",
-      "workspace": "terrama2_91"
-    },
     "veg": {
       "name": "view90_style",
       "workspace": "terrama2_90"
@@ -120,10 +112,6 @@
       "name": "view105_style",
       "workspace": "terrama2_105"
     },
-    "usocon": {
-      "name": "view102_style",
-      "workspace": "terrama2_102"
-    },
     "usoant": {
       "name": "view99_style",
       "workspace": "terrama2_99"
@@ -165,10 +153,6 @@
     "usoant": {
       "name": "view112_style",
       "workspace": "terrama2_112"
-    },
-    "usocon": {
-      "name": "view115_style",
-      "workspace": "terrama2_115"
     },
     "veg": {
       "name": "view114_style",

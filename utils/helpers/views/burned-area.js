@@ -43,11 +43,6 @@ module.exports = {
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
     isChild: true
   },
-  CAR_AQ_X_USOCON: {
-    shortLabel: 'Uso Consolidado',
-    carRegisterColumn: 'de_car_validado_sema_numero_do1',
-    isChild: true
-  },
   CAR_AQ_X_VEGNAT: {
     shortLabel: 'Vegetação Nativa',
     carRegisterColumn: 'de_car_validado_sema_numero_do1',
