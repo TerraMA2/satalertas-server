@@ -3,18 +3,17 @@ module.exports = function (headerDocument, reportData, title) {
     info: {
       title: 'Relatório DETER'
     },
-    pageSize: 'A4',
-    pageOrientation: 'landscape',
-    pageMargins: [ 30, 30, 30, 30 ],
-    footer(currentPage, pageCount) {
+    pageMargins: [30, 90, 30, 30],
+    footer(pagenumber, pageCount) {
       return {
         table: {
           body: [
             [
               {
-                text: 'Página ' + currentPage.toString() + ' de ' + pageCount,
-                fontSize: 8,
-                margin: [500, 0, 30, 0]
+                text: 'Página ' + pagenumber + ' de ' + pageCount,
+                fontSize: 6,
+                bold: true,
+                margin: [483, 0, 30, 0]
               }
             ],
           ]
@@ -22,9 +21,24 @@ module.exports = function (headerDocument, reportData, title) {
         layout: 'noBorders'
       };
     },
+    header(currentPage, pageCount, pageSize) {
+      return {
+        columns: headerDocument
+      };
+    },
     content: [
       {
-        columns: headerDocument
+        text: [
+          {
+            text: 'SAT:',
+            bold: true
+          },
+          {
+            text: ` ${reportData.property.sat ? reportData.property.sat : 'XXXXXXXXXXXXX'}`,
+            bold: false
+          }
+        ],
+        style: 'headerBody'
       },
       {
         text: [
@@ -33,7 +47,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ` ${ reportData.reportData.property.city}-MT`,
+            text: ` ${ reportData.property.city}-MT`,
             bold: false
           }
         ],
@@ -46,7 +60,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ` ${ reportData.reportData.property.county}`,
+            text: ` ${ reportData.property.county}`,
             bold: false
           }
         ],
@@ -75,10 +89,10 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: (
-              ' com o uso de Sistema de Informações Geográficas no imóvel rural ' +  reportData.reportData.property.name +
-              ' (Figura 1), localizado no município de ' +  reportData.reportData.property.city +
-              '-MT, pertencente a ' +  reportData.reportData.property.owner + ', conforme informações declaradas no ' +
-              ' Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ' +  reportData.reportData.property.register
+              ' com o uso de Sistema de Informações Geográficas no imóvel rural ' +  reportData.property.name +
+              ' (Figura 1), localizado no município de ' +  reportData.property.city +
+              '-MT, pertencente a ' +  reportData.property.owner + ', conforme informações declaradas no ' +
+              ' Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ' +  reportData.property.register
             ),
           },
           {
@@ -133,10 +147,6 @@ module.exports = function (headerDocument, reportData, title) {
         ),
         margin: [30, 0, 30, 15],
         style: 'body'
-      },
-      {
-        text: '',
-        pageBreak: 'after'
       },
       {
         text: '2.1 Dados utilizados',
@@ -312,10 +322,6 @@ module.exports = function (headerDocument, reportData, title) {
         ]
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
         text: '2.2 Método utilizado',
         style: 'listItem'
       },
@@ -420,10 +426,6 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
         text: 'O objetivo do DETER é identificar as alterações da vegetação natural ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
@@ -510,10 +512,6 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: '',
-        pageBreak: 'after'
-      },
-      {
         text: [
           {
             text: 'Quadro 1 ',
@@ -531,35 +529,112 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 10
       },
       {
-        text: ' rural denominado ' +  reportData.reportData.property.name + '.',
+        text: ` rural denominado ${reportData.property.name} a partir da análise do DETER, em ${reportData.currentDate}`,
         margin: [30, 0, 30, 15],
         style: 'body'
       },
       {
         style: 'tableStyle',
         table: {
-          widths: [ '*', '*' ],
+          widths: ['*', '*'],
           headerRows: 1,
           body: [
+            [
+              {
+                border: [false, false, false, false],
+                text: ''
+
+              },
+              {
+                border: [false, false, false, false],
+                text: ''
+
+              },
+            ],
+            [
+              {
+                colSpan: 2,
+                style: 'tableHeader',
+                text: 'Área de Uso Consolidado (ha)'
+              }
+            ],
+            [
+              {
+                colSpan: 2,
+                alignment: 'center',
+                text: `${reportData.property.areaUsoCon}`
+              }
+            ],
             [
               {
                 text: 'Área atingida',
                 style: 'tableHeader'
               },
               {
-                text: 'Desmatamento recente\n(DETER – nº de alertas)',
+                text: 'Desmatamento no período (ha)',
                 style: 'tableHeader'
               }
             ],
-            ... reportData.reportData.tableData.map(rel => {
+            ...reportData.property.tableData.map(rel => {
               return [
                 rel.affectedArea,
-                rel.recentDeforestation
+                rel.pastDeforestation
               ];
-            })
+            }),
+            [
+              {
+                colSpan: 2,
+                style: 'tableHeader',
+                text: 'Desmatamento por tipologia vegetal (ha)'
+              }
+            ],
+            [
+              {
+                alignment: 'center',
+                text: `${reportData.property.tableVegRadam.affectedArea}`
+              },
+              {
+                alignment: 'center',
+                text: `${reportData.property.tableVegRadam.pastDeforestation}`
+              }
+            ],
+            [
+              {
+                colSpan: 2,
+                style: 'tableHeader',
+                text: 'Desmatamento Total (ha)'
+              }
+            ],
+            [
+              {
+                colSpan: 2,
+                alignment: 'center',
+                text: `${reportData.property.areaPastDeforestation}`
+              }
+            ],
+
           ]
         },
-        fontSize: 12
+        fontSize: 9
+      },
+      {
+        text: '',
+        pageBreak: 'after'
+      },
+      {
+        text: [
+          {
+            text: 'Observaçoes: ',
+            bold: true
+          },
+          {
+            text: `${reportData.property.comments ? reportData.property.comments : 'XXXXXXXXXXXXX'}`,
+            bold: false
+          }
+        ],
+        alignment: 'justify',
+        margin: [30, 30, 30, 30],
+        fontSize: 10
       },
       {
         text: '4 CONCLUSÃO',
@@ -567,13 +642,13 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: `${ reportData.reportData.property.foundDeter ? 'Houve' : 'Não houve'} desmatamento ilegal no imóvel rural objeto deste Relatório `,
+        text: `${ reportData.property.foundDeter ? 'Houve' : 'Não houve'} desmatamento ilegal no imóvel rural objeto deste Relatório Técnico, conforme`,
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
-        text: 'Técnico, conforme descrito no Quadro 01 (vide item 3. Análise Técnica).',
+        text: 'descrito no Quadro 01 (vide item 3. Análise Técnica).',
         margin: [30, 0, 30, 15],
         style: 'body'
       },
@@ -589,11 +664,25 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ' – Informações sobre o CAR-MT ' +  reportData.reportData.property.register + ';',
+            text: ` – Informações sobre o CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};`,
             style: 'body'
           }
         ],
         margin: [30, 0, 30, 0]
+      },
+      {
+        text: [
+          {
+            text: 'Anexo 2.',
+            style: 'body',
+            bold: true
+          },
+          {
+            text: ' – Relatório do SINESP-INFOSEG referente aos proprietários/posseiros do imóvel rural. ',
+            style: 'body'
+          }
+        ],
+        margin: [30, 0, 30, 0],
       },
       {
         text: '',
@@ -605,7 +694,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: `Este relatório técnico foi validado em ${ reportData.reportData.currentDate} por: `,
+        text: `Este relatório técnico foi validado em ${ reportData.currentDate} por: `,
         margin: [30, 0, 30, 100],
         alignment: 'center',
         style: 'body'
@@ -617,32 +706,35 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         columns: [
-           reportData.images.partnerImage1,
-           reportData.images.partnerImage2,
-           reportData.images.partnerImage3
+          reportData.images.partnerImage1,
+          reportData.images.partnerImage2,
+          reportData.images.partnerImage3
         ]
       },
       {
         columns: [
-           reportData.images.partnerImage4,
-           reportData.images.partnerImage5,
-           reportData.images.partnerImage6
+          reportData.images.partnerImage4,
+          reportData.images.partnerImage5,
+          reportData.images.partnerImage6
         ],
       },
       {
         columns: [
-           reportData.images.partnerImage7,
-           reportData.images.partnerImage8
+          reportData.images.partnerImage7,
+          reportData.images.partnerImage8,
+          reportData.images.partnerImage9
         ]
       }
     ],
     styles: {
       tableStyle: {
         alignment: 'center',
+        fontSize: 9,
         margin: [30, 0, 30, 5]
       },
       tableHeader: {
         fontSize: 10,
+        fillColor: '#eeeeff',
         bold: true,
         alignment: 'center',
         margin: [0, 0, 0, 0]
