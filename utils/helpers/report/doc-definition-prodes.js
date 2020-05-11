@@ -402,7 +402,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: (
           'plataforma computacional TerraMA². Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
-          'análise e emissão de alertas sobre extremos ambientais(1). Assim, utilizando esta base tecnológica inovadora, ' +
+          'análise e emissão de alertas sobre extremos ambientais¹. Assim, utilizando esta base tecnológica inovadora, ' +
           'no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, ' +
           'analisar (intersecção de geometrias dos mapas), visualizar e consultar dados sobre danos ambientais causados ' +
           'por desmatamentos e queimadas. Para isso, dados dinâmicos e estáticos foram processados para produzirem as informações ' +
