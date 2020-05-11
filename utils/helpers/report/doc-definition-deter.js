@@ -78,33 +78,44 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 20]
       },
       {
+        text: `DATA DE EMISSÃO: ${reportData.currentDate}`,
+        alignment: 'left',
+        style: 'title'
+      },
+      {
+        text: `PERÍODO DE ANÁLISE: ${reportData.formattedFilterDate}`,
+        alignment: 'left',
+        style: 'title',
+        margin: [30, 0, 30, 20]
+      },
+      {
         text: '1. OBJETIVO',
         style: 'listItem'
       },
       {
+        text: 'Trata-se de relatório técnico sobre desmatamentos ilegais identificados',
+        alignment: 'right',
+        margin: [152, 0, 30, 0],
+        style: 'body'
+      },
+      {
         text: [
           {
-            text: 'Trata-se de relatório técnico sobre desmatamentos ilegais identificados ',
-            alignment: 'right',
-          },
-          {
             text: (
-              ' com o uso de Sistema de Informações Geográficas no imóvel rural ' +  reportData.property.name +
-              ' (Figura 1), localizado no município de ' +  reportData.property.city +
-              '-MT, pertencente a ' +  reportData.property.owner + ', conforme informações declaradas no ' +
-              ' Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR-MT ' +  reportData.property.register
+                ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1), com área igual a ${reportData.property.area} ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
             ),
           },
           {
-            text: ' (Anexo 1) ',
+            text: ' (Anexo 1)',
             bold: true
           },
           {
             text: (
-              '/ acervo fundiário do Instituto Nacional de Colonização e Reforma Agrária (SIGEF/INCRA).'
+                '.'
             )
           }
         ],
+        alignment: 'justify',
         margin: [30, 0, 30, 15],
         style: 'body'
       },
@@ -112,7 +123,8 @@ module.exports = function (headerDocument, reportData, title) {
         columns: [
           reportData.images.geoserverImage1,
           reportData.images.geoserverImage2
-        ]
+        ],
+        margin: [30, 0, 30, 15]
       },
       {
         text: [
@@ -126,24 +138,52 @@ module.exports = function (headerDocument, reportData, title) {
           }
         ],
         alignment: 'center',
-        fontSize: 10
+        fontSize: 9,
+        margin: [30, 0, 30, 15]
+      },
+      {
+        columns: [
+          {
+            text: `Edifício Sede das Promotorias de Justiça da Capital
+                  Av. Desembargador Milton Figueiredo Ferreira Mendes, s/nº
+                  Setor D - Centro Político e Administrativo • Cuiabá/MT
+                  CEP: 78049-928`,
+            fontSize: 7,
+            alignment: 'left'
+          },
+          {
+            text: `Telefone: (65) 3611-2664`,
+            fontSize: 7,
+            alignment: 'center'
+          },
+          {
+            text: `caop@mpmt.mp.br`,
+            fontSize: 7,
+            alignment: 'right'
+          }
+        ],
+        margin: [30, 25, 30, 15]
+      },
+      {
+        text: '',
+        pageBreak: 'after'
       },
       {
         text: '2 HISTÓRICO',
         style: 'listItem'
       },
       {
-        text: 'As informações sobre os desmatamentos foram integradas no âmbito ',
+        text: 'As informações  sobre os desmatamentos  foram integradas no âmbito',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-          'do Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
-          'e Instituto Nacional de Pesquisas Espaciais (INPE), cujo objeto consiste na coleta automática, armazenamento ' +
-          'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
-          'INPE, com os dados de fontes estatais oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.'
+            'do Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
+            'e Instituto Nacional de Pesquisas Espaciais (INPE), cujo objeto consiste na coleta automática, armazenamento ' +
+            'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
+            'INPE, com os dados de fontes estatais oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.'
         ),
         margin: [30, 0, 30, 15],
         style: 'body'
@@ -161,10 +201,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: (
-              'Dados das áreas desmatadas no Estado de Mato Grosso mapeadas pelo Sistema de Detecção de Desmatamento em Tempo Real (DETER) ' +
-              '(alertas de desmatamento em tempo quase real) desenvolvido pelo INPE;'
-            ),
+            text:`ados das áreas desmatadas no Estado de Mato Grosso mapeadas pelo Sistema de Detecção de Desmatamento em Tempo Real (DETER) (alertas de desmatamento em tempo quase real) desenvolvido pelo INPE;`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -180,15 +217,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: (
-              'Informações e dados geográficos do SIMCAR Parceiros e Público, da Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA), como: ' +
-              'i. Proprietário(s)/posseiro(s); ' +
-              'ii. Base de referência do CAR validado; ' +
-              'iii. Base de referência do CAR em análise; ' +
-              'iv. Base de referência do CAR aguardando complementação; '  +
-              'v. Base de referência do CAR cancelado e indeferido; e ' +
-              'vi. Base de referência do Programa de Regularização Ambiental (PRA);'
-            ),
+            text: `Informações e dados geográficos do SIMCAR, disponibilizadas pela Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA). Os dados declarados no SIMCAR foram unidos em uma única base, compreendendo os CAR validados, aguardando complementação, em análise e migrados do Sistema de Cadastro Ambiental Rural (SICAR). Foram excluídos da base os CAR com status cancelado e indeferido;`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -204,14 +233,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: (
-              'Dados do Navegador Geográfico da SEMA (SIMGEO): ' +
-              'i. Base de referência das áreas embargadas pela SEMA. ' +
-              'ii. Base de referência das áreas desembargadas pela SEMA; ' +
-              'iii. Base de referência das Autorizações de Exploração (AUTEX); ' +
-              'iv. Base de referência das Autorizações de Desmatamento (AD); ' +
-              'v. Base de referência das Áreas de Preservação Permanente (APP), Reserva Legal (ARL), Uso Restrito (AUS) e de Uso Consolidado (AUC);'
-            ),
+            text:`Dados do Navegador Geográfico da SEMA (SIMGEO): i. Base das áreas embargadas pela SEMA. ii. Base das áreas desembargadas pela SEMA; iii. Base das Autorizações de Exploração (AUTEX); iv. Base das Autorizações de Desmatamento (AD); v. Base das Áreas de Preservação Permanente (APP) e Áreas de Reserva Legal (ARL) (estas informações se referem as áreas declaradas no SIMCAR que se encontram em análise, aguardando complementação ou validadas, além daquelas retificadas após a migração do SICAR para o SIMCAR); vi. Base de referência de Áreas de Uso Restrito (AUR), disponibilizada pela SEMA; e vii. Base de referência de Uso Consolidado (AUC) adotada pela SEMA;`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -227,7 +249,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: 'Dados do acervo fundiário do Instituto Nacional de Colonização e Reforma Agrária (SIGEF/INCRA);',
+            text: `Dados geográficos das Unidades de Conservação (UC) no Estado de Mato Grosso, disponíveis no Cadastro Nacional de Unidades de Conservação do Ministério de Meio Ambiente (MMA);`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -243,10 +265,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: (
-              'Dados geográficos das Unidades de Conservação (UC) no Estado de Mato Grosso, disponíveis no Cadastro Nacional de Unidades ' +
-              'de Conservação do Ministério de Meio Ambiente (MMA);'
-            ),
+            text: `Dados geográficos das Terras Indígenas no Estado de Mato Grosso, disponíveis no sítio eletrônico da Fundação Nacional do Índio (FUNAI);`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -262,9 +281,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: (
-              'Dados geográficos das Terras Indígenas no Estado de Mato Grosso, disponíveis no sítio eletrônico da Fundação Nacional do Índio (FUNAI);'
-            ),
+            text: `Mapa de vegetação do Projeto RadamBrasil;`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -280,9 +297,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: (
-              'Mapa de vegetação do Projeto RadamBrasil;'
-            ),
+            text: `Imagens dos Satélites Landsat, SPOT, Planet, Sentinel-2, CBERS-4 e de outras fontes disponíveis;`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -298,24 +313,8 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: 'Imagens dos Satélites Landsat, SPOT, Planet, Sentinel-2, CBERS-4 e de outras fontes disponíveis;',
-            margin: [20, 0, 30, 5],
-            width: 'auto',
-            style: 'body'
-          }
-        ]
-      },
-      {
-        columns: [
-          {
-            text: 'i) ',
-            margin: [50, 0, 0, 5],
-            width: 'auto',
-            style: 'body'
-          },
-          {
-            text: 'Dados pessoais dos responsáveis pelo imóvel rural obtidos no Sistema Nacional de Informações de Segurança Pública (SINESP-INFOSEG).',
-            margin: [20, 0, 30, 5],
+            text: `Dados pessoais dos responsáveis pelo imóvel rural obtidos no Sistema Nacional de Informações de Segurança Pública (SINESP-INFOSEG).`,
+            margin: [20, 0, 30, 15],
             width: 'auto',
             style: 'body'
           }
@@ -326,43 +325,31 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'Todas as informações acima descritas foram integradas utilizando a ',
+        text: 'Todas as  informações acima  descritas foram  integradas  utilizando a ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
-          'análise e emissão de alertas sobre extremos ambientais¹. Assim, utilizando esta base tecnológica inovadora, ' +
-          'no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, ' +
-          'analisar (intersecção de geometrias dos mapas), visualizar e consultar dados sobre danos ambientais causados ' +
-          'por desmatamentos recentes. Para isso, dados dinâmicos e estáticos foram processados para produzirem as informações ' +
-          'que foram sistematizadas neste relatório.'
-        ),
+        text: `plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, análise e emissão de alertas sobre extremos ambientais¹. Assim, utilizando esta base tecnológica inovadora, no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, analisar (intersecção de geometrias dos mapas), visualizar e consultar dados sobre danos ambientais causados por desmatamentos recentes. Para isso, dados dinâmicos e estáticos foram processados para produzirem as informações que foram sistematizadas neste relatório.`,
         margin: [30, 0, 30, 5],
         style: 'body'
       },
       {
-        text: 'Os dados de desmatamentos (polígonos) do Sistema DETER foram cruzados ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'Os  dados de  desmatamentos (polígonos)  do DETER  foram  cruzados',
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'com informações geoespaciais de fontes oficiais para identificação e quantificação ' +
-          'dos danos ambientais causados por desmatamentos supostamente ilegais, bem como para ' +
-          'identificação dos responsáveis pelo imóvel rural atingido, para fins de responsabilização civil, administrativa ' +
-          'e, eventualmente, criminal pelos danos causados.'
-        ),
+        text: `com informações geoespaciais de fontes oficiais para identificação e quantificação dos danos ambientais causados por desmatamentos ilegais, bem como para identificação dos responsáveis pelo imóvel rural detectado, para fins de responsabilização civil, administrativa e, eventualmente, criminal pelos danos causados.`,
         margin: [30, 0, 30, 5],
         style: 'body'
       },
       {
-        text: 'As informações sobre o imóvel rural onde incidiu o desmatamento e',
+        text: 'As  informações  sobre  o imóvel  rural onde incidiu  o desmatamento e',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [152, 0, 30, 0],
         style: 'body'
       },
       {
@@ -371,31 +358,25 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Para qualificação da área desmatada, o tipo de vegetação foi ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'Para qualificação  da área desmatada, os  potígonos dos desmatamen-',
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'identificado utilizando o mapa de vegetação do Projeto RadamBrasil.'
-        ),
+        text: `mentos foram intersectados com dados geoespaciais de áreas protegidas (APP, ARL, AUR, UC e TI) e do tipo de vegetação classificado pelo projeto RadamBrasil.`,
         margin: [30, 0, 30, 5],
         style: 'body'
       },
       {
-        text: 'Os dados geoespaciais do SIMGEO, MMA e FUNAI foram cruzados ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'Para  identificar  ilícitos ambientais, os  polígonos dos  desmatamentos',
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'com os dados do INPE para identificação e quantificação dos desmatamentos em áreas protegidas ' +
-          '(APP, ARL, AUR, UC e TI), bem como para identificar ilícitos ambientais, mediante o cruzamento ' +
-          'com dados das Autorizações de Exploração (AUTEX) e de Desmatamento (AD) emitidas pela SEMA.'
-        ),
-        margin: [30, 0, 30, 5],
+        text: `foram intersectados com dados geospaciais das Autorizações de Exploração (AUTEX) e de Desmatamento (AD) emitidas pela SEMA. Ainda, verificou-se se as áreas desmatadas se encontram ou haviam sido embargadas pela SEMA. Os poligonos de desmatento detectados externos às áreas com supressão de vegetação autorizada foram considerados como áreas de ilicitos ambientais.`,
+        margin: [30, 0, 30, 15],
         style: 'body'
       },
       {
@@ -403,32 +384,26 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'Os projetos PRODES e DETER, utilizados para identificação e ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'Os projetos  PRODES e  DETER, utilizados para identificação  e quantifi-',
+        alignment: 'justify',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'quantificação dos desmatamentos, fazem parte do Programa de Monitoramento da Amazônia e '
-        ),
+        text: `cação dos desmatamentos, fazem parte do Programa de Monitoramento da Amazônia e Demais Biomas (PAMZ+) desenvolvido pela Coordenação-geral de Observação da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. Além do PRODES e DETER, o PAMZ+ conta também com o Sistema de Mapeamento do Uso e Ocupação da Terra (TerraClass). Estes três projetos são complementares e concebidos para atender diferentes objetivos.`,
         margin: [30, 0, 30, 5],
         style: 'body'
       },
+
       {
-        text: (
-          'Demais Biomas (PAMZ+)' +
-          'desenvolvido pela Coordenação-geral de Observação da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
-          'Além do PRODES e DETER, o PAMZ+ conta também com o Sistema de Mapeamento do Uso e Ocupação da Terra (TerraClass). ' +
-          'Estes três projetos são complementares e concebidos para atender diferentes objetivos.'
-        ),
-        margin: [30, 0, 30, 5],
-        style: 'body'
+        text: `1    Informações mais detalhadas sobre o funcionamento do TerraMA² podem ser obtidas em http://www.TerraMA2.dpi.inpe.br/sobre. Acessado em 07.10.2019.`,
+        fontSize: 8,
+        margin: [30, 0, 30, 0]
       },
       {
-        text: 'O objetivo do DETER é identificar as alterações da vegetação natural ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'O objetivo  do DETER  é  identificar  as alterações  da vegetação natural ',
+        alignment: 'justify',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
@@ -442,72 +417,55 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'O DETER é operado com imagens do sensor WFI do satélite CBERS-4 do INPE/CRESDA ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'O DETER é  operado  com  imagens do sensor WFI do  satélite CBERS-4',
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          '(Brasil/China), com resolução espacial de 64m e quatro bandas espectrais (azul, verde, ' +
-          'vermelho e infravermelho próximo). Para isso, as frações de solo, vegetação e sombra em uma ' +
-          'imagem são estimadas a partir do Modelo Linear de Mistura Espectral (MLME), a fim de realçar ' +
-          'feições de extração seletiva de madeira e de queimadas, que fazem parte do processo de desmatamento.'
-        ),
+        text: ` do INPE/CRESDA (Brasil/China), com resolução espacial de 64m e quatro bandas espectrais (azul, verde, vermelho e infravermelho próximo). Para isso, as frações de solo, vegetação e sombra em uma imagem são estimadas a partir do Modelo Linear de Mistura Espectral (MLME), a fim de realçar feições de extração seletiva de madeira e de queimadas, que fazem parte do processo de desmatamento.`,
         margin: [30, 0, 30, 5],
         style: 'body'
       },
       {
-        text: 'Assim, no âmbito do DETER, diariamente são escolhidas imagens com ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'Assim, no âmbito do DETER, diariamente  são escolhidas imagens com',
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'menor cobertura de nuvens e feita a composição' +
-          'das bandas espectrais mais sensíveis às respostas da contribuição do solo e da vegetação para realçar áreas de ' +
-          'desmatamento, que são identificadas por fotointerpretação considerando a tonalidade, textura e contexto da área ' +
-          'na imagem de satélite processada. Com essa metodologia, o sistema é capaz de diferenciar impactos naturais de antrópicos, ' +
-          'em razão das feições das áreas analisadas. O tempo entre o mapeamento dos alertas, validação e inclusão no banco de dados ' +
-          'é de aproximadamente 72 horas.'
-        ),
+        text: `menor cobertura de nuvens e feita a composição das bandas espectrais mais sensíveis às respostas da contribuição do solo e da vegetação para realçar áreas de desmatamento, que são identificadas por fotointerpretação considerando a tonalidade, textura e contexto da área na imagem de satélite processada. Com essa metodologia, o sistema é capaz de diferenciar impactos naturais de antrópicos, em razão das feições das áreas analisadas. O tempo entre o mapeamento dos alertas, validação e inclusão no banco de dados é de aproximadamente 72 horas.`,
         margin: [30, 0, 30, 5],
         style: 'body'
       },
       {
-        text: 'Os dados do INPE constituem fonte de acentuada importância para a ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'Os dados do INPE constituem fonte de acentuada importância para a',
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o ' +
-          'Termo de Ajustamento de Conduta (TAC) da carne, Moratória da Soja e outros acordos intergovernamentais, como ' +
-          'o feito na Conferência das Nações Unidas Sobre Mudanças Climáticas (COP21) para a redução das emissões de gases ' +
-          'de efeito estufa por desflorestamento e degradação florestal1. Ainda, a importância e credibilidade dos dados gerados ' +
-          'pelo INPE é refletida pelas milhares de publicações científicas que utilizaram essas informações para realização de ' +
-          'pesquisas, que podem ser encontrada no Google Scholar².'
-        ),
-        margin: [30, 0, 30, 5],
+        text: `gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o Termo de Ajustamento de Conduta (TAC) da carne, Moratória da Soja e outros acordos intergovernamentais, como o feito na Conferência das Nações Unidas Sobre Mudanças Climáticas (COP21) para a redução das emissões de gases de efeito estufa por desflorestamento e degradação florestal. Ainda, a importância e credibilidade dos dados gerados pelo INPE é refletida pelas milhares de publicações científicas que utilizaram essas informações para realização de pesquisas, que podem ser encontrada no Google Scholar².`,
+        margin: [30, 0, 30, 15],
         style: 'body'
+      },
+      {
+        text: `2    Disponível em http://scholar.google.com.br. Acessado em 13.01.2020.`,
+        fontSize: 8,
+        margin: [30, 110, 30, 0]
       },
       {
         text: '3 ANÁLISE TÉCNICA',
         style: 'listItem'
       },
       {
-        text: 'A partir do sistema Satélites Alertas foram obtidos os alertas DETER ',
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: 'O  INPE, a  partir  dos  dados do  DETER,  identificou  desmatamento de',
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: (
-          'detectados no período entre XX/XX/XXXX a XX/XX/XXXX. ' +
-          'Dessa forma, seguem abaixo as informações sobre os desmatamentos.'
-        ),
+        text: `${reportData.property.areaPastDeforestation} hectares no imóvel rural denominado ${reportData.property.name} no período de ${reportData.formattedFilterDate}, conforme desmatamento explicitado no Quadro 1 (quantificação e descrição das áreas desmatadas que foram identificadas com o cruzamento dos dados descritos no histórico desse relatório).`,
         margin: [30, 0, 30, 15],
         style: 'body'
       },
@@ -515,23 +473,15 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: 'Quadro 1 ',
-            margin: [30, 0, 30, 0],
-            bold: true,
+            bold: true
           },
           {
-            text: `- Classes e quantitativos de áreas desmatadas e queimadas no imóvel`,
-            margin: [30, 0, 30, 0],
-            bold: false
-          }
+            text: ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' + reportData.property.name + ' a  partir da análise do PRODES, no período ' + reportData.formattedFilterDate + '.'
+          },
         ],
-        alignment: 'right',
+        margin: [30, 0, 30, 5],
         style: 'body',
-        fontSize: 10
-      },
-      {
-        text: ` rural denominado ${reportData.property.name} a partir da análise do DETER, em ${reportData.currentDate}`,
-        margin: [30, 0, 30, 15],
-        style: 'body'
+        fontSize: 9
       },
       {
         style: 'tableStyle',
@@ -622,6 +572,69 @@ module.exports = function (headerDocument, reportData, title) {
         pageBreak: 'after'
       },
       {
+        columns: [
+          reportData.images.geoserverImage4,
+          reportData.images.geoserverImage5,
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        columns: [
+          {
+            text: "a",
+            style: "body",
+            alignment: "center"
+          },
+          {
+            text: "b",
+            style: "body",
+            alignment: "center"
+          }
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        columns: [
+          reportData.images.geoserverImage6,
+          reportData.images.geoserverImage7
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        columns: [
+          {
+            text: "c",
+            style: "body",
+            alignment: "center"
+          },
+          {
+            text: "d",
+            style: "body",
+            alignment: "center"
+          }
+        ],
+        margin: [30, 0, 30, 0]
+      },
+      {
+        text: [
+          {
+            text: 'Figura 2. ',
+            bold: true
+          },
+          {
+            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Sentinel de 2019, (c) Landsat de 2018 e (d) Planet de ${reportData.currentYear}`,
+            bold: false
+          }
+        ],
+        margin: [30, 0, 30, 0],
+        alignment: 'center',
+        fontSize: 9
+      },
+      {
+        text: '',
+        pageBreak: 'after'
+      },
+      {
         text: [
           {
             text: 'Observaçoes: ',
@@ -642,13 +655,13 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: `${ reportData.property.foundDeter ? 'Houve' : 'Não houve'} desmatamento ilegal no imóvel rural objeto deste Relatório Técnico, conforme`,
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
+        text: `${ reportData.property.foundDeter ? 'Houve    ' : 'Não houve'} desmatamento ilegal no imóvel  rural  objeto deste  Relatório`,
+        alignment: 'left',
+        margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: 'descrito no Quadro 01 (vide item 3. Análise Técnica).',
+        text: 'Técnico, conforme descrito no Quadro 01 (vide item 3. Análise Técnica).',
         margin: [30, 0, 30, 15],
         style: 'body'
       },

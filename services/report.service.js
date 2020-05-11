@@ -68,8 +68,11 @@ const analysisReportFormat = {
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;forceTitles:off;layout:vertical&LAYER=${views.STATIC.children.CAR_VALIDADO.workspace}:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`;
 
   },
-  deter (reportData, resultReportData) {
-
+  deter (reportData, views, resultReportData, carColumn, carColumnSema)  {
+    const currentYear = new Date().getFullYear();
+    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage6'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
   }
 }
 
@@ -149,24 +152,33 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
   if ((propertyData && views.DETER && type === 'deter')) {
 
     // --- Radam View vegetation of area grouped by physiognomy --------------------------------------------------------
-    const sqlVegRadam = ` SELECT gid, numero_do1, numero_do2, fisionomia, ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_, ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam FROM car_x_vegradam WHERE gid = ${carRegister} `;
+    const sqlVegRadam = ` 
+        SELECT 
+               gid,
+               numero_do1,
+               numero_do2,
+               fisionomia,
+               ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_, 
+               ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam FROM car_x_vegradam
+        WHERE gid = ${carRegister} `;
     propertyData['vegRadam']  = await Report.sequelize.query(sqlVegRadam, QUERY_TYPES_SELECT);
     // -----------------------------------------------------------------------------------------------------------------
 
-    // --- Deter area grouped by year ---------------------------------------------------------------------------------
-    const sqlDeterYear = `SELECT
-                              extract(year from date_trunc('year', cd.${columnExecutionDate})) AS date,
-                              ROUND(COALESCE(SUM(CAST(cd.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as area
-                              FROM public.${views.DETER.children.CAR_X_DETER.table_name} cd
-                              WHERE cd.${columnCarEstadual} = '${carRegister}'
-                              GROUP BY date
-                              ORDER BY date`;
-
-    propertyData['areaPastDeforestation'] = await Report.sequelize.query(sqlDeterYear, QUERY_TYPES_SELECT);;
+    // --- Total area of Deter period ----------------------------------------------------------------------------------------
+    const sqlDeterAreaPastDeforestation =
+        `   
+            SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area 
+            FROM public.${views.DETER.children.CAR_X_DETER.table_name} 
+            WHERE ${columnCarEstadual} = '${carRegister}' ${dateSql} `;
+    const resultDeterAreaPastDeforestation = await Report.sequelize.query(sqlDeterAreaPastDeforestation, QUERY_TYPES_SELECT);
+    propertyData['areaPastDeforestation'] = resultDeterAreaPastDeforestation[0]['area'];
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Total area of UsoCon ----------------------------------------------------------------------------------------
-    const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${views.STATIC.children.CAR_X_USOCON.table_name} where gid_car = '${carRegister}'`;
+    const sqlUsoConArea = `
+        SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area
+        FROM public.${views.STATIC.children.CAR_X_USOCON.table_name}
+        WHERE gid_car = '${carRegister}'`;
     const resultUsoConArea = await Report.sequelize.query(sqlUsoConArea, QUERY_TYPES_SELECT);
     propertyData['areaUsoCon'] = resultUsoConArea[0]['area'];
     // -----------------------------------------------------------------------------------------------------------------
