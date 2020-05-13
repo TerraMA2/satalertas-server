@@ -73,7 +73,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'title'
       },
       {
-        text: `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${ reportData.year}`,
+        text: `${title}`,
         style: 'title',
         margin: [30, 0, 30, 20]
       },
