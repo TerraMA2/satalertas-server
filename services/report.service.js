@@ -12,10 +12,33 @@ const Result = require("../utils/result");
   SatVegService = require("../services/sat-veg.service");
   axios = require('axios');
 
+  const config = {
+    headers: {'X-My-Custom-Header': 'Header-Value'}
+  };
 
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
+
+getImageObject = function (image, fit, margin, alignment) {
+  if (image && image[0] && !image[0].includes('data:application/vnd.ogc.se_xml')) {
+    return new Image(
+        image,
+        fit,
+        margin,
+        alignment
+    );
+  } else {
+    return {
+      text: 'Imagem não encontrada.',
+      alignment: 'center',
+      color: '#ff0000',
+      fontSize: 9,
+      italics: true,
+      margin: [30, 60, 30, 60]
+    };
+  }
+}
 
 setAnalysisYear = function(data, period, variable) {
   const analysisYears = [];
@@ -55,23 +78,24 @@ setBoundingBox = function(bBox) {
 
 const analysisReportFormat = {
   prodes(reportData, views, resultReportData, carColumn, carColumnSema) {
-    const currentYear = new Date().getFullYear();
-    resultReportData['prodesStartYear'] = reportData['startYear'];
+    resultReportData['prodesStartYear'] = resultReportData.property['period'][0]['start_year'];
 
     resultReportData['prodesTableData'] = reportData.analyzesYear;
     resultReportData['prodesTableData'].push({date: 'Total', area: resultReportData.property.prodesTotalArea});
 
-    resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=404&height=431&time=${resultReportData.prodesStartYear}/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
-    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
-    resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage2'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.DYNAMIC.children.PRODES.workspace}:${views.DYNAMIC.children.PRODES.view}_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${resultReportData.property['period'][0]['start_year']}/${resultReportData.property['period'][0]['end_year']}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/2019&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/2018&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsImage6'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+
+    resultReportData['urlGsDeforestationHistory'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:#{image}#,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/#{year}#&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsDeforestationHistory1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/#{year}#&cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on;forceTitles:off;layout:vertical&LAYER=${views.STATIC.children.CAR_VALIDADO.workspace}:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`;
 
   },
   deter (reportData, views, resultReportData, carColumn, carColumnSema)  {
-    const currentYear = new Date().getFullYear();
-    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
-    resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/${currentYear}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/2019&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
+    resultReportData['urlGsImage5'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=P1Y/2018&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
     resultReportData['urlGsImage6'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4674&format=image/png`;
   }
 }
@@ -87,9 +111,9 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
 
   reportData['statebbox'] = setBoundingBox(reportData['statebbox']);
   carColumnSema= 'rid';
-  resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=250&height=250&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=400&height=400&cql_filter=id_munic>0;municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:4326&format=image/png`;
   resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
-  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${reportData['startYear']}/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+  resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado&styles=&bbox=${resultReportData.property.bbox}&width=400&height=400&time=2008/P1Y&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
 
   analysisReportFormat[type](reportData, views, resultReportData, carColumn, carColumnSema);
 
@@ -277,12 +301,6 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     propertyData['vegRadam']  = await Report.sequelize.query(sqlVegRadam, QUERY_TYPES_SELECT);
     // -----------------------------------------------------------------------------------------------------------------
 
-    // --- Year start --------------------------------------------------------------------------------------------------
-    const sqlProdesStartYear = `SELECT MIN(prodes.ano) AS start_year FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes`;
-    const prodesStartYear = await Report.sequelize.query(sqlProdesStartYear, QUERY_TYPES_SELECT);
-    propertyData['startYear'] = prodesStartYear[0]['start_year'];
-    // -----------------------------------------------------------------------------------------------------------------
-
     // --- Fisionomia of prodes radam ----------------------------------------------------------------------------------
     const sqlFisionomiaPRODESSum = `SELECT de_veg_radambr_fisionomia AS class, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEG_RADAM.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
     propertyData['prodesRadam'] = await Report.sequelize.query(sqlFisionomiaPRODESSum, QUERY_TYPES_SELECT);
@@ -337,6 +355,23 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
         SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_UC.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} and de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
       `;
     // -----------------------------------------------------------------------------------------------------------------
+
+    // ----- Area of Deforestation History -----------------------------------------------------------------------------
+    const sqlDeforestationHistory =
+        ` SELECT
+                            extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
+                            ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0),4) as area
+            FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} cp
+            WHERE cp.${columnCarEstadual} = '${carRegister}'
+            GROUP BY date
+            ORDER BY date`;
+    const deflorestationHistory = await Report.sequelize.query(sqlDeforestationHistory, QUERY_TYPES_SELECT);
+
+
+    propertyData['period']  = await Report.sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
+
+    propertyData['deflorestationHistory'] = setAnalysisYear(deflorestationHistory, { startYear:  propertyData['period'][0]['start_year'], endYear:  propertyData['period'][0]['end_year'] }, 'area');
+    // ---------------------------------------------------------------------------------------------------------------
 
     const resCrossings = await Report.sequelize.query(sqlCrossings, QUERY_TYPES_SELECT);
     let prodesSumArea = 0;
@@ -624,17 +659,13 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
   return await propertyData;
 };
 
-setDocDefinitions = async function(reportData, docDefinition) {
-  if (reportData.type === 'prodes') {
-    const startDate = new Date(reportData.date[0]).toLocaleDateString('pt-BR');
-    const endDate = new Date(reportData.date[1]).toLocaleDateString('pt-BR');
-
-    if (reportData.chartImages && (reportData.chartImages.length > 0)) {
-      const ndviContext = [];
-      for (let i = 0; i < reportData.chartImages.length; ++i) {
-        if (i === 0) {
-          ndviContext.push({text: '', pageBreak: 'after'});
-          ndviContext.push(
+getContextChartNdvi = async function(chartImages, startDate, endDate) {
+  const ndviContext = [];
+  if (chartImages && (chartImages.length > 0)) {
+    for (let i = 0; i < chartImages.length; ++i) {
+      if (i === 0) {
+        ndviContext.push({text: '', pageBreak: 'after'});
+        ndviContext.push(
             {
               columns: [{
                 text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no períoco de ${startDate} a ${endDate}.`,
@@ -642,34 +673,132 @@ setDocDefinitions = async function(reportData, docDefinition) {
                 style: 'body'
               }]
             });
-        } else {
-          ndviContext.push({text: '', pageBreak: 'after'});
-        }
-        ndviContext.push({columns: [reportData.chartImages[i].geoserverImageNdvi]});
-        ndviContext.push({columns: [reportData.chartImages[i].myChart]});
+      } else {
+        ndviContext.push({text: '', pageBreak: 'after'});
       }
-
-      const content = [];
-      for (let j = 0; j < docDefinition.content.length; j++) {
-        if (j === 98) {
-          ndviContext.forEach(ndvi => {
-            content.push(ndvi);
-          });
-          content.push(
-            {
-              text: '',
-              pageBreak: 'after'
-            }
-          )
-        }
-        content.push(docDefinition.content[j]);
-      }
-
-      docDefinition.content = content;
+      ndviContext.push({columns: [chartImages[i].geoserverImageNdvi]});
+      ndviContext.push({columns: [chartImages[i].myChart]});
     }
+    ndviContext.push(
+        {
+          text: '',
+          pageBreak: 'after'
+        }
+    )
+  }
+  return await ndviContext;
+}
+
+getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDeforestationHistory) {
+  const deflorestationHistoryContext = [];
+
+  if (deflorestationHistory && deflorestationHistory.length > 0) {
+    let images = [];
+    let titles = [];
+    let subTitles = [];
+
+    deflorestationHistoryContext.push({
+      text: '',
+      pageBreak: 'after'
+    });
+
+    for (let i = 0; i < deflorestationHistory.length; ++i) {
+      let url = urlGsDeforestationHistory.replace(new RegExp('#{image}#', ''), `LANDSAT_5_${deflorestationHistory[i].date}`);
+      url = url.replace(new RegExp('#{year}#', ''), deflorestationHistory[i].date);
+
+      let image = await axios.get(url, config).then(resp => resp);
+      let buff = new Buffer(image.data, 'binary');
+      let imgBase64 = `data:image/png;base64,${buff.toString('base64')}`;
+
+      images.push(getImageObject([`data:image/png;base64,${fs.readSync(image.data, 'base64')}`], [200, 200], [0, 10], 'center'));
+      titles.push({
+        text: `${deflorestationHistory[i].date}`,
+        style: 'body',
+        alignment: 'center'
+      });
+      subTitles.push({
+        text: `${deflorestationHistory[i].area} ha`,
+        style: 'body',
+        alignment: 'center'
+      });
+
+      if ((i % 3) === 0) {
+        deflorestationHistoryContext.push(
+          {
+            columns: titles,
+            margin: [30, 0, 30, 0]
+          },
+          {
+            columns: images,
+            margin: [30, 0, 30, 0]
+          },
+          {
+            columns: subTitles,
+            margin: [30, 0, 30, 0]
+          }
+        );
+
+        images = [];
+        titles = [];
+        subTitles = [];
+      }
+    }
+
+    deflorestationHistoryContext.push( {
+      text: '',
+      pageBreak: 'after'
+    });
+  }
+
+  return await deflorestationHistoryContext;
+}
+
+setDocDefinitions = async function(reportData, docDefinition) {
+  if (reportData.type === 'prodes') {
+    const startDate = new Date(reportData.date[0]).toLocaleDateString('pt-BR');
+    const endDate = new Date(reportData.date[1]).toLocaleDateString('pt-BR');
+
+    const content = [];
+    for (let j = 0; j < docDefinition.content.length; j++) {
+      if (j === 98) {
+        // const desflorestationHistoryContext = await getContextDesflorestationHistory(reportData.property['deflorestationHistory'], reportData.urlGsDeforestationHistory);
+        reportData.desflorestationHistoryContext.forEach(desflorestationHistory => {
+          content.push(desflorestationHistory);
+        });
+
+        const ndviContext = await getContextChartNdvi(reportData['chartImages'], startDate, endDate);
+        ndviContext.forEach(ndvi => {
+          content.push(ndvi);
+        });
+      }
+
+      content.push(docDefinition.content[j]);
+    }
+
+    docDefinition.content = content;
   }
   return await docDefinition;
 };
+
+setImages = async function(reportData){
+  if (!reportData['images']) {
+    reportData.images = {};
+  }
+  reportData['images']['headerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logoHeaderMpmt.jpeg', 'base64')}`], [320, 50], [60, 25, 0, 20], 'left')
+  reportData['images']['headerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [320, 50], [0, 25, 30, 20], 'right')
+  reportData['images']['chartImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-1.png', 'base64')}`], [200, 200], [0, 3], 'center')
+  reportData['images']['chartImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-2.png', 'base64')}`], [250, 250], [3, 3], 'center');
+  reportData['images']['chartImage3'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-3.png', 'base64')}`], [250, 250], [3, 3], 'center');
+  reportData['images']['partnerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mpmt-small.png', 'base64')}`], [180, 50], [30, 0, 0, 0], 'left');
+  reportData['images']['partnerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/pjedaou-large.png', 'base64')}`], [100, 50], [30, 0, 0, 0], 'center');
+  reportData['images']['partnerImage3'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/caex.png', 'base64')}`], [80, 50], [30, 0, 25, 0], 'right');
+  reportData['images']['partnerImage4'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [130, 60], [80, 30, 0, 0], 'left');
+  reportData['images']['partnerImage5'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/dpi.png', 'base64')}`], [100, 60], [95, 30, 0, 0], 'center');
+  reportData['images']['partnerImage6'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/terrama2-large.png', 'base64')}`], [100, 60], [0, 30, 30, 0], 'right');
+  reportData['images']['partnerImage7'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mt.png', 'base64')}`], [100, 60], [80, 30, 0, 0], 'left');
+  reportData['images']['partnerImage8'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/sema.png', 'base64')}`], [100, 60], [130, 25, 0, 0], 'center');
+  reportData['images']['partnerImage9'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logo-patria-amada-brasil-horizontal.png', 'base64')}`], [100, 60], [0, 30, 25, 0], 'right');
+}
 
 module.exports = FileReport = {
   async saveBase64(document, code, type, path, docName){
@@ -1009,9 +1138,6 @@ module.exports = FileReport = {
         });
         //--------------------------------------------------------------------------------------------------------------
 
-        // propertyData.burningSpotlights = burningSpotlights;
-        // propertyData.burnedAreas = burnedAreas;
-
         propertyData.prodesArea = prodesArea[0]['area'];
         propertyData.prodesTotalArea = prodesTotalArea[0]['area'];
 
@@ -1122,25 +1248,7 @@ module.exports = FileReport = {
             reportData['type'] === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code}` :
               `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
 
-      if (!reportData['images']) {
-        reportData.images = {};
-      }
-
-      reportData['images']['headerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logoHeaderMpmt.jpeg', 'base64')}`], [320, 50], [60, 25, 0, 20], 'left')
-      reportData['images']['headerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [320, 50], [0, 25, 30, 20], 'right')
-      reportData['images']['chartImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-1.png', 'base64')}`], [200, 200], [0, 3], 'center')
-      reportData['images']['chartImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-2.png', 'base64')}`], [250, 250], [3, 3], 'center');
-      reportData['images']['chartImage3'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-3.png', 'base64')}`], [250, 250], [3, 3], 'center');
-      reportData['images']['partnerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mpmt-small.png', 'base64')}`], [180, 50], [30, 0, 0, 0], 'left');
-      reportData['images']['partnerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/pjedaou-large.png', 'base64')}`], [100, 50], [30, 0, 0, 0], 'center');
-      reportData['images']['partnerImage3'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/caex.png', 'base64')}`], [80, 50], [30, 0, 25, 0], 'right');
-      reportData['images']['partnerImage4'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [130, 60], [80, 30, 0, 0], 'left');
-      reportData['images']['partnerImage5'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/dpi.png', 'base64')}`], [100, 60], [95, 30, 0, 0], 'center');
-      reportData['images']['partnerImage6'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/terrama2-large.png', 'base64')}`], [100, 60], [0, 30, 30, 0], 'right');
-      reportData['images']['partnerImage7'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mt.png', 'base64')}`], [100, 60], [80, 30, 0, 0], 'left');
-      reportData['images']['partnerImage8'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/sema.png', 'base64')}`], [100, 60], [130, 25, 0, 0], 'center');
-      reportData['images']['partnerImage9'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logo-patria-amada-brasil-horizontal.png', 'base64')}`], [100, 60], [0, 30, 25, 0], 'right');
-
+      setImages(reportData);
 
       const headerDocument = [
         reportData.images.headerImage1,
