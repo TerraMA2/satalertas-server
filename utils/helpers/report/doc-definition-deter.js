@@ -394,7 +394,6 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 5],
         style: 'body'
       },
-
       {
         text: `1    Informações mais detalhadas sobre o funcionamento do TerraMA² podem ser obtidas em http://www.TerraMA2.dpi.inpe.br/sobre. Acessado em 07.10.2019.`,
         fontSize: 8,
