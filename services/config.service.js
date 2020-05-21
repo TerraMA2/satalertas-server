@@ -56,7 +56,7 @@ module.exports = ConfigService = {
       },
       visions: [
         {
-          title: `Visão do Estado`,
+          title: `Visão do Estado {break}{emptyLine}`,
           description: null,
           carRegisterColumn: null,
           layerData: {
@@ -68,13 +68,13 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `id_munic>0;{cityCqlFilter}`,
             bbox: `{statebbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
         {
-          title: `Visão do Município`,
+          title: `Visão do Município {break}{emptyLine}`,
           description: null,
           carRegisterColumn: `numero_do1`,
           layerData: {
@@ -86,8 +86,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{cityCqlFilter}`,
             bbox: `{citybbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -104,8 +104,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -122,8 +122,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter} AND dd_deter_inpe_classname='DEGRADACAO'`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -140,8 +140,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -158,8 +158,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         }
@@ -181,8 +181,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -202,8 +202,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -223,8 +223,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -244,8 +244,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -265,8 +265,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         },
@@ -286,8 +286,8 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4674`
           }
         }
@@ -296,18 +296,19 @@ module.exports = ConfigService = {
         {
           title: `SPOT de 2008`,
           description: null,
-          carRegisterColumn: `rid`,
+          carRegisterColumn: `RED_BAND;rid;de_car_validado_sema_gid`,
           layerData: {
             url: `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap`,
-            layers: `${groupView.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008_car_validado`,
+            layers: `terrama2_119:MosaicSpot2008,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view},${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}`,
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
-            time: `2008/P1Y`,
+            time: `P1Y/2008`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
-            cql_filter: `{propertyCqlFilter}`,
+            width: `600`,
+            height: `600`,
+            styles:`raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
+            cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
             srs: `EPSG:4326`
           }
         },
@@ -321,10 +322,10 @@ module.exports = ConfigService = {
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
-            time: `P1Y/2019`,
+            time: `P1Y/2018`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             styles:`raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
             cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
             srs: `EPSG:4326`
@@ -340,10 +341,10 @@ module.exports = ConfigService = {
             transparent: true,
             format: `image/png`,
             version: `1.1.0`,
-            time: `2008/P1Y`,
+            time: `P1Y/2019`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             styles:`raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
             cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
             srs: `EPSG:4326`
@@ -367,8 +368,8 @@ module.exports = ConfigService = {
             time: `{dateYear}/{year}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `404`,
-            height: `431`,
+            width: `600`,
+            height: `600`,
             srs: `EPSG:4326`
           }
         }
@@ -389,8 +390,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           styles:`raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           srs: `EPSG:4326`
         }
@@ -410,8 +411,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -430,8 +431,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -450,8 +451,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -470,8 +471,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -490,8 +491,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -510,8 +511,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -530,8 +531,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -550,8 +551,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -571,8 +572,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -592,8 +593,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -613,8 +614,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -634,8 +635,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -654,8 +655,8 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -675,8 +676,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -696,8 +697,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -717,8 +718,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -738,8 +739,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -759,8 +760,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -780,8 +781,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       },
@@ -801,8 +802,8 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `raster,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4326`
         }
       }
@@ -824,8 +825,8 @@ module.exports = ConfigService = {
           time: `{dateYear}/{year}`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4674`
         }
       }
@@ -847,8 +848,8 @@ module.exports = ConfigService = {
           time: `{dateYear}/{year}`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `404`,
-          height: `431`,
+          width: `600`,
+          height: `600`,
           srs: `EPSG:4674`
         }
       }

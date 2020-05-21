@@ -567,6 +567,34 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 9
       },
       {
+        text: `*  Pode haver sobreposição entre os dados de desmatamento com as áreas atingidas, devendo as áreas serem analisadas separadamente`,
+        fontSize: 8,
+        alignment: 'justify',
+        margin: [30, 10, 30, 30]
+      },
+      {
+        text: `Anota-se  que os  dados  acima indicam extreme de  dúvidas, com grau`,
+        alignment: 'right',
+        margin: [30, 0, 30, 0],
+        style: 'body'
+      },
+      {
+        text: 'de acurácia com mais de 90% de acerto, no entanto, alterações nos valores poderão ocorrer em decorrência de trabalhos de campo, pelo uso de outras imagens de satélite com diferentes resoluções espaciais, radiométricas e temporais, bem como pela fotointerpretação do analista durante a vetorização das áreas.',
+        margin: [30, 0, 30, 15],
+        style: 'body'
+      },
+      {
+        text: `Na  representação  cartográfica  abaixo (Figura 2) é  possível visualizar,`,
+        alignment: 'right',
+        margin: [30, 0, 30, 0],
+        style: 'body'
+      },
+      {
+        text: 'com imagens satélitais(LANDSAT, SPOT, SENTINEL e Planet) a situação da cobertura vegetal do imóvel rural antes de 10/05/2020 e após 13/05/2020, apontando a ocorrência de desmatamento ilegal no imóvel rural decorrente da ausência de autorização pelo órgão competente para o ato de desmatamento.',
+        margin: [30, 0, 30, 15],
+        style: 'body'
+      },
+      {
         text: '',
         pageBreak: 'after'
       },
@@ -634,34 +662,14 @@ module.exports = function (headerDocument, reportData, title) {
         pageBreak: 'after'
       },
       {
-        text: [
-          {
-            text: 'Observaçoes: ',
-            bold: true
-          },
-          {
-            text: `${reportData.property.comments ? reportData.property.comments : 'XXXXXXXXXXXXX'}`,
-            bold: false
-          }
-        ],
-        alignment: 'justify',
-        margin: [30, 30, 30, 30],
-        fontSize: 10
-      },
-      {
         text: '4 CONCLUSÃO',
         margin: [30, 20, 30, 0],
         style: 'listItem'
       },
       {
-        text: `${ reportData.property.foundDeter ? 'Houve    ' : 'Não houve'} desmatamento ilegal no imóvel  rural  objeto deste  Relatório`,
+        text: `${reportData.property.comments ? reportData.property.comments : 'XXXXXXXXXXXXX'}`,
         alignment: 'left',
         margin: [157, 0, 30, 0],
-        style: 'body'
-      },
-      {
-        text: 'Técnico, conforme descrito no Quadro 01 (vide item 3. Análise Técnica).',
-        margin: [30, 0, 30, 15],
         style: 'body'
       },
       {
