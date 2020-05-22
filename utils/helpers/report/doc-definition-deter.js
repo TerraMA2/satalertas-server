@@ -584,13 +584,13 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: `Na  representação  cartográfica  abaixo (Figura 2) é  possível visualizar,`,
+        text: `Na  representação  cartográfica  abaixo (Figura 2 e 3) é  possível visualizar,`,
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
-        text: 'com imagens satélitais(LANDSAT, SPOT, SENTINEL e Planet) a situação da cobertura vegetal do imóvel rural antes de 10/05/2020 e após 13/05/2020, apontando a ocorrência de desmatamento ilegal no imóvel rural decorrente da ausência de autorização pelo órgão competente para o ato de desmatamento.',
+        text: 'com imagens satélitais(Spot-2,5m, Landsat-30m, Sentinel-10m e Planet-3m) a situação da cobertura vegetal do imóvel rural antes de 10/05/2020 e após 13/05/2020, apontando a ocorrência de desmatamento ilegal no imóvel rural decorrente da ausência de autorização pelo órgão competente para o ato de desmatamento.',
         margin: [30, 0, 30, 15],
         style: 'body'
       },

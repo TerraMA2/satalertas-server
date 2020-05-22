@@ -200,6 +200,17 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
     propertyData['areaPastDeforestation'] = resultDeterAreaPastDeforestation[0]['area'];
     // -----------------------------------------------------------------------------------------------------------------
 
+    // --- Deforestation alerts and areas ------------------------------------------------------------------------------
+    const sqlDeflorestationAlerts = `
+      SELECT 
+             substring(ST_EXTENT(carxdeter.intersection_geom)::TEXT, 5, length(ST_EXTENT(carxdeter.intersection_geom)::TEXT) - 5) as bbox,
+             ROUND(COALESCE(SUM(CAST(calculated_area_ha AS DECIMAL)), 0), 4) AS area
+      FROM public.${views.DETER.children.CAR_X_DETER.table_name}
+      WHERE ${columnCarEstadual} = '${carRegister}' ${dateSql}
+    `;
+    propertyData['deflorestationAlerts'] = await Report.sequelize.query(sqlDeflorestationAlerts, QUERY_TYPES_SELECT);
+    // -----------------------------------------------------------------------------------------------------------------
+
     // --- Total area of UsoCon ----------------------------------------------------------------------------------------
     const sqlUsoConArea = `
         SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area
@@ -763,7 +774,6 @@ setDocDefinitions = async function(reportData, docDefinition) {
     const content = [];
     for (let j = 0; j < docDefinition.content.length; j++) {
       if (j === 98) {
-        // const desflorestationHistoryContext = await getContextDesflorestationHistory(reportData.property['deflorestationHistory'], reportData.urlGsDeforestationHistory);
         reportData.desflorestationHistoryContext.forEach(desflorestationHistory => {
           content.push(desflorestationHistory);
         });
@@ -779,6 +789,23 @@ setDocDefinitions = async function(reportData, docDefinition) {
 
     docDefinition.content = content;
   }
+
+  if (reportData.type === 'deter') {
+    const content = [];
+
+    for (let j = 0; j < docDefinition.content.length; j++) {
+      if (j === 98) {
+        reportData.desflorestationContext.forEach(desflorestationHistory => {
+          content.push(desflorestationHistory);
+        });
+      }
+
+      content.push(docDefinition.content[j]);
+    }
+
+    docDefinition.content = content;
+  }
+
   return await docDefinition;
 };
 
@@ -786,8 +813,9 @@ setImages = async function(reportData){
   if (!reportData['images']) {
     reportData.images = {};
   }
-  reportData['images']['headerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logoP.png', 'base64')}`], [320, 50], [60, 25, 0, 20], 'left')
-  reportData['images']['headerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [320, 50], [0, 25, 30, 20], 'right')
+  reportData['images']['headerImage0'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mpmt-small.png', 'base64')}`], [320, 50], [60, 25, 0, 20], 'left')
+  reportData['images']['headerImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logo-satelites-alerta-horizontal.png', 'base64')}`], [320, 50], [0, 25, 0, 0], 'left')
+  reportData['images']['headerImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/inpe.png', 'base64')}`], [320, 50], [0, 25, 70, 20], 'right')
   reportData['images']['chartImage1'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-1.png', 'base64')}`], [200, 200], [0, 3], 'center')
   reportData['images']['chartImage2'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-2.png', 'base64')}`], [250, 250], [3, 3], 'center');
   reportData['images']['chartImage3'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/report-chart-3.png', 'base64')}`], [250, 250], [3, 3], 'center');
@@ -1083,7 +1111,7 @@ module.exports = FileReport = {
       const spotlightsYear = await Report.sequelize.query(sqlSpotlightsYear, QUERY_TYPES_SELECT);
       // ---------------------------------------------------------------------------------------------------------------
 
-      const dateSql = ` and ${columnExecutionDate}::date >= '${dateFrom}' AND ${columnExecutionDate}::date <= '${dateTo}'`;
+      const dateSql = ` AND ${columnExecutionDate}::date >= '${dateFrom}' AND ${columnExecutionDate}::date <= '${dateTo}'`;
       // ---------------------------------------------------------------------------------------------------------------
       const sqlProdesArea = `SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCar} = '${carRegister}' ${dateSql}`;
       const prodesArea = await Report.sequelize.query(sqlProdesArea, QUERY_TYPES_SELECT);
@@ -1253,6 +1281,7 @@ module.exports = FileReport = {
       setImages(reportData);
 
       const headerDocument = [
+        reportData.images.headerImage0,
         reportData.images.headerImage1,
         reportData.images.headerImage2
       ];
