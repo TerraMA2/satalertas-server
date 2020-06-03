@@ -20,7 +20,7 @@
     "port": 5432,
     "define": {
       "schema": "alertas"
-    }
+    },
     "basePath": ""
   },
   "production": {

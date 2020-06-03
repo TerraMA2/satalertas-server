@@ -102,7 +102,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-                ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1), com área igual a ${reportData.property.area} ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
+                ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1) com área igual a ${reportData.property.area} ha, localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no ${reportData.property.register ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR '+reportData.property.register : 'Sistema Cadastro Ambiental Rural Federal, protocolo CAR '+reportData.property.federalregister}`
             ),
           },
           {
@@ -201,7 +201,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text:`ados das áreas desmatadas no Estado de Mato Grosso mapeadas pelo Sistema de Detecção de Desmatamento em Tempo Real (DETER) (alertas de desmatamento em tempo quase real) desenvolvido pelo INPE;`,
+            text:`Dados das áreas desmatadas no Estado de Mato Grosso mapeadas pelo Sistema de Detecção de Desmatamento em Tempo Real (DETER) (alertas de desmatamento em tempo quase real) desenvolvido pelo INPE;`,
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body'
@@ -502,20 +502,6 @@ module.exports = function (headerDocument, reportData, title) {
             ],
             [
               {
-                colSpan: 2,
-                style: 'tableHeader',
-                text: 'Área de Uso Consolidado (ha)'
-              }
-            ],
-            [
-              {
-                colSpan: 2,
-                alignment: 'center',
-                text: `${reportData.property.areaUsoCon}`
-              }
-            ],
-            [
-              {
                 text: 'Área atingida',
                 style: 'tableHeader'
               },
@@ -530,23 +516,6 @@ module.exports = function (headerDocument, reportData, title) {
                 rel.pastDeforestation
               ];
             }),
-            [
-              {
-                colSpan: 2,
-                style: 'tableHeader',
-                text: 'Desmatamento por tipologia vegetal (ha)'
-              }
-            ],
-            [
-              {
-                alignment: 'center',
-                text: `${reportData.property.tableVegRadam.affectedArea}`
-              },
-              {
-                alignment: 'center',
-                text: `${reportData.property.tableVegRadam.pastDeforestation}`
-              }
-            ],
             [
               {
                 colSpan: 2,
@@ -590,7 +559,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'com imagens satélitais(LANDSAT, SPOT, SENTINEL e Planet) a situação da cobertura vegetal do imóvel rural antes de 10/05/2020 e após 13/05/2020, apontando a ocorrência de desmatamento ilegal no imóvel rural decorrente da ausência de autorização pelo órgão competente para o ato de desmatamento.',
+        text: `com imagens satélitais(Spot-2,5m, Landsat-30m, Sentinel-10m e Planet-3m) a situação da cobertura vegetal do imóvel rural no período de ${reportData.formattedFilterDate}.`,
         margin: [30, 0, 30, 15],
         style: 'body'
       },
