@@ -186,20 +186,7 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
 setDeterData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnExecutionDate, carRegister) {
   if ((propertyData && views.DETER && type === 'deter')) {
 
-    // --- Radam View vegetation of area grouped by physiognomy --------------------------------------------------------
-    const sqlVegRadam = ` 
-        SELECT 
-               gid,
-               numero_do1,
-               numero_do2,
-               fisionomia,
-               ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_, 
-               ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam FROM car_x_vegradam
-        WHERE gid = ${carRegister} `;
-    propertyData['vegRadam']  = await Report.sequelize.query(sqlVegRadam, QUERY_TYPES_SELECT);
-    // -----------------------------------------------------------------------------------------------------------------
-
-    // --- Total area of Deter period ----------------------------------------------------------------------------------------
+    // --- Total area of Deter period ----------------------------------------------------------------------------------
     const sqlDeterAreaPastDeforestation =
         `   
             SELECT ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area 
@@ -222,36 +209,6 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
       GROUP BY a_cardeter_31_id
     `;
     propertyData['deflorestationAlerts'] = await Report.sequelize.query(sqlDeflorestationAlerts, QUERY_TYPES_SELECT);
-    // -----------------------------------------------------------------------------------------------------------------
-
-    // --- Total area of UsoCon ----------------------------------------------------------------------------------------
-    const sqlUsoConArea = `
-        SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area
-        FROM public.${views.STATIC.children.CAR_X_USOCON.table_name}
-        WHERE gid_car = '${carRegister}'`;
-    const resultUsoConArea = await Report.sequelize.query(sqlUsoConArea, QUERY_TYPES_SELECT);
-    propertyData['areaUsoCon'] = resultUsoConArea[0]['area'];
-    // -----------------------------------------------------------------------------------------------------------------
-
-    // --- Fisionomia of DETER radam -----------------------------------------------------------------------------------
-    const sqlFisionomiaDeterSum = `SELECT de_veg_radambr_fisionomia AS class, ROUND(COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area FROM public.${views.DETER.children.CAR_DETER_X_VEG_RADAM.table_name} where ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
-    propertyData['deterRadam'] = await Report.sequelize.query(sqlFisionomiaDeterSum, QUERY_TYPES_SELECT);
-    let radamProdes = 0;
-    let radamText = '';
-    if (propertyData['deterRadam'] && propertyData['deterRadam'].length > 0) {
-      for (const radam of propertyData['deterRadam']) {
-        const area = radam['area'];
-        const cls = radam['class'];
-        if (cls !== null) {
-          radamText += radamText === '' ? `${cls}: ${area}` : `\n ${cls}: ${area}`;
-          radamProdes += area;
-        }
-      }
-    }
-    propertyData['tableVegRadam'] = {
-      affectedArea: 'Vegetação RADAM BR',
-      pastDeforestation: radamText
-    };
     // -----------------------------------------------------------------------------------------------------------------
 
     // ---- Values of table --------------------------------------------------------------------------------------------
