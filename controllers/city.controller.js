@@ -1,5 +1,6 @@
-const   models = require('../models');
-        City = models.de_municipios_sema;
+const models = require('../models')
+      City = models.de_municipios_sema
+      logger = require('../utils/logger');
 
 exports.getAll = async (req, res) => {
 
@@ -7,7 +8,7 @@ exports.getAll = async (req, res) => {
         res.json(await City.findAll());
     } catch (e) {
       const msgErr = `In indigenous-land.controller, method getAll:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       res.json(msgErr);
     }
 };
@@ -28,7 +29,7 @@ exports.getAllSimplified = async (req, res) => {
     res.json(await City.findAll(options));
   } catch (e) {
     const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
-    console.log(msgErr);
+    logger.error(msgErr);
     res.json(msgErr);
   }
 };
@@ -47,7 +48,7 @@ exports.getAllRegionsSimplified = async (req, res) => {
     res.json(await City.findAll(options));
   } catch (e) {
     const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
-    console.log(msgErr);
+    logger.error(msgErr);
     res.json(msgErr);
   }
 };
@@ -66,7 +67,7 @@ exports.getAllMesoregionsSimplified = async (req, res) => {
     res.json(await City.findAll(options));
   } catch (e) {
     const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
-    console.log(msgErr);
+    logger.error(msgErr);
     res.json(msgErr);
   }
 };
@@ -85,7 +86,7 @@ exports.getAllMicroregionsSimplified = async (req, res) => {
     res.json(await City.findAll(options));
   } catch (e) {
     const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
-    console.log(msgErr);
+    logger.error(msgErr);
     res.json(msgErr);
   }
 };

@@ -1,4 +1,5 @@
-const axios = require('axios');
+const axios = require('axios')
+      logger = require('../utils/logger');
 
 module.exports = SatVegService = {
   async get(coordinates, type, preFilter, filter, filterParam, sat) {
@@ -19,7 +20,7 @@ module.exports = SatVegService = {
       return await response.data;
     } catch (e) {
       const msgErr = `In unit sat-veg.service, method get:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       throw new Error(msgErr);
     }
   }

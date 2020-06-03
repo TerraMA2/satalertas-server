@@ -1,5 +1,6 @@
-const   models = require('../models');
-        IndigenousLand = models.de_terra_indigena_sema;
+const   models = require('../models')
+        IndigenousLand = models.de_terra_indigena_sema
+        logger = require('../utils/logger')
 
 exports.getAll = async (req, res) => {
 
@@ -7,7 +8,7 @@ exports.getAll = async (req, res) => {
         res.json(await IndigenousLand.findAll());
     } catch (e) {
       const msgErr = `In indigenous-land.controller, method getAll:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       res.json(msgErr);
     }
 };
@@ -27,7 +28,7 @@ exports.getAllSimplified = async (req, res) => {
         res.json(await IndigenousLand.findAll(options));
     } catch (e) {
       const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       res.json(msgErr);
     }
 };
