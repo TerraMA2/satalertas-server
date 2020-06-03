@@ -10,7 +10,8 @@ const Result = require("../utils/result");
   confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
   ViewUtil = require("../utils/view.utils");
   SatVegService = require("../services/sat-veg.service");
-  axios = require('axios');
+  axios = require('axios')
+  logger = require('../utils/logger')
 
   const config = {
     headers: {'X-My-Custom-Header': 'Header-Value'}
@@ -806,7 +807,7 @@ module.exports = FileReport = {
       if (err) {
         throw err;
       }
-      console.log(`Arquivo salvo em .. ${path}`);
+      logger.error(`Arquivo salvo em .. ${path}`);
     })
   },
   async get(id) {
@@ -910,7 +911,7 @@ module.exports = FileReport = {
         if (err) {
           throw err;
         }
-        console.log(`Arquivo ${report.dataValues.path}/${report.dataValues.name} excluído com sucesso!`);
+        logger.error(`Arquivo ${report.dataValues.path}/${report.dataValues.name} excluído com sucesso!`);
       })
       const countRowDeleted = await Report.destroy({ where: {id} }).then(rowDeleted => rowDeleted).catch(err => err)
       const result = countRowDeleted ?
@@ -931,7 +932,7 @@ module.exports = FileReport = {
         if (err) {
           throw err;
         }
-        console.log(`Arquivo salvo em ..${document.path.trim()}/${docName.trim()}`);
+        logger.error(`Arquivo salvo em ..${document.path.trim()}/${docName.trim()}`);
       })
 
       const report = new Report({
@@ -1205,8 +1206,8 @@ module.exports = FileReport = {
         points[index]['url'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view},${groupViews.STATIC.children.CAR_X_USOCON.workspace}:${groupViews.STATIC.children.CAR_X_USOCON.view},${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}&styles=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view}_style,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_X_USOCON.view}_hatched_style,${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}_style&bbox=${bbox}&width=404&height=431&time=${points[index].startyear}/${currentYear}&cql_filter=${carColumn}='${carRegister}';gid_car='${carRegister}';${groupViews[type.toUpperCase()].children[groupType[type]].table_name}_id=${points[index].a_carprodes_1_id}&srs=EPSG:4674&format=image/png`;
 
         points[index]['options'] = await SatVegService.get({long: points[index].long, lat: points[index].lat },'ndvi', 3, 'wav', '', 'aqua').then( async resp => {
-          console.log(resp['listaDatas'])
-          console.log(resp['listaSerie'])
+          logger.error(resp['listaDatas'])
+          logger.error(resp['listaSerie'])
           return await {
             type: 'line',
             data: {
@@ -1258,14 +1259,14 @@ module.exports = FileReport = {
 
       return { docDefinitions: await setDocDefinitions(reportData, docDefinitions), headerDocument: headerDocument };
     } catch (e) {
-      console.log(e)
+      logger.error(e)
     }
   },
   async createPdf(reportData) {
     try {
       return Result.ok(await this.getDocDefinitions(reportData));
     } catch (e) {
-      console.log(e)
+      logger.error(e)
     }
   }
 };

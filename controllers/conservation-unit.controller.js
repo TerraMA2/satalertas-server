@@ -1,12 +1,13 @@
-const   models = require('../models');
-        ConservationUnit = models.de_unidade_cons_sema;
+const   models = require('../models')
+        ConservationUnit = models.de_unidade_cons_sema
+        logger = require('../utils/logger');
 
 exports.getAll = async (req, res) => {
     try {
         res.json(await ConservationUnit.findAll());
     } catch (e) {
       const msgErr = `In conservation-unit.controller, method getAll:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       res.json(msgErr);
     }
 };
@@ -25,7 +26,7 @@ exports.getAllSimplified = async (req, res) => {
         res.json(await ConservationUnit.findAll(options));
     } catch (e) {
       const msgErr = `In conservation-unit.controller, method getAllSimplified:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       res.json(msgErr);
     }
 };

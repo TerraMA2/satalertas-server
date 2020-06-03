@@ -1,7 +1,8 @@
-const models = require('../models');
-      Car = models.de_car_validado_sema;
-      Filter = require("../utils/filter/filter.utils");
-      QUERY_TYPES_SELECT = { type: "SELECT" };
+const models = require('../models')
+      Car = models.de_car_validado_sema
+      Filter = require("../utils/filter/filter.utils")
+      QUERY_TYPES_SELECT = { type: "SELECT" }
+      logger = require('../utils/logger')
 
 module.exports = carService = {
   async getAllSimplified(params) {
@@ -97,7 +98,7 @@ module.exports = carService = {
 
     } catch (e) {
       const msgErr = `In unit car.service, method getAllSimplified:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       throw new Error(msgErr);
     }
   },
@@ -106,7 +107,7 @@ module.exports = carService = {
       return await Car.findAll();
     } catch (e) {
       const msgErr = `In unit car.service, method getAll:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       throw new Error(msgErr);
     }
   },
@@ -122,7 +123,7 @@ module.exports = carService = {
 
     } catch (e) {
       const msgErr = `In unit car.service, method getByCpf:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       throw new Error(msgErr);
     }
   }

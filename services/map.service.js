@@ -1,7 +1,8 @@
-const   models = require('../models');
-        View = models.views;
-        Filter = require("../utils/filter/filter.utils");
-        QUERY_TYPES_SELECT = { type: "SELECT" };
+const   models = require('../models')
+        View = models.views
+        Filter = require("../utils/filter/filter.utils")
+        QUERY_TYPES_SELECT = { type: "SELECT" }
+        logger = require('../utils/logger');
 
 getColumnsTable = async function(tableName, schema) {
   const sql =
@@ -93,7 +94,7 @@ module.exports = mapService = {
       return dataJson;
     } catch (e) {
       const msgErr = `In unit map.service, method getAnalysisData:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       throw new Error(msgErr);
     }
   },
@@ -145,7 +146,7 @@ module.exports = mapService = {
       return dataJson;
     } catch (e) {
       const msgErr = `In unit map.service, method getStaticData:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       throw new Error(msgErr);
     }
   },
@@ -203,7 +204,7 @@ module.exports = mapService = {
       return dataJson;
     } catch (e) {
       const msgErr = `In unit map.service, method getDynamicData:${e}`;
-      console.log(msgErr);
+      logger.error(msgErr);
       throw new Error(msgErr);
     }
   }
