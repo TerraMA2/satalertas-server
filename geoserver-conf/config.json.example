@@ -5,6 +5,7 @@
     "workspace": "workspace",
     "datastore": "datastore",
     "baseHost": "http://terrama.mpmt.mp.br/mpmt/geoserver",
+    "baseHostDeter": "/api",
     "host": "http://terrama.mpmt.mp.br/mpmt/geoserver/rest/",
     "mosaic": {
       "wmsStore": {
@@ -44,6 +45,7 @@
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
     "baseHost": "http://terrama.mpmt.mp.br/mpmt/geoserver",
+    "baseHostDeter": "/http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
     "host": "http://terrama.mpmt.mp.br/mpmt/geoserver/rest/",
     "mosaic": {
       "wmsStore": {
