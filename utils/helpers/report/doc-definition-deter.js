@@ -89,7 +89,7 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 20]
       },
       {
-        text: '1. OBJETIVO',
+        text: '1. OBJETO',
         style: 'listItem'
       },
       {
@@ -102,7 +102,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-                ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1) com área igual a ${reportData.property.area} ha, localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no ${reportData.property.register ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR '+reportData.property.register : 'Sistema Cadastro Ambiental Rural Federal, protocolo CAR '+reportData.property.federalregister}`
+                ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1) com área igual a ${reportData.property.area} ha, localizado no município de ${reportData.property.city}-MT, de coordenada central longitude = ${reportData.property.long} e latitude = ${reportData.property.lat}, pertencente a ${reportData.property.owner}, conforme informações declaradas no ${reportData.property.register ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR '+reportData.property.register : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR '+reportData.property.federalregister}`
             ),
           },
           {
@@ -281,22 +281,6 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body'
           },
           {
-            text: `Mapa de vegetação do Projeto RadamBrasil;`,
-            margin: [20, 0, 30, 5],
-            width: 'auto',
-            style: 'body'
-          }
-        ]
-      },
-      {
-        columns: [
-          {
-            text: 'g) ',
-            margin: [50, 0, 0, 5],
-            width: 'auto',
-            style: 'body'
-          },
-          {
             text: `Imagens dos Satélites Landsat, SPOT, Planet, Sentinel-2, CBERS-4 e de outras fontes disponíveis;`,
             margin: [20, 0, 30, 5],
             width: 'auto',
@@ -307,7 +291,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         columns: [
           {
-            text: 'h) ',
+            text: 'g) ',
             margin: [50, 0, 0, 5],
             width: 'auto',
             style: 'body'
@@ -358,13 +342,13 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Para qualificação  da área desmatada, os  potígonos dos desmatamen-',
+        text: 'Para qualificação  da área desmatada, os  polígonos dos desmatamen-',
         alignment: 'left',
         margin: [157, 0, 30, 0],
         style: 'body'
       },
       {
-        text: `mentos foram intersectados com dados geoespaciais de áreas protegidas (APP, ARL, AUR, UC e TI) e do tipo de vegetação classificado pelo projeto RadamBrasil.`,
+        text: `mentos foram intersectados com dados geoespaciais de áreas protegidas (APP, ARL, AUR, UC e TI).`,
         margin: [30, 0, 30, 5],
         style: 'body'
       },
@@ -397,7 +381,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: `1    Informações mais detalhadas sobre o funcionamento do TerraMA² podem ser obtidas em http://www.TerraMA2.dpi.inpe.br/sobre. Acessado em 07.10.2019.`,
         fontSize: 8,
-        margin: [30, 0, 30, 0]
+        margin: [30, 20, 30, 0]
       },
       {
         text: 'O objetivo  do DETER  é  identificar  as alterações  da vegetação natural ',
@@ -475,7 +459,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' + reportData.property.name + ' a  partir da análise do PRODES, no período ' + reportData.formattedFilterDate + '.'
+            text: ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' + reportData.property.name + ' a  partir da análise do DETER, no período ' + reportData.formattedFilterDate + '.'
           },
         ],
         margin: [30, 0, 30, 5],
@@ -559,7 +543,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: `com imagens satélitais(Spot-2,5m, Landsat-30m, Sentinel-10m e Planet-3m) a situação da cobertura vegetal do imóvel rural no período de ${reportData.formattedFilterDate}.`,
+        text: `com imagens satelitais(Spot-2,5m, Landsat-30m, Sentinel-10m e Planet-3m) a situação da cobertura vegetal do imóvel rural no período de 2008 até ${reportData.currentYear}.`,
         margin: [30, 0, 30, 15],
         style: 'body'
       },
@@ -618,7 +602,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Sentinel de 2019, (c) Landsat de 2018 e (d) Planet de ${reportData.currentYear}`,
+            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Landsat de 2018 , (c) Sentinel de 2019e (d) Planet de ${reportData.currentYear}`,
             bold: false
           }
         ],
