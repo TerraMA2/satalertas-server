@@ -108,9 +108,10 @@ const analysisReportFormat = {
         const bboxDeter = alert.bbox.split(',')
         const yearBefore = (alert.year - 1);
 
-        const view = yearBefore < 2013 ? 'LANDSAT_5_' :
+        const view =
+          yearBefore < 2013 ? 'LANDSAT_5_' :
             yearBefore < 2017 ? 'LANDSAT_8_' :
-                'SENTINEL_2_';
+              'SENTINEL_2_';
 
         alert['urlGsImageBefore'] =  `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:${view}${yearBefore},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${alert.bbox}&width=600&height=600&time=P1Y/${alert.year}&cql_filter=RED_BAND>0;${views.DETER.children.CAR_X_DETER.table_name}_id='${alert.id}'&srs=EPSG:4674&format=image/png`;
 
@@ -757,44 +758,131 @@ getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDe
   return await deflorestationHistoryContext;
 }
 
-setDocDefinitions = async function(reportData, docDefinition) {
-  if (reportData.type === 'prodes') {
-    const startDate = new Date(reportData.date[0]).toLocaleDateString('pt-BR');
-    const endDate = new Date(reportData.date[1]).toLocaleDateString('pt-BR');
+getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionContent, reportData) {
+  const startDate = new Date(reportData.date[0]).toLocaleDateString('pt-BR');
+  const endDate = new Date(reportData.date[1]).toLocaleDateString('pt-BR');
 
-    const content = [];
-    for (let j = 0; j < docDefinition.content.length; j++) {
-      if (j === 98) {
-        reportData.desflorestationHistoryContext.forEach(desflorestationHistory => {
-          content.push(desflorestationHistory);
-        });
+  const content = [];
+  for (let j = 0; j < docDefinitionContent.length; j++) {
+    if (j === 98) {
+      reportData.desflorestationHistoryContext.forEach(desflorestationHistory => {
+        content.push(desflorestationHistory);
+      });
 
-        const ndviContext = await getContextChartNdvi(reportData['chartImages'], startDate, endDate);
-        ndviContext.forEach(ndvi => {
-          content.push(ndvi);
-        });
-      }
-
-      content.push(docDefinition.content[j]);
+      const ndviContext = await getContextChartNdvi(reportData['chartImages'], startDate, endDate);
+      ndviContext.forEach(ndvi => {
+        content.push(ndvi);
+      });
     }
 
-    docDefinition.content = content;
+    content.push(docDefinitionContent[j]);
+  }
+
+  return await content;
+}
+
+getContentForDeflorestionAlertsContext = async function(docDefinitionContent, deflorestationAlertsContext) {
+  const content = [];
+
+  for (let j = 0; j < docDefinitionContent.length; j++) {
+    if (j === 66) {
+      deflorestationAlertsContext.forEach(deflorestationAlerts => {
+        content.push(deflorestationAlerts);
+      });
+    }
+
+    content.push(docDefinitionContent[j]);
+  }
+
+  return await content;
+}
+
+getConclusion = async function(conclusionText) {
+  const firstLineMargin = 152;
+  const margin = 30;
+  const numberOfCharactersInTheFirstLine = 71;
+  const conclusionParagraphs = conclusionText ? conclusionText.split('\n') : [ 'XXXXXXXXXXXXX.' ];
+  const conclusion = [];
+
+  for(let i = 0; i < conclusionParagraphs.length; i++) {
+    const alignment = conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine ? 'right' : 'left';
+
+    const paragraph =  [];
+
+    let firstLine = conclusionParagraphs[i].substring(0, numberOfCharactersInTheFirstLine).trim();
+    //isNaN("3") || !!parseFloat("3")
+    let numberOfCharacters = 0;
+    if ((conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine) && (conclusionParagraphs[i][numberOfCharactersInTheFirstLine + 1] !== '')) {
+      for (let j = 0 ; j < numberOfCharactersInTheFirstLine ; j++) {
+        numberOfCharacters++;
+        if (firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters].trim() === '') {
+          firstLine = firstLine.substring(0, numberOfCharactersInTheFirstLine - numberOfCharacters).trim();
+          j = numberOfCharactersInTheFirstLine;
+        }
+      }
+
+      if (numberOfCharacters > 0) {
+        let text = '';
+        let number = 0;
+        for (let j = 0 ; j < (firstLine.length); j++) {
+          text += firstLine[j];
+          if ((number < (numberOfCharacters - 5)) && (firstLine[j].trim() === '')) {
+            text += ' ';
+            number++;
+          }
+        }
+        firstLine = text;
+      }
+    }
+
+    if (firstLine.trim() != '') {
+      conclusion.push({
+        text: `${firstLine}`,
+        alignment: `${alignment}`,
+        margin: [firstLineMargin, 0, margin, 0],
+        style: 'body'
+      });
+    }
+
+    if (conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine) {
+      const restOfText = conclusionParagraphs[i].substring(numberOfCharactersInTheFirstLine - numberOfCharacters).trim();
+      if (restOfText.trim() != '') {
+        conclusion.push({
+          text: `${restOfText}`,
+          margin: [30, 0, 30, 5],
+          style: 'body'
+        });
+      }
+    }
+
+  }
+  return await conclusion;
+}
+
+getContentConclusion = async function(docDefinitionContent, conclusionText) {
+  const content = [];
+  const conclusion = await getConclusion(conclusionText);
+  for (let j = 0; j < docDefinitionContent.length; j++) {
+    if (j === 67) {
+      conclusion.forEach(conclusionParagraph => {
+        content.push(conclusionParagraph);
+      });
+    }
+
+    content.push(docDefinitionContent[j]);
+  }
+
+  return await content;
+}
+
+setDocDefinitions = async function(reportData, docDefinition) {
+  if (reportData.type === 'prodes') {
+    docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(docDefinition.content, reportData);
   }
 
   if (reportData.type === 'deter') {
-    const content = [];
-
-    for (let j = 0; j < docDefinition.content.length; j++) {
-      if (j === 66) {
-        reportData.deflorestationAlertsContext.forEach(deflorestationAlerts => {
-          content.push(deflorestationAlerts);
-        });
-      }
-
-      content.push(docDefinition.content[j]);
-    }
-
-    docDefinition.content = content;
+    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments);
+    docDefinition.content = await getContentForDeflorestionAlertsContext(docDefinition.content, reportData.deflorestationAlertsContext);
   }
 
   return await docDefinition;

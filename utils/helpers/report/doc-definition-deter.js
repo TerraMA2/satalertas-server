@@ -620,12 +620,6 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: `${reportData.property.comments ? reportData.property.comments : 'XXXXXXXXXXXXX'}`,
-        alignment: 'left',
-        margin: [157, 0, 30, 0],
-        style: 'body'
-      },
-      {
         text: '5 ANEXOS',
         style: 'listItem'
       },
