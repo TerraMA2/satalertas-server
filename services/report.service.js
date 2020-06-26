@@ -810,12 +810,12 @@ getConclusion = async function(conclusionText) {
     const paragraph =  [];
 
     let firstLine = conclusionParagraphs[i].substring(0, numberOfCharactersInTheFirstLine).trim();
-    //isNaN("3") || !!parseFloat("3")
+
     let numberOfCharacters = 0;
     if ((conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine) && (conclusionParagraphs[i][numberOfCharactersInTheFirstLine + 1] !== '')) {
       for (let j = 0 ; j < numberOfCharactersInTheFirstLine ; j++) {
         numberOfCharacters++;
-        if (firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters].trim() === '') {
+        if (firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters] && firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters].trim() === '') {
           firstLine = firstLine.substring(0, numberOfCharactersInTheFirstLine - numberOfCharacters).trim();
           j = numberOfCharactersInTheFirstLine;
         }
