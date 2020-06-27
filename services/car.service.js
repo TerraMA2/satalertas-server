@@ -32,18 +32,18 @@ module.exports = carService = {
       const sqlSelectSum = specificParameters.sum && layer.codgroup !== 'BURNED' ? `,SUM(${specificParameters.tableAlias}.${specificParameters.sumField}) AS ${specificParameters.sumAlias}` : '';
       const sqlSelect =
         ` SELECT 
-                        property.gid AS gid,
-                        property.numero_do1 AS registro_estadual,
-                        property.numero_do2 AS registro_federal,
-                        property.nome_da_p1 AS nome_propriedade,
-                        property.municipio1 AS municipio,
-                        property.area_ha_ AS area,
-                        property.situacao_1 AS situacao,
-                        ST_Y(ST_Centroid(property.geom)) AS "lat",
-                        ST_X(ST_Centroid(property.geom)) AS "long",
-                        (SELECT count(1) > 0 FROM alertas.reports rep WHERE property.gid = rep.car_gid) AS has_pdf
-                        ${sqlSelectSum}
-                        ${sqlSelectCount} `;
+                property.gid AS gid,
+                property.numero_do1 AS registro_estadual,
+                property.numero_do2 AS registro_federal,
+                property.nome_da_p1 AS nome_propriedade,
+                property.municipio1 AS municipio,
+                property.area_ha_ AS area,
+                property.situacao_1 AS situacao,
+                ST_Y(ST_Centroid(property.geom)) AS "lat",
+                ST_X(ST_Centroid(property.geom)) AS "long",
+                (SELECT count(1) > 0 FROM alertas.reports rep WHERE property.gid = rep.car_gid) AS has_pdf
+                ${sqlSelectSum}
+                ${sqlSelectCount} `;
 
       const sqlFrom = ` FROM public.${table.name} AS ${specificParameters.tableAlias}`;
 

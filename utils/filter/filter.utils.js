@@ -166,37 +166,59 @@ const themeSelected = {
                 }
         }
 };
-function alertType(analyzes, sql, columns, aliasTablePrimary, view) {
-        analyzes.forEach(analyze => {
-                if (analyze.valueOption && analyze.valueOption.value && analyze.type) {
-                        const values = getValues(analyze);
-                        const alertType = {
-                                burned() {
-                                        sql.sqlHaving += ` HAVING count(1) ${values.columnValueFocos} `;
-                                },
-                                car_area() {
-                                        sql.secondaryTables += ' , public.de_car_validado_sema car ';
-                                        sql.sqlWhere += ` ${addAND(sql.sqlWhere)} car.area_ha_ ${values.columnValue} `;
-                                        sql.sqlWhere += ` ${addAND(sql.sqlWhere)} car.numero_do1 = ${columns.column1} `;
-                                },
-                                others() {
-                                        sql.sqlWhere += ` ${addAND(sql.sqlWhere)} ${aliasTablePrimary}.calculated_area_ha ${values.columnValue} `;
-                                }
-                        };
 
-                        if (isDeter(analyze, view) || isBurnedArea(analyze, view) || isDeforestation(analyze, view)) {
-                                alertType['others']();
-                        }
+function setClassSearch(classSearch, sql, aliasTablePrimary, view){
+  if (classSearch && (classSearch.radioValue === 'SELECTION') && (classSearch.analyzes.length > 0)){
+    classSearch.analyzes.forEach(analyze => {
+      if (analyze.valueOption && analyze.type) {
+        const setClass = {
+          deter() {
+            if (view.codgroup === 'DETER') {
+              const columnName = view.isPrimary ? `dd_deter_inpe_classname` : `${view.tableOwner}_dd_deter_inpe_classname`;
+              sql.sqlWhere += ` ${addAND(sql.sqlWhere)} ${aliasTablePrimary}.${columnName} like '%${analyze.valueOption}%' `
+            }
+          }
+        }
 
-                        if (isBurned(analyze, view)) {
-                                alertType[analyze.type]();
-                        }
+        setClass[analyze.type]();
+      }
+    });
+  }
+}
 
-                        if (isCarArea(analyze.type)) {
-                                alertType[analyze.type]();
-                        }
-                }
-        });
+function setAlertType(alertType, sql, columns, aliasTablePrimary, view) {
+  if (alertType && (alertType.radioValue !== 'ALL') && (alertType.analyzes.length > 0)) {
+    alertType.analyzes.forEach(analyze => {
+      if (analyze.valueOption && analyze.valueOption.value && analyze.type) {
+        const values = getValues(analyze);
+        const alertType = {
+          burned() {
+            sql.sqlHaving += ` HAVING count(1) ${values.columnValueFocos} `;
+          },
+          car_area() {
+            sql.secondaryTables += ' , public.de_car_validado_sema car ';
+            sql.sqlWhere += ` ${addAND(sql.sqlWhere)} car.area_ha_ ${values.columnValue} `;
+            sql.sqlWhere += ` ${addAND(sql.sqlWhere)} car.numero_do1 = ${columns.column1} `;
+          },
+          others() {
+            sql.sqlWhere += ` ${addAND(sql.sqlWhere)} ${aliasTablePrimary}.calculated_area_ha ${values.columnValue} `;
+          }
+        };
+
+        if (isDeter(analyze, view) || isBurnedArea(analyze, view) || isDeforestation(analyze, view)) {
+          alertType['others']();
+        }
+
+        if (isBurned(analyze, view)) {
+          alertType[analyze.type]();
+        }
+
+        if (isCarArea(analyze.type)) {
+          alertType[analyze.type]();
+        }
+      }
+    });
+  }
 };
 const setFilter = {
         specificSearch: async function(conn, sql, filter, columns, cod, table, view) {
@@ -210,10 +232,8 @@ const setFilter = {
 
                         await themeSelected[filter.themeSelected.type](conn, sql, filter, columns, cod, table.alias, srid);
                 }
-
-                if (filter.alertType && (filter.alertType.radioValue !== 'ALL') && (filter.alertType.analyzes.length > 0)) {
-                        alertType(filter.alertType.analyzes, sql, columns, table.alias, view);
-                }
+                setAlertType(filter.alertType, sql, columns, table.alias, view);
+                setClassSearch(filter.classSearch, sql, table.alias, view);
         }
 };
 function getValues(analyze) {
@@ -376,6 +396,7 @@ const filterUtils = {
     } else {
       paramsFilter = params;
     }
+
     return await this.getFilter(conn, table, paramsFilter, view, columns);
     }
 };
