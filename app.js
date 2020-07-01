@@ -19,6 +19,7 @@ const projusRouter = require('./routes/projus.router')
 const indigenousLandRouter = require('./routes/indigenous-land.router')
 const conservationUnitRouter = require('./routes/conservation-unit.router')
 const cityRouter = require('./routes/city.router')
+const analyzeRouter = require('./routes/analyze.router')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
@@ -47,6 +48,7 @@ app.use(basePath+'/projus', projusRouter)
 app.use(basePath+'/indigenousLand', indigenousLandRouter)
 app.use(basePath+'/conservationUnit', conservationUnitRouter)
 app.use(basePath+'/city', cityRouter)
+app.use(basePath+'/analyze', analyzeRouter)
 
 // Error handler
 app.use(errorController.show404)
