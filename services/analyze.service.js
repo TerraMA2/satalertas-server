@@ -9,6 +9,7 @@ const analyses = {
     const sql = ` 
       SELECT deter.classname AS name, row_number() over () AS gid  FROM public.${group.table_name} deter
       GROUP BY deter.classname
+      ORDER BY deter.classname
     `
     return await View.sequelize.query(sql, QUERY_TYPES_SELECT);
   }

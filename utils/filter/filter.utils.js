@@ -175,7 +175,7 @@ function setClassSearch(classSearch, sql, aliasTablePrimary, view){
           deter() {
             if (view.codgroup === 'DETER') {
               const columnName = view.isPrimary ? `dd_deter_inpe_classname` : `${view.tableOwner}_dd_deter_inpe_classname`;
-              sql.sqlWhere += ` ${addAND(sql.sqlWhere)} ${aliasTablePrimary}.${columnName} like '%${analyze.valueOption}%' `
+              sql.sqlWhere += ` ${addAND(sql.sqlWhere)} ${aliasTablePrimary}.${columnName} like '%${analyze.valueOption.name}%' `
             }
           }
         }
