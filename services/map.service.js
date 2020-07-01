@@ -60,7 +60,7 @@ module.exports = mapService = {
       const columnsTable = await getColumnsTable(layer.tableName, 'public')
 
       const select =
-        ` SELECT  ${columnsTable}
+        ` SELECT  DISTINCT ${columnsTable}
                   , ST_Y(ST_Centroid(${table.alias}.intersection_geom)) AS "lat"
                   , ST_X(ST_Centroid(${table.alias}.intersection_geom)) AS "long"
           `;
