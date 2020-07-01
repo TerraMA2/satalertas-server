@@ -1,5 +1,5 @@
 const axios = require('axios')
-      logger = require('../utils/logger');
+logger = require('../utils/logger');
 
 module.exports = SatVegService = {
   async get(coordinates, type, preFilter, filter, filterParam, sat) {
