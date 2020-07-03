@@ -20,7 +20,8 @@ const Result = require("../utils/result");
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
-getFilterClassSearch = function(sql, classSearch, view, tableOwner){
+getFilterClassSearch = function(sql, filter, view, tableOwner){
+  const classSearch = filter && filter.classSearch ? filter.classSearch : null;
   if (classSearch && (classSearch.radioValue === 'SELECTION') && (classSearch.analyzes.length > 0)){
     classSearch.analyzes.forEach(analyze => {
       if (analyze.valueOption && analyze.type) {
@@ -222,7 +223,7 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
         `   
             SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area 
             FROM public.${views.DETER.children.CAR_X_DETER.table_name} 
-            WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_X_DETER, views.DETER.tableOwner)} `;
+            WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_X_DETER, views.DETER.tableOwner)} `;
     const resultDeterAreaPastDeforestation = await Report.sequelize.query(sqlDeterAreaPastDeforestation, QUERY_TYPES_SELECT);
     propertyData['areaPastDeforestation'] = resultDeterAreaPastDeforestation[0]['area'];
     // -----------------------------------------------------------------------------------------------------------------
@@ -241,7 +242,7 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
             TRIM(REPLACE(carxdeter.dd_deter_inpe_satellite, '-', '')) AS sat,
             (bio.gid) = 2 AS has_deter
       FROM public.${views.DETER.children.CAR_X_DETER.table_name} AS carxdeter, public.${views.STATIC.children.BIOMAS.table_name} bio
-      WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_X_DETER, views.DETER.tableOwner)}
+      WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_X_DETER, views.DETER.tableOwner)}
             AND st_intersects(bio.geom, carxdeter.intersection_geom)
       GROUP BY a_cardeter_31_id, bio.gid `;
 
@@ -251,36 +252,36 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
     // ---- Values of table --------------------------------------------------------------------------------------------
     const sqlCrossings = `
       SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-      FROM public.${views.DETER.children.CAR_DETER_X_APP.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_APP, views.DETER.tableOwner)}      
+      FROM public.${views.DETER.children.CAR_DETER_X_APP.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_APP, views.DETER.tableOwner)}      
       UNION ALL
         SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-        FROM public.${views.DETER.children.CAR_DETER_X_RESERVA.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_RESERVA, views.DETER.tableOwner)}
+        FROM public.${views.DETER.children.CAR_DETER_X_RESERVA.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_RESERVA, views.DETER.tableOwner)}
       UNION ALL
         SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-        FROM public.${views.DETER.children.CAR_DETER_X_TI.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_TI, views.DETER.tableOwner)}
+        FROM public.${views.DETER.children.CAR_DETER_X_TI.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_TI, views.DETER.tableOwner)}
       UNION ALL
         SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-        FROM public.${views.DETER.children.CAR_DETER_X_EXPLORA.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_EXPLORA, views.DETER.tableOwner)}
+        FROM public.${views.DETER.children.CAR_DETER_X_EXPLORA.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_EXPLORA, views.DETER.tableOwner)}
       UNION ALL
         SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-        FROM public.${views.DETER.children.CAR_DETER_X_DESMATE.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_DESMATE, views.DETER.tableOwner)}
+        FROM public.${views.DETER.children.CAR_DETER_X_DESMATE.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_DESMATE, views.DETER.tableOwner)}
       UNION ALL
         SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-        FROM public.${views.DETER.children.CAR_DETER_X_EMB.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_EMB, views.DETER.tableOwner)}
+        FROM public.${views.DETER.children.CAR_DETER_X_EMB.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_EMB, views.DETER.tableOwner)}
       UNION ALL
         SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-        FROM public.${views.DETER.children.CAR_DETER_X_DESEMB.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_DESEMB, views.DETER.tableOwner)}
+        FROM public.${views.DETER.children.CAR_DETER_X_DESEMB.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_DESEMB, views.DETER.tableOwner)}
       UNION ALL
         SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
         FROM public.${views.DETER.children.CAR_DETER_X_UC.table_name} 
-        WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_UC, views.DETER.tableOwner)}  AND de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
+        WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_UC, views.DETER.tableOwner)}  AND de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
       UNION ALL
         SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
         FROM public.${views.DETER.children.CAR_DETER_X_UC.table_name} 
-        WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_UC, views.DETER.tableOwner)} AND de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
+        WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_UC, views.DETER.tableOwner)} AND de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
       UNION ALL
         SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-        FROM public.${views.DETER.children.CAR_DETER_X_QUEIMA.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter.classSearch, views.DETER.children.CAR_DETER_X_QUEIMA, views.DETER.tableOwner)}
+        FROM public.${views.DETER.children.CAR_DETER_X_QUEIMA.table_name} WHERE ${views.DETER.tableOwner}_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_DETER_X_QUEIMA, views.DETER.tableOwner)}
     `;
 
     const resCrossings = await Report.sequelize.query(sqlCrossings, QUERY_TYPES_SELECT);
@@ -814,7 +815,7 @@ getContentForDeflorestionAlertsContext = async function(docDefinitionContent, de
 getConclusion = async function(conclusionText) {
   const firstLineMargin = 152;
   const margin = 30;
-  const numberOfCharactersInTheFirstLine = 71;
+  const numberOfCharactersInTheFirstLine = 70;
   const conclusionParagraphs = conclusionText ? conclusionText.split('\n') : [ 'XXXXXXXXXXXXX.' ];
   const conclusion = [];
 
@@ -827,7 +828,7 @@ getConclusion = async function(conclusionText) {
 
     let numberOfCharacters = 0;
     if ((conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine) && (conclusionParagraphs[i][numberOfCharactersInTheFirstLine + 1] !== '')) {
-      for (let j = 0 ; j < numberOfCharactersInTheFirstLine ; j++) {
+      for (let j = 0 ; j < numberOfCharactersInTheFirstLine - 1 ; j++) {
         numberOfCharacters++;
         if (firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters] && firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters].trim() === '') {
           firstLine = firstLine.substring(0, numberOfCharactersInTheFirstLine - numberOfCharacters).trim();
