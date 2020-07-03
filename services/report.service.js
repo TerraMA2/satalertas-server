@@ -31,6 +31,7 @@ getFilterClassSearch = function(sql, classSearch, view, tableOwner){
       }
     });
   }
+
   return sql;
 }
 
