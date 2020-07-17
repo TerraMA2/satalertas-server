@@ -520,15 +520,9 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 9
       },
       {
-        text: `*  Pode haver sobreposição entre os dados de desmatamento com as áreas atingidas, devendo as áreas serem analisadas separadamente`,
-        fontSize: 8,
-        alignment: 'justify',
-        margin: [30, 10, 30, 30]
-      },
-      {
         text: `Anota-se  que os  dados  acima indicam extreme de  dúvidas, com grau`,
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [30, 15, 30, 0],
         style: 'body'
       },
       {
@@ -662,13 +656,13 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: `Este relatório técnico foi validado em ${ reportData.currentDate} por: `,
-        margin: [30, 0, 30, 100],
+        margin: [30, 0, 30, 250],
         alignment: 'center',
         style: 'body'
       },
       {
         text: 'Relatório técnico produzido em parceria com: ',
-        margin: [30, 0, 30, 15],
+        margin: [30, 150, 30, 15],
         style: 'body'
       },
       {
