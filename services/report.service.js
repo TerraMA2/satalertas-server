@@ -800,7 +800,7 @@ getContentForDeflorestionAlertsContext = async function(docDefinitionContent, de
   const content = [];
 
   for (let j = 0; j < docDefinitionContent.length; j++) {
-    if (j === 66) {
+    if (j === 65) {
       deflorestationAlertsContext.forEach(deflorestationAlerts => {
         content.push(deflorestationAlerts);
       });
@@ -878,7 +878,7 @@ getContentConclusion = async function(docDefinitionContent, conclusionText) {
   const content = [];
   const conclusion = await getConclusion(conclusionText);
   for (let j = 0; j < docDefinitionContent.length; j++) {
-    if (j === 67) {
+    if (j === 66) {
       conclusion.forEach(conclusionParagraph => {
         content.push(conclusionParagraph);
       });
