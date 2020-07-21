@@ -10,6 +10,35 @@ const VIEWS = require(__dirname + '/../utils/helpers/views/view')
 
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
+getSql = async function(params) {
+  const view = params.specificParameters && params.specificParameters !== 'null' ?
+    JSON.parse(params.specificParameters) : [];
+
+  let sql = '';
+  if (view.idview && view.idview > 0 && view.idview !== 'null') {
+    const table = {
+      name: view.tableName,
+      alias: 'main_table'
+    };
+    const collumns = await Filter.getColumns(view, '', table.alias);
+    const filter = await Filter.getFilter(View, table, params, view, collumns);
+
+    const sqlWhere =
+      filter.sqlHaving ?
+        ` ${filter.sqlWhere} 
+          AND ${table.alias}.${collumns.column1} IN
+          ( SELECT tableWhere.${collumns.column1} AS subtitle
+            FROM public.${table.name} AS tableWhere
+            GROUP BY tableWhere.${collumns.column1}
+        ${filter.sqlHaving}) ` :
+        filter.sqlWhere;
+
+    sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
+  };
+
+  return sql;
+}
+
 setFilter = function(groupViews, data_view) {
   const view_default = `${data_view.workspace}:${data_view.view}`;
   return VIEWS[data_view.cod_group] && VIEWS[data_view.cod_group].filter ?
@@ -396,6 +425,14 @@ module.exports = FileReport = {
   async fetchGroupOfOrderedLayers() {
     try {
       return await orderView(await getGroupViews());
+    } catch (e) {
+      return Result.err(e);
+    }
+  },
+
+  async getSqlExport(params) {
+    try {
+      return await getSql(params);
     } catch (e) {
       return Result.err(e);
     }
