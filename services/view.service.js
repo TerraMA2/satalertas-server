@@ -3,40 +3,39 @@ const View = models.views
 const RegisteredView = models.registered_views
 const env = process.env.NODE_ENV || 'development'
 const Result = require(__dirname + '/../utils/result')
-const confDb = require(__dirname + '/../config/config.json')[env]
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
-const GROUP_VIEWS  = require('../utils/helpers/group-view')
 const VIEWS = require(__dirname + '/../utils/helpers/views/view')
 
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
 getSql = async function(params) {
-  const view = params.specificParameters && params.specificParameters !== 'null' ?
-    JSON.parse(params.specificParameters) : [];
+    const view = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(JSON.parse(params.specificParameters)) : [];
 
-  let sql = '';
-  if (view.idview && view.idview > 0 && view.idview !== 'null') {
-    const table = {
-      name: view.tableName,
-      alias: 'main_table'
+    let sql = '';
+    if (view.id && view.id > 0 && view.id !== 'null') {
+        const table = {
+            name: view.tableName,
+            alias: 'main_table'
+        };
+        const collumns = await Filter.getColumns(view, '', table.alias);
+        const filter = await Filter.getFilter(View, table, params, view, collumns);
+
+        const sqlWhere =
+                filter.sqlHaving ?
+
+                `${filter.sqlWhere} 
+                AND ${table.alias}.${collumns.column1} IN
+                ( SELECT tableWhere.${collumns.column1} AS subtitle
+                FROM public.${table.name} AS tableWhere
+                GROUP BY tableWhere.${collumns.column1}
+                ${filter.sqlHaving}) `
+
+                : filter.sqlWhere;
+
+        sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
     };
-    const collumns = await Filter.getColumns(view, '', table.alias);
-    const filter = await Filter.getFilter(View, table, params, view, collumns);
 
-    const sqlWhere =
-      filter.sqlHaving ?
-        ` ${filter.sqlWhere} 
-          AND ${table.alias}.${collumns.column1} IN
-          ( SELECT tableWhere.${collumns.column1} AS subtitle
-            FROM public.${table.name} AS tableWhere
-            GROUP BY tableWhere.${collumns.column1}
-        ${filter.sqlHaving}) ` :
-        filter.sqlWhere;
-
-    sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
-  };
-
-  return sql;
+    return sql;
 }
 
 setFilter = function(groupViews, data_view) {
@@ -70,6 +69,7 @@ setViews = function(groupViews, data_view) {
     codgroup: data_view.cod_group,
     cod: data_view.cod,
     label: data_view.name_view,
+    description: data_view.description,
     shortLabel:
       VIEWS[data_view.cod_group] &&
       VIEWS[data_view.cod_group][data_view.cod] &&
@@ -105,14 +105,36 @@ setViews = function(groupViews, data_view) {
     isDisabled: data_view.is_disable,
     filter: data_view.type === 'analysis'? setFilter(groupViews, data_view) : null,
     layerData: setlayerData(data_view),
-    legend: setLegend(data_view)
+    legend: setLegend(data_view),
+    tools: [
+      {
+          icon: "fas fa-info",
+          name: "description",
+          title: "Descrição"
+      },
+      {
+          icon: "fas fa-save",
+          name: "export",
+          title: "Exportar"
+      },
+      {
+          icon: "fas fa-adjust",
+          name: "opacity",
+          title: "Opacidade"
+      },
+      {
+          icon: "fas fa-expand-alt",
+          name: "extent",
+          title: "Extent"
+      }
+    ]
   }
 };
 
 orderView = async function(groupViews) {
   const layers = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA', 'STATIC', 'DYNAMIC'];
 
-  let child  = [];
+  let child = [];
   let owner = [];
   let other = [];
 
@@ -259,6 +281,7 @@ getViews = async function(groupViews) {
     ` SELECT
                view.id AS view_id,
                TRIM(view.name) AS name_view,
+               view.description AS description,
                (CASE
                    WHEN view.source_type = 1 THEN 'STATIC'
                    WHEN view.source_type = 2 THEN 'DYNAMIC'
