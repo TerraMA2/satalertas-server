@@ -13,6 +13,5 @@ logs/
 config/config.json
 .idea/
 documentos/*.pdf
-.vscode/
 geoserver-conf/config.json
 tmp/

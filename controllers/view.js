@@ -161,3 +161,17 @@ exports.getSidebarConfigDynamic = async (req, res, next) => {
 exports.getReportLayers = async (req, res, next) => {
     res.json(await ViewService.getReportLayers())
 }
+
+exports.getSqlExport = async (req, res, next) => {
+    try {
+        const params = {
+            specificParameters,
+            date,
+            filter
+        } = req.query;
+
+        res.json(await ViewService.getSqlExport(params));
+    } catch (e) {
+        res.json(e);
+    }
+}
