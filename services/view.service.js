@@ -9,11 +9,10 @@ const VIEWS = require(__dirname + '/../utils/helpers/views/view')
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
 getSql = async function(params) {
-    const view = params.specificParameters && params.specificParameters !== 'null' ?
-        JSON.parse(params.specificParameters) : [];
+    const view = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(JSON.parse(params.specificParameters)) : [];
 
     let sql = '';
-    if (view.idview && view.idview > 0 && view.idview !== 'null') {
+    if (view.id && view.id > 0 && view.id !== 'null') {
         const table = {
             name: view.tableName,
             alias: 'main_table'
@@ -22,14 +21,16 @@ getSql = async function(params) {
         const filter = await Filter.getFilter(View, table, params, view, collumns);
 
         const sqlWhere =
-            filter.sqlHaving ?
-                ` ${filter.sqlWhere} 
-          AND ${table.alias}.${collumns.column1} IN
-          ( SELECT tableWhere.${collumns.column1} AS subtitle
-            FROM public.${table.name} AS tableWhere
-            GROUP BY tableWhere.${collumns.column1}
-        ${filter.sqlHaving}) ` :
-                filter.sqlWhere;
+                filter.sqlHaving ?
+
+                `${filter.sqlWhere} 
+                AND ${table.alias}.${collumns.column1} IN
+                ( SELECT tableWhere.${collumns.column1} AS subtitle
+                FROM public.${table.name} AS tableWhere
+                GROUP BY tableWhere.${collumns.column1}
+                ${filter.sqlHaving}) `
+
+                : filter.sqlWhere;
 
         sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
     };
@@ -447,6 +448,14 @@ module.exports = FileReport = {
   async fetchGroupOfOrderedLayers() {
     try {
       return await orderView(await getGroupViews());
+    } catch (e) {
+      return Result.err(e);
+    }
+  },
+
+  async getSqlExport(params) {
+    try {
+      return await getSql(params);
     } catch (e) {
       return Result.err(e);
     }

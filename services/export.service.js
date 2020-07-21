@@ -3,7 +3,8 @@ const { execSync, spawnSync } = require('child_process')
     fs = require('fs')
     env = process.env.NODE_ENV || 'development'
     config = require(__dirname + '/../config/config.json')[env]
-    Filter = require("../utils/filter/filter.utils");
+    Filter = require("../utils/filter/filter.utils")
+    ViewService = require("../services/view.service")
     crypto = require('crypto');
 
 module.exports = exportService = {
@@ -12,7 +13,8 @@ module.exports = exportService = {
         const tableName = params['tableName'];
         const formats = await this.getFormats(fileFormats);
         const connectionString = "PG:host=" + config.host + " port=" + config.port + " user=" + config.username + " password=" + config.password + " dbname=" + config.database;
-        const sql = `SELECT * FROM public.${tableName} LIMIT 10`;
+        params.date = params.date.split(',');
+        const sql = await ViewService.getSqlExport(params);
         const tmpFolder = path.resolve(__dirname, '..', 'tmp');
         fs.rmdirSync(tmpFolder, { recursive: true });
         const formatsLength = formats.length;
@@ -45,15 +47,11 @@ module.exports = exportService = {
             const zipGenerationCommand = "zip -j " + zipPath + " " + tmpFolder + '/' + tableName + '.*';
             execSync(zipGenerationCommand);
             return {
-                format: 'application/zip',
                 filePath: zipPath,
-                fileName: `${tableName}.zip`
             };
         } else {
             return {
-                format: formats[0].contentType,
                 filePath: file,
-                fileName: `${tableName + formats[0].fileExtention}`
             };
         }
     },
