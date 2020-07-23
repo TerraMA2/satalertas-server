@@ -9,7 +9,7 @@ const VIEWS = require(__dirname + '/../utils/helpers/views/view')
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
 getSql = async function(params) {
-    const view = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(JSON.parse(params.specificParameters)) : [];
+    const view = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
 
     let sql = '';
     if (view.id && view.id > 0 && view.id !== 'null') {

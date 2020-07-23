@@ -14,4 +14,4 @@ config/config.json
 .idea/
 documentos/*.pdf
 geoserver-conf/config.json
-tmp/
+tmp/*
