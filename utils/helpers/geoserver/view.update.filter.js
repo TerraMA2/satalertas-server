@@ -21,7 +21,7 @@ module.exports = function(workspace, dataStore, view, title, tableOwner, tableNa
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: -1
       },
       dataStore: `${dataStore}`,
       addParameter: true

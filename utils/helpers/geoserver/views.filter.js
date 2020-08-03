@@ -13,7 +13,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: -1
       },
       dataStore: dataStore
     },
@@ -31,7 +31,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: -1
         },
       dataStore: `${dataStore}`
     },
@@ -48,7 +48,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: -1
       },
       dataStore: `${dataStore}`
     },
@@ -65,7 +65,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: -1
       },
       dataStore: `${dataStore}`
     },
@@ -82,7 +82,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: -1
       },
       dataStore: `${dataStore}`
     }
