@@ -1246,8 +1246,8 @@ module.exports = FileReport = {
           FROM ${views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name}  AS spotlights
           UNION ALL
           SELECT 'burnedAreaYear'                                                           AS key,
-                 MIN(extract(year from date_trunc('year', burnedarea.data_pas))) AS start_year,
-                 MAX(extract(year from date_trunc('year', burnedarea.data_pas))) AS end_year
+                 MIN(extract(year from date_trunc('year', burnedarea.timestamp))) AS start_year,
+                 MAX(extract(year from date_trunc('year', burnedarea.timestamp))) AS end_year
           FROM ${views.DYNAMIC.children.AREAS_QUEIMADAS.table_name}  AS burnedarea;
         `;
 

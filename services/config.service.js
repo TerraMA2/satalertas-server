@@ -2349,9 +2349,9 @@ module.exports = ConfigService = {
           'show': false,
           'alias': [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_data_anter`]
         },
-        [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_data_pas`]: {
+        [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_timestamp`]: {
           'show': false,
-          'alias': `${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_data_pas`
+          'alias': `${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_timestamp`
         },
         [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_ha`]: {
           'show': false,
@@ -2417,9 +2417,9 @@ module.exports = ConfigService = {
           'show': false,
           'alias': 'dd_area_queimada_inpe_data_anter'
         },
-        'dd_area_queimada_inpe_data_pas': {
+        'dd_area_queimada_inpe_timestamp': {
           'show': false,
-          'alias': 'dd_area_queimada_inpe_data_pas'
+          'alias': 'dd_area_queimada_inpe_timestamp'
         },
         'dd_area_queimada_inpe_ha': {
           'show': false,
@@ -3417,9 +3417,9 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Data'
         },
-        'data_pas': {
+        'timestamp': {
           'show': false,
-          'alias': 'data_pas'
+          'alias': 'timestamp'
         },
         'date': {
           'show': true,
