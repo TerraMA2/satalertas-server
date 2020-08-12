@@ -117,7 +117,7 @@ function setAlertGraphic(alert, graphic1, graphic2) {
         }
       }]
   }
-};
+}
 async function setGraphic(resultAux, value1, subtitle) {
   let labels = [];
   let data = [];
@@ -139,7 +139,7 @@ async function setGraphic(resultAux, value1, subtitle) {
       hoverBackgroundColor: hoverBackgroundColor
     }]
   };
-};
+}
 async function getSqlDetailsAnalysisTotals(alert, params) {
   let sql1 = '';
   let sql2 = '';
@@ -217,18 +217,18 @@ async function getSqlDetailsAnalysisTotals(alert, params) {
         `;
   }
   return {sql1, sql2, value1, subtitle};
-};
+}
 function generate_color() {
   const hexadecimal = '0123456789ABCDEF';
   let color = '#';
   const date = new Date();
   const milliseconds = date.getMilliseconds();
 
-  for (var i = 0; i < 6; i++) {
+  for (let i = 0; i < 6; i++) {
     color += hexadecimal[Math.floor(Math.random(milliseconds) * 16)];
   }
   return color;
-};
+}
 // --------------------------------------------------------------
 module.exports = dashboardService = {
   async getAnalysisTotals(params) {
