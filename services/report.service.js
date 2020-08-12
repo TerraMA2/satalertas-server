@@ -58,7 +58,7 @@ getImageObject = function (image, fit, margin, alignment) {
 
 setAnalysisYear = function(data, period, variable) {
   const analysisYears = [];
-  for (year = period['startYear']; year <= period['endYear']; year++){
+  for (let year = period['startYear']; year <= period['endYear']; year++){
     analysisYears.push( {date: year, [`${variable}`] : data.find(analise => analise.date === year) ? (data.find(analise => analise.date === year)[variable]) : '0.0000'} );
   }
   return analysisYears;
@@ -294,7 +294,7 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
     });
 
     if (!propertyData['foundDeter']){ propertyData['foundDeter'] = {}; }
-    propertyData['foundDeter'] = deterSumArea ? true : false;
+    propertyData['foundDeter'] = !!deterSumArea;
     // -----------------------------------------------------------------------------------------------------------------
 
   }
@@ -403,7 +403,7 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     });
 
     if (!propertyData['foundProdes']){ propertyData['foundProdes'] = {}; }
-    propertyData['foundProdes'] = prodesSumArea ? true : false;
+    propertyData['foundProdes'] = !!prodesSumArea;
 
     let radamProdes = 0;
     let radamText = '';
@@ -544,7 +544,7 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
 
     if (!propertyData['foundBurnlight']) {
-      propertyData['foundBurnlight'] = burnlightCount ? true : false
+      propertyData['foundBurnlight'] = !!burnlightCount
     }
   }
 
@@ -672,7 +672,7 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
     propertyData['prodesBurnAuthorization']['burnAreas'] = parseFloat(burnAuthorizationBURNEDAREASum[0]['area']);
 
     if (!propertyData['foundBurnlight']) {
-      propertyData['foundBurnlight'] = burnedAreaSum ? true : false
+      propertyData['foundBurnlight'] = !!burnedAreaSum
     }
   }
 
@@ -706,7 +706,7 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
         }
     )
   }
-  return await ndviContext;
+  return ndviContext;
 }
 
 getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDeforestationHistory) {
@@ -770,7 +770,7 @@ getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDe
     });
   }
 
-  return await deflorestationHistoryContext;
+  return deflorestationHistoryContext;
 }
 
 getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionContent, reportData) {
@@ -793,7 +793,7 @@ getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionConte
     content.push(docDefinitionContent[j]);
   }
 
-  return await content;
+  return content;
 }
 
 getContentForDeflorestionAlertsContext = async function(docDefinitionContent, deflorestationAlertsContext) {
@@ -809,7 +809,7 @@ getContentForDeflorestionAlertsContext = async function(docDefinitionContent, de
     content.push(docDefinitionContent[j]);
   }
 
-  return await content;
+  return content;
 }
 
 getConclusion = async function(conclusionText) {
@@ -850,7 +850,7 @@ getConclusion = async function(conclusionText) {
       }
     }
 
-    if (firstLine.trim() != '') {
+    if (firstLine.trim() !== '') {
       conclusion.push({
         text: `${firstLine}`,
         alignment: `${alignment}`,
@@ -861,7 +861,7 @@ getConclusion = async function(conclusionText) {
 
     if (conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine) {
       const restOfText = conclusionParagraphs[i].substring(numberOfCharactersInTheFirstLine - numberOfCharacters).trim();
-      if (restOfText.trim() != '') {
+      if (restOfText.trim() !== '') {
         conclusion.push({
           text: `${restOfText}`,
           margin: [30, 0, 30, 5],
@@ -871,7 +871,7 @@ getConclusion = async function(conclusionText) {
     }
 
   }
-  return await conclusion;
+  return conclusion;
 }
 
 getContentConclusion = async function(docDefinitionContent, conclusionText) {
@@ -887,7 +887,7 @@ getContentConclusion = async function(docDefinitionContent, conclusionText) {
     content.push(docDefinitionContent[j]);
   }
 
-  return await content;
+  return content;
 }
 
 setDocDefinitions = async function(reportData, docDefinition) {
@@ -1254,8 +1254,8 @@ module.exports = FileReport = {
         const datesSynthesis = await Report.sequelize.query(sqlDatesSynthesis, QUERY_TYPES_SELECT);
 
         datesSynthesis.forEach(years => {
-          if (!propertyData['analysisPeriod']) { propertyData['analysisPeriod'] = { } };
-          if (!propertyData['analysisPeriod'][years.key]) { propertyData['analysisPeriod'][years.key] = { }};
+          if (!propertyData['analysisPeriod']) { propertyData['analysisPeriod'] = { } }
+          if (!propertyData['analysisPeriod'][years.key]) { propertyData['analysisPeriod'][years.key] = { }}
 
           propertyData['analysisPeriod'][years.key]['startYear'] = years.start_year;
           propertyData['analysisPeriod'][years.key]['endYear'] = years.end_year;
@@ -1333,7 +1333,7 @@ module.exports = FileReport = {
         points[index]['options'] = await SatVegService.get({long: points[index].long, lat: points[index].lat },'ndvi', 3, 'wav', '', 'aqua').then( async resp => {
           logger.error(resp['listaDatas'])
           logger.error(resp['listaSerie'])
-          return await {
+          return {
             type: 'line',
             data: {
               labels: resp['listaDatas'],
@@ -1356,7 +1356,7 @@ module.exports = FileReport = {
             }
           };
         });
-      };
+      }
 
       return Result.ok(points);
     } catch (e) {
@@ -1372,7 +1372,7 @@ module.exports = FileReport = {
             reportData['type'] === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code}` :
               `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
 
-      setImages(reportData);
+      await setImages(reportData);
 
       const headerDocument = [
         reportData.images.headerImage0,

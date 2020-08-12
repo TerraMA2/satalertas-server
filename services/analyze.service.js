@@ -11,7 +11,7 @@ const analyses = {
       GROUP BY deter.classname
       ORDER BY deter.classname
     `
-    return await View.sequelize.query(sql, QUERY_TYPES_SELECT);
+    return View.sequelize.query(sql, QUERY_TYPES_SELECT);
   }
 }
 module.exports = AnalyzeService = {

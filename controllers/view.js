@@ -56,7 +56,7 @@ exports.get = (req, res, next) => {
                     url: `${geoserverUrl}?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=${layerId}`
                 }
 
-                const layer = {
+                return {
                     cod: `${cod}`,
                     codgroup: `${codgroup}`,
                     label: `${viewName}`,
@@ -72,7 +72,6 @@ exports.get = (req, res, next) => {
                     layerData: layerData,
                     legend: legend
                 }
-                return layer
             })
 
             registeredViews = registeredViews.reduce((r, a) => {

@@ -33,7 +33,7 @@ getSql = async function(params) {
                 : filter.sqlWhere;
 
         sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
-    };
+    }
 
     return sql;
 }
@@ -364,13 +364,13 @@ getViews = async function(groupViews) {
     });
 
     dataset_views.forEach(dataView => {
-      if (!groupViews[dataView.cod_group].children) { groupViews[dataView.cod_group].children = [] };
+      if (!groupViews[dataView.cod_group].children) { groupViews[dataView.cod_group].children = [] }
 
       const view = setViews(groupViews, dataView);
 
       const groupBy = view.isPrimary ? 'owner' : view.isChild ? 'child' : 'other';
 
-      if (!groupViews[dataView.cod_group].children[groupBy]) { groupViews[dataView.cod_group].children[groupBy] = [] };
+      if (!groupViews[dataView.cod_group].children[groupBy]) { groupViews[dataView.cod_group].children[groupBy] = [] }
 
       groupViews[dataView.cod_group].children[groupBy].push(view);
     });
