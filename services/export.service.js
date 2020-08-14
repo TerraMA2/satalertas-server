@@ -10,10 +10,9 @@ const { execSync, spawnSync } = require('child_process')
 module.exports = exportService = {
     async get(params) {
         const fileFormats = params['fileFormats'].split(',');
-        const tableName = params['tableName'];
+        const { tableName } = JSON.parse(params.specificParameters).tableName;
         const formats = await this.getFormats(fileFormats);
         const connectionString = "PG:host=" + config.host + " port=" + config.port + " user=" + config.username + " password=" + config.password + " dbname=" + config.database;
-        params.date = params.date;
         const sql = await ViewService.getSqlExport(params);
         const tmpFolder = path.resolve(__dirname, '..', 'tmp');
         fs.rmdirSync(tmpFolder, { recursive: true });
