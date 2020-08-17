@@ -9,33 +9,41 @@ const VIEWS = require(__dirname + '/../utils/helpers/views/view')
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
 getSql = async function(params) {
-    const view = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
+  const view = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
 
-    let sql = '';
-    if (view.id && view.id > 0 && view.id !== 'null') {
-        const table = {
-            name: view.tableName,
-            alias: 'main_table'
-        };
-        const collumns = await Filter.getColumns(view, '', table.alias);
-        const filter = await Filter.getFilter(View, table, params, view, collumns);
+  let sql = '';
+  if (view.id && view.id > 0 && view.id !== 'null') {
+    const table = {
+        name: view.tableName,
+        alias: 'main_table'
+    };
+    const collumns = await Filter.getColumns(view, '', table.alias);
+    const filter = await Filter.getFilter(View, table, params, view, collumns);
 
-        const sqlWhere =
-                filter.sqlHaving ?
+    const columnGid = view.codgroup === 'CAR' ? 'gid' : 'de_car_validado_sema_gid'
 
-                `${filter.sqlWhere} 
-                AND ${table.alias}.${collumns.column1} IN
-                ( SELECT tableWhere.${collumns.column1} AS subtitle
-                FROM public.${table.name} AS tableWhere
-                GROUP BY tableWhere.${collumns.column1}
-                ${filter.sqlHaving}) `
+    filter.sqlWhere = params.selectedGids ?
+      filter.sqlWhere ?
+        ` ${filter.sqlWhere} AND ${columnGid} in (${params.selectedGids}) ` :
+          ` WHERE ${columnGid} in (${params.selectedGids}) ` :
+      filter.sqlWhere;
 
-                : filter.sqlWhere;
+    const sqlWhere =
+            filter.sqlHaving ?
 
-        sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
-    }
+            `${filter.sqlWhere} 
+            AND ${table.alias}.${collumns.column1} IN
+            ( SELECT tableWhere.${collumns.column1} AS subtitle
+            FROM public.${table.name} AS tableWhere
+            GROUP BY tableWhere.${collumns.column1}
+            ${filter.sqlHaving}) `
 
-    return sql;
+            : filter.sqlWhere;
+
+    sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
+  }
+
+  return sql;
 }
 
 setFilter = function(groupViews, data_view) {
