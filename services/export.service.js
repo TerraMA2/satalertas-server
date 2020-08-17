@@ -10,7 +10,8 @@ const { execSync, spawnSync } = require('child_process')
 module.exports = exportService = {
     async get(params) {
         const fileFormats = params['fileFormats'].split(',');
-        const { tableName } = JSON.parse(params.specificParameters).tableName;
+        const layer = JSON.parse(params.specificParameters)
+        const tableName = layer.tableName;
         const formats = await this.getFormats(fileFormats);
         const connectionString = "PG:host=" + config.host + " port=" + config.port + " user=" + config.username + " password=" + config.password + " dbname=" + config.database;
         const sql = await ViewService.getSqlExport(params);

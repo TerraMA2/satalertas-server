@@ -282,19 +282,20 @@ const filterUtils = {
       offset: ''
     };
 
-    if (params.date && params.date !== "null") {
-      const dateFrom = params.date[0];
-      const dateTo = params.date[1];
-      sql.sqlWhere += ` WHERE ${table.alias}.execution_date BETWEEN '${dateFrom}' AND '${dateTo}' `
+    if(view.isAnalysis) {
+      if (params.date && params.date !== "null") {
+        const dateFrom = params.date[0];
+        const dateTo = params.date[1];
+        sql.sqlWhere += ` WHERE ${table.alias}.execution_date BETWEEN '${dateFrom}' AND '${dateTo}' `
+      }
+
+      if (filter) {
+        const filtered = filter.specificSearch && filter.specificSearch.isChecked ? 'specificSearch' : 'others';
+
+        const cod = (view.codgroup === 'BURNED') ? 'focos' : 'others';
+        await setFilter[filtered](conn, sql, filter, columns, cod, table, view);
+      }
     }
-
-    if (filter) {
-      const filtered = filter.specificSearch && filter.specificSearch.isChecked ? 'specificSearch' : 'others';
-
-      const cod = (view.codgroup === 'BURNED') ? 'focos' : 'others';
-      await setFilter[filtered](conn, sql, filter, columns, cod, table, view);
-    }
-
     sql.order = (params.sortColumn && params.sortOrder) ? ` ORDER BY ${params.sortColumn} ${params.sortOrder === '1'?'ASC':'DESC'} ` : ``;
     sql.limit = (params.limit) ? ` LIMIT ${params.limit} ` : ``;
     sql.offset = (params.offset) ? ` OFFSET ${params.offset} ` : ``;
