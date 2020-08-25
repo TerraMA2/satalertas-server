@@ -15,7 +15,7 @@ module.exports ={
   BIOMAS: {
     shortLabel: 'Biomas'},
   CAR_VALIDADO: {
-    shortLabel: 'CAR Validado',
+    shortLabel: 'Cadastro Ambiental Rural',
     carRegisterColumn: 'numero_do1'
   },
   COMARCA: {
