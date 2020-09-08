@@ -23,7 +23,7 @@ module.exports = carService = {
             sqlWhere: '',
             secondaryTables: '',
             sqlHaving: '',
-            order: '',
+            order: (specificParameters.sortField && specificParameters.sortOrder) ? ` ORDER BY ${specificParameters.sortField} ${specificParameters.sortOrder == '1'?'ASC':'DESC'} ` : ``,
             limit: specificParameters.limit ? ` LIMIT ${specificParameters.limit}` : '',
             offset: specificParameters.offset ? ` OFFSET ${specificParameters.offset}` : ''
           };
@@ -48,9 +48,6 @@ module.exports = carService = {
       const sqlFrom = ` FROM public.${table.name} AS ${specificParameters.tableAlias}`;
 
       const sqlGroupBy = layer && layer.codgroup && layer.codgroup === 'CAR' ? '' : ` GROUP BY property.gid `;
-
-      const sqlOrderBy = ` ORDER BY ${layer.codgroup === 'BURNED' ? specificParameters.countAlias : specificParameters.sortField} DESC `;
-
 
       const column = layer.isPrimary ? 'de_car_validado_sema_gid' : 'a_carfocos_20_de_car_validado_sema_gid';
 
@@ -78,7 +75,7 @@ module.exports = carService = {
                     ${filter.secondaryTables}
                     ${sqlWhere}
                     ${sqlGroupBy}
-                    ${sqlOrderBy}
+                    ${filter.order}
                     ${filter.limit}
                     ${filter.offset}`;
 
