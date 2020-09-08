@@ -272,6 +272,7 @@ function getValues(analyze) {
 const filterUtils = {
   async getFilter(conn, table, params, view, columns) {
     const filter = params.filter && params.filter !== 'null' ? JSON.parse(params.filter) : {};
+    params.sortColumn = params.sortField ? params.sortField : params.sortColumn;
 
     const sql = {
       sqlWhere: '',
@@ -296,7 +297,8 @@ const filterUtils = {
         await setFilter[filtered](conn, sql, filter, columns, cod, table, view);
       }
     }
-    sql.order = (params.sortColumn && params.sortOrder) ? ` ORDER BY ${params.sortColumn} ${params.sortOrder === '1'?'ASC':'DESC'} ` : ``;
+
+    sql.order = (params.sortColumn && params.sortOrder) ? ` ORDER BY ${params.sortColumn} ${params.sortOrder == '1'?'ASC':'DESC'} ` : ``;
     sql.limit = (params.limit) ? ` LIMIT ${params.limit} ` : ``;
     sql.offset = (params.offset) ? ` OFFSET ${params.offset} ` : ``;
 
