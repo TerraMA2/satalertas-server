@@ -114,7 +114,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1), com área igual a ${reportData.property.area} ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, pertencente a ${reportData.property.owner}, conforme informações declaradas no Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister}`
+              ` com o uso de Sistema de Informações Geográficas no imóvel rural ${reportData.property.name} (Figura 1), com área igual a ${reportData.property.area} ha (sendo ${getInformationVegRadam(reportData.property.vegRadam)} segundo Mapa da vegetação do Projeto RadamBrasil), localizado no município de ${reportData.property.city}-MT, de coordenada central longitude = ${reportData.property.long} e latitude = ${reportData.property.lat}, pertencente a ${reportData.property.owner}, conforme informações declaradas no ${reportData.property.register ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR '+reportData.property.register : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR '+reportData.property.federalregister}`
             ),
           },
           {
@@ -1118,35 +1118,9 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 9
       },
       {
-        text: [
-          {
-            text: 'Observaçoes: ',
-            bold: true
-          },
-          {
-            text: `${reportData.property.comments ? reportData.property.comments : 'XXXXXXXXXXXXX'}`,
-            bold: false
-          }
-        ],
-        alignment: 'justify',
-        margin: [30, 30, 30, 30],
-        fontSize: 10
-      },
-      {
         text: '4 CONCLUSÃO',
         margin: [30, 20, 30, 0],
         style: 'listItem'
-      },
-      {
-        text: `${reportData.property.foundProdes ? 'Houve' : 'Não houve'} desmatamento ilegal no imóvel rural objeto deste Relatório Técnico, conforme`,
-        alignment: 'right',
-        margin: [30, 0, 30, 0],
-        style: 'body'
-      },
-      {
-        text: 'descrito no Quadro 01 (vide item 3. Análise Técnica).',
-        margin: [30, 0, 30, 15],
-        style: 'body'
       },
       {
         text: '5 ANEXOS',

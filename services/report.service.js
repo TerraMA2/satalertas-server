@@ -872,11 +872,11 @@ getConclusion = async function(conclusionText) {
   return conclusion;
 }
 
-getContentConclusion = async function(docDefinitionContent, conclusionText) {
+getContentConclusion = async function(docDefinitionContent, conclusionText, line) {
   const content = [];
   const conclusion = await getConclusion(conclusionText);
   for (let j = 0; j < docDefinitionContent.length; j++) {
-    if (j === 66) {
+    if (j === line) {
       conclusion.forEach(conclusionParagraph => {
         content.push(conclusionParagraph);
       });
@@ -890,11 +890,12 @@ getContentConclusion = async function(docDefinitionContent, conclusionText) {
 
 setDocDefinitions = async function(reportData, docDefinition) {
   if (reportData.type === 'prodes') {
+    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 99);
     docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(docDefinition.content, reportData);
   }
 
   if (reportData.type === 'deter') {
-    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments);
+    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 66);
     docDefinition.content = await getContentForDeflorestionAlertsContext(docDefinition.content, reportData.deflorestationAlertsContext);
   }
 
