@@ -18,7 +18,6 @@ exports.getAllSimplified = async (req, res) => {
     attributes: [
       'gid',
       ['municipio', 'name'],
-      'id_munic',
       'geocodigo'
     ],
     order: [

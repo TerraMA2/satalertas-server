@@ -26,7 +26,7 @@ module.exports = function(view_burned, workspacekAlertas, cod_view, tableOwner, 
     city: {
       view: view_burned,
       field: isPrimary ? `dd_focos_inpe_id_2` : `${tableOwner}_dd_focos_inpe_id_2`,
-      value: `geocode`
+      value: `geocodigo`
     },
     uc: {
       view: `${workspacekAlertas}:${cod_view}_uc_sql`,
