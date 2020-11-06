@@ -66,7 +66,7 @@ module.exports = ConfigService = {
             format: `image/png`,
             version: `1.1.0`,
             time: `{filterDate}`,
-            cql_filter: `id_munic>0;{cityCqlFilter}`,
+            cql_filter: `geocodigo<>'';{cityCqlFilter}`,
             bbox: `{statebbox}`,
             width: `600`,
             height: `600`,
@@ -3023,9 +3023,9 @@ module.exports = ConfigService = {
           'show': false,
           'alias': 'idcar'
         },
-        'id_munic': {
+        'geocodigo': {
           'show': false,
-          'alias': 'id_munic'
+          'alias': 'Cod. IBGE'
         },
         'id_trecho_': {
           'show': false,
