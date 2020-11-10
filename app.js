@@ -1,10 +1,8 @@
-const express = require('express')
-    compression = require('compression')
-    path = require('path')
-    morgan = require('morgan')
-    helmet = require('helmet')
+const express = require('express'),
+    compression = require('compression'),
+    morgan = require('morgan'),
+    helmet = require('helmet'),
     cors = require('cors')
-    bodyParser = require('body-parser')
 
 const viewRouter = require('./routes/view')
 const geoserverRouter = require('./routes/geoserver')
@@ -31,9 +29,9 @@ const errorController = require('./controllers/error')
 const app = express()
 
 app.use(cors())
-app.use(compression())
+app.use(compression({}))
 app.use(helmet())
-app.use(morgan('combined'))
+app.use(morgan('combined', {}))
 app.use(express.json({limit: '100mb'}))
 
 app.use(basePath+'/view', viewRouter)
