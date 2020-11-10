@@ -1,21 +1,21 @@
 
-const Result = require("../utils/result");
-  models = require('../models');
-  Report = models.reports;
-  env = process.env.NODE_ENV || 'development';
-  confDb = require(__dirname + '/../config/config.json')[env];
-  PdfPrinter = require('pdfmake');
-  fs = require('fs');
-  env = process.env.NODE_ENV || 'development';
-  confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
-  ViewUtil = require("../utils/view.utils");
-  SatVegService = require("../services/sat-veg.service");
+const Result = require("../utils/result")
+  models = require('../models')
+  Report = models.reports
+  env = process.env.NODE_ENV || 'development'
+  confDb = require(__dirname + '/../config/config.json')[env]
+  PdfPrinter = require('pdfmake')
+  fs = require('fs')
+  env = process.env.NODE_ENV || 'development'
+  confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
+  ViewUtil = require("../utils/view.utils")
+  SatVegService = require("../services/sat-veg.service")
   axios = require('axios')
   logger = require('../utils/logger')
 
-  const config = {
-    headers: {'X-My-Custom-Header': 'Header-Value'}
-  };
+const config = {
+  headers: {'X-My-Custom-Header': 'Header-Value'}
+};
 
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };

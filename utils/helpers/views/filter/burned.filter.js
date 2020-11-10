@@ -23,6 +23,21 @@ module.exports = function(view_burned, workspacekAlertas, cod_view, tableOwner, 
       field: `nm_micro`,
       value: `name`
     },
+    immediateregion: {
+      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      field: `nm_rgi`,
+      value: `name`
+    },
+    intermediateregion: {
+      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      field: `nm_rgint`,
+      value: `name`
+    },
+    pjbh: {
+      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      field: `pjbh`,
+      value: `name`
+    },
     city: {
       view: view_burned,
       field: isPrimary ? `dd_focos_inpe_id_2` : `${tableOwner}_dd_focos_inpe_id_2`,
