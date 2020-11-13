@@ -135,6 +135,9 @@ const analysisReportFormat = {
         alert['urlGsImagePlanetCurrentAndCar'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=raster,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=600&height=600&time=P1Y/${alert.year}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${views.DETER.children.CAR_X_DETER.table_name}_id='${alert.id}'&srs=EPSG:4674&format=image/png`;
       });
     }
+  },
+  queimada (reportData, views, resultReportData, carColumn, carColumnSema, date, filter = null) {
+
   }
 }
 
@@ -177,9 +180,7 @@ getImageObject = function(image, fit, margin, alignment) {
   }
 };
 
-getViewsReport = async function() {
-  return await ViewUtil.getGrouped()
-};
+getViewsReport = async function() { return await ViewUtil.getGrouped() };
 
 getCarData = async function(carTableName, municipiosTableName, columnCarEstadualSemas, columnCarFederalSemas, columnAreaHaCar, carRegister){
   const sql =
@@ -219,7 +220,7 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
     // --- Total area of Deter period ----------------------------------------------------------------------------------
     const sqlDeterAreaPastDeforestation =
         `   
-            SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area 
+            SELEigueCT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area 
             FROM public.${views.DETER.children.CAR_X_DETER.table_name} 
             WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_X_DETER, views.DETER.tableOwner)} `;
     const resultDeterAreaPastDeforestation = await Report.sequelize.query(sqlDeterAreaPastDeforestation, QUERY_TYPES_SELECT);
@@ -425,125 +426,82 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
   return await propertyData;
 };
 
-setBurnedData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCarEstadualSemas, columnExecutionDate, carRegister) {
+setBurnedData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCarEstadualSemas, columnExecutionDate, carRegister, filter) {
   if (propertyData && views.BURNED && type === 'queimada') {
-    const sqlBurningSpotlights = `
-            SELECT
-                    count(1) as focuscount,
-                    extract('YEAR' FROM focus.${columnExecutionDate}) AS year
-            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} AS focus
-            INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
-                    focus.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
-                    car.${columnCarEstadualSemas} = '${carRegister}'
-            group by year `;
 
-    const resultBurningSpotlights = await Report.sequelize.query(sqlBurningSpotlights, QUERY_TYPES_SELECT);
-    const burningSpotlights = resultBurningSpotlights;
+    // ---  Firing Authorization ---------------------------------------------------------------------------------------
+    const sqlFiringAuth = `
+        SELECT aut.titulo_nu1, aut.data_apro1, aut.data_venc1
+        FROM public.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name} AS aut
+        JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car ON st_contains(car.geom, aut.geom)
+        WHERE   car.${columnCarEstadualSemas} = ${carRegister}
+            AND '${filter.date[0]}' <= aut.data_apro1
+            AND '${filter.date[1]}' >= data_venc1
+    `;
+    const resultFiringAuth = await Report.sequelize.query(sqlFiringAuth, QUERY_TYPES_SELECT);
+    propertyData['firingAuth'] = resultFiringAuth;
+    // -----------------------------------------------------------------------------------------------------------------
 
-    const sqlSpotlightsYear = `SELECT
-                              extract(year from date_trunc('year', cf.${columnExecutionDate})) AS date,
-                              COUNT(1) as spotlights
-                              FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} cf
-                              WHERE cf.${columnCarEstadual} = '${carRegister}'
-                              GROUP BY date
-                              ORDER BY date`;
-    const sqlAPPFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_APP.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlLegalReserveFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_RESERVA.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlIndigenousLandFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_TI.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlExploraFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_EXPLORA.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlDesmateFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_DESMATE.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlEmbFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_EMB.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlLandAreaFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_DESEMB.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlRestrictUseFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_USO_RESTRITO.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlBurnAuthorizationFOCOSCount = `SELECT COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlFisionomiaFOCOSCount = `SELECT de_veg_radambr_fisionomia AS class, COUNT(1) AS count FROM public.${views.BURNED.children.CAR_FOCOS_X_VEG_RADAM.table_name} where ${views.BURNED.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
+    // ---  Firing Authorization ---------------------------------------------------------------------------------------
+    const sqlBurnCount = `
+        SELECT SUM(COALESCE(foco_total, 0)) AS total_foco,
+               SUM(COALESCE(foco_autorizado, 0)) AS foco_autorizado,
+               SUM(COALESCE(foco_nao_autorizado, 0)) AS foco_nao_autorizado
+        FROM (
+            SELECT  COUNT(1) as total_foco,
+                    0 as foco_autorizado,
+                    COUNT(1) as  foco_nao_autorizado
+            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
+            WHERE   car_focos.${columnCarEstadual} = ${carRegister}
+                AND '${filter.date[0]}' <= car_focos.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name}_data_apro1
+                AND '${filter.date[1]}' >= car_focos.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name}_data_venc1
+      
+            UNION ALL
+            
+            SELECT  0 as foco_total,
+                    COUNT(1) as foco_autorizado,
+                    COUNT(1)*(-1) as  foco_nao_autorizado
+            FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS CAR_FOCOS_X_QUEIMA
+            WHERE   CAR_FOCOS_X_QUEIMA.${views.BURNED.children.CAR_X_FOCOS.table_name}_${columnCarEstadual} = ${carRegister}
+                AND '${filter.date[0]}' <= aut.data_apro1
+                AND '${filter.date[1]}' >= data_venc1
+        ) as CAR_X_FOCOS_X_QUEIMA
+    `;
+    const resultBurnCount = await Report.sequelize.query(sqlBurnCount, QUERY_TYPES_SELECT);
+    propertyData['burnCount'] = resultBurnCount;
+    // -----------------------------------------------------------------------------------------------------------------
 
-    const resultRestrictUseFOCOSCount = await Report.sequelize.query(sqlRestrictUseFOCOSCount, QUERY_TYPES_SELECT);
-    const restrictUseFOCOSCount = resultRestrictUseFOCOSCount;
+    // ---  historyBurnlight ---------------------------------------------------------------------------------------
+    const sqlHistoryBurnlight = `
+        SELECT SUM(COALESCE(foco_total, 0)) AS total_foco,
+               SUM(COALESCE(foco_autorizado, 0)) AS foco_autorizado,
+               SUM(COALESCE(foco_nao_autorizado, 0)) AS foco_nao_autorizado
+        FROM (
+            SELECT  COUNT(1) as total_foco,
+                    0 as foco_autorizado,
+                    COUNT(1) as  foco_nao_autorizado
+            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name}  a_carfocos_48
+            WHERE   car.${columnCarEstadual} = ${carRegister}
+                    AND '1999-01-01' <= aut.data_apro1
+                    AND '${filter.date[1]}' >= data_venc1
+                GROUP BY ${columnExecutionDate}
+      
+            UNION ALL
+            
+            SELECT  0 as foco_total,
+                    COUNT(1) as foco_autorizado,
+                    COUNT(1)*(-1) as  foco_nao_autorizado
+            FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS aut
+            WHERE   car.${columnCarEstadual} = ${carRegister}
+                    AND '1999-01-01' <= aut.data_apro1
+                    AND '${filter.date[1]}' >= data_venc1
+                GROUP BY ${columnExecutionDate}
+        ) as foco
+    `
 
-    const resultBurnAuthorizationFOCOSCount = await Report.sequelize.query(sqlBurnAuthorizationFOCOSCount, QUERY_TYPES_SELECT);
-    const burnAuthorizationFOCOSCount = resultBurnAuthorizationFOCOSCount;
-
-    const resultFisionomiaFOCOSCount = await Report.sequelize.query(sqlFisionomiaFOCOSCount, QUERY_TYPES_SELECT);
-    const fisionomiaFOCOSCount = resultFisionomiaFOCOSCount;
-
-    const resultAPPFOCOSCount = await Report.sequelize.query(sqlAPPFOCOSCount, QUERY_TYPES_SELECT);
-    const aPPFOCOSCount = resultAPPFOCOSCount;
-
-    const resultLegalReserveFOCOSCount = await Report.sequelize.query(sqlLegalReserveFOCOSCount, QUERY_TYPES_SELECT);
-    const legalReserveFOCOSCount = resultLegalReserveFOCOSCount;
-
-    const resultIndigenousLandFOCOSCount = await Report.sequelize.query(sqlIndigenousLandFOCOSCount, QUERY_TYPES_SELECT);
-    const indigenousLandFOCOSCount = resultIndigenousLandFOCOSCount;
-
-    const resultExploraFOCOSCount = await Report.sequelize.query(sqlExploraFOCOSCount, QUERY_TYPES_SELECT);
-    const explorationFOCOSCount = resultExploraFOCOSCount;
-
-    const resultDesmateFOCOSCount = await Report.sequelize.query(sqlDesmateFOCOSCount, QUERY_TYPES_SELECT);
-    const deforestationFOCOSCount = resultDesmateFOCOSCount;
-
-    const resultEmbFOCOSCount = await Report.sequelize.query(sqlEmbFOCOSCount, QUERY_TYPES_SELECT);
-    const embargoedAreaFOCOSCount = resultEmbFOCOSCount;
-
-    const resultLandAreaFOCOSCount = await Report.sequelize.query(sqlLandAreaFOCOSCount, QUERY_TYPES_SELECT);
-    const landAreaFOCOSCount = resultLandAreaFOCOSCount;
-
-
-    const resultSpotlightsYear = await Report.sequelize.query(sqlSpotlightsYear, QUERY_TYPES_SELECT);
-    const spotlightsYear = resultSpotlightsYear;
-
-    propertyData['burningSpotlights'] = burningSpotlights;
-    propertyData['spotlightsYear'] = spotlightsYear;
-
-    let burnlightCount = 0;
-
-    burnlightCount += aPPFOCOSCount[0]['count'] ? aPPFOCOSCount[0]['count'] : 0
-    burnlightCount += legalReserveFOCOSCount[0]['count'] ? legalReserveFOCOSCount[0]['count'] : 0
-    burnlightCount += indigenousLandFOCOSCount[0]['count'] ? indigenousLandFOCOSCount[0]['count'] : 0
-    burnlightCount += deforestationFOCOSCount[0]['count'] ? deforestationFOCOSCount[0]['count'] : 0
-    burnlightCount += embargoedAreaFOCOSCount[0]['count'] ? embargoedAreaFOCOSCount[0]['count'] : 0
-    burnlightCount += landAreaFOCOSCount[0]['count'] ? landAreaFOCOSCount[0]['count'] : 0
-
-    if (!propertyData['tableData']){ propertyData['tableData'] = {}; }
-    propertyData['tableData']['affectedArea'] = 'APP';
-    propertyData['tableData']['burnlights'] = parseFloat(aPPFOCOSCount[0]['count'] | 0);
-
-    if (!propertyData['prodesLegalReserve']){ propertyData['prodesLegalReserve'] = {}; }
-    propertyData['prodesLegalReserve']['affectedArea'] = 'ARL';
-    propertyData['prodesLegalReserve']['burnlights'] =  parseFloat(legalReserveFOCOSCount[0]['count'] | 0);
-
-    if (!propertyData['prodesRestrictedUse']){ propertyData['prodesRestrictedUse'] = {}; }
-    propertyData['prodesRestrictedUse']['affectedArea'] = 'AUR';
-    propertyData['prodesRestrictedUse']['burnlights'] = parseFloat(restrictUseFOCOSCount[0]['count'] | 0);
-
-    if (!propertyData['prodesIndigenousLand']){ propertyData['prodesIndigenousLand'] = {}; }
-    propertyData['prodesIndigenousLand']['affectedArea'] = 'TI';
-    propertyData['prodesIndigenousLand']['burnlights'] = parseFloat(indigenousLandFOCOSCount[0]['count']);
-
-    if (!propertyData['prodesExploration']){ propertyData['prodesExploration'] = {}; }
-    propertyData['prodesExploration']['affectedArea'] = 'AUTEX';
-    propertyData['prodesExploration']['burnlights'] = parseFloat(explorationFOCOSCount[0]['count']);
-
-    if (!propertyData['prodesDeforestation']){ propertyData['prodesDeforestation'] = {}; }
-    propertyData['prodesDeforestation']['affectedArea'] = 'AD';
-    propertyData['prodesDeforestation']['burnlights'] = parseFloat(deforestationFOCOSCount[0]['count']);
-
-    if (!propertyData['prodesEmbargoedArea']){ propertyData['prodesEmbargoedArea'] = {}; }
-    propertyData['prodesEmbargoedArea']['affectedArea'] = 'Área embargada';
-    propertyData['prodesEmbargoedArea']['burnlights'] = parseFloat(embargoedAreaFOCOSCount[0]['count']);
-
-    if (!propertyData['prodesLandArea']){ propertyData['prodesLandArea'] = {}; }
-    propertyData['prodesLandArea']['affectedArea'] = 'Área desembargada';
-    propertyData['prodesLandArea']['burnlights'] = parseFloat(landAreaFOCOSCount[0]['count']);
-
-    if (!propertyData['prodesBurnAuthorization']){ propertyData['prodesBurnAuthorization'] = {}; }
-    propertyData['prodesBurnAuthorization']['affectedArea'] = 'AQ';
-    propertyData['prodesBurnAuthorization']['burnlights'] = parseFloat(burnAuthorizationFOCOSCount[0]['count']);
-
-
-    if (!propertyData['foundBurnlight']) {
-      propertyData['foundBurnlight'] = !!burnlightCount
-    }
+    const resultHistoryBurnlight = await Report.sequelize.query(sqlHistoryBurnlight, QUERY_TYPES_SELECT);
+    propertyData['historyBurnlight'] = resultHistoryBurnlight;
+    // -----------------------------------------------------------------------------------------------------------------
   }
 
   return await propertyData;
@@ -1074,7 +1032,7 @@ module.exports = FileReport = {
   async getReportCarData(query) {
     const { carRegister, date, type } = query;
 
-    const filter = JSON.parse(query.filter);
+    let filter = JSON.parse(query.filter);
 
     let dateFrom = null;
     let dateTo = null;
@@ -1110,9 +1068,14 @@ module.exports = FileReport = {
 
       const dateSql = ` and ${columnExecutionDate}::date >= '${dateFrom}' AND ${columnExecutionDate}::date <= '${dateTo}'`;
 
+      if(filter) {
+        filter['date'] = date;
+      } else {
+        filter = { date: date };
+      }
       await setDeterData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnExecutionDate, carRegister, filter);
-      await setBurnedData(type, views, propertyData, dateSql, columnCar, columnCarSemas, columnExecutionDate, carRegister);
-      await setBurnedAreaData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnCarSemas, columnExecutionDate, carRegister);
+      await setBurnedData(type, views, propertyData, dateSql, columnCar, columnCarSemas, columnExecutionDate, carRegister, filter);
+      // await setBurnedAreaData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnCarSemas, columnExecutionDate, carRegister);
       await setProdesData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnExecutionDate, carRegister);
 
       return Result.ok(await setReportFormat(propertyData, views, type, columnCar, columnCarSemas, date, filter));
