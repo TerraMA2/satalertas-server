@@ -1,21 +1,21 @@
 
-const Result = require("../utils/result");
-  models = require('../models');
-  Report = models.reports;
-  env = process.env.NODE_ENV || 'development';
-  confDb = require(__dirname + '/../config/config.json')[env];
-  PdfPrinter = require('pdfmake');
-  fs = require('fs');
-  env = process.env.NODE_ENV || 'development';
-  confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
-  ViewUtil = require("../utils/view.utils");
-  SatVegService = require("../services/sat-veg.service");
+const Result = require("../utils/result")
+  models = require('../models')
+  Report = models.reports
+  env = process.env.NODE_ENV || 'development'
+  confDb = require(__dirname + '/../config/config.json')[env]
+  PdfPrinter = require('pdfmake')
+  fs = require('fs')
+  env = process.env.NODE_ENV || 'development'
+  confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
+  ViewUtil = require("../utils/view.utils")
+  SatVegService = require("../services/sat-veg.service")
   axios = require('axios')
   logger = require('../utils/logger')
 
-  const config = {
-    headers: {'X-My-Custom-Header': 'Header-Value'}
-  };
+const config = {
+  headers: {'X-My-Custom-Header': 'Header-Value'}
+};
 
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };
@@ -428,7 +428,6 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
 
 setBurnedData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCarEstadualSemas, columnExecutionDate, carRegister, filter) {
   if (propertyData && views.BURNED && type === 'queimada') {
-
     // ---  Firing Authorization ---------------------------------------------------------------------------------------
     const sqlFiringAuth = `
         SELECT 
@@ -503,8 +502,7 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
             
         ) AS CAR_X_FOCOS_X_QUEIMA
         GROUP BY month_year_occurrence
-    `
-
+    `;
     const resultHistoryBurnlight = await Report.sequelize.query(sqlHistoryBurnlight, QUERY_TYPES_SELECT);
     propertyData['historyBurnlight'] = resultHistoryBurnlight;
     // -----------------------------------------------------------------------------------------------------------------
@@ -517,9 +515,15 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
   if (propertyData && views.BURNED_AREA && type === 'queimada') {
     const sqlBurnedAreas = `
       SELECT
+<<<<<<< HEAD
         ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS burnedAreas,
         extract('YEAR' FROM areaq.${columnExecutionDate}) AS date
       FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
+=======
+        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0)) as burnedAreas,
+        extract('YEAR' FROM areaq.${columnExecutionDate}) as date
+      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} as areaq
+>>>>>>> 35a797b055866f3d3c02da7451182100470aad45
       INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
       areaq.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
       car.${columnCarEstadualSemas} = '${carRegister}'
@@ -553,7 +557,7 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
 
     const sqlRestrictUseBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_USO_RESTRITO.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
     const sqlBurnAuthorizationBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_QUEIMA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
+    // const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
 
     const resultRestrictUseBURNEDAREASum = await Report.sequelize.query(sqlRestrictUseBURNEDAREASum, QUERY_TYPES_SELECT);
     const restrictUseBURNEDAREASum = resultRestrictUseBURNEDAREASum;
@@ -561,8 +565,8 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
     const resultBurnAuthorizationBURNEDAREASum = await Report.sequelize.query(sqlBurnAuthorizationBURNEDAREASum, QUERY_TYPES_SELECT);
     const burnAuthorizationBURNEDAREASum = resultBurnAuthorizationBURNEDAREASum;
 
-    const resultFisionomiaBURNEDAREASum = await Report.sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
-    const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
+    // const resultFisionomiaBURNEDAREASum = await Report.sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
+    // const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
 
     const resultAPPBURNEDAREASum = await Report.sequelize.query(sqlAPPBURNEDAREASum, QUERY_TYPES_SELECT);
     const aPPBURNEDAREASum = resultAPPBURNEDAREASum;
@@ -1258,6 +1262,30 @@ module.exports = FileReport = {
       return Result.err(e)
     }
   },
+  async getChartOptions(labels, data){
+    return {
+      type: 'line',
+      data: {
+        labels: labels,
+        lineColor: 'rgb(10,5,109)',
+        datasets: [{
+          label: 'NDVI',
+          data: data,
+          backgroundColor: 'rgba(17,17,177,0)',
+          borderColor: 'rgba(5,177,0,1)',
+          showLine: true,
+          borderWidth: 2,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: false,
+        legend: {
+          display: false
+        }
+      }
+    };
+  },
   async getPointsAlerts(query) {
     const {carRegister, date, type} = query;
     const groupViews = await ViewUtil.getGrouped();
@@ -1299,34 +1327,28 @@ module.exports = FileReport = {
         points[index]['url'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view},${groupViews.STATIC.children.CAR_X_USOCON.workspace}:${groupViews.STATIC.children.CAR_X_USOCON.view},${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}&styles=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view}_style,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_X_USOCON.view}_hatched_style,${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}_style&bbox=${bbox}&width=404&height=431&time=${points[index].startyear}/${currentYear}&cql_filter=${carColumn}='${carRegister}';gid_car='${carRegister}';${groupViews[type.toUpperCase()].children[groupType[type]].table_name}_id=${points[index].a_carprodes_1_id}&srs=EPSG:4674&format=image/png`;
 
         points[index]['options'] = await SatVegService.get({long: points[index].long, lat: points[index].lat },'ndvi', 3, 'wav', '', 'aqua').then( async resp => {
-          logger.error(resp['listaDatas'])
-          logger.error(resp['listaSerie'])
-          return {
-            type: 'line',
-            data: {
-              labels: resp['listaDatas'],
-              lineColor: 'rgb(10,5,109)',
-              datasets: [{
-                label: 'NDVI',
-                data: resp['listaSerie'],
-                backgroundColor: 'rgba(17,17,177,0)',
-                borderColor: 'rgba(5,177,0,1)',
-                showLine: true,
-                borderWidth: 2,
-                pointRadius: 0
-              }]
-            },
-            options: {
-              responsive: false,
-              legend: {
-                display: false
-              }
-            }
-          };
+          const labels = resp['listaDatas'];
+          const data = resp['listaSerie'];
+          logger.error(labels)
+          logger.error(data)
+          return this.getChartOptions(labels, data);
         });
       }
 
       return Result.ok(points);
+    } catch (e) {
+      return Result.err(e)
+    }
+  },
+  async getBurnlightCharts(query) {
+    try {
+      const sql = "";
+      const burnlightData = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+      const labels = burnlightData['labels'];
+      const data = burnlightData['data']
+
+      const options = this.getChartOptions(labels, data);
+      return Result.ok(options);
     } catch (e) {
       return Result.err(e)
     }

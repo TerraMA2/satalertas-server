@@ -24,6 +24,21 @@ module.exports = function(view_deter, workspacekAlertas, cod_view, tableOwner, i
       field: `nm_micro`,
       value: `name`
     },
+    immediateregion: {
+      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      field: `nm_rgi`,
+      value: `name`
+    },
+    intermediateregion: {
+      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      field: `nm_rgint`,
+      value: `name`
+    },
+    pjbh: {
+      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      field: `pjbh`,
+      value: `name`
+    },
     city: {
       view: `${workspacekAlertas}:${cod_view}_city_sql`,
       field: `gid`,
