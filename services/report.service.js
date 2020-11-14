@@ -196,9 +196,9 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
               car.cpfcnpj AS cpf,
               car.nomepropri AS owner,
               munic.comarca AS county,
-              substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) as citybbox,
-              substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) as statebbox,
-              substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox,
+              substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
+              substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
+              substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car
@@ -231,7 +231,7 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
     const sqlDeflorestationAlerts = `
       SELECT 
             carxdeter.${views.DETER.children.CAR_X_DETER.table_name}_id AS id,
-            SUBSTRING(ST_EXTENT(carxdeter.intersection_geom)::TEXT, 5, length(ST_EXTENT(carxdeter.intersection_geom)::TEXT) - 5) as bbox,
+            SUBSTRING(ST_EXTENT(carxdeter.intersection_geom)::TEXT, 5, length(ST_EXTENT(carxdeter.intersection_geom)::TEXT) - 5) AS bbox,
             COALESCE(calculated_area_ha, 4) AS area,
             TO_CHAR(carxdeter.execution_date, 'dd/mm/yyyy') AS date,
             TO_CHAR(carxdeter.execution_date, 'yyyy') AS year,
@@ -307,7 +307,7 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     const sqlProdesYear =
       `SELECT
         extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
-        ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as area
+        ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area
       FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS cp
       WHERE cp.${columnCarEstadual} = '${carRegister}'
       GROUP BY date
@@ -379,7 +379,7 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     const sqlDeforestationHistory =
         ` SELECT
                             extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
-                            ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0),4) as area
+                            ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0),4) AS area
             FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} cp
             WHERE cp.${columnCarEstadual} = '${carRegister}'
             GROUP BY date
@@ -431,7 +431,10 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     // ---  Firing Authorization ---------------------------------------------------------------------------------------
     const sqlFiringAuth = `
-        SELECT aut.titulo_nu1, aut.data_apro1, aut.data_venc1
+        SELECT 
+                aut.titulo_nu1,
+                aut.data_apro1, aut.data_venc1,
+                ROUND((COALESCE(aut.area__m2_,0) / 10000), 4) AS area_ha
         FROM public.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name} AS aut
         JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car ON st_contains(car.geom, aut.geom)
         WHERE   car.${columnCarEstadualSemas} = ${carRegister}
@@ -444,59 +447,62 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     // ---  Firing Authorization ---------------------------------------------------------------------------------------
     const sqlBurnCount = `
-        SELECT SUM(COALESCE(foco_total, 0)) AS total_foco,
-               SUM(COALESCE(foco_autorizado, 0)) AS foco_autorizado,
-               SUM(COALESCE(foco_nao_autorizado, 0)) AS foco_nao_autorizado
+        SELECT SUM(COALESCE(total_focus, 0)) AS total_focus,
+               SUM(COALESCE(authorized_focus, 0)) AS authorized_focus,
+               SUM(COALESCE(unauthorized_focus, 0)) AS unauthorized_focus
         FROM (
-            SELECT  COUNT(1) as total_foco,
-                    0 as foco_autorizado,
-                    COUNT(1) as  foco_nao_autorizado
+            SELECT  COUNT(1) AS total_focus,
+                    0 AS authorized_focus,
+                    COUNT(1) AS  unauthorized_focus
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
             WHERE   car_focos.${columnCarEstadual} = ${carRegister}
-                AND '${filter.date[0]}' <= car_focos.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name}_data_apro1
-                AND '${filter.date[1]}' >= car_focos.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name}_data_venc1
-      
+                AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
+                      
             UNION ALL
             
-            SELECT  0 as foco_total,
-                    COUNT(1) as foco_autorizado,
-                    COUNT(1)*(-1) as  foco_nao_autorizado
+            SELECT  0 AS foco_total,
+                    COUNT(1) AS authorized_focus,
+                    COUNT(1)*(-1) AS  unauthorized_focus
             FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS CAR_FOCOS_X_QUEIMA
-            WHERE   CAR_FOCOS_X_QUEIMA.${views.BURNED.children.CAR_X_FOCOS.table_name}_${columnCarEstadual} = ${carRegister}
-                AND '${filter.date[0]}' <= aut.data_apro1
-                AND '${filter.date[1]}' >= data_venc1
-        ) as CAR_X_FOCOS_X_QUEIMA
+            WHERE  CAR_FOCOS_X_QUEIMA.${views.BURNED.children.CAR_X_FOCOS.table_name}_${columnCarEstadual} = ${carRegister}
+               AND '${filter.date[0]}' <= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_apro1
+               AND '${filter.date[0]}' >= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_venc1
+        ) AS CAR_X_FOCOS_X_QUEIMA
     `;
     const resultBurnCount = await Report.sequelize.query(sqlBurnCount, QUERY_TYPES_SELECT);
-    propertyData['burnCount'] = resultBurnCount;
+    propertyData['burnCount'] = resultBurnCount[0];
     // -----------------------------------------------------------------------------------------------------------------
 
     // ---  historyBurnlight ---------------------------------------------------------------------------------------
     const sqlHistoryBurnlight = `
-        SELECT SUM(COALESCE(foco_total, 0)) AS total_foco,
-               SUM(COALESCE(foco_autorizado, 0)) AS foco_autorizado,
-               SUM(COALESCE(foco_nao_autorizado, 0)) AS foco_nao_autorizado
+        SELECT SUM(COALESCE(total_focus, 0)) AS total_focus,
+               SUM(COALESCE(authorized_focus, 0)) AS authorized_focus,
+               SUM(COALESCE(unauthorized_focus, 0)) AS unauthorized_focus,
+               month_year_occurrence
         FROM (
-            SELECT  COUNT(1) as total_foco,
-                    0 as foco_autorizado,
-                    COUNT(1) as  foco_nao_autorizado
-            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name}  a_carfocos_48
-            WHERE   car.${columnCarEstadual} = ${carRegister}
-                    AND '1999-01-01' <= aut.data_apro1
-                    AND '${filter.date[1]}' >= data_venc1
-                GROUP BY ${columnExecutionDate}
-      
+            SELECT  COUNT(1) AS total_focus,
+                    0 AS authorized_focus,
+                    COUNT(1) AS  unauthorized_focus,
+                    (CONCAT(EXTRACT(MONTH FROM car_focos.execution_date), '/', extract(year from car_focos.execution_date))) AS month_year_occurrence
+            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
+            WHERE   car_focos.${columnCarEstadual} = ${carRegister}
+                AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
+            GROUP BY month_year_occurrence
+                      
             UNION ALL
             
-            SELECT  0 as foco_total,
-                    COUNT(1) as foco_autorizado,
-                    COUNT(1)*(-1) as  foco_nao_autorizado
-            FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS aut
-            WHERE   car.${columnCarEstadual} = ${carRegister}
-                    AND '1999-01-01' <= aut.data_apro1
-                    AND '${filter.date[1]}' >= data_venc1
-                GROUP BY ${columnExecutionDate}
-        ) as foco
+            SELECT  0 AS foco_total,
+                    COUNT(1) AS authorized_focus,
+                    COUNT(1)*(-1) AS  unauthorized_focus,
+                    (CONCAT(EXTRACT(MONTH FROM CAR_FOCOS_X_QUEIMA.execution_date), '/', extract(year from CAR_FOCOS_X_QUEIMA.execution_date))) AS month_year_occurrence
+            FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS CAR_FOCOS_X_QUEIMA
+            WHERE  CAR_FOCOS_X_QUEIMA.${views.BURNED.children.CAR_X_FOCOS.table_name}_${columnCarEstadual} = ${carRegister}
+               AND '${filter.date[0]}' <= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_apro1
+               AND '${filter.date[0]}' >= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_venc1
+            GROUP BY month_year_occurrence
+            
+        ) AS CAR_X_FOCOS_X_QUEIMA
+        GROUP BY month_year_occurrence
     `
 
     const resultHistoryBurnlight = await Report.sequelize.query(sqlHistoryBurnlight, QUERY_TYPES_SELECT);
@@ -511,9 +517,9 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
   if (propertyData && views.BURNED_AREA && type === 'queimada') {
     const sqlBurnedAreas = `
       SELECT
-        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) as burnedAreas,
-        extract('YEAR' FROM areaq.${columnExecutionDate}) as date
-      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} as areaq
+        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS burnedAreas,
+        extract('YEAR' FROM areaq.${columnExecutionDate}) AS date
+      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
       INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
       areaq.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
       car.${columnCarEstadualSemas} = '${carRegister}'
@@ -526,7 +532,7 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
     const sqlBurnedAreasYear = `
       SELECT
         extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
-        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) as burnedAreas
+        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS burnedAreas
       FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
       WHERE areaq.${columnCarEstadual} = '${carRegister}'
       GROUP BY date
@@ -1122,7 +1128,7 @@ module.exports = FileReport = {
       const sqlBurnedAreasYear =
           ` SELECT
                   extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
-                  COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) as area
+                  COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
             FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} areaq
             WHERE areaq.${columnCar} = '${carRegister}'
             GROUP BY date
@@ -1135,7 +1141,7 @@ module.exports = FileReport = {
       const sqlProdesYear =
           ` SELECT
                   extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
-                  COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0) as area
+                  COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
             FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} cp
             WHERE cp.${columnCar} = '${carRegister}'
             GROUP BY date
@@ -1147,7 +1153,7 @@ module.exports = FileReport = {
       const sqlDeterYear =
           ` SELECT
                   extract(year from date_trunc('year', cd.${columnExecutionDate})) AS date,
-                  COALESCE(SUM(CAST(cd.${columnCalculatedAreaHa}  AS DECIMAL)), 0) as area
+                  COALESCE(SUM(CAST(cd.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
             FROM public.${views.DETER.children.CAR_X_DETER.table_name} cd
             WHERE cd.${columnCar} = '${carRegister}'
             GROUP BY date
@@ -1159,7 +1165,7 @@ module.exports = FileReport = {
       const sqlSpotlightsYear =
           ` SELECT
                   extract(year from date_trunc('year', cf.${columnExecutionDate})) AS date,
-                  COUNT(cf.*) as spotlights
+                  COUNT(cf.*) AS spotlights
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} cf
             WHERE cf.${columnCar} = '${carRegister}'
             GROUP BY date
@@ -1277,7 +1283,7 @@ module.exports = FileReport = {
 
     const sqlBbox = `
       SELECT
-            substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) as bbox
+            substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
       FROM de_car_validado_sema AS car 
       WHERE car.${carColumn} = '${carRegister}'
       GROUP BY gid`;
