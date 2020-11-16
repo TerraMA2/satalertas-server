@@ -23,7 +23,7 @@ module.exports = carService = {
             sqlWhere: '',
             secondaryTables: '',
             sqlHaving: '',
-            order: (specificParameters.sortField && specificParameters.sortOrder) ? ` ORDER BY ${specificParameters.sortField} ${specificParameters.sortOrder == '1'?'ASC':'DESC'} ` : ``,
+            order: layer.codgroup != 'BURNED' && (specificParameters.sortField && specificParameters.sortOrder) ? ` ORDER BY ${specificParameters.sortField} ${specificParameters.sortOrder == '1'?'ASC':'DESC'} ` : ``,
             limit: specificParameters.limit ? ` LIMIT ${specificParameters.limit}` : '',
             offset: specificParameters.offset ? ` OFFSET ${specificParameters.offset}` : ''
           };

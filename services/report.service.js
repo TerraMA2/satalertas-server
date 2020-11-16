@@ -220,7 +220,7 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
     // --- Total area of Deter period ----------------------------------------------------------------------------------
     const sqlDeterAreaPastDeforestation =
         `   
-            SELEigueCT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area 
+            SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area 
             FROM public.${views.DETER.children.CAR_X_DETER.table_name} 
             WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(dateSql, filter, views.DETER.children.CAR_X_DETER, views.DETER.tableOwner)} `;
     const resultDeterAreaPastDeforestation = await Report.sequelize.query(sqlDeterAreaPastDeforestation, QUERY_TYPES_SELECT);
@@ -515,15 +515,9 @@ setBurnedAreaData = async function(type, views, propertyData, dateSql, columnCar
   if (propertyData && views.BURNED_AREA && type === 'queimada') {
     const sqlBurnedAreas = `
       SELECT
-<<<<<<< HEAD
         ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS burnedAreas,
         extract('YEAR' FROM areaq.${columnExecutionDate}) AS date
       FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
-=======
-        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0)) as burnedAreas,
-        extract('YEAR' FROM areaq.${columnExecutionDate}) as date
-      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} as areaq
->>>>>>> 35a797b055866f3d3c02da7451182100470aad45
       INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
       areaq.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
       car.${columnCarEstadualSemas} = '${carRegister}'
