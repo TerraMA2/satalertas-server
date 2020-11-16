@@ -6,7 +6,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate ) {
       {
         text: 'Verificou-se que não há autorização de queima controlada emitida ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [30, 15, 30, 0],
         style: 'body'
       },
       {
@@ -20,11 +20,11 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate ) {
       {
         text: 'Verificou-se que há autorização de queima controlada emitida para o',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [30, 15, 30, 0],
         style: 'body'
       },
       {
-        text: `imóvel rural em análise para o período de ${formattedFilterDate} (AQC n. ${authNumbers.join(', ')})`, //$(aqcNumber)
+        text: `imóvel rural em análise para o período de ${formattedFilterDate.replace('a','até')} (AQC n. ${authNumbers.join(', ')})`, //$(aqcNumber)
         margin: [30, 0, 30, 5],
         style: 'body',
       }
@@ -62,9 +62,6 @@ module.exports = function (headerDocument, reportData, title) {
       };
     },
     content: [
-      // {
-      //   columns: headerDocument
-      // },
       {
         text: [
           {
@@ -85,7 +82,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ` ${ reportData.property.city}`, // variavel -
+            text: ` ${ reportData.property.city}`,
             bold: false
           }
         ],
@@ -140,7 +137,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text: (
-                'uso de Sistema de Informações Geográficas no imóvel rural ' + `${ reportData.property.city}` // variável - nome da propriedade
+                'uso de Sistema de Informações Geográficas no imóvel rural ' + `${ reportData.property.city}`
             ),
           },
           {
@@ -149,13 +146,13 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: (
-                ' com área igual a ' +  `${reportData.property.area}` // variável - tamanho da propriedade
+                ' com área igual a ' +  `${reportData.property.area}`
                 + ' hectares localizada no município de ' +
-                reportData.property.city // variável - nome do municipio
-                + '-MT, pertencente a ' + `${reportData.property.owner}` // variável - nome do proprietário
+                reportData.property.city
+                + '-MT, pertencente a ' + `${reportData.property.owner}`
                 + ', conforme informações declaradas no ' +
                 ' Sistema Sistema Nacional de Cadastro Ambiental Rural (SICAR), protocolo CAR ' +
-                reportData.property.register  // variável - recibo CAR
+                reportData.property.register
             )
           },
           {
@@ -272,10 +269,10 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: (
-                'Informações e dados geográficos do SIMCAR Parceiros e Público, da Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA). Os' +
+                'Informações e dados geográficos do SIMCAR Parceiros e Público, da Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA). Os ' +
                 'dados declarados no SIMCAR foram unidos em uma única base, ' +
                 'compreendendo os CAR validades, aguardando ' +
-                'complementação, em análise e migrados do Sistema de Cadastro' +
+                'complementação, em análise e migrados do Sistema de Cadastro ' +
                 'Ambiental Rural (SICAR). Foram excluídos da base os CAR com status '  +
                 'cancelado e indeferido;'
             ),
@@ -295,7 +292,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: (
-                'Dados do Navegador Geográfico da SEMA (SIMGEO): referentes às' +
+                'Dados do Navegador Geográfico da SEMA (SIMGEO): referentes às ' +
                 'autorizações de queima controlada (AQC)'
             ),
             margin: [20, 0, 30, 5],
@@ -369,7 +366,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: 'Dados pessoais dos responsáveis pelo imóvel rural obtidos no Sistema Nacional de Informações de Segurança Pública (SINESP-INFOSEG).',
-            margin: [20, 0, 30, 5],
+            margin: [20, 0, 30, 15],
             width: 'auto',
             style: 'body'
           }
@@ -399,15 +396,15 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: 'Os dados do Programa Queimadas (pontos ',
-        alignment: 'left',
+        alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
             'representando a área nominal do píxel de fogo), foram cruzados com ' +
-            'informações geoespaciais de fontes oficiais para identificação de incêndios' +
-            'florestais em imóveis rurais no Estado de Mato Grosso, bem como para' +
+            'informações geoespaciais de fontes oficiais para identificação de incêndios ' +
+            'florestais em imóveis rurais no Estado de Mato Grosso, bem como para ' +
             'identificação dos responsáveis pelo imóvel rural atingido.'
         ),
         margin: [30, 0, 30, 5],
@@ -425,7 +422,7 @@ module.exports = function (headerDocument, reportData, title) {
             'controlada (AQC) emitidas pela SEMA, assim como foi verificada a existência ' +
             'de cicatriz causada pela passagem de fogo na vegetação a partir da ' +
             'interpretação das imagens de satélite após ou durante o período de ' +
-            `${ reportData.formattedFilterDate}. Ainda, foram elaborados gráficos contendo as séries` + // variável - período do filtro
+            `${ reportData.formattedFilterDate}. Ainda, foram elaborados gráficos contendo as séries` +
             'temporais de focos de calor que incidiram no imóvel rural ao longo dos anos ' +
             '(a partir de 1999) e no período de 15 de julho até 15 de setembro desde 2006 ' +
             '(período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
@@ -468,7 +465,7 @@ module.exports = function (headerDocument, reportData, title) {
             'satélites recebidos e processados pelo INPE. A quantidade de satélites pode variar ao longo do tempo e por este ' +
             'motivo as comparações interanuais são realizadas apenas pelos dados do satélite AQUA. No entanto, para ' +
             'identificar e confirmar a ocorrência de fogo na vegetação este relatório considera todos os focos dos satélites AQUA,' +
-            'TERRA, SNPP e NOAA-20 pelo fato de possuírem uma precisão geométrica maior. Devido a alta frequência de imageamento' +
+            'TERRA, SNPP e NOAA-20 pelo fato de possuírem uma precisão geométrica maior. Devido a alta frequência de imageamento ' +
             ' os pontos de todos os satélites são utilizados para indicar o primeiro e último dia de ocorrência de fogo numa dada propriedade.'
         ),
         margin: [30, 0, 30, 5],
@@ -504,7 +501,7 @@ module.exports = function (headerDocument, reportData, title) {
             'pelo INPE é refletida pelas milhares de publicações científicas que utilizaram essas informações para realização de ' +
             'pesquisas, que podem ser encontrada no Google Scholar².'
         ),
-        margin: [30, 0, 30, 5],
+        margin: [30, 0, 30, 15],
         style: 'body'
       },
       {
@@ -518,18 +515,18 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: ( // inserir quantidade de queimadas aqui no xx e o nome da propriedade no propriedade aqui
-            'identificou ' + `33` // variável - quantidade de focos
-            + ' focos de calor no imóvel rural denominado' + reportData.property.name + // Variável - nome da propriedade
-            `no período de ${ reportData.formattedFilterDate}. Na figura 02 é possível ` + // variável - data formadata no texto
-            'observar em imagem de satélite a cicatriz de incêndio na vegetação do' +
-            'imóvel rural causada pela passagem de fogo (feições de cor roxa na imagem' +
-            'de satélite), assim como os focos de calor que incidiram na região do' +
-            'incêndio. Nas figuras 03 e 04 constam os gráficos com as séries temporais de' +
-            'focos de calor que incidiram no imóvel rural ao longo dos anos (a partir de' +
+        text: (
+            'identificou ' + `${reportData.property.burnCount['total_focus']} `
+            + ' focos de calor no imóvel rural denominado ' + `${reportData.property.name} ` +
+            `no período de ${ reportData.formattedFilterDate.replace('a', 'até')}. Na figura 02 é possível ` +
+            'observar em imagem de satélite a cicatriz de incêndio na vegetação do ' +
+            'imóvel rural causada pela passagem de fogo (feições de cor roxa na imagem ' +
+            'de satélite), assim como os focos de calor que incidiram na região do ' +
+            'incêndio. Nas figuras 03 e 04 constam os gráficos com as séries temporais de ' +
+            'focos de calor que incidiram no imóvel rural ao longo dos anos (a partir de ' +
             '1999) e no período de 15 de julho até 15 de setembro desde o ano 2006 (ano ' +
-            'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que' +
-            'estabelece o período proibitivo de uso do fogo para limpeza e manejo de' +
+            'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que ' +
+            'estabelece o período proibitivo de uso do fogo para limpeza e manejo de ' +
             'áreas no Estado de Mato Grosso).'
         ),
         margin: [30, 0, 30, 15],
@@ -549,16 +546,15 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: (
-                '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de calor na vegetação' +
-                'da ' + reportData.property.name // Fazenda Mina de Ouro
-                +' em ' + reportData.property.city // Variável - nome da cidade
+                '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de calor na vegetação ' +
+                'da ' + reportData.property.name
+                +' em ' + reportData.property.city
                 + '-MT'
             ),
             margin: [30, 0, 30, 0],
             bold: false
           }
         ],
-        alignment: 'right',
         style: 'body',
         fontSize: 10
       },
@@ -576,16 +572,15 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: (
-                '- Série histórica de focos de calor na' +
-                reportData.property.name // Fazenda Mina de Ouro
-                +' em ' + reportData.property.city // Variável - nome da cidade
+                '- Série histórica de focos de calor na ' +
+                reportData.property.name
+                +' em ' + reportData.property.city
                 + '-MT'
             ),
             margin: [30, 0, 30, 0],
             bold: false
           }
         ],
-        alignment: 'right',
         style: 'body',
         fontSize: 10
       },
@@ -603,33 +598,20 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: (
-                '- Série histórica de focos de calor no periodo proibitivo na' +
-                reportData.property.name // Fazenda Mina de Ouro
-                +' em ' + reportData.property.city // Variável - nome da cidade
+                '- Série histórica de focos de calor no periodo proibitivo na ' +
+                reportData.property.name
+                +' em ' + reportData.property.city
                 + '-MT'
             ),
             margin: [30, 0, 30, 0],
             bold: false
           }
         ],
-        alignment: 'right',
+      
         style: 'body',
         fontSize: 10
       },
       ...dinamicFiringAuthText(reportData.property, reportData.formattedFilterDate),
-      {
-        text: (
-            '\nTEXTO DINÂMICO VAI APARECER AQUI\n' +
-            // `$\{dinamicText()}` +
-            'das bandas espectrais mais sensíveis às respostas da contribuição do solo e da vegetação para realçar áreas de ' +
-            'desmatamento, que são identificadas por fotointerpretação considerando a tonalidade, textura e contexto da área ' +
-            'na imagem de satélite processada. Com essa metodologia, o sistema é capaz de diferenciar impactos naturais de antrópicos, ' +
-            'em razão das feições das áreas analisadas. O tempo entre o mapeamento dos alertas, validação e inclusão no banco de dados ' +
-            'é de aproximadamente 72 horas.'
-        ),
-        margin: [30, 0, 30, 5],
-        style: 'body'
-      },
       {
         text: '6 CONCLUSÃO',
         style: 'listItem'
@@ -642,7 +624,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: (
-            reportData.property.name // variável - nome da propriedade
+            reportData.property.name
             +', conforme a identificação de cicatriz de incêndio em imagem de satélite após o período analisado ' +
             'e a incidência de focos de calor no imóvel rural durante esse período.'
         ),
@@ -657,12 +639,11 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: (
-            'imóvel rural ao longo dos anos e em períodos proibitivos, observou-se que a' +
+            'imóvel rural ao longo dos anos e em períodos proibitivos, observou-se que a ' +
             'ocorrência de incêndio é reincidente, sendo recomendada a adoção de ' +
             'medidas preventivas e de combate aos incêndios florestais no local. '
-            // Chamar o texto dinâmico da conclusão
         ),
-        margin: [30, 0, 30, 5],
+        margin: [30, 0, 30, 15],
         style: 'body'
       },
       {
@@ -677,7 +658,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ` – Informações sobre o CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};`, // variável - ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};
+            text: ` – Informações sobre o CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};`,
             style: 'body'
           }
         ],
@@ -705,13 +686,13 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: (' – Relação de propostas de medidas preventivas' +
-                'e de combate aos incêndios florestais para serem implementadas no imóvel' +
+            text: (' – Relação de propostas de medidas preventivas ' +
+                'e de combate aos incêndios florestais para serem implementadas no imóvel ' +
                 'rural.'),
             style: 'body'
           }
         ],
-        margin: [30, 0, 30, 0],
+        margin: [30, 0, 30, 15],
       },
       {
         text: '8 VALIDAÇÃO',
@@ -719,7 +700,8 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        margin: [30, 0, 30, 250],          text: `Este relatório técnico foi validado em ${ reportData.currentDate} por: `, // variável ${ reportData.currentDate}
+        margin: [30, 0, 30, 250],
+        text: `Este relatório técnico foi validado em ${ reportData.currentDate} por: `,
 
         alignment: 'center',
         style: 'body'
