@@ -19,13 +19,13 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate ) {
   } else {
     paragraph.push(
       {
-        text: 'Verificou-se que há autorização de queima controlada emitida para o',
+        text: 'Verificou-se que há autorização de queima controlada emitida ',
         alignment: 'right',
         margin: [30, 15, 30, 0],
         style: 'body'
       },
       {
-        text: `imóvel rural em análise para o período de ${formattedFilterDate.replace('a','até')} (AQC n. ${authUniqueNumbers.join(', ')})`, //$(aqcNumber)
+        text: `para o imóvel rural em análise para o período de ${formattedFilterDate.replace('a','até')} (AQC n. ${authUniqueNumbers.join(', ')})`, //$(aqcNumber)
         margin: [30, 0, 30, 5],
         style: 'body',
       }
@@ -222,14 +222,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'As informações sobre os incêndios foram integradas ',
+        text: 'As informações sobre os incêndios foram integradas no âmbito ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [160, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'no âmbito do Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
+            'do Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
             'e Instituto Nacional de Pesquisas Espaciais (INPE), cujo objeto consiste na coleta automática, armazenamento ' +
             'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
             'INPE, com os dados de fontes estatais oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.'
@@ -378,14 +378,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'Todas as informações acima descritas foram integradas utilizando a ',
+        text: 'Todas as informações acima descritas foram integradas utilizando ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
+            'a plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
             'análise e emissão de alertas sobre extremos ambientais¹. Assim, utilizando esta base tecnológica inovadora, ' +
             'no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, ' +
             'analisar (intersecção de geometrias dos mapas), visualizar e consultar dados sobre danos ambientais causados ' +
@@ -396,14 +396,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Os dados do Programa Queimadas (pontos ',
+        text: 'Os dados do Programa Queimadas (pontos representando a ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'representando a área nominal do píxel de fogo), foram cruzados com ' +
+            'área nominal do píxel de fogo), foram cruzados com ' +
             'informações geoespaciais de fontes oficiais para identificação de incêndios ' +
             'florestais em imóveis rurais no Estado de Mato Grosso, bem como para ' +
             'identificação dos responsáveis pelo imóvel rural atingido.'
@@ -412,14 +412,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Para validação dos incêndios ilegais, os focos de calor',
+        text: 'Para validação dos incêndios ilegais, os focos de calor foram ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'foram intersectados com os dados geospaciais das autorizações de queima ' +
+            'intersectados com os dados geospaciais das autorizações de queima ' +
             'controlada (AQC) emitidas pela SEMA, assim como foi verificada a existência ' +
             'de cicatriz causada pela passagem de fogo na vegetação a partir da ' +
             'interpretação das imagens de satélite após ou durante o período de ' +
@@ -439,7 +439,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: 'Os projetos PRODES e DETER, utilizados para identificação e ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
@@ -455,14 +455,14 @@ module.exports = function (headerDocument, reportData, title) {
       },
 
       {
-        text: 'Os dados de queimadas possuem características distintas',
+        text: 'Os dados de queimadas possuem características distintas pois ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'pois os focos representados na forma de um ponto são a indicação do centro de um píxel de uma imagem de um dos ' +
+            'os focos representados na forma de um ponto são a indicação do centro de um píxel de uma imagem de um dos ' +
             'satélites recebidos e processados pelo INPE. A quantidade de satélites pode variar ao longo do tempo e por este ' +
             'motivo as comparações interanuais são realizadas apenas pelos dados do satélite AQUA. No entanto, para ' +
             'identificar e confirmar a ocorrência de fogo na vegetação este relatório considera todos os focos dos satélites AQUA,' +
@@ -473,14 +473,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'As cicatrizes das áreas queimadas são produzidas ',
+        text: 'As cicatrizes das áreas queimadas são produzidas sistematicamente ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'sistematicamente para o bioma Cerrado com uso das imagens do satélite Landsat-8 ' +
+            'para o bioma Cerrado com uso das imagens do satélite Landsat-8 ' +
             'e estes dados, com resolução espacial de 30 metros, confirmam a localização e extensão ' +
             'da superfície queimada.'
         ),
@@ -488,14 +488,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body'
       },
       {
-        text: 'Os dados do INPE constituem fonte de acentuada importância para a ',
+        text: 'Os dados do INPE constituem fonte de acentuada importância ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o ' +
+            'para a gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o ' +
             'Termo de Ajustamento de Conduta (TAC) da carne, Moratória da Soja e outros acordos intergovernamentais, como ' +
             'o feito na Conferência das Nações Unidas Sobre Mudanças Climáticas (COP21) para a redução das emissões de gases ' +
             'de efeito estufa por desflorestamento e degradação florestal. Ainda, a importância e credibilidade dos dados gerados ' +
@@ -510,14 +510,14 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'O INPE, a partir dos dados do Programa Queimadas ',
+        text: 'O INPE, a partir dos dados do Programa Queimadas identificou ',
         alignment: 'right',
-        margin: [30, 0, 30, 0],
+        margin: [0, 0, 30, 0],
         style: 'body'
       },
       {
         text: (
-            'identificou ' + `${reportData.property.burnCount['total_focus']} `
+            `${reportData.property.burnCount['total_focus']} `
             + ' focos de calor no imóvel rural denominado ' + `${reportData.property.name} ` +
             `no período de ${ reportData.formattedFilterDate.replace('a', 'até')}. Na figura 02 é possível ` +
             'observar em imagem de satélite a cicatriz de incêndio na vegetação do ' +
@@ -618,7 +618,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: 'Foi observada a ocorrência de incêndio na vegetação da',
+        text: 'Foi observada a ocorrência de incêndio na vegetação da ',
         alignment: 'right',
         margin: [30, 0, 30, 0],
         style: 'body'
