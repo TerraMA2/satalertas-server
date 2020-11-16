@@ -1,6 +1,7 @@
 function dinamicFiringAuthText(firingAuthData, formattedFilterDate ) {
   const paragraph = [];
   const authNumbers = firingAuthData.firingAuth.map(auth => auth['titulo_nu1']);
+  const authUniqueNumbers = [...new Set(authNumbers)];
   if (firingAuthData.firingAuth.length === 0) {
     paragraph.push(
       {
@@ -24,7 +25,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate ) {
         style: 'body'
       },
       {
-        text: `imóvel rural em análise para o período de ${formattedFilterDate.replace('a','até')} (AQC n. ${authNumbers.join(', ')})`, //$(aqcNumber)
+        text: `imóvel rural em análise para o período de ${formattedFilterDate.replace('a','até')} (AQC n. ${authUniqueNumbers.join(', ')})`, //$(aqcNumber)
         margin: [30, 0, 30, 5],
         style: 'body',
       }
