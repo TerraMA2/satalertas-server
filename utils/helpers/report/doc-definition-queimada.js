@@ -1,8 +1,7 @@
 function dinamicFiringAuthText(firingAuthData, formattedFilterDate ) {
   const paragraph = [];
-  // const authNumbers = firingAuthData.firingAuth.map(auth => auth.titulo_nu1);
-  // console.log('>> "', firingAuthData.firingAuth);
-  if (firingAuthData.firingAuth.length = 0) {
+  const authNumbers = firingAuthData.firingAuth.map(auth => auth['titulo_nu1']);
+  if (firingAuthData.firingAuth.length === 0) {
     paragraph.push(
       {
         text: 'Verificou-se que não há autorização de queima controlada emitida ',
@@ -25,7 +24,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate ) {
         style: 'body'
       },
       {
-        text: `imóvel rural em análise para o período de ${formattedFilterDate} (AQC n. (numero aqui)))`, //$(aqcNumber)
+        text: `imóvel rural em análise para o período de ${formattedFilterDate} (AQC n. ${authNumbers.join(', ')})`, //$(aqcNumber)
         margin: [30, 0, 30, 5],
         style: 'body',
       }
