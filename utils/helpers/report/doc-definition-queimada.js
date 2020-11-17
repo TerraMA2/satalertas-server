@@ -161,11 +161,7 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 15],
         style: 'bodyIndentFirst'
       },
-      // {
-      //   columns: [
-          reportData.images.geoserverImage1,
-      //   ]
-      // },
+      reportData.images.geoserverImage1,
       {
         text: [
           {
@@ -478,11 +474,7 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 15],
         style: 'bodyIndentFirst'
       },
-      // {
-        // columns: [
-          reportData.images.geoserverImage2,
-        // ]
-      // },
+      reportData.images.geoserverImage2,
       {
         text: [
           {
@@ -634,7 +626,6 @@ module.exports = function (headerDocument, reportData, title) {
       {
         margin: [30, 0, 30, 250],
         text: `Este relatório técnico foi validado em ${ reportData.currentDate} por: `,
-
         alignment: 'center',
         style: 'body'
       },
