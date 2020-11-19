@@ -564,29 +564,6 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body',
         fontSize: 10,
       },
-      {
-        columns: [reportData.unauthorizedChartImage],
-      },
-      {
-        text: [
-          {
-            text: 'Figura 4 ',
-            bold: true,
-          },
-          {
-            text:
-              '- Série histórica de focos de calor no periodo proibitivo na ' +
-              reportData.property.name +
-              ' em ' +
-              reportData.property.city +
-              '-MT',
-            bold: false,
-          },
-        ],
-        margin: [30, 0, 30, 0],
-        style: 'body',
-        fontSize: 10,
-      },
       ...dinamicFiringAuthText(
         reportData.property,
         reportData.formattedFilterDate,

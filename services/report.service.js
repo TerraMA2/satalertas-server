@@ -510,7 +510,9 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
             GROUP BY month_year_occurrence
             
         ) AS CAR_X_FOCOS_X_QUEIMA
+        
         GROUP BY month_year_occurrence
+        ORDER BY to_date(month_year_occurrence, 'DD/YYYY')
     `;
     const resultHistoryBurnlight = await Report.sequelize.query(sqlHistoryBurnlight, QUERY_TYPES_SELECT);
     propertyData['historyBurnlight'] = resultHistoryBurnlight;
