@@ -4,8 +4,9 @@
     "password": "geoserver",
     "workspace": "workspace",
     "datastore": "datastore",
-    "baseHost": "http://localhost:8080/geoserver/",
-    "host": "http://localhost:8080/geoserver/rest/",
+    "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
+    "baseHostDeter": "/api",
+    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
     "mosaic": {
       "wmsStore": {
         "name": "MosaicSpot2008",
@@ -36,15 +37,16 @@
         "styles": []
       }
     },
-    "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
+    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
   },
   "production": {
     "username": "admin",
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "baseHost": "http://localhost:8080/geoserver",
-    "host": "http://localhost:8080/geoserver/rest/",
+    "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
+    "baseHostDeter": "/http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
+    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
     "mosaic": {
       "wmsStore": {
         "name": "MosaicSpot2008",
@@ -74,6 +76,6 @@
         "styles": []
       }
     },
-    "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
+    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
   }
 }
