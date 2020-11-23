@@ -490,7 +490,7 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
                     (CONCAT(extract(MONTH from car_focos.execution_date), '/',extract(year from car_focos.execution_date))) AS month_year_occurrence
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
             WHERE car_focos.${columnCarEstadual} = ${carRegister}
-                AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
+                AND car_focos.${columnExecutionDate} BETWEEN '2018-01-01T02:00:00.000Z' AND '${filter.date[1]}'
             GROUP BY month_year_occurrence
             ORDER BY TO_DATE(CONCAT(extract(MONTH from car_focos.execution_date), '/',extract(year from car_focos.execution_date)), 'MM/YYYY')
     `;
