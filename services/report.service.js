@@ -483,36 +483,16 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     // ---  historyBurnlight ---------------------------------------------------------------------------------------
     const sqlHistoryBurnlight = `
-        SELECT SUM(COALESCE(total_focus, 0)) AS total_focus,
-               SUM(COALESCE(authorized_focus, 0)) AS authorized_focus,
-               SUM(COALESCE(unauthorized_focus, 0)) AS unauthorized_focus,
-               month_year_occurrence
-        FROM (
             SELECT  COUNT(1) AS total_focus,
                     0 AS authorized_focus,
-                    COUNT(1) AS  unauthorized_focus,
-                    (CONCAT(EXTRACT(MONTH FROM car_focos.execution_date), '/', extract(year from car_focos.execution_date))) AS month_year_occurrence
+                    0 AS  unauthorized_focus,
+                    COUNT(1) filter(where to_char(car_focos.execution_date, 'MMDD') between '0715' and '0915') as prohibitive_period, -- Contando focos no periodo proibitivo
+                    (CONCAT(extract(MONTH from car_focos.execution_date), '/',extract(year from car_focos.execution_date))) AS year_occurrence
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
-            WHERE   car_focos.${columnCarEstadual} = ${carRegister}
+            WHERE car_focos.${columnCarEstadual} = ${carRegister}
                 AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
-            GROUP BY month_year_occurrence
-                      
-            UNION ALL
-            
-            SELECT  0 AS foco_total,
-                    COUNT(1) AS authorized_focus,
-                    COUNT(1)*(-1) AS  unauthorized_focus,
-                    (CONCAT(EXTRACT(MONTH FROM CAR_FOCOS_X_QUEIMA.execution_date), '/', extract(year from CAR_FOCOS_X_QUEIMA.execution_date))) AS month_year_occurrence
-            FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS CAR_FOCOS_X_QUEIMA
-            WHERE  CAR_FOCOS_X_QUEIMA.${views.BURNED.children.CAR_X_FOCOS.table_name}_${columnCarEstadual} = ${carRegister}
-               AND '${filter.date[0]}' <= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_apro1
-               AND '${filter.date[0]}' >= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_venc1
-            GROUP BY month_year_occurrence
-            
-        ) AS CAR_X_FOCOS_X_QUEIMA
-        
-        GROUP BY month_year_occurrence
-        ORDER BY to_date(month_year_occurrence, 'DD/YYYY')
+            GROUP BY year_occurrence
+            ORDER BY TO_DATE(CONCAT(extract(MONTH from car_focos.execution_date), '/',extract(year from car_focos.execution_date)), 'MM/YYYY')
     `;
     const resultHistoryBurnlight = await Report.sequelize.query(sqlHistoryBurnlight, QUERY_TYPES_SELECT);
     propertyData['historyBurnlight'] = resultHistoryBurnlight;
