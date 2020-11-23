@@ -488,12 +488,12 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
                     0 AS authorized_focus,
                     0 AS  unauthorized_focus,
                     COUNT(1) filter(where to_char(car_focos.execution_date, 'MMDD') between '0715' and '0915') as prohibitive_period, -- Contando focos no periodo proibitivo
-                    (CONCAT(extract(MONTH from car_focos.execution_date), '/',extract(year from car_focos.execution_date))) AS month_year_occurrence
+                    (EXTRACT(YEAR FROM car_focos.execution_date))::INT AS month_year_occurrence
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
             WHERE car_focos.${columnCarEstadual} = ${carRegister}
                 AND car_focos.${columnExecutionDate} BETWEEN '2018-01-01T02:00:00.000Z' AND '${filter.date[1]}'
             GROUP BY month_year_occurrence
-            ORDER BY TO_DATE(CONCAT(extract(MONTH from car_focos.execution_date), '/',extract(year from car_focos.execution_date)), 'MM/YYYY')
+            ORDER BY month_year_occurrence
     `;
     const resultHistoryBurnlight = await Report.sequelize.query(sqlHistoryBurnlight, QUERY_TYPES_SELECT);
     propertyData['historyBurnlight'] = resultHistoryBurnlight;
