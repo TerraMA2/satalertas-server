@@ -330,8 +330,17 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Fisionomia of prodes radam ----------------------------------------------------------------------------------
-    // const sqlFisionomiaPRODESSum = `SELECT de_veg_radambr_fisionomia AS class, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEG_RADAM.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
-    // propertyData['prodesRadam'] = await Report.sequelize.query(sqlFisionomiaPRODESSum, QUERY_TYPES_SELECT);
+    const sqlFisionomiaPRODESSum =
+    `
+      SELECT
+             fisionomia AS class,
+             SUM(ST_Area(ST_Intersection(car_prodes.intersection_geom, radam.geom)::geography) / 10000.0) AS area
+      FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS car_prodes, public.${views.STATIC.children.VEGETACAO_RADAM_BR.table_name} AS radam
+      WHERE car_prodes.de_car_validado_sema_gid = '${carRegister}' ${dateSql}
+       AND ST_Intersects(car_prodes.intersection_geom, radam.geom)
+      GROUP BY radam.fisionomia`;
+
+    propertyData['prodesRadam'] = await Report.sequelize.query(sqlFisionomiaPRODESSum, QUERY_TYPES_SELECT);
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Total area of prodes ----------------------------------------------------------------------------------------
@@ -1070,9 +1079,9 @@ module.exports = FileReport = {
         filter = { date: date };
       }
       await setDeterData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnExecutionDate, carRegister, filter);
+      await setProdesData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnExecutionDate, carRegister);
       await setBurnedData(type, views, propertyData, dateSql, columnCar, columnCarSemas, columnExecutionDate, carRegister, filter);
       // await setBurnedAreaData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnCarSemas, columnExecutionDate, carRegister);
-      await setProdesData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnExecutionDate, carRegister);
 
       return Result.ok(await setReportFormat(propertyData, views, type, columnCar, columnCarSemas, date, filter));
     } catch (e) {
