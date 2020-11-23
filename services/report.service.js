@@ -441,13 +441,14 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
     const sqlFiringAuth = `
         SELECT 
                 aut.titulo_nu1,
-                aut.data_apro1, aut.data_venc1,
-                ROUND((COALESCE(aut.area__m2_,0) / 10000), 4) AS area_ha
+                TO_CHAR(aut.data_apro1, 'DD/MM/YYYY') AS data_apro, TO_CHAR(aut.data_venc1, 'DD/MM/YYYY') AS data_venc,
+                SUM(ROUND((COALESCE(aut.area__m2_,0) / 10000), 4)) AS area_ha
         FROM public.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name} AS aut
         JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car ON st_contains(car.geom, aut.geom)
         WHERE   car.${columnCarEstadualSemas} = ${carRegister}
             AND '${filter.date[0]}' <= aut.data_apro1
             AND '${filter.date[1]}' >= data_venc1
+            GROUP BY aut.titulo_nu1, aut.data_apro1, aut.data_venc1
     `;
     const resultFiringAuth = await Report.sequelize.query(sqlFiringAuth, QUERY_TYPES_SELECT);
     propertyData['firingAuth'] = resultFiringAuth;
