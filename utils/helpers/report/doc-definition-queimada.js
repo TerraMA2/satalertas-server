@@ -237,7 +237,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              'Dados históricos dos focos de calor ativos no Estado de Mato Grosso ' +
+              'Dados históricos dos focos de fogo ativos no Estado de Mato Grosso ' +
               'mapeados pelo Programa Queimadas desenvolvido pelo INPE;',
             margin: [20, 0, 30, 5],
             width: 'auto',
@@ -408,13 +408,13 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: (
-          'Para validação dos incêndios ilegais, os focos de calor foram ' +
+          'Para validação dos incêndios ilegais, os focos de fogo foram ' +
           'intersectados com os dados geospaciais das autorizações de queima ' +
           'controlada (AQC) emitidas pela SEMA, assim como foi verificada a existência ' +
           'de cicatriz causada pela passagem de fogo na vegetação a partir da ' +
           'interpretação das imagens de satélite após ou durante o período de ' +
-          `${reportData.formattedFilterDate}. Ainda, foram elaborados gráficos contendo as séries` +
-          'temporais de focos de calor que incidiram no imóvel rural ao longo dos anos ' +
+          `${reportData.formattedFilterDate}. Ainda, foram elaborados gráficos contendo as séries ` +
+          'temporais de focos de fogo que incidiram no imóvel rural ao longo dos anos ' +
           '(a partir de 1999) e no período de 15 de julho até 15 de setembro desde 2006 ' +
           '(período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
           'Lei Estadual n. 233, de 21 de dezembro de 2005).'
@@ -478,7 +478,7 @@ module.exports = function (headerDocument, reportData, title) {
         text:
           'O INPE, a partir dos dados do Programa Queimadas identificou ' +
           `${reportData.property.burnCount['total_focus']} ` +
-          ' focos de calor ativos no imóvel rural denominado ' +
+          ' focos de fogo ativos no imóvel rural denominado ' +
           `${reportData.property.name} ` +
           `no período de ${reportData.formattedFilterDate.replace(
             'a',
@@ -486,9 +486,9 @@ module.exports = function (headerDocument, reportData, title) {
           )}. Na figura 02 é possível ` +
           'observar em imagem de satélite a cicatriz de incêndio na vegetação do ' +
           'imóvel rural causada pela passagem de fogo (feições de cor roxa na imagem ' +
-          'de satélite), assim como os focos de calor que incidiram na região do ' +
+          'de satélite), assim como os focos de fogo que incidiram na região do ' +
           'incêndio. Nas figuras 03 e 04 constam os gráficos com as séries temporais de ' +
-          'focos de calor que incidiram no imóvel rural ao longo dos anos (a partir de ' +
+          'focos de fogo que incidiram no imóvel rural ao longo dos anos (a partir de ' +
           '1999) e no período de 15 de julho até 15 de setembro desde o ano 2006 (ano ' +
           'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que ' +
           'estabelece o período proibitivo de uso do fogo para limpeza e manejo de ' +
@@ -505,7 +505,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de calor ativos na vegetação ' +
+              '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de fogo ativos na vegetação ' +
               'da ' +
               reportData.property.name +
               ' em ' +
@@ -548,7 +548,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- Série histórica de focos de calor ativos na ' +
+              '- Série histórica de focos de fogo ativos na ' +
               reportData.property.name +
               ' em ' +
               reportData.property.city +
@@ -573,13 +573,13 @@ module.exports = function (headerDocument, reportData, title) {
           'Foi observada a ocorrência de incêndio na vegetação da ' +
           reportData.property.name +
           ', conforme a identificação de cicatriz de incêndio em imagem de satélite após o período analisado ' +
-          'e a incidência de focos de calor no imóvel rural durante esse período.',
+          'e a incidência de focos de fogo no imóvel rural durante esse período.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
       {
         text:
-          'Após a análise da série histórica de focos de calor no' +
+          'Após a análise da série histórica de focos de fogo no ' +
           'imóvel rural ao longo dos anos e em períodos proibitivos, observou-se que a ' +
           'ocorrência de incêndio é reincidente, sendo recomendada a adoção de ' +
           'medidas preventivas e de combate aos incêndios florestais no local. ',
