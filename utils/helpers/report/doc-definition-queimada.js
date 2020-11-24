@@ -1,9 +1,8 @@
 function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
   const paragraph = [];
   const authNumbers = firingAuthData.firingAuth.map(
-    (auth) => auth['titulo_nu1'],
+    (auth) => `de ${auth.data_apro} a ${auth.data_venc}, AQC n. ${auth['titulo_nu1']}`,
   );
-  const authUniqueNumbers = [...new Set(authNumbers)];
   if (firingAuthData.firingAuth.length === 0) {
     paragraph.push({
       text:
@@ -17,10 +16,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
     paragraph.push({
       text:
         'Verificou-se que há autorização de queima controlada emitida ' +
-        `para o imóvel rural em análise para o período de ${formattedFilterDate.replace(
-          'a',
-          'até',
-        )} (AQC n. ${authUniqueNumbers.join(', ')})`,
+        `para o imóvel rural em análise para o período ${authNumbers.join(', ')}.`,
       alignment: 'left',
       margin: [30, 15, 30, 0],
       style: 'bodyIndentFirst',

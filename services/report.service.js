@@ -450,13 +450,14 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
     const sqlFiringAuth = `
         SELECT 
                 aut.titulo_nu1,
-                aut.data_apro1, aut.data_venc1,
-                ROUND((COALESCE(aut.area__m2_,0) / 10000), 4) AS area_ha
+                TO_CHAR(aut.data_apro1, 'DD/MM/YYYY') AS data_apro, TO_CHAR(aut.data_venc1, 'DD/MM/YYYY') AS data_venc,
+                SUM(ROUND((COALESCE(aut.area__m2_,0) / 10000), 4)) AS area_ha
         FROM public.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name} AS aut
         JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car ON st_contains(car.geom, aut.geom)
         WHERE   car.${columnCarEstadualSemas} = ${carRegister}
             AND '${filter.date[0]}' <= aut.data_apro1
             AND '${filter.date[1]}' >= data_venc1
+            GROUP BY aut.titulo_nu1, aut.data_apro1, aut.data_venc1
     `;
     const resultFiringAuth = await Report.sequelize.query(sqlFiringAuth, QUERY_TYPES_SELECT);
     propertyData['firingAuth'] = resultFiringAuth;
@@ -492,36 +493,16 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     // ---  historyBurnlight ---------------------------------------------------------------------------------------
     const sqlHistoryBurnlight = `
-        SELECT SUM(COALESCE(total_focus, 0)) AS total_focus,
-               SUM(COALESCE(authorized_focus, 0)) AS authorized_focus,
-               SUM(COALESCE(unauthorized_focus, 0)) AS unauthorized_focus,
-               month_year_occurrence
-        FROM (
             SELECT  COUNT(1) AS total_focus,
                     0 AS authorized_focus,
-                    COUNT(1) AS  unauthorized_focus,
-                    (CONCAT(EXTRACT(MONTH FROM car_focos.execution_date), '/', extract(year from car_focos.execution_date))) AS month_year_occurrence
+                    0 AS  unauthorized_focus,
+                    COUNT(1) filter(where to_char(car_focos.execution_date, 'MMDD') between '0715' and '0915') as prohibitive_period, -- Contando focos no periodo proibitivo
+                    (EXTRACT(YEAR FROM car_focos.execution_date))::INT AS month_year_occurrence
             FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
-            WHERE   car_focos.${columnCarEstadual} = ${carRegister}
-                AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
+            WHERE car_focos.${columnCarEstadual} = ${carRegister}
+                AND car_focos.${columnExecutionDate} BETWEEN '2008-01-01T00:00:00.000Z' AND '${filter.date[1]}'
             GROUP BY month_year_occurrence
-                      
-            UNION ALL
-            
-            SELECT  0 AS foco_total,
-                    COUNT(1) AS authorized_focus,
-                    COUNT(1)*(-1) AS  unauthorized_focus,
-                    (CONCAT(EXTRACT(MONTH FROM CAR_FOCOS_X_QUEIMA.execution_date), '/', extract(year from CAR_FOCOS_X_QUEIMA.execution_date))) AS month_year_occurrence
-            FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS CAR_FOCOS_X_QUEIMA
-            WHERE  CAR_FOCOS_X_QUEIMA.${views.BURNED.children.CAR_X_FOCOS.table_name}_${columnCarEstadual} = ${carRegister}
-               AND '${filter.date[0]}' <= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_apro1
-               AND '${filter.date[0]}' >= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_venc1
-            GROUP BY month_year_occurrence
-            
-        ) AS CAR_X_FOCOS_X_QUEIMA
-        
-        GROUP BY month_year_occurrence
-        ORDER BY to_date(month_year_occurrence, 'DD/YYYY')
+            ORDER BY month_year_occurrence
     `;
     const resultHistoryBurnlight = await Report.sequelize.query(sqlHistoryBurnlight, QUERY_TYPES_SELECT);
     propertyData['historyBurnlight'] = resultHistoryBurnlight;
