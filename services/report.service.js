@@ -861,6 +861,10 @@ setDocDefinitions = async function(reportData, docDefinition) {
     docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 66);
     docDefinition.content = await getContentForDeflorestionAlertsContext(docDefinition.content, reportData.deflorestationAlertsContext);
   }
+  
+  if (reportData.type === 'queimada') {
+    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 47);
+  }
 
   return await docDefinition;
 };

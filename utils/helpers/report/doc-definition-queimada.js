@@ -237,7 +237,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              'Dados históricos dos focos de calor no Estado de Mato Grosso ' +
+              'Dados históricos dos focos de calor ativos no Estado de Mato Grosso ' +
               'mapeados pelo Programa Queimadas desenvolvido pelo INPE;',
             margin: [20, 0, 30, 5],
             width: 'auto',
@@ -478,7 +478,7 @@ module.exports = function (headerDocument, reportData, title) {
         text:
           'O INPE, a partir dos dados do Programa Queimadas identificou ' +
           `${reportData.property.burnCount['total_focus']} ` +
-          ' focos de calor no imóvel rural denominado ' +
+          ' focos de calor ativos no imóvel rural denominado ' +
           `${reportData.property.name} ` +
           `no período de ${reportData.formattedFilterDate.replace(
             'a',
@@ -505,7 +505,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de calor na vegetação ' +
+              '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de calor ativos na vegetação ' +
               'da ' +
               reportData.property.name +
               ' em ' +
@@ -548,7 +548,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- Série histórica de focos de calor na ' +
+              '- Série histórica de focos de calor ativos na ' +
               reportData.property.name +
               ' em ' +
               reportData.property.city +
@@ -641,19 +641,23 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 30],
       },
       {
+        text: '',
+        pageBreak: 'after'
+      },
+      {
         text: '8 VALIDAÇÃO',
-        margin: [30, 0, 30, 0],
+        margin: [30, 15, 30, 0],
         style: 'listItem',
       },
       {
-        margin: [30, 0, 30, 250],
+        margin: [30, 30, 30, 250],
         text: `Este relatório técnico foi validado em ${reportData.currentDate} por: `,
         alignment: 'center',
         style: 'body',
       },
       {
         text: 'Relatório técnico produzido em parceria com: ',
-        margin: [30, 150, 30, 15],
+        margin: [30, 0, 30, 15],
         style: 'body',
       },
       {
