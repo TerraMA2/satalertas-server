@@ -90,6 +90,62 @@ const themeSelected = {
 
                 await codGoup[cod]();
         },
+        immediateregion: async function(conn, sql, filter, columns, cod, aliasTablePrimary, srid){
+            sql.secondaryTables += ' , public.de_municipios_sema county ';
+            const codGoup = {
+                focos: async function() {
+                    sql.sqlWhere += ` AND county.nm_rgi like '${filter.themeSelected.value.name}' `;
+                    sql.sqlWhere += ` AND ${columns.filterColumns.columnsTheme.geocod} = cast(county.geocodigo AS integer) `;
+                },
+                others: async function() {
+                    srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
+                    const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
+                    const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid[0].srid}) ` ;
+
+                    sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
+                    sql.sqlWhere += ` AND county.nm_rgi = '${filter.themeSelected.value.name}' `;
+                }
+            };
+
+            await codGoup[cod]();
+        },
+        intermediateregion: async function(conn, sql, filter, columns, cod, aliasTablePrimary, srid){
+            sql.secondaryTables += ' , public.de_municipios_sema county ';
+            const codGoup = {
+                focos: async function() {
+                    sql.sqlWhere += ` AND county.nm_rgint like '${filter.themeSelected.value.name}' `;
+                    sql.sqlWhere += ` AND ${columns.filterColumns.columnsTheme.geocod} = cast(county.geocodigo AS integer) `;
+                },
+                others: async function() {
+                    srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
+                    const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
+                    const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid[0].srid}) ` ;
+
+                    sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
+                    sql.sqlWhere += ` AND county.nm_rgint = '${filter.themeSelected.value.name}' `;
+                }
+            };
+
+            await codGoup[cod]();
+        },
+        pjbh: async function(conn, sql, filter, columns, cod, aliasTablePrimary, srid){
+            sql.secondaryTables += ' , public.de_municipios_sema county ';
+            const codGoup = {
+                focos: async function() {
+                    sql.sqlWhere += ` AND county.pjbh like '${filter.themeSelected.value.name}' `;
+                    sql.sqlWhere += ` AND ${columns.filterColumns.columnsTheme.geocod} = cast(county.geocodigo AS integer) `;
+                },
+                others: async function() {
+                    srid = srid && srid[0] && srid[0].srid ? srid : { rows: [{srid: 4326}]};
+                    const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
+                    const fieldIntersects =(srid[0].srid === sridSec[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${srid[0].srid}) ` ;
+
+                    sql.sqlWhere += ` AND ST_Intersects(${aliasTablePrimary}.intersection_geom, ${fieldIntersects}) `;
+                    sql.sqlWhere += ` AND county.pjbh = '${filter.themeSelected.value.name}'  `;
+                }
+            };
+            await codGoup[cod]();
+        },
         microregion: async function(conn, sql, filter, columns, cod, aliasTablePrimary, srid){
                 sql.secondaryTables += ' , public.de_municipios_sema county ';
                 const codGoup = {
@@ -297,7 +353,6 @@ const filterUtils = {
         await setFilter[filtered](conn, sql, filter, columns, cod, table, view);
       }
     }
-
     sql.order = (params.sortColumn && params.sortOrder) ? ` ORDER BY ${params.sortColumn} ${params.sortOrder == '1'?'ASC':'DESC'} ` : ``;
     sql.limit = (params.limit) ? ` LIMIT ${params.limit} ` : ``;
     sql.offset = (params.offset) ? ` OFFSET ${params.offset} ` : ``;

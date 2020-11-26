@@ -23,7 +23,8 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       workspace: `${workspaceAlertas}`,
       sql: `
         SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca,
-               secondary_table.municipio , secondary_table.nm_meso, secondary_table.nm_micro  
+               secondary_table.municipio , secondary_table.nm_meso, secondary_table.nm_micro, 
+               secondary_table.nm_rgi, secondary_table.nm_rgint, secondary_table.pjbh  
         FROM public.${tableName} AS main_table ,public.de_municipios_sema AS secondary_table  
         WHERE ST_Intersects(intersection_geom, secondary_table.geom)
       `,

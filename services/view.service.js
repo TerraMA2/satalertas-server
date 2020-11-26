@@ -409,6 +409,7 @@ module.exports = FileReport = {
               'sum_alias'            AS sum_alias,
               (CASE
                   WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN 'area'
+                  WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X FOCOS') IS NOT NULL) THEN 'count_alias'
                   ELSE 'sum_alias'
               END)                   AS sort_field,
               (CASE

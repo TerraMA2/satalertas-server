@@ -7,7 +7,7 @@ exports.getAll = async (req, res) => {
     try {
         res.json(await City.findAll());
     } catch (e) {
-      const msgErr = `In indigenous-land.controller, method getAll:${e}`;
+      const msgErr = `In city.controller, method getAll:${e}`;
       logger.error(msgErr);
       res.json(msgErr);
     }
@@ -18,7 +18,6 @@ exports.getAllSimplified = async (req, res) => {
     attributes: [
       'gid',
       ['municipio', 'name'],
-      'id_munic',
       'geocodigo'
     ],
     order: [
@@ -28,7 +27,7 @@ exports.getAllSimplified = async (req, res) => {
   try {
     res.json(await City.findAll(options));
   } catch (e) {
-    const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
+    const msgErr = `In city.controller, method getAllSimplified:${e}`;
     logger.error(msgErr);
     res.json(msgErr);
   }
@@ -47,7 +46,7 @@ exports.getAllRegionsSimplified = async (req, res) => {
   try {
     res.json(await City.findAll(options));
   } catch (e) {
-    const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
+    const msgErr = `In city.controller, method getAllSimplified:${e}`;
     logger.error(msgErr);
     res.json(msgErr);
   }
@@ -66,7 +65,64 @@ exports.getAllMesoregionsSimplified = async (req, res) => {
   try {
     res.json(await City.findAll(options));
   } catch (e) {
-    const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
+    const msgErr = `In city.controller, method getAllSimplified:${e}`;
+    logger.error(msgErr);
+    res.json(msgErr);
+  }
+};
+
+exports.getAllImmediateRegionSimplified = async (req, res) => {
+  const options = {
+    attributes: [
+      ['nm_rgi', 'name']
+    ],
+    group: 'nm_rgi',
+    order: [
+      ['nm_rgi']
+    ]
+  };
+  try {
+    res.json(await City.findAll(options));
+  } catch (e) {
+    const msgErr = `In city.controller, method getAllSimplified:${e}`;
+    logger.error(msgErr);
+    res.json(msgErr);
+  }
+};
+
+exports.getAllIntermediateRegionSimplified = async (req, res) => {
+  const options = {
+    attributes: [
+      ['nm_rgint', 'name']
+    ],
+    group: 'nm_rgint',
+    order: [
+      ['nm_rgint']
+    ]
+  };
+  try {
+    res.json(await City.findAll(options));
+  } catch (e) {
+    const msgErr = `In city.controller, method getAllSimplified:${e}`;
+    logger.error(msgErr);
+    res.json(msgErr);
+  }
+};
+
+exports.getAllPjbhSimplified = async (req, res) => {
+  const options = {
+    attributes: [
+      ['pjbh', 'name']
+    ],
+    group: 'pjbh',
+    order: [
+      ['pjbh']
+    ]
+  };
+  try {
+    res.json(await City.findAll(options));
+  } catch (e) {
+    const msgErr = `In city.controller, method getAllSimplified:${e}`;
     logger.error(msgErr);
     res.json(msgErr);
   }
@@ -85,7 +141,7 @@ exports.getAllMicroregionsSimplified = async (req, res) => {
   try {
     res.json(await City.findAll(options));
   } catch (e) {
-    const msgErr = `In indigenous-land.controller, method getAllSimplified:${e}`;
+    const msgErr = `In city.controller, method getAllSimplified:${e}`;
     logger.error(msgErr);
     res.json(msgErr);
   }
