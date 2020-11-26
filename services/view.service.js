@@ -130,21 +130,6 @@ setViews = function(groupViews, data_view) {
           name: "opacity",
           title: "Opacidade"
       },
-      // {
-      //     icon: "fas fa-expand-alt",
-      //     name: "extent",
-      //     title: "Extent"
-      // },
-      // {
-      //   icon: "fas fa-calendar-alt",
-      //   name: "calendar",
-      //   title: "Filtrar por intervalo de data"
-      // },
-      // {
-      //   icon: "fas fa-sliders-h",
-      //   name: "slider",
-      //   title: "Filtrar por data"
-      // }
     ]
   }
 };
