@@ -282,6 +282,7 @@ getGroupViews = async function() {
                null AS children
         
         FROM terrama2.views AS view
+        WHERE view.active = true
         GROUP BY cod, label, parent, view_graph, active_area, is_private `;
   try {
     const dataset_group_views = await RegisteredView.sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
@@ -359,6 +360,7 @@ getViews = async function(groupViews) {
         LEFT JOIN  terrama2.registered_views AS r_view ON view.id         = r_view.view_id
         LEFT JOIN  terrama2.analysis         AS ana    ON dsf.data_set_id = ana.dataset_output
         WHERE dsf.key = 'table_name'
+          AND view.active = true
         ORDER BY type, cod_group, name_view
       `;
 

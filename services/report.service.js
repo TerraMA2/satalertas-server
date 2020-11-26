@@ -1287,9 +1287,9 @@ module.exports = FileReport = {
   },
   async getPointsAlerts(query) {
     const {carRegister, date, type} = query;
-    const groupViews = await ViewUtil.getGrouped();
+    const views = await ViewUtil.getGrouped();
 
-    const carColumn = 'rid';
+    const carColumn = 'gid';
     const carColumnSemas = 'de_car_validado_sema_gid';
 
     const groupType = {prodes: 'CAR_X_PRODES', deter: 'CAR_X_DETER', queimada: ''}
@@ -1302,7 +1302,7 @@ module.exports = FileReport = {
                ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
                extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
                main_table.execution_date
-        FROM public.${groupViews[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
+        FROM public.${views[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
         WHERE main_table.${carColumnSemas} = '${carRegister}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
           AND main_table.calculated_area_ha > 12
@@ -1323,15 +1323,17 @@ module.exports = FileReport = {
 
       const currentYear = new Date().getFullYear();
       for (let index = 0 ; index < points.length; index++) {
-        points[index]['url'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view},${groupViews.STATIC.children.CAR_X_USOCON.workspace}:${groupViews.STATIC.children.CAR_X_USOCON.view},${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}&styles=${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_VALIDADO.view}_style,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${groupViews.STATIC.children.CAR_X_USOCON.view}_hatched_style,${groupViews[type.toUpperCase()].children[groupType[type]].workspace}:${groupViews[type.toUpperCase()].children[groupType[type]].view}_style&bbox=${bbox}&width=404&height=431&time=${points[index].startyear}/${currentYear}&cql_filter=${carColumn}='${carRegister}';gid_car='${carRegister}';${groupViews[type.toUpperCase()].children[groupType[type]].table_name}_id=${points[index].a_carprodes_1_id}&srs=EPSG:4674&format=image/png`;
+        points[index]['url'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views[type.toUpperCase()].children[groupType[type]].workspace}:${views[type.toUpperCase()].children[groupType[type]].view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views[type.toUpperCase()].children[groupType[type]].workspace}:${views[type.toUpperCase()].children[groupType[type]].view}_red_style&bbox=${bbox}&width=600&height=600&time=${points[index].startyear}/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${views[type.toUpperCase()].children[groupType[type]].table_name}_id=${points[index].a_carprodes_1_id}&srs=EPSG:4674&format=image/png`;
 
-        points[index]['options'] = await SatVegService.get({long: points[index].long, lat: points[index].lat },'ndvi', 3, 'wav', '', 'aqua').then( async resp => {
-          const labels = resp['listaDatas'];
-          const data = resp['listaSerie'];
-          logger.error(labels)
-          logger.error(data)
-          return this.getChartOptions(labels, data);
-        });
+        points[index]['options'] = await SatVegService
+          .get({long: points[index].long, lat: points[index].lat },'ndvi', 3, 'wav', '', 'aqua')
+          .then( async resp => {
+            const labels = resp['listaDatas'];
+            const data = resp['listaSerie'];
+            logger.error(labels)
+            logger.error(data)
+            return this.getChartOptions(labels, data);
+          });
       }
 
       return Result.ok(points);
