@@ -1,46 +1,46 @@
 module.exports = function(view_burned, workspacekAlertas, cod_view, tableOwner, isPrimary) {
   return {
     default: {
-      view: view_burned
+      view: `${workspacekAlertas}:${cod_view}_sql`
     },
     biome: {
-      view: view_burned,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
       field: isPrimary ? `dd_focos_inpe_bioma` : `${tableOwner}_dd_focos_inpe_bioma`,
       value: `name`
     },
     region: {
-      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
       field: `comarca`,
       value: `name`
     },
     mesoregion: {
-      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
       field: `nm_meso`,
       value: `name`
     },
     microregion: {
-      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
       field: `nm_micro`,
       value: `name`
     },
     immediateregion: {
-      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
       field: `nm_rgi`,
       value: `name`
     },
     intermediateregion: {
-      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
       field: `nm_rgint`,
       value: `name`
     },
     pjbh: {
-      view: `${workspacekAlertas}:${cod_view}_city_sql`,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
       field: `pjbh`,
       value: `name`
     },
     city: {
-      view: view_burned,
-      field: isPrimary ? `dd_focos_inpe_id_2` : `${tableOwner}_dd_focos_inpe_id_2`,
+      view: `${workspacekAlertas}:${cod_view}_sql`,
+      field: isPrimary ? `geocodigo` : `${tableOwner}_dd_focos_inpe_id_2`,
       value: `geocodigo`
     },
     uc: {
@@ -54,8 +54,8 @@ module.exports = function(view_burned, workspacekAlertas, cod_view, tableOwner, 
       value: `gid`
     },
     car: {
-      view: view_burned,
-      field: isPrimary ? `de_car_validado_sema_area_ha_` : `${tableOwner}_de_car_validado_sema_area_ha_`
+      view: `${workspacekAlertas}:${cod_view}_sql`,
+      field: isPrimary ? `area_ha_` : `${tableOwner}_de_car_validado_sema_area_ha_`
     },
     projus: {
       view: `${workspacekAlertas}:${cod_view}_projus_sql`,

@@ -130,7 +130,7 @@ setViews = function(groupViews, data_view) {
           name: "opacity",
           title: "Opacidade"
       },
-      // {
+      // { Do not replace or delete, it will be implemented later.
       //     icon: "fas fa-expand-alt",
       //     name: "extent",
       //     title: "Extent"
