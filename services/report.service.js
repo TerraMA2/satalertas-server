@@ -20,20 +20,6 @@ const config = {
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js')
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
-const dateFormat = function (date) {
-  const year = date.split('-')[0];
-  let month = date.split('-')[1];
-  let day = date.split('-')[2];
-  if (Number(day) < 10) {
-    day = `0${day}`;
-  }
-  if (Number(month) < 10) {
-    month = `0${month}`;
-  }
-
-  return `${day}/${month}/${year}`;
-}
-
 getFilterClassSearch = function(sql, filter, view, tableOwner){
   const classSearch = filter && filter.classSearch ? filter.classSearch : null;
   if (classSearch && (classSearch.radioValue === 'SELECTION') && (classSearch.analyzes.length > 0)){
@@ -670,7 +656,7 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
         ndviContext.push(
             {
               columns: [{
-                text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no período de ${dateFormat(startDate)} a ${dateFormat(endDate)}.`,
+                text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
                 margin: [30, 20, 30, 15],
                 style: 'body'
               }]
