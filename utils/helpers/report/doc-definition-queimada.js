@@ -1,4 +1,4 @@
-function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
+function dinamicFiringAuthText(firingAuthData) {
   const paragraph = [];
   const authNumbers = firingAuthData.firingAuth.map(
     (auth) => `de ${auth.data_apro} a ${auth.data_venc}, AQC n. ${auth['titulo_nu1']}`,
@@ -560,10 +560,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body',
         fontSize: 10,
       },
-      ...dinamicFiringAuthText(
-        reportData.property,
-        reportData.formattedFilterDate,
-      ),
+      ...dinamicFiringAuthText(reportData.property),
       {
         text: '6 CONCLUSÃO',
         style: 'listItem',
