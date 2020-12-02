@@ -68,9 +68,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `geocodigo<>'';{cityCqlFilter}`,
             bbox: `{statebbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -86,9 +86,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{cityCqlFilter}`,
             bbox: `{citybbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -104,9 +104,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -122,9 +122,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter} AND dd_deter_inpe_classname='DEGRADACAO'`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -140,9 +140,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -158,9 +158,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         }
       ],
@@ -181,9 +181,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -202,9 +202,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -223,9 +223,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -244,9 +244,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -265,9 +265,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -286,9 +286,9 @@ module.exports = ConfigService = {
             time: `{filterDate}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4674`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         }
       ],
@@ -305,11 +305,11 @@ module.exports = ConfigService = {
             version: `1.1.0`,
             time: `P1Y/2008`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
+            width: `400`,
+            height: `400`,
             styles:`,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
             cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-            srs: `EPSG:4326`
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -324,11 +324,11 @@ module.exports = ConfigService = {
             version: `1.1.0`,
             time: `P1Y/2018`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
+            width: `400`,
+            height: `400`,
             styles:`,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
             cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-            srs: `EPSG:4326`
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         },
         {
@@ -343,11 +343,11 @@ module.exports = ConfigService = {
             version: `1.1.0`,
             time: `P1Y/2019`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
+            width: `400`,
+            height: `400`,
             styles:`,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
             cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-            srs: `EPSG:4326`
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         }
       ],
@@ -368,9 +368,9 @@ module.exports = ConfigService = {
             time: `{dateYear}/{year}`,
             cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
             bbox: `{bbox}`,
-            width: `600`,
-            height: `600`,
-            srs: `EPSG:4326`
+            width: `400`,
+            height: `400`,
+            srs: `EPSG:${confGeoServer.sridTerraMa}`
           }
         }
       ],
@@ -390,10 +390,10 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
+          width: `400`,
+          height: `400`,
           styles:`,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
-          srs: `EPSG:4326`
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -411,9 +411,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -431,9 +431,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -451,9 +451,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -471,9 +471,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -491,9 +491,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -511,9 +511,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -531,9 +531,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -551,9 +551,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -572,9 +572,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -593,9 +593,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -614,9 +614,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -635,9 +635,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -655,9 +655,9 @@ module.exports = ConfigService = {
           version: `1.1.0`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -676,9 +676,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -697,9 +697,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.buworkspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -718,9 +718,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -739,9 +739,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -760,9 +760,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -781,9 +781,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       },
       {
@@ -802,9 +802,9 @@ module.exports = ConfigService = {
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
           styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4326`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       }
     ],
@@ -825,9 +825,9 @@ module.exports = ConfigService = {
           time: `{dateYear}/{year}`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4674`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       }
     ],
@@ -848,9 +848,9 @@ module.exports = ConfigService = {
           time: `{dateYear}/{year}`,
           cql_filter: `{propertyCqlFilter};{propertyCqlFilter}`,
           bbox: `{bbox}`,
-          width: `600`,
-          height: `600`,
-          srs: `EPSG:4674`
+          width: `400`,
+          height: `400`,
+          srs: `EPSG:${confGeoServer.sridTerraMa}`
         }
       }
     ]

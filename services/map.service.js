@@ -4,6 +4,7 @@ const   models = require('../models')
         ConfigService = require("../services/config.service")
         QUERY_TYPES_SELECT = { type: "SELECT" }
         logger = require('../utils/logger');
+        confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
 
 getColumnsTable = async function(tableName, schema, alias = '') {
   const sql =
@@ -314,8 +315,8 @@ module.exports = mapService = {
 
       const sqlSelect =
         ` SELECT  ${columnsTable},
-                  ST_Y(ST_Transform (ST_Centroid(geom), 4674)) AS "lat",
-                  ST_X(ST_Transform (ST_Centroid(geom), 4674)) AS "long" `;
+                  ST_Y(ST_Transform (ST_Centroid(geom), ${confGeoServer.sridTerraMa})) AS "lat",
+                  ST_X(ST_Transform (ST_Centroid(geom), ${confGeoServer.sridTerraMa})) AS "long" `;
       let sqlFrom = '';
       let sqlWhere = '';
 
@@ -371,8 +372,8 @@ module.exports = mapService = {
 
       const sqlSelect =
         ` SELECT  ${columnsTable}
-                  , ST_Y(ST_Transform (ST_Centroid(${geomColumn}), 4326)) AS "lat"
-                  , ST_X(ST_Transform (ST_Centroid(${geomColumn}), 4326)) AS "long"
+                  , ST_Y(ST_Transform (ST_Centroid(${geomColumn}), ${confGeoServer.sridTerraMa})) AS "lat"
+                  , ST_X(ST_Transform (ST_Centroid(${geomColumn}), ${confGeoServer.sridTerraMa})) AS "long"
           FROM public.${tableName} 
         `;
 

@@ -27,20 +27,20 @@ const ViewUtils = {
                         <string>features</string>
                         <string>${json.title}</string>
                     </keywords>
-                    <srs>EPSG:4326</srs>
+                    <srs>EPSG:${confGeoServer.sridTerraMa}</srs>
                     <nativeBoundingBox>
                         <minx>-180</minx>
                         <maxx>180</maxx>
                         <miny>-90</miny>
                         <maxy>90</maxy>
-                        <crs>EPSG:4326</crs>
+                        <crs>EPSG:${confGeoServer.sridTerraMa}</crs>
                     </nativeBoundingBox>
                     <latLonBoundingBox>
                         <minx>-180</minx>
                         <maxx>180</maxx>
                         <miny>-90</miny>
                         <maxy>90</maxy>
-                        <crs>EPSG:4326</crs>
+                        <crs>EPSG:${confGeoServer.sridTerraMa}</crs>
                     </latLonBoundingBox>
                     <projectionPolicy>FORCE_DECLARED</projectionPolicy>
                     <enabled>true</enabled>

@@ -37,7 +37,7 @@
       "maxx": -49.99835,
       "miny": -18.507536,
       "maxy": -6.998611,
-      "crs": "EPSG:4326"
+      "crs": "EPSG:${confGeoServer.sridTerraMa}"
     }
   }
 }

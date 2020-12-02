@@ -20,7 +20,7 @@ setViewJson = function(json, view){
         "nativeName": view.name,
         "title": view.title,
         "keywords": { "string": [ "features", view.title ] },
-        "srs": "EPSG:4326",
+        "srs": "EPSG:${confGeoServer.sridTerraMa}",
         "nativeBoundingBox": { },
         "latLonBoundingBox": { },
         "projectionPolicy": "FORCE_DECLARED",
@@ -96,14 +96,14 @@ updateBoundingBox = function(json){
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": "EPSG:4326"
+      "crs": "EPSG:${confGeoServer.sridTerraMa}"
   };
   json.featureType.latLonBoundingBox = {
       "minx": -180,
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": "EPSG:4326"
+      "crs": "EPSG:${confGeoServer.sridTerraMa}"
   };
 };
 

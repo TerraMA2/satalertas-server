@@ -7,6 +7,8 @@
     "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
     "baseHostDeter": "/api",
     "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "sridPlanet": 3857,
+    "sridTerraMa": 4674,
     "mosaic": {
       "wmsStore": {
         "name": "MosaicSpot2008",
@@ -47,6 +49,8 @@
     "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
     "baseHostDeter": "http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
     "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "sridPlanet": 3857,
+    "sridTerraMa": 4674,
     "mosaic": {
       "wmsStore": {
         "name": "MosaicSpot2008",
