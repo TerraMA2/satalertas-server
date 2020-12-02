@@ -12,6 +12,7 @@ const Result = require("../utils/result")
   SatVegService = require("../services/sat-veg.service")
   axios = require('axios')
   logger = require('../utils/logger')
+  moment = require('moment')
 
 const config = {
   headers: {'X-My-Custom-Header': 'Header-Value'}
@@ -656,7 +657,7 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
         ndviContext.push(
             {
               columns: [{
-                text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no períoco de ${startDate} a ${endDate}.`,
+                text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
                 margin: [30, 20, 30, 15],
                 style: 'body'
               }]
@@ -742,8 +743,9 @@ getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDe
 }
 
 getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionContent, reportData) {
-  const startDate = new Date(reportData.date[0]).toLocaleDateString('pt-BR');
-  const endDate = new Date(reportData.date[1]).toLocaleDateString('pt-BR');
+  moment.locale('pt-br');
+  const startDate = moment(reportData.date[0]).format('L');
+  const endDate = moment(reportData.date[1]).format('L');
 
   const content = [];
   for (let j = 0; j < docDefinitionContent.length; j++) {
@@ -1312,7 +1314,6 @@ module.exports = FileReport = {
         FROM public.${views[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
         WHERE main_table.${carColumnSemas} = '${carRegister}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
-          AND main_table.calculated_area_ha > 12
     `;
 
     const sqlBbox = `
