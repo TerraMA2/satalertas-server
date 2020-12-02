@@ -1,10 +1,11 @@
 const   models = require('../models')
         View = models.views
         Filter = require("../utils/filter/filter.utils")
+        ConfigService = require("../services/config.service")
         QUERY_TYPES_SELECT = { type: "SELECT" }
         logger = require('../utils/logger');
 
-getColumnsTable = async function(tableName, schema) {
+getColumnsTable = async function(tableName, schema, alias = '') {
   const sql =
     ` SELECT column_name
       FROM information_schema.columns
@@ -14,8 +15,9 @@ getColumnsTable = async function(tableName, schema) {
   const columns = await View.sequelize.query(sql, QUERY_TYPES_SELECT)
 
   let columnsNameStr = '';
+  alias = alias ? `${alias}.` : '';
   columns.forEach(column => {
-    columnsNameStr += columnsNameStr === '' ? column.column_name : `, ${column.column_name}`;
+    columnsNameStr += columnsNameStr === '' ? `${alias}${column.column_name}` : `, ${alias}${column.column_name}`;
   })
   return columnsNameStr;
 }
@@ -32,7 +34,211 @@ getColumnByType = async function(tableName, schema, type) {
   return columns.length > 0 ? columns[0].column_name :  '' ;
 }
 
+const getSql = {
+  async burnedCentroid(filter) {
+    const table = filter.table
+    return `
+      WITH group_result AS (
+        SELECT ${table.alias}.de_car_validado_sema_gid
+        FROM ${table.name} AS ${table.alias} ${filter.secondaryTables}
+        ${filter.sqlWhere}
+        GROUP BY ${table.alias}.de_car_validado_sema_gid
+        ${filter.sqlHaving}
+      )
+      SELECT  group_result.*
+            , ST_Y(ST_Centroid(c.geom)) AS "lat"
+            , ST_X(ST_Centroid(c.geom)) AS "long"
+      FROM de_car_validado_sema AS c,
+           group_result
+      WHERE group_result.de_car_validado_sema_gid= c.gid
+    `;
+  },
+  async popupInfo(filter) {
+    return `
+      WITH group_result AS (
+        SELECT COUNT(1) AS ${filter.table.aliasAlert}, ${filter.table.alias}.${filter.table.columnGid}
+        FROM ${filter.table.name} AS ${filter.table.alias} ${filter.secondaryTables}
+        ${filter.sqlWhere}
+        GROUP BY ${filter.table.alias}.${filter.table.columnGid}
+        ${filter.sqlHaving}
+      )
+      SELECT group_result.*, ${filter.table.columnsTable}
+      FROM de_car_validado_sema AS c,
+           group_result
+      ${filter.whereCar}
+    `;
+  },
+  async popupInfoCar(filter) {
+    return `
+      SELECT ${filter.table.columnsTable}
+      FROM de_car_validado_sema AS c
+      ${filter.whereCar}
+    `;
+  },
+  async othersData(filter) {
+    const table = filter.table
+    return `
+      WITH group_result AS (
+        SELECT ${table.alias}.de_car_validado_sema_gid
+        FROM ${table.name} AS ${table.alias}
+        ${filter.secondaryTables}
+        ${filter.sqlWhere}
+        GROUP BY ${table.alias}.de_car_validado_sema_gid
+        ${filter.sqlHaving}
+      )
+      SELECT group_result.*, ${columnsTable}
+      FROM de_car_validado_sema AS c,
+           group_result
+      WHERE group_result.de_car_validado_sema_gid= c.gid
+    `;
+  }
+}
+
+getFilter = async function (params) {
+  const layer = JSON.parse(params.view);
+
+  const table = {
+    name: layer.tableName,
+    alias: 'main_table',
+    owner:  layer.isPrimary ? '' : `${layer.tableOwner}_`
+  };
+
+  const filter = await Filter.setFilter(View, params, table, layer);
+  filter['table'] = table;
+
+  return filter;
+}
+
+setInfoColumns = async function (data, codGroup) {
+  const infoColumns = await ConfigService.getInfoColumns(codGroup);
+  const dataValue = data[0];
+  const changedRow = [];
+  for ( const e of Object.entries(dataValue)) {
+    const key = e[0];
+    if (key !== 'lat' && key !== 'long') {
+      const value = e[1];
+      if (infoColumns[key] && infoColumns[key].alias && infoColumns[key].alias !== undefined) {
+        if (infoColumns[key].show) {
+          changedRow.push({key: infoColumns[key].alias, value: value, type: infoColumns[key].type});
+        }
+      } else {
+        changedRow.push({key, value});
+      }
+    }
+  };
+  return changedRow;
+}
+
 module.exports = mapService = {
+  getAnalysisCentroid: {
+    async burned(params){
+      try {
+        const filter = await getFilter(params);
+        const sql = await getSql['burnedCentroid'](filter)
+
+        return await View.sequelize.query(sql, QUERY_TYPES_SELECT);
+      } catch (e) {
+        const msgErr = `In unit map.service, in getAnalysisCentroid method getAnalysisCentroid.BURNED: ${e}`;
+        logger.error(msgErr);
+        throw new Error(msgErr);
+      }
+    },
+    async others(params) {
+      try {
+        const layer = JSON.parse(params.view);
+
+        const table = {
+          name: layer.tableName,
+          alias: 'main_table',
+          owner:  layer.isPrimary ? '' : `${layer.tableOwner}_`
+        };
+
+        const filter =  await Filter.setFilter(View, params, table, layer);
+
+        const column =  `${table.owner}de_car_validado_sema_numero_do1`;
+
+        const sqlWhere =
+          filter.sqlHaving ?
+            ` ${filter.sqlWhere} 
+          AND main_table.${column}  IN
+            ( SELECT tableWhere.${column} AS subtitle
+              FROM public.${table.name} AS tableWhere
+              GROUP BY tableWhere.${column}
+              ${filter.sqlHaving}) ` :
+            filter.sqlWhere;
+
+        const columnsTable = await getColumnsTable(layer.tableName, 'public')
+
+        const select =
+          ` SELECT  DISTINCT ${columnsTable}
+                  , ST_Y(ST_Centroid(${table.alias}.intersection_geom)) AS "lat"
+                  , ST_X(ST_Centroid(${table.alias}.intersection_geom)) AS "long"
+          `;
+
+        const from = ` FROM public.${table.name} AS ${table.alias} `;
+
+        const sql = ` ${select}
+                    ${from}
+                    ${filter.secondaryTables}
+                    ${filter.sqlWhere}
+                    ${filter.order}
+                    ${filter.limit}
+                    ${filter.offset} `;
+
+        let result;
+        let resultCount;
+
+        result = await View.sequelize.query(sql, QUERY_TYPES_SELECT);
+        let dataJson = result;
+
+        if (params.countTotal) {
+          const sqlCount =
+            ` SELECT COUNT(1) AS count FROM public.${table.name} AS ${table.alias}
+              ${filter.secondaryTables}
+              ${sqlWhere} `;
+
+          resultCount = await View.sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+          dataJson.push(resultCount[0]['count']);
+        }
+
+        return dataJson;
+      } catch (e) {
+        const msgErr = `In unit map.service, in getAnalysisCentroid method getAnalysisCentroid.OTHERS: ${e}`;
+        logger.error(msgErr);
+        throw new Error(msgErr);
+      }
+    }
+  },
+  async getPopupInfo(params){
+    try {
+      const table = {
+        name: params.view.tableName,
+        alias: 'main_table',
+        owner:  params.view.isPrimary ? '' : `${params.view.tableOwner}_`,
+        columnGid: 'de_car_validado_sema_gid',
+        aliasAlert: 'alerts',
+        columnsTable: await getColumnsTable('de_car_validado_sema', 'public', 'c')
+      };
+
+      const columns = await Filter.getColumns(params.view, table.owner, table.alias);
+
+      const filter = await Filter.getFilter(View, table, params, params.view, columns);
+      filter.table = table;
+      filter.sqlWhere = filter.sqlWhere ? `${filter.sqlWhere} AND ${table.alias}.${table.columnGid} = ${params.carGid} ` : `WHERE ${table.alias}.${table.columnGid} = ${params.carGid} `;
+      filter.whereCar = `WHERE c.gid = ${params.carGid}`
+
+      const type = params.codGroup === 'STATIC' ? 'popupInfoCar' : 'popupInfo';
+
+      const sql = await getSql[type](filter)
+
+      const data = await View.sequelize.query(sql, QUERY_TYPES_SELECT)
+      return setInfoColumns(data, params.codGroup);
+    } catch (e) {
+      const msgErr = `In unit map.service, method getAnalysisData.BURNED:${e}`;
+      logger.error(msgErr);
+      throw new Error(msgErr);
+    }
+  },
   async getAnalysisData(params) {
     try {
       const layer = JSON.parse(params.view);
@@ -50,30 +256,30 @@ module.exports = mapService = {
       const sqlWhere =
         filter.sqlHaving ?
           ` ${filter.sqlWhere} 
-          AND main_table.${column}  IN
-            ( SELECT tableWhere.${column} AS subtitle
-              FROM public.${table.name} AS tableWhere
-              GROUP BY tableWhere.${column}
-              ${filter.sqlHaving}) ` :
+        AND main_table.${column}  IN
+          ( SELECT tableWhere.${column} AS subtitle
+            FROM public.${table.name} AS tableWhere
+            GROUP BY tableWhere.${column}
+            ${filter.sqlHaving}) ` :
           filter.sqlWhere;
 
       const columnsTable = await getColumnsTable(layer.tableName, 'public')
 
       const select =
         ` SELECT  DISTINCT ${columnsTable}
-                  , ST_Y(ST_Centroid(${table.alias}.intersection_geom)) AS "lat"
-                  , ST_X(ST_Centroid(${table.alias}.intersection_geom)) AS "long"
-          `;
+                , ST_Y(ST_Centroid(${table.alias}.intersection_geom)) AS "lat"
+                , ST_X(ST_Centroid(${table.alias}.intersection_geom)) AS "long"
+        `;
 
       const from = ` FROM public.${table.name} AS ${table.alias} `;
 
       const sql = ` ${select}
-                    ${from}
-                    ${filter.secondaryTables}
-                    ${sqlWhere}
-                    ${filter.order}
-                    ${filter.limit}
-                    ${filter.offset} `;
+                  ${from}
+                  ${filter.secondaryTables}
+                  ${sqlWhere}
+                  ${filter.order}
+                  ${filter.limit}
+                  ${filter.offset} `;
 
       let result;
       let resultCount;
@@ -84,8 +290,8 @@ module.exports = mapService = {
       if (params.countTotal) {
         const sqlCount =
           ` SELECT COUNT(1) AS count FROM public.${table.name} AS ${table.alias}
-              ${filter.secondaryTables}
-              ${sqlWhere} `;
+            ${filter.secondaryTables}
+            ${sqlWhere} `;
 
         resultCount = await View.sequelize.query(sqlCount, QUERY_TYPES_SELECT);
         dataJson.push(resultCount[0]['count']);
@@ -93,7 +299,7 @@ module.exports = mapService = {
 
       return dataJson;
     } catch (e) {
-      const msgErr = `In unit map.service, method getAnalysisData:${e}`;
+      const msgErr = `In unit map.service, method getAnalysisData.others:${e}`;
       logger.error(msgErr);
       throw new Error(msgErr);
     }
@@ -108,8 +314,8 @@ module.exports = mapService = {
 
       const sqlSelect =
         ` SELECT  ${columnsTable},
-                  ST_Y(ST_Transform (ST_Centroid(geom), 4326)) AS "lat",
-                  ST_X(ST_Transform (ST_Centroid(geom), 4326)) AS "long" `;
+                  ST_Y(ST_Transform (ST_Centroid(geom), 4674)) AS "lat",
+                  ST_X(ST_Transform (ST_Centroid(geom), 4674)) AS "long" `;
       let sqlFrom = '';
       let sqlWhere = '';
 
