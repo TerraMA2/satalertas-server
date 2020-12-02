@@ -695,7 +695,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
+          styles: `,${groupView.STATIC.children.CAR_VALIDADO.buworkspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `600`,
           height: `600`,
@@ -867,6 +867,109 @@ module.exports = ConfigService = {
 
     const infoColumns ={
       'DETER': groupView.DETER ? {
+        'alerts': {
+          'show': true,
+          'alias': 'Nº Alertas'
+        },
+        'de_car_validado_sema_gid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'numero_do2': {
+          'show': true,
+          'alias': 'CAR Federal'
+        },
+        'numero_do1': {
+          'show': true,
+          'alias': 'CAR Estadual'
+        },
+        'gid': {
+          'show': true,
+          'alias': 'Id. CAR'
+        },
+        'rid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'area_ha_sema': {
+          'show': false,
+          'alias': 'Área do CAR(ha)'
+        },
+        'nome_da_p1': {
+          'show': true,
+          'alias': 'Propriedade'
+        },
+        'municipio1': {
+          'show': true,
+          'alias': 'Município'
+        },
+        'situacao_1': {
+          'show': false,
+          'alias': 'Sit. CAR'
+        },
+        'area_ha_': {
+          'show': true,
+          'alias': 'Área do CAR(ha)',
+          'type' : 'decimal'
+        },
+        'nomepropri': {
+          'show': true,
+          'alias': 'Proprietário(s)'
+        },
+        'cpfcnpj': {
+          'show': true,
+          'alias': 'CPF/CNPJ',
+          'type' : 'cpf'
+        },
+        'origem': {
+          'show': false,
+          'alias': 'origem'
+        },
+
+        'migracao_i': {
+          'show': false,
+          'alias': 'migracao_i'
+        },
+        'id_feicao': {
+          'show': false,
+          'alias': 'id_feicao'
+        },
+        'nomes_prop': {
+          'show': false,
+          'alias': 'nomes_prop'
+        },
+        'atividade': {
+          'show': false,
+          'alias': 'atividade'
+        },
+        'apf_numero': {
+          'show': false,
+          'alias': 'apf_numero'
+        },
+        'numero_art': {
+          'show': false,
+          'alias': 'numero_art'
+        },
+        'modulos_fi': {
+          'show': true,
+          'alias': 'Módulos Fiscais'
+        },
+        'cruza_terr': {
+          'show': false,
+          'alias': 'cruza_terr'
+        },
+        'cruza_area': {
+          'show': false,
+          'alias': 'cruza_area'
+        },
+        'percentual': {
+          'show': false,
+          'alias': 'percentual'
+        },
+        'geocodigo': {
+          'show': false,
+          'alias': 'Cód. IBGE'
+        },
         [`${groupView.DETER.tableOwner}_dd_deter_inpe_classname`]: {
           'show': true,
           'alias': 'Classe'
@@ -904,8 +1007,8 @@ module.exports = ConfigService = {
           'alias': 'Proprietário'
         },
         [`${groupView.DETER.tableOwner}_de_car_validado_sema_gid`]: {
-          'show': true,
-          'alias': 'CAR estadual'
+          'show': false,
+          'alias': 'Id. CAR'
         },
         [`${groupView.DETER.tableOwner}_de_car_validado_sema_numero_do2`]: {
           'show': true,
@@ -1100,8 +1203,8 @@ module.exports = ConfigService = {
           'alias': 'Modelo'
         },
         'de_autorizacao_desmate_sema_rid': {
-          'show': true,
-          'alias': 'CAR estadual'
+          'show': false,
+          'alias': 'Id.'
         },
         'de_autorizacao_desmate_sema_numero_do2': {
           'show': true,
@@ -1170,10 +1273,6 @@ module.exports = ConfigService = {
         'de_car_validado_sema_nomepropri': {
           'show': true,
           'alias': 'Proprietário'
-        },
-        'de_car_validado_sema_gid': {
-          'show': true,
-          'alias': 'CAR estadual'
         },
         'de_car_validado_sema_numero_do2': {
           'show': true,
@@ -1361,6 +1460,109 @@ module.exports = ConfigService = {
         }
       } : '',
       'PRODES': groupView.PRODES ?  {
+        'alerts': {
+          'show': true,
+          'alias': 'Quantidade de Alertas'
+        },
+        'de_car_validado_sema_gid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'numero_do2': {
+          'show': true,
+          'alias': 'CAR Federal'
+        },
+        'numero_do1': {
+          'show': true,
+          'alias': 'CAR Estadual'
+        },
+        'gid': {
+          'show': true,
+          'alias': 'Id. CAR'
+        },
+        'rid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'area_ha_sema': {
+          'show': false,
+          'alias': 'Área do CAR(ha)'
+        },
+        'nome_da_p1': {
+          'show': true,
+          'alias': 'Propriedade'
+        },
+        'municipio1': {
+          'show': true,
+          'alias': 'Município'
+        },
+        'situacao_1': {
+          'show': false,
+          'alias': 'Sit. CAR'
+        },
+        'area_ha_': {
+          'show': true,
+          'alias': 'Área do CAR(ha)',
+          'type' : 'decimal'
+        },
+        'nomepropri': {
+          'show': true,
+          'alias': 'Proprietário(s)'
+        },
+        'cpfcnpj': {
+          'show': true,
+          'alias': 'CPF/CNPJ',
+          'type' : 'cpf'
+        },
+        'origem': {
+          'show': false,
+          'alias': 'origem'
+        },
+
+        'migracao_i': {
+          'show': false,
+          'alias': 'migracao_i'
+        },
+        'id_feicao': {
+          'show': false,
+          'alias': 'id_feicao'
+        },
+        'nomes_prop': {
+          'show': false,
+          'alias': 'nomes_prop'
+        },
+        'atividade': {
+          'show': false,
+          'alias': 'atividade'
+        },
+        'apf_numero': {
+          'show': false,
+          'alias': 'apf_numero'
+        },
+        'numero_art': {
+          'show': false,
+          'alias': 'numero_art'
+        },
+        'modulos_fi': {
+          'show': true,
+          'alias': 'Módulos Fiscais'
+        },
+        'cruza_terr': {
+          'show': false,
+          'alias': 'cruza_terr'
+        },
+        'cruza_area': {
+          'show': false,
+          'alias': 'cruza_area'
+        },
+        'percentual': {
+          'show': false,
+          'alias': 'percentual'
+        },
+        'geocodigo': {
+          'show': false,
+          'alias': 'Cód. IBGE'
+        },
          [`${groupView.PRODES.tableOwner}_dd_prodes_inpe_class_name`]: {
           'show': true,
           'alias': 'Classe'
@@ -1398,12 +1600,12 @@ module.exports = ConfigService = {
           'alias': 'Id. Car'
         },
         [`${groupView.PRODES.tableOwner}_de_car_validado_sema_numero_do1`]: {
-          'show': true,
-          'alias': 'CAR estadual'
+          'show': false,
+          'alias': 'Id. '
         },
         [`de_car_validado_sema_numero_do1`]: {
-          'show': true,
-          'alias': 'CAR estadual'
+          'show': false,
+          'alias': 'Id.'
         },
         [`${groupView.PRODES.tableOwner}_de_car_validado_sema_nomes_prop`]: {
           'show': false,
@@ -1571,7 +1773,7 @@ module.exports = ConfigService = {
         },
         'de_autorizacao_desmate_sema_rid': {
           'show': true,
-          'alias': 'CAR estadual'
+          'alias': 'Id.'
         },
         'de_autorizacao_desmate_sema_numero_do2': {
           'show': true,
@@ -1859,6 +2061,109 @@ module.exports = ConfigService = {
         }
       } : '',
       'BURNED': groupView.BURNED ?  {
+        'alerts': {
+          'show': true,
+          'alias': 'Focos de fogo ativo'
+        },
+        'de_car_validado_sema_gid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'numero_do2': {
+          'show': true,
+          'alias': 'CAR Federal'
+        },
+        'numero_do1': {
+          'show': true,
+          'alias': 'CAR Estadual'
+        },
+        'gid': {
+          'show': true,
+          'alias': 'Id. CAR'
+        },
+        'rid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'area_ha_sema': {
+          'show': false,
+          'alias': 'Área do CAR(ha)'
+        },
+        'nome_da_p1': {
+          'show': true,
+          'alias': 'Propriedade'
+        },
+        'municipio1': {
+          'show': true,
+          'alias': 'Município'
+        },
+        'situacao_1': {
+          'show': false,
+          'alias': 'Sit. CAR'
+        },
+        'area_ha_': {
+          'show': true,
+          'alias': 'Área do CAR(ha)',
+          'type' : 'decimal'
+        },
+        'nomepropri': {
+          'show': true,
+          'alias': 'Proprietário(s)'
+        },
+        'cpfcnpj': {
+          'show': true,
+          'alias': 'CPF/CNPJ',
+          'type' : 'cpf'
+        },
+        'origem': {
+          'show': false,
+          'alias': 'origem'
+        },
+
+        'migracao_i': {
+          'show': false,
+          'alias': 'migracao_i'
+        },
+        'id_feicao': {
+          'show': false,
+          'alias': 'id_feicao'
+        },
+        'nomes_prop': {
+          'show': false,
+          'alias': 'nomes_prop'
+        },
+        'atividade': {
+          'show': false,
+          'alias': 'atividade'
+        },
+        'apf_numero': {
+          'show': false,
+          'alias': 'apf_numero'
+        },
+        'numero_art': {
+          'show': false,
+          'alias': 'numero_art'
+        },
+        'modulos_fi': {
+          'show': true,
+          'alias': 'Módulos Fiscais'
+        },
+        'cruza_terr': {
+          'show': false,
+          'alias': 'cruza_terr'
+        },
+        'cruza_area': {
+          'show': false,
+          'alias': 'cruza_area'
+        },
+        'percentual': {
+          'show': false,
+          'alias': 'percentual'
+        },
+        'geocodigo': {
+          'show': false,
+          'alias': 'Cód. IBGE'
+        },
          [`${groupView.BURNED.tableOwner}_dd_focos_inpe_bioma`]: {
           'show': true,
           'alias': 'Bioma'
@@ -1897,7 +2202,7 @@ module.exports = ConfigService = {
         },
          [`${groupView.BURNED.tableOwner}_de_car_validado_sema_gid`]: {
           'show': true,
-          'alias': 'CAR estadual'
+          'alias': 'Id. CAR'
         },
          [`${groupView.BURNED.tableOwner}_de_car_validado_sema_numero_do2`]: {
           'show': true,
@@ -2052,8 +2357,8 @@ module.exports = ConfigService = {
           'alias': 'Modelo'
         },
         'de_autorizacao_desmate_sema_rid': {
-          'show': true,
-          'alias': 'CAR estadual'
+          'show': false,
+          'alias': 'Id.'
         },
         'de_autorizacao_desmate_sema_numero_do2': {
           'show': true,
@@ -2124,8 +2429,8 @@ module.exports = ConfigService = {
           'alias': 'Proprietário'
         },
         'de_car_validado_sema_gid': {
-          'show': true,
-          'alias': 'CAR estadual'
+          'show': false,
+          'alias': 'Id.'
         },
         'de_car_validado_sema_numero_do2': {
           'show': true,
@@ -2345,6 +2650,109 @@ module.exports = ConfigService = {
         }
       } : '',
       'BURNED_AREA': groupView.BURNED_AREA ?  {
+        'alerts': {
+          'show': true,
+          'alias': 'Focos de fogo ativo'
+        },
+        'de_car_validado_sema_gid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'numero_do2': {
+          'show': true,
+          'alias': 'CAR Federal'
+        },
+        'numero_do1': {
+          'show': true,
+          'alias': 'CAR Estadual'
+        },
+        'gid': {
+          'show': true,
+          'alias': 'Id. CAR'
+        },
+        'rid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'area_ha_sema': {
+          'show': false,
+          'alias': 'Área do CAR(ha)'
+        },
+        'nome_da_p1': {
+          'show': true,
+          'alias': 'Propriedade'
+        },
+        'municipio1': {
+          'show': true,
+          'alias': 'Município'
+        },
+        'situacao_1': {
+          'show': false,
+          'alias': 'Sit. CAR'
+        },
+        'area_ha_': {
+          'show': true,
+          'alias': 'Área do CAR(ha)',
+          'type' : 'decimal'
+        },
+        'nomepropri': {
+          'show': true,
+          'alias': 'Proprietário(s)'
+        },
+        'cpfcnpj': {
+          'show': true,
+          'alias': 'CPF/CNPJ',
+          'type' : 'cpf'
+        },
+        'origem': {
+          'show': false,
+          'alias': 'origem'
+        },
+
+        'migracao_i': {
+          'show': false,
+          'alias': 'migracao_i'
+        },
+        'id_feicao': {
+          'show': false,
+          'alias': 'id_feicao'
+        },
+        'nomes_prop': {
+          'show': false,
+          'alias': 'nomes_prop'
+        },
+        'atividade': {
+          'show': false,
+          'alias': 'atividade'
+        },
+        'apf_numero': {
+          'show': false,
+          'alias': 'apf_numero'
+        },
+        'numero_art': {
+          'show': false,
+          'alias': 'numero_art'
+        },
+        'modulos_fi': {
+          'show': true,
+          'alias': 'Módulos Fiscais'
+        },
+        'cruza_terr': {
+          'show': false,
+          'alias': 'cruza_terr'
+        },
+        'cruza_area': {
+          'show': false,
+          'alias': 'cruza_area'
+        },
+        'percentual': {
+          'show': false,
+          'alias': 'percentual'
+        },
+        'geocodigo': {
+          'show': false,
+          'alias': 'Cód. IBGE'
+        },
         [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_data_anter`]: {
           'show': false,
           'alias': [`${groupView.BURNED_AREA.tableOwner}_dd_area_queimada_inpe_data_anter`]
@@ -2395,7 +2803,7 @@ module.exports = ConfigService = {
         },
         [`${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_gid`]: {
           'show': true,
-          'alias': 'CAR estadual'
+          'alias': 'Id. CAR'
         },
         [`${groupView.BURNED_AREA.tableOwner}_de_car_validado_sema_numero_do2`]: {
           'show': true,
@@ -2412,6 +2820,10 @@ module.exports = ConfigService = {
         'calculated_area_ha': {
           'show': true,
           'alias': 'Área da interseção (ha)'
+        },
+        'active_fire_spots': {
+          'show': true,
+          'alias': 'Número de focos de fogo ativo'
         },
         'dd_area_queimada_inpe_data_anter': {
           'show': false,
@@ -2555,7 +2967,7 @@ module.exports = ConfigService = {
         },
         'de_autorizacao_desmate_sema_rid': {
           'show': true,
-          'alias': 'CAR estadual'
+          'alias': 'Id.'
         },
         'de_autorizacao_desmate_sema_numero_do2': {
           'show': true,
@@ -2626,12 +3038,16 @@ module.exports = ConfigService = {
           'alias': 'Proprietário'
         },
         'de_car_validado_sema_gid': {
-          'show': true,
-          'alias': 'CAR estadual'
+          'show': false,
+          'alias': 'Sequencial do CAR'
         },
-        'de_car_validado_sema_numero_do2': {
+        'numero_do2': {
           'show': true,
-          'alias': 'CAR federal'
+          'alias': 'CAR Federal'
+        },
+        'numero_do1': {
+          'show': true,
+          'alias': 'CAR Estadual'
         },
         'de_car_validado_sema_situacao_1': {
           'show': true,
@@ -2783,6 +3199,109 @@ module.exports = ConfigService = {
         }
       } : '',
       'STATIC':  groupView.STATIC ? {
+        'alerts': {
+          'show': true,
+          'alias': 'Focos de fogo ativo'
+        },
+        'de_car_validado_sema_gid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'numero_do2': {
+          'show': true,
+          'alias': 'CAR Federal'
+        },
+        'numero_do1': {
+          'show': true,
+          'alias': 'CAR Estadual'
+        },
+        'gid': {
+          'show': true,
+          'alias': 'Id. CAR'
+        },
+        'rid': {
+          'show': false,
+          'alias': 'Id. CAR'
+        },
+        'area_ha_sema': {
+          'show': false,
+          'alias': 'Área do CAR(ha)'
+        },
+        'nome_da_p1': {
+          'show': true,
+          'alias': 'Propriedade'
+        },
+        'municipio1': {
+          'show': true,
+          'alias': 'Município'
+        },
+        'situacao_1': {
+          'show': false,
+          'alias': 'Sit. CAR'
+        },
+        'area_ha_': {
+          'show': true,
+          'alias': 'Área do CAR(ha)',
+          'type' : 'decimal'
+        },
+        'nomepropri': {
+          'show': true,
+          'alias': 'Proprietário(s)'
+        },
+        'cpfcnpj': {
+          'show': true,
+          'alias': 'CPF/CNPJ',
+          'type' : 'cpf'
+        },
+        'origem': {
+          'show': false,
+          'alias': 'origem'
+        },
+
+        'migracao_i': {
+          'show': false,
+          'alias': 'migracao_i'
+        },
+        'id_feicao': {
+          'show': false,
+          'alias': 'id_feicao'
+        },
+        'nomes_prop': {
+          'show': false,
+          'alias': 'nomes_prop'
+        },
+        'atividade': {
+          'show': false,
+          'alias': 'atividade'
+        },
+        'apf_numero': {
+          'show': false,
+          'alias': 'apf_numero'
+        },
+        'numero_art': {
+          'show': false,
+          'alias': 'numero_art'
+        },
+        'modulos_fi': {
+          'show': true,
+          'alias': 'Módulos Fiscais'
+        },
+        'cruza_terr': {
+          'show': false,
+          'alias': 'cruza_terr'
+        },
+        'cruza_area': {
+          'show': false,
+          'alias': 'cruza_area'
+        },
+        'percentual': {
+          'show': false,
+          'alias': 'percentual'
+        },
+        'geocodigo': {
+          'show': false,
+          'alias': 'Cód. IBGE'
+        },
         'a_infrac': {
           'show': false,
           'alias': 'a_infrac'
@@ -2812,10 +3331,6 @@ module.exports = ConfigService = {
           'alias': 'area_calc1'
         },
         'area_ha': {
-          'show': true,
-          'alias': 'Área (ha)'
-        },
-        'area_ha_': {
           'show': true,
           'alias': 'Área (ha)'
         },
@@ -2886,14 +3401,6 @@ module.exports = ConfigService = {
         'coord_y': {
           'show': true,
           'alias': 'Latitude'
-        },
-        'cpf': {
-          'show': true,
-          'alias': 'CPF'
-        },
-        'cpfcnpj': {
-          'show': true,
-          'alias': 'CPF/CNPJ'
         },
         'dano': {
           'show': true,
@@ -2999,17 +3506,9 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Fonte'
         },
-        'geocodigo': {
-          'show': false,
-          'alias': 'geocodigo'
-        },
         'geom': {
           'show': false,
           'alias': 'geom'
-        },
-        'gid': {
-          'show': false,
-          'alias': 'gid'
         },
         'grupo': {
           'show': true,
@@ -3022,10 +3521,6 @@ module.exports = ConfigService = {
         'idcar': {
           'show': false,
           'alias': 'idcar'
-        },
-        'geocodigo': {
-          'show': false,
-          'alias': 'Cod. IBGE'
         },
         'id_trecho_': {
           'show': false,
@@ -3083,10 +3578,6 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Município'
         },
-        'municipio1': {
-          'show': true,
-          'alias': 'Município'
-        },
         'nm_estado': {
           'show': true,
           'alias': 'Estado'
@@ -3111,25 +3602,9 @@ module.exports = ConfigService = {
           'show': true,
           'alias': 'Nome'
         },
-        'nome_da_p1': {
-          'show': true,
-          'alias': 'Imóvel'
-        },
-        'nomepropri': {
-          'show': true,
-          'alias': 'Proprietário'
-        },
         'nome_ti_a1': {
           'show': true,
           'alias': 'Nome TI'
-        },
-        'rid': {
-          'show': true,
-          'alias': 'CAR estadual'
-        },
-        'numero_do2': {
-          'show': true,
-          'alias': 'CAR federal'
         },
         'numero_do3': {
           'show': false,
@@ -3146,10 +3621,6 @@ module.exports = ConfigService = {
         'orbita': {
           'show': true,
           'alias': 'Órbita'
-        },
-        'origem': {
-          'show': true,
-          'alias': 'Origem'
         },
         'path_row': {
           'show': false,
@@ -3589,9 +4060,9 @@ module.exports = ConfigService = {
     }
 
     try {
-      return await Result.ok(codGroup && codGroup !== 'undefined' ? infoColumns[codGroup] : infoColumns);
+      return await (codGroup && codGroup !== 'undefined' ? infoColumns[codGroup] : infoColumns);
     } catch (e) {
-      return Result.err(e);
+      throw new Error(e);
     }
   }
 };

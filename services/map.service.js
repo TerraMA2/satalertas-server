@@ -53,7 +53,7 @@ const getSql = {
       WHERE group_result.de_car_validado_sema_gid= c.gid
     `;
   },
-  async burnedData(filter) {
+  async popupInfo(filter) {
     return `
       WITH group_result AS (
         SELECT COUNT(1) AS ${filter.table.aliasAlert}, ${filter.table.alias}.${filter.table.columnGid}
@@ -65,6 +65,13 @@ const getSql = {
       SELECT group_result.*, ${filter.table.columnsTable}
       FROM de_car_validado_sema AS c,
            group_result
+      ${filter.whereCar}
+    `;
+  },
+  async popupInfoCar(filter) {
+    return `
+      SELECT ${filter.table.columnsTable}
+      FROM de_car_validado_sema AS c
       ${filter.whereCar}
     `;
   },
@@ -104,21 +111,22 @@ getFilter = async function (params) {
 
 setInfoColumns = async function (data, codGroup) {
   const infoColumns = await ConfigService.getInfoColumns(codGroup);
-  const changedData = [];
   const dataValue = data[0];
-  const changedRow = {};
+  const changedRow = [];
   for ( const e of Object.entries(dataValue)) {
     const key = e[0];
     if (key !== 'lat' && key !== 'long') {
       const value = e[1];
       if (infoColumns[key] && infoColumns[key].alias && infoColumns[key].alias !== undefined) {
-        changedRow[infoColumns[key].alias] = value;
+        if (infoColumns[key].show) {
+          changedRow.push({key: infoColumns[key].alias, value: value, type: infoColumns[key].type});
+        }
       } else {
-        changedRow[key] = value;
+        changedRow.push({key, value});
       }
     }
   };
-  return {data: [changedRow]};
+  return changedRow;
 }
 
 module.exports = mapService = {
@@ -201,7 +209,6 @@ module.exports = mapService = {
       }
     }
   },
-
   async getPopupInfo(params){
     try {
       const table = {
@@ -209,7 +216,7 @@ module.exports = mapService = {
         alias: 'main_table',
         owner:  params.view.isPrimary ? '' : `${params.view.tableOwner}_`,
         columnGid: 'de_car_validado_sema_gid',
-        aliasAlert: 'active_fire_spots',
+        aliasAlert: 'alerts',
         columnsTable: await getColumnsTable('de_car_validado_sema', 'public', 'c')
       };
 
@@ -220,18 +227,18 @@ module.exports = mapService = {
       filter.sqlWhere = filter.sqlWhere ? `${filter.sqlWhere} AND ${table.alias}.${table.columnGid} = ${params.carGid} ` : `WHERE ${table.alias}.${table.columnGid} = ${params.carGid} `;
       filter.whereCar = `WHERE c.gid = ${params.carGid}`
 
+      const type = params.codGroup === 'STATIC' ? 'popupInfoCar' : 'popupInfo';
 
-      const sql = await getSql['burnedData'](filter)
+      const sql = await getSql[type](filter)
 
       const data = await View.sequelize.query(sql, QUERY_TYPES_SELECT)
-      return setInfoColumns(data, 'BURNED');
+      return setInfoColumns(data, params.codGroup);
     } catch (e) {
       const msgErr = `In unit map.service, method getAnalysisData.BURNED:${e}`;
       logger.error(msgErr);
       throw new Error(msgErr);
     }
   },
-
   async getAnalysisData(params) {
     try {
       const layer = JSON.parse(params.view);
