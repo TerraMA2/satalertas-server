@@ -1,3 +1,5 @@
+const env = process.env.NODE_ENV || 'development';
+const confGeoServer = require('../../../geoserver-conf/config.json')[env];
 
 module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tableName, isPrimary) {
   return {
@@ -29,7 +31,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: confGeoServer.sridTerraMa
         },
       dataStore: `${dataStore}`,
       addParameter: true
@@ -62,7 +64,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: confGeoServer.sridTerraMa
       },
       dataStore: `${dataStore}`,
       addParameter: true
@@ -95,7 +97,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: confGeoServer.sridTerraMa
       },
       dataStore: `${dataStore}`,
       addParameter: true
@@ -128,7 +130,7 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: 4326
+        srid: confGeoServer.sridTerraMa
       },
       dataStore: `${dataStore}`,
       addParameter: true

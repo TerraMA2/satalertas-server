@@ -7,7 +7,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": false
@@ -20,7 +20,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -32,7 +32,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -44,7 +44,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -56,7 +56,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -69,7 +69,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": false
@@ -82,7 +82,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -94,7 +94,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -106,19 +106,19 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
     {
         "title": "car_deter_projus_sql",
         "workspace": "mpmt_alertas",
-        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_cardeter_49 AS main_table ,public.de_projus_bacias_sema AS secondary_table  WHERE ST_Intersects(intersection_geom,   st_transform(secondary_table.geom, 4326))",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_cardeter_49 AS main_table ,public.de_projus_bacias_sema AS secondary_table  WHERE ST_Intersects(intersection_geom,   st_transform(secondary_table.geom, 4674))",
         "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -130,7 +130,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -143,7 +143,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -155,7 +155,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -167,7 +167,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -179,7 +179,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -191,7 +191,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -204,7 +204,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -216,7 +216,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -228,7 +228,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -240,7 +240,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -252,7 +252,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -265,7 +265,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -277,7 +277,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -289,7 +289,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -301,7 +301,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -313,7 +313,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -326,7 +326,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -338,7 +338,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -350,7 +350,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -362,7 +362,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -374,7 +374,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -387,7 +387,7 @@
     "geometry": {
         "name":"intersection_geom",
         "type": "Geometry",
-        "srid": 4326
+        "srid": 4674
     },
     "dataStore": "terrama2_filters"
 },
@@ -399,7 +399,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -411,7 +411,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -423,7 +423,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -435,7 +435,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -448,7 +448,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -460,7 +460,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -472,7 +472,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -484,7 +484,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -496,7 +496,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -509,7 +509,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -521,7 +521,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -533,7 +533,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -545,7 +545,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -557,7 +557,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -570,7 +570,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -582,7 +582,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -594,7 +594,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -606,7 +606,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -618,7 +618,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -631,7 +631,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -643,7 +643,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -655,7 +655,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -667,7 +667,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -679,7 +679,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -694,7 +694,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -706,7 +706,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -718,7 +718,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -730,7 +730,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -742,7 +742,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -755,7 +755,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -767,7 +767,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -779,7 +779,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -791,7 +791,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -803,7 +803,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -816,7 +816,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -828,7 +828,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -840,7 +840,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -852,7 +852,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -864,7 +864,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -877,7 +877,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -889,7 +889,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -901,7 +901,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -913,7 +913,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -925,7 +925,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -938,7 +938,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -950,7 +950,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -962,7 +962,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -974,7 +974,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -986,7 +986,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -999,7 +999,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1011,7 +1011,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1023,7 +1023,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1035,7 +1035,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1047,7 +1047,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1061,7 +1061,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1073,7 +1073,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1085,7 +1085,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1097,7 +1097,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1109,7 +1109,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1122,7 +1122,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1134,7 +1134,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1146,7 +1146,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1158,7 +1158,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1170,7 +1170,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1183,7 +1183,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1195,7 +1195,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1207,7 +1207,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1219,7 +1219,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1231,7 +1231,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1244,7 +1244,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1256,7 +1256,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1268,7 +1268,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1280,7 +1280,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1292,7 +1292,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1305,7 +1305,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1317,7 +1317,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1329,7 +1329,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1341,7 +1341,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1353,7 +1353,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1368,7 +1368,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1381,7 +1381,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1394,7 +1394,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1407,7 +1407,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1421,7 +1421,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1434,7 +1434,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1447,7 +1447,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1460,7 +1460,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1474,7 +1474,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1487,7 +1487,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1500,7 +1500,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1513,7 +1513,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1527,7 +1527,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1540,7 +1540,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1553,7 +1553,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1566,7 +1566,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1580,7 +1580,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1593,7 +1593,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1606,7 +1606,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1619,7 +1619,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1634,7 +1634,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1647,7 +1647,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1660,7 +1660,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1673,7 +1673,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1687,7 +1687,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1700,7 +1700,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1713,7 +1713,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1726,7 +1726,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1740,7 +1740,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1753,7 +1753,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1766,7 +1766,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1779,7 +1779,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1793,7 +1793,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1806,7 +1806,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1819,7 +1819,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1832,7 +1832,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1846,7 +1846,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1859,7 +1859,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1872,7 +1872,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1885,7 +1885,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1899,7 +1899,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1912,7 +1912,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1925,7 +1925,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1938,7 +1938,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -1954,7 +1954,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": false
@@ -1967,7 +1967,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1979,7 +1979,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -1991,19 +1991,19 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
     {
         "title": "car_aq_projus_sql",
         "workspace": "mpmt_alertas",
-        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_86 AS main_table ,public.de_projus_bacias_sema AS secondary_table  WHERE ST_Intersects(intersection_geom,   st_transform(secondary_table.geom, 4326))",
+        "sql": "SELECT main_table.*, secondary_table.gid  FROM public.a_caraq_86 AS main_table ,public.de_projus_bacias_sema AS secondary_table  WHERE ST_Intersects(intersection_geom,   st_transform(secondary_table.geom, 4674))",
         "keyColumn": "monitored_id",
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2016,7 +2016,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": false
@@ -2029,7 +2029,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2041,7 +2041,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2053,7 +2053,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2065,7 +2065,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2078,7 +2078,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2090,7 +2090,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2102,7 +2102,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2114,7 +2114,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2126,7 +2126,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2139,7 +2139,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2151,7 +2151,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2163,7 +2163,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2175,7 +2175,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2187,7 +2187,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2200,7 +2200,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2212,7 +2212,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2224,7 +2224,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2236,7 +2236,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2248,7 +2248,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2262,7 +2262,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2274,7 +2274,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2286,7 +2286,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2298,7 +2298,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2310,7 +2310,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2323,7 +2323,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2335,7 +2335,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2347,7 +2347,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2359,7 +2359,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2371,7 +2371,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2384,7 +2384,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2396,7 +2396,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2408,7 +2408,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2420,7 +2420,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2432,7 +2432,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2445,7 +2445,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2457,7 +2457,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2469,7 +2469,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2481,7 +2481,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2493,7 +2493,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters"
     },
@@ -2506,7 +2506,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -2519,7 +2519,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -2532,7 +2532,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -2545,7 +2545,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -2559,7 +2559,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -2572,7 +2572,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -2585,7 +2585,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true
@@ -2598,7 +2598,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "terrama2_filters",
         "addParameter": true

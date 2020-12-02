@@ -8,7 +8,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "103_98_datastore",
         "addParameter": true
@@ -22,7 +22,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "98_99_datastore",
         "addParameter": true
@@ -36,7 +36,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "100_101_datastore",
         "addParameter": true
@@ -50,7 +50,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "99_100_datastore",
         "addParameter": true
@@ -64,7 +64,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "101_102_datastore",
         "addParameter": true
@@ -78,7 +78,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "104_104_datastore",
         "addParameter": true
@@ -92,7 +92,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "105_105_datastore",
         "addParameter": true
@@ -106,7 +106,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "107_107_datastore",
         "addParameter": true
@@ -120,7 +120,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "106_106_datastore",
         "addParameter": true
@@ -134,7 +134,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "109_109_datastore",
         "addParameter": true
@@ -148,7 +148,7 @@
         "geometry": {
             "name":"intersection_geom",
             "type": "Geometry",
-            "srid": 4326
+            "srid": 4674
         },
         "dataStore": "108_108_datastore",
         "addParameter": true
