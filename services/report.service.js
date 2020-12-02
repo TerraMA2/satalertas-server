@@ -151,12 +151,12 @@ const analysisReportFormat = {
     }
   },
   queimada (reportData, views, resultReportData, carColumn, carColumnSema, date, filter = null) {
-    // resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
-    resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+    resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:3857&format=image/png`;
+    // resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
 
     // Com Planet
-    // resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bbox}&width=400&height=400&cql_filter=RED_BAND>0;${carColumn}='${resultReportData.property.gid};${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
-    resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${date[0]}/${date[1]}&cql_filter=${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
+    resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bboxplanet}&width=400&height=400&cql_filter=RED_BAND>0;${carColumn}=${resultReportData.property.gid};${carColumnSema}=${resultReportData.property.gid}&srs=EPSG:3857&format=image/png`;
+    // resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bbox}&width=400&height=400&time=${date[0]}/${date[1]}&cql_filter=${carColumnSema}='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:4326&format=image/png`;
   }
 }
 
@@ -171,6 +171,8 @@ setReportFormat = async function(reportData, views, type, carColumn, carColumnSe
 
   reportData['statebbox'] = setBoundingBox(reportData['statebbox']);
   carColumnSema= 'rid';
+
+  reportData['bboxplanet'] = setBoundingBox(reportData['bboxplanet']);
 
   analysisReportFormat[type](reportData, views, resultReportData, carColumn, carColumnSema, date, filter);
 
@@ -216,6 +218,7 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
+              substring(ST_EXTENT(ST_Transform(car.geom, 3857))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, 3857))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car
