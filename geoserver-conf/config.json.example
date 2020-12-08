@@ -2,8 +2,8 @@
   "development": {
     "username": "admin",
     "password": "geoserver",
-    "workspace": "workspace",
-    "datastore": "datastore",
+    "workspace": "mpmt_alertas",
+    "datastore": "mpmt_alertas_datastore",
     "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
     "baseHostDeter": "/api",
     "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
