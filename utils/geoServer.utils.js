@@ -20,7 +20,7 @@ setViewJson = function(json, view){
         "nativeName": view.name,
         "title": view.title,
         "keywords": { "string": [ "features", view.title ] },
-        "srs": "EPSG:${confGeoServer.sridTerraMa}",
+        "srs": `EPSG:${confGeoServer.sridTerraMa}`,
         "nativeBoundingBox": { },
         "latLonBoundingBox": { },
         "projectionPolicy": "FORCE_DECLARED",
@@ -96,14 +96,14 @@ updateBoundingBox = function(json){
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": "EPSG:${confGeoServer.sridTerraMa}"
+      "crs": `EPSG:${confGeoServer.sridTerraMa}`
   };
   json.featureType.latLonBoundingBox = {
       "minx": -180,
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": "EPSG:${confGeoServer.sridTerraMa}"
+      "crs": `EPSG:${confGeoServer.sridTerraMa}`
   };
 };
 
@@ -123,7 +123,7 @@ const geoServerUtil = {
         "enabled": true,
         "workspace": {
           "name": nameWorkspace,
-          "href": `http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/workspaces/${nameWorkspace}.json`
+          "href": `${confGeoServer.host}workspaces/${nameWorkspace}.json`
         },
         "connectionParameters": {
           "entry": [

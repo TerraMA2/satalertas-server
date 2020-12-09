@@ -25,3 +25,8 @@ exports.saveGroupLayer = async (req, res, next) => {
   const jsonConf = req.body;
   res.json(await GeoServerService.saveGroupLayer(jsonConf));
 };
+
+exports.updateDataStore = async (req, res, _next) => {
+  const jsonData = req.body;
+  res.json(await GeoServerService.updateDataStore(jsonData));
+}
