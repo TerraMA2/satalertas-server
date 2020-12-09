@@ -151,16 +151,22 @@ module.exports = geoServerService = {
     }
   },
 
-  async validateDataStore(nameWorkspace, nameDataStrore) {
-    if (nameDataStrore) {
+  async validateDataStore(nameWorkspace, nameDataStore) {
+    if (nameDataStore) {
       const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
-      const method = await this.setMethod(`${urlD}/${nameDataStrore}.json`);
+      const method = await this.setMethod(`${urlD}/${nameDataStore}.json`);
 
       if (method === 'post') {
-        const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStrore);
+        const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
         console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
       }
     }
+  },
+
+  async updateDataStore({nameWorkspace, nameDataStore}) {
+    const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
+    const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
+    console.log(await this.saveGeoServer(data.dataStore.name, 'put', urlD, data, CONFIG_JSON))
   },
 
   async deleteView(views){
