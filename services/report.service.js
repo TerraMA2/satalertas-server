@@ -466,27 +466,10 @@ setBurnedData = async function(type, views, propertyData, dateSql, columnCarEsta
 
     // ---  Firing Authorization ---------------------------------------------------------------------------------------
     const sqlBurnCount = `
-        SELECT SUM(COALESCE(total_focus, 0)) AS total_focus,
-               SUM(COALESCE(authorized_focus, 0)) AS authorized_focus,
-               SUM(COALESCE(unauthorized_focus, 0)) AS unauthorized_focus
-        FROM (
-            SELECT  COUNT(1) AS total_focus,
-                    0 AS authorized_focus,
-                    COUNT(1) AS  unauthorized_focus
-            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
-            WHERE   car_focos.${columnCarEstadual} = ${carRegister}
-                AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
-                      
-            UNION ALL
-            
-            SELECT  0 AS foco_total,
-                    COUNT(1) AS authorized_focus,
-                    COUNT(1)*(-1) AS  unauthorized_focus
-            FROM public.${views.BURNED.children.CAR_FOCOS_X_QUEIMA.table_name} AS CAR_FOCOS_X_QUEIMA
-            WHERE  CAR_FOCOS_X_QUEIMA.${views.BURNED.children.CAR_X_FOCOS.table_name}_${columnCarEstadual} = ${carRegister}
-               AND '${filter.date[0]}' <= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_apro1
-               AND '${filter.date[0]}' >= CAR_FOCOS_X_QUEIMA.de_autorizacao_queima_sema_data_venc1
-        ) AS CAR_X_FOCOS_X_QUEIMA
+        SELECT  COUNT(1) AS total_focus
+        FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
+        WHERE   car_focos.${columnCarEstadual} = ${carRegister}
+            AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
     `;
     const resultBurnCount = await Report.sequelize.query(sqlBurnCount, QUERY_TYPES_SELECT);
     propertyData['burnCount'] = resultBurnCount[0];
