@@ -208,7 +208,7 @@ getCarData = async function(carTableName, municipiosTableName, columnCarEstadual
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, 3857))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, 3857))::TEXT) - 5) AS bboxplanet,
+              substring(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car
@@ -429,7 +429,7 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
       for (const radam of propertyData['prodesRadam']) {
         const area = radam['area'];
         const cls = radam['class'];
-        if (cls !== null) {
+        if (cls) {
           radamText += radamText === '' ? `${cls}: ${area}` : `\n ${cls}: ${area}`;
           radamProdes += area;
         }
