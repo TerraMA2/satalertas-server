@@ -254,7 +254,7 @@ module.exports = geoServerService = {
         "title": title,
         "description": description,
         "abstract": abstract,
-        "srs": "EPSG:${confGeoServer.sridTerraMa}",
+        "srs": `EPSG:${confGeoServer.sridTerraMa}`,
         "projectionPolicy": "FORCE_DECLARED",
         "enabled": true,
         "store": {

@@ -20,7 +20,7 @@ setViewJson = function(json, view){
         "nativeName": view.name,
         "title": view.title,
         "keywords": { "string": [ "features", view.title ] },
-        "srs": "EPSG:${confGeoServer.sridTerraMa}",
+        "srs": `EPSG:${confGeoServer.sridTerraMa}`,
         "nativeBoundingBox": { },
         "latLonBoundingBox": { },
         "projectionPolicy": "FORCE_DECLARED",
