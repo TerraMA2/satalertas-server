@@ -569,24 +569,6 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem',
       },
       {
-        text:
-          'Foi observada a ocorrência de incêndio na vegetação da ' +
-          reportData.property.name +
-          ', conforme a identificação de cicatriz de incêndio em imagem de satélite após o período analisado ' +
-          'e a incidência de focos de fogo no imóvel rural durante esse período.',
-        margin: [30, 0, 30, 5],
-        style: 'bodyIndentFirst',
-      },
-      {
-        text:
-          'Após a análise da série histórica de focos de fogo no ' +
-          'imóvel rural ao longo dos anos e em períodos proibitivos, observou-se que a ' +
-          'ocorrência de incêndio é reincidente, sendo recomendada a adoção de ' +
-          'medidas preventivas e de combate aos incêndios florestais no local. ',
-        margin: [30, 0, 30, 15],
-        style: 'bodyIndentFirst',
-      },
-      {
         text: '7 ANEXOS',
         style: 'listItem',
       },
