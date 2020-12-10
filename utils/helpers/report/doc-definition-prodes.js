@@ -238,7 +238,7 @@ module.exports = function (headerDocument, reportData, title) {
               'ii. Base de referência do CAR validado; ' +
               'iii. Base de referência do CAR em análise; ' +
               'iv. Base de referência do CAR aguardando complementação; ' +
-              'v. Base de referência do CAR cancelado e indeferido; e ' +
+              'v. Base de referência do CAR cancelado e indeferido; ' +
               'vi. Base de referência do Programa de Regularização Ambiental (PRA);'
             ),
             margin: [20, 0, 30, 5],

@@ -38,7 +38,7 @@ getFilterClassSearch = function(sql, filter, view, tableOwner){
 }
 
 getImageObject = function (image, fit, margin, alignment) {
-  if (image && image[0] && !image[0].includes('data:application/vnd.ogc.se_xml')) {
+  if (image && image[0] && !image[0].includes('data:application/vnd.ogc.se_xml') && !image[0].includes('data:text/xml;')) {
     return new Image(
         image,
         fit,
@@ -1322,7 +1322,7 @@ module.exports = FileReport = {
 
       return Result.ok(points);
     } catch (e) {
-      return Result.err(e)
+      throw new Error(e);
     }
   },
   async getBurnlightCharts(query) {
