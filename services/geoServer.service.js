@@ -34,30 +34,28 @@ setViewsDynamic = async function(views) {
   } else {
     const viewsDynamic = [];
     const GROUP_FILTER = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA'];
-    const FILTERS_TYPE = ['biome', 'city', 'uc', 'ti', 'projus'];
-
-
+    const FILTERS_TYPE = ['biome', 'city', 'uc', 'ti', 'default'];
     const groupViews = await ViewService.fetchGroupOfOrderedLayers();
 
-    GROUP_FILTER.forEach( group => {
+    for (const group of GROUP_FILTER) {
       if (groupViews[group] && groupViews[group].children) {
-        groupViews[group].children.forEach(layer => {
+        for (const layer of groupViews[group].children) {
           const type = group === 'BURNED' ? group.toLowerCase() : 'default';
 
-          if (group === 'BURNED') {
-            const view_burned_update = VIEW_UPDATE_FILTER(
-              layer.workspace,
-              layer.datastore,
-              layer.view,
-              layer.label,
-              layer.tableOwner,
-              layer.tableName,
-              layer.isPrimary)
+          //if (group === 'BURNED') {
+          //  const view_burned_update = VIEW_UPDATE_FILTER(
+          //    layer.workspace,
+          //    layer.datastore,
+          //    layer.view,
+          //    layer.label,
+          //    layer.tableOwner,
+          //    layer.tableName,
+          //    layer.isPrimary)
 
-            viewsDynamic.push(view_burned_update)
-          }
+          //  viewsDynamic.push(view_burned_update)
+          //}
 
-          const filter = FILTER[type](
+          const filter = await FILTER[type](
             confGeoServer.workspace,
             confGeoServer.datastore,
             layer.cod,
@@ -65,17 +63,17 @@ setViewsDynamic = async function(views) {
             layer.tableName,
             layer.isPrimary);
 
-          FILTERS_TYPE.forEach(filterType => {
+          for (const filterType of FILTERS_TYPE){
             if (filter[filterType]) {
               const view = filter[filterType];
               view.view_workspace = layer.workspace;
               view.view = layer.view;
               viewsDynamic.push(view);
             }
-          });
-        });
+          };
+        };
       }
-    });
+    };
 
     return viewsDynamic;
   }
@@ -151,16 +149,22 @@ module.exports = geoServerService = {
     }
   },
 
-  async validateDataStore(nameWorkspace, nameDataStrore) {
-    if (nameDataStrore) {
+  async validateDataStore(nameWorkspace, nameDataStore) {
+    if (nameDataStore) {
       const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
-      const method = await this.setMethod(`${urlD}/${nameDataStrore}.json`);
+      const method = await this.setMethod(`${urlD}/${nameDataStore}.json`);
 
       if (method === 'post') {
-        const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStrore);
+        const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
         console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
       }
     }
+  },
+
+  async updateDataStore({nameWorkspace, nameDataStore}) {
+    const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
+    const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
+    console.log(await this.saveGeoServer(data.dataStore.name, 'put', urlD, data, CONFIG_JSON))
   },
 
   async deleteView(views){
@@ -248,7 +252,7 @@ module.exports = geoServerService = {
         "title": title,
         "description": description,
         "abstract": abstract,
-        "srs": "EPSG:${confGeoServer.sridTerraMa}",
+        "srs": `EPSG:${confGeoServer.sridTerraMa}`,
         "projectionPolicy": "FORCE_DECLARED",
         "enabled": true,
         "store": {
