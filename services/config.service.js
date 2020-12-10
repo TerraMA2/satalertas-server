@@ -695,7 +695,7 @@ module.exports = ConfigService = {
           format: `image/png`,
           version: `1.1.0`,
           cql_filter: `{mosaicCqlFilter};{propertyCqlFilter};{propertyCqlFilter}`,
-          styles: `,${groupView.STATIC.children.CAR_VALIDADO.buworkspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
+          styles: `,${groupView.STATIC.children.CAR_VALIDADO.workspace}:${groupView.STATIC.children.CAR_VALIDADO.view}_yellow_style,${groupView.PRODES.children.CAR_X_PRODES.workspace}:${groupView.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
           bbox: `{bbox}`,
           width: `400`,
           height: `400`,
