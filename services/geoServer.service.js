@@ -160,11 +160,56 @@ module.exports = geoServerService = {
       }
     }
   },
+  
+  async getDataStoreData(nameWorkspace, nameDataStore) {
+    const urlDS = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores/${nameDataStore}.json`;
+    const result = axios.get(urlDS, CONFIG_JSON).then(resp => resp.data.dataStore).catch(err => err);
+    return result
+  },
 
   async updateDataStore({nameWorkspace, nameDataStore}) {
     const urlD = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores`;
-    const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
-    console.log(await this.saveGeoServer(data.dataStore.name, 'put', urlD, data, CONFIG_JSON))
+    const isPostGis = await this.getDataStoreData(nameWorkspace, nameDataStore);
+    if (isPostGis && (isPostGis.type === 'PostGIS')) {
+      const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
+      console.log(await this.saveGeoServer(data.dataStore.name, 'put', urlD, data, CONFIG_JSON))
+    }
+  },
+
+  async getWorkspaces () {
+    const urlWorkspaces = `${confGeoServer.host}workspaces.json`;
+    const result = await axios.get(urlWorkspaces,CONFIG_JSON).then(resp => resp).catch(err => err)
+    return result.status && (result.status === 200) ? result.data.workspaces.workspace : `${result.response.status}/${result.response.statusText} - ${result.response.data}`;
+  },
+
+  async getDataStores(nameWorkspace) {
+    const urlWorkspace = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores.json`;
+    const result = await axios.get(urlWorkspace, CONFIG_JSON).then(resp => resp.data.dataStores.dataStore).catch(err => err);
+    return result;
+  },
+  async updateDataStores(nameWorkspace) {
+    const allDataStores = await this.getDataStores(nameWorkspace);
+    const updatesPromises = [];
+    if (allDataStores) {
+      allDataStores.forEach(({ name }) => {
+        const ds = {nameWorkspace, nameDataStore: name}
+        updatesPromises.push(this.updateDataStore(ds));
+      });
+    }
+    await Promise.all(updatesPromises);
+  },
+
+  async updateAllDataStores () {
+    const result = await this.getWorkspaces();
+    const nameWorkspaces = result.map(({ name }) => name );
+    const updatesPromises = [];
+    if (nameWorkspaces) {
+      nameWorkspaces.forEach(workspace => {
+        updatesPromises.push(this.updateDataStores(workspace));
+      });
+    }
+    await Promise.all(updatesPromises);
+    return result;
   },
 
   async deleteView(views){
@@ -173,7 +218,6 @@ module.exports = geoServerService = {
     for (let view of views) {
 
       view.name = view.name ? view.name : view.title;
-
 
       const urli = `${confGeoServer.host}workspaces/${view.workspace}/featuretypes/${view.name}?recurse=true`;
 

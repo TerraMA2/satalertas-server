@@ -4,7 +4,7 @@
     "nativeName":"carView",
     "title": "carView",
     "keywords": { "string": [ "features",  "carView" ] },
-    "srs": "EPSG:${confGeoServer.sridTerraMa}",
+    "srs": 4674,
     "projectionPolicy": "FORCE_DECLARED",
     "enabled": true,
     "metadata": {
