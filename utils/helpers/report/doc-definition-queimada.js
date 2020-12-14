@@ -9,7 +9,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
         'Verificou-se que não há autorização de queima controlada emitida ' +
         'para o imóvel rural em análise.',
       alignment: 'left',
-      margin: [30, 15, 30, 0],
+      margin: [30, 15, 30, 15],
       style: 'bodyIndentFirst',
     });
   } else {
@@ -18,7 +18,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
         'Verificou-se que há autorização de queima controlada emitida ' +
         `para o imóvel rural em análise para o período ${authNumbers.join(', ')}.`,
       alignment: 'left',
-      margin: [30, 15, 30, 0],
+      margin: [30, 15, 30, 15],
       style: 'bodyIndentFirst',
     });
   }
@@ -26,6 +26,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
 }
 
 module.exports = function (headerDocument, reportData, title) {
+  const registerToUse = reportData.property.register ? reportData.property.register : reportData.property.federalregister;
   return {
     info: {
       title: 'Relatório QUEIMADA',
@@ -145,7 +146,7 @@ module.exports = function (headerDocument, reportData, title) {
               `${reportData.property.owner}` +
               ', conforme informações declaradas no ' +
               ' Sistema Sistema Nacional de Cadastro Ambiental Rural (SICAR), protocolo CAR ' +
-              reportData.property.register,
+              `${registerToUse}`,
           },
           {
             text: ' (Anexo 1) ',
@@ -215,17 +216,17 @@ module.exports = function (headerDocument, reportData, title) {
         pageBreak: 'after',
       },
       {
-        text: '3 Dados utilizados',
-        style: 'listItem',
+        text:
+        'coleta automática, armazenamento ' +
+        'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
+        'INPE, com os dados de fontes estatais ' +
+        'oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.',
+        margin: [30, 0, 30, 0],
+        style: 'body',
       },
       {
-          text:
-            'coleta automática, armazenamento ' +
-            'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
-            'INPE, com os dados de fontes estatais ' +
-            'oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.',
-          margin: [30, 0, 30, 0],
-          style: 'body',
+        text: '3 Dados utilizados',
+        style: 'listItem',
       },
       {
         columns: [
@@ -580,11 +581,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true,
           },
           {
-            text: ` – Informações sobre o CAR ${
-              reportData.property.register
-                ? reportData.property.register
-                : reportData.property.federalregister
-            };`,
+            text: ` – Informações sobre o CAR ${registerToUse};`,
             style: 'body',
           },
         ],
@@ -689,7 +686,7 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 11,
         alignment: 'justify',
         lineHeight: 1.5,
-        leadingIndent: 176,
+        leadingIndent: 120,
       },
       title: {
         bold: true,
