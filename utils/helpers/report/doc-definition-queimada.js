@@ -221,7 +221,7 @@ module.exports = function (headerDocument, reportData, title) {
         'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
         'INPE, com os dados de fontes estatais ' +
         'oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.',
-        margin: [30, 0, 30, 0],
+        margin: [30, 0, 30, 15],
         style: 'body',
       },
       {
