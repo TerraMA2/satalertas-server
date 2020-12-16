@@ -41,16 +41,18 @@ module.exports = function(view_burned, workspacekAlertas, cod_view, tableOwner, 
     city: {
       view: `${workspacekAlertas}:${cod_view}_sql`,
       field: isPrimary ? `geocodigo` : `${tableOwner}_dd_focos_inpe_id_2`,
-      value: `geocodigo`
+      value: `geocode`
     },
     uc: {
       view: `${workspacekAlertas}:${cod_view}_uc_sql`,
-      field: `gid`,
+      param: true,
+      field: `param`,
       value: `gid`
     },
     ti: {
       view: `${workspacekAlertas}:${cod_view}_ti_sql`,
-      field: `gid`,
+      param: true,
+      field: `param`,
       value: `gid`
     },
     car: {
