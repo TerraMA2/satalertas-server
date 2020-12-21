@@ -130,12 +130,12 @@ setViews = function(groupViews, data_view) {
           name: "opacity",
           title: "Opacidade"
       },
-      // { Do not replace or delete, it will be implemented later.
+      // {
       //     icon: "fas fa-expand-alt",
       //     name: "extent",
       //     title: "Extent"
       // },
-      // {
+      // { //Do not replace or delete, it will be implemented later.
       //   icon: "fas fa-calendar-alt",
       //   name: "calendar",
       //   title: "Filtrar por intervalo de data"
@@ -315,12 +315,12 @@ getViews = async function(groupViews) {
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
                    WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ') IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL))    THEN 'BURNED_AREA'
+                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN 'BURNED_AREA'
                    ELSE UPPER(REPLACE(translate(REPLACE(TRIM(view.name), '  ', ' '),
                                          'áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',
                                          'aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'
                                           ),  ' ','_'))
-               END)   AS cod_group,
+               END) AS cod_group,
                (UPPER(REPLACE(REPLACE(REPLACE(translate(TRIM(view.name),
                                          '  áàâãäåaaaÁÂÃÄÅAAAÀéèêëeeeeeEEEÉEEÈìíîïìiiiÌÍÎÏÌIIIóôõöoooòÒÓÔÕÖOOOùúûüuuuuÙÚÛÜUUUUçÇñÑýÝ',
                                          ' aaaaaaaaaAAAAAAAAAeeeeeeeeeEEEEEEEiiiiiiiiIIIIIIIIooooooooOOOOOOOOuuuuuuuuUUUUUUUUcCnNyY'

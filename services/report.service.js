@@ -1,4 +1,3 @@
-
 const Result = require("../utils/result")
   models = require('../models')
   Report = models.reports

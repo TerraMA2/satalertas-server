@@ -126,7 +126,7 @@ setInfoColumns = async function (data, codGroup) {
         changedRow.push({key, value});
       }
     }
-  };
+  }
   return changedRow;
 }
 

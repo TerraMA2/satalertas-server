@@ -59,7 +59,7 @@ getSqlAnalysisTotals = async function(params) {
                   ${value2},
                   ${alert.selected} AS selected,
                   ${alert.activearea} AS activearea,
-                  false AS immobilitactive,
+                  false AS activealert,
                   null AS alertsgraphics 
              ${sqlFrom}`;
       } else {
@@ -73,7 +73,7 @@ getSqlAnalysisTotals = async function(params) {
                     00.00 AS value2 ,
                     ${alert.selected} AS selected,
                     ${alert.activearea} AS activearea,
-                    false AS immobilitactive,
+                    false AS activealert,
                     null AS alertsgraphics `;
       }
     }
@@ -221,11 +221,9 @@ async function getSqlDetailsAnalysisTotals(alert, params) {
 function generate_color() {
   const hexadecimal = '0123456789ABCDEF';
   let color = '#';
-  const date = new Date();
-  const milliseconds = date.getMilliseconds();
 
   for (let i = 0; i < 6; i++) {
-    color += hexadecimal[Math.floor(Math.random(milliseconds) * 16)];
+    color += hexadecimal[Math.floor(Math.random() * 16)];
   }
   return color;
 }

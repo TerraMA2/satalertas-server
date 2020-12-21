@@ -7,7 +7,6 @@ const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
 const confDb = require(__dirname + '/../config/config.json')[env];
 const ViewService = require(__dirname + "/view.service");
 const FILTER = require(__dirname + '/../utils/helpers/geoserver/filter');
-const VIEW_UPDATE_FILTER = require(__dirname + '/../utils/helpers/geoserver/view.update.filter');
 
 const URL = `${confGeoServer.host}workspaces/${confGeoServer.workspace}/featuretypes`;
 const CONFIG = { headers: { "Authorization": 'Basic ' + Buffer.from(`${confGeoServer.username}:${confGeoServer.password}`).toString('base64'), "Content-Type": 'application/xml' } };
@@ -70,10 +69,10 @@ setViewsDynamic = async function(views) {
               view.view = layer.view;
               viewsDynamic.push(view);
             }
-          };
-        };
+          }
+        }
       }
-    };
+    }
 
     return viewsDynamic;
   }
@@ -163,8 +162,7 @@ module.exports = geoServerService = {
   
   async getDataStoreData(nameWorkspace, nameDataStore) {
     const urlDS = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores/${nameDataStore}.json`;
-    const result = axios.get(urlDS, CONFIG_JSON).then(resp => resp.data.dataStore).catch(err => err);
-    return result
+    return axios.get(urlDS, CONFIG_JSON).then(resp => resp.data.dataStore).catch(err => err);
   },
 
   async updateDataStore({nameWorkspace, nameDataStore}) {
@@ -184,8 +182,7 @@ module.exports = geoServerService = {
 
   async getDataStores(nameWorkspace) {
     const urlWorkspace = `${confGeoServer.host}workspaces/${nameWorkspace}/datastores.json`;
-    const result = await axios.get(urlWorkspace, CONFIG_JSON).then(resp => resp.data.dataStores.dataStore).catch(err => err);
-    return result;
+    return await axios.get(urlWorkspace, CONFIG_JSON).then(resp => resp.data.dataStores.dataStore).catch(err => err);
   },
   async updateDataStores(nameWorkspace) {
     const allDataStores = await this.getDataStores(nameWorkspace);
