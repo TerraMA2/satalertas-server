@@ -1,6 +1,6 @@
 {
   "name": "terrama2-server",
-  "version": "2.0.0-beta",
+  "version": "develop",
   "private": true,
   "scripts": {
     "start": "NODE_ENV=development nodemon ./bin/www",
