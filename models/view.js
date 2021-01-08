@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const View = sequelize.define('views', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,

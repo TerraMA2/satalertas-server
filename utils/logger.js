@@ -1,7 +1,7 @@
 
 'use strict';
 const { createLogger, format, transports } = require('winston')
-      fs = require('fs')
+const fs = require('fs')
 
 require('winston-daily-rotate-file');
 
