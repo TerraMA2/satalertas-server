@@ -5,6 +5,7 @@ const express = require('express'),
     cors = require('cors')
 
 const viewRouter = require('./routes/view')
+const groupRouter = require('./routes/group.router')
 const geoserverRouter = require('./routes/geoserver')
 const reportRouter = require('./routes/report')
 const configRouter = require('./routes/config')
@@ -34,6 +35,7 @@ app.use(helmet())
 app.use(morgan('combined', {}))
 app.use(express.json({limit: '200mb', inflate: true, strict: true, type: 'application/json'}))
 
+app.use(basePath+'/group', groupRouter)
 app.use(basePath+'/view', viewRouter)
 app.use(basePath+'/geoserver', geoserverRouter)
 app.use(basePath+'/report', reportRouter)
