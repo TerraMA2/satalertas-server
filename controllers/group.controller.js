@@ -15,3 +15,13 @@ exports.getById = async (req, res) => {
         res.json(e);
     }
 };
+
+exports.add = async (req, res) => {
+    const newGroup = req.body;
+    res.json(await GroupService.add(newGroup));
+}
+
+exports.update = async (req, res) => {
+    const groupModify = req.body;
+    res.json(await GroupService.update(groupModify));
+}
