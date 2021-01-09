@@ -34,18 +34,45 @@ module.exports = GroupService = {
   },
   async getById(id) {
     try {
-      const where = {
+      let where = {};
+
+      const group = await Group.findByPk(id);
+      group.dataValues.project = await Project.findByPk(group.idProject);
+      where = {
         where: {
-          id: id
+          id_group: group.id
         }
       };
-
-      return await Group.findAll(where);
+      group.dataValues.relViews = await RelGroupView.findAll(where)
+      for(const relViews of group.dataValues.relViews){
+        const id = relViews.idView;
+        const views = await View.findAll();
+        relViews.dataValues.view = await View.findByPk(id);
+      }
+      return group;
 
     } catch (e) {
       const msgErr = `In unit car.service, method getByCpf:${e}`;
       logger.error(msgErr);
       throw new Error(msgErr);
     }
+  },
+  async add(newGroup) {
+    const group = new Group({
+      name: newGroup.name,
+      idProject: newGroup.idProject,
+      code: newGroup.code
+    })
+    return await Group.create(group.dataValues).then(group => group.dataValues);
+  },
+  async update(groupModify) {
+    const group = await Group.findByPk(groupModify.id);
+
+    group.name = groupModify.name;
+    group.idProject = groupModify.idProject;
+    group.code = groupModify.code;
+
+    await group.save();
+    return group.dataValues;
   }
 };
