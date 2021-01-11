@@ -1,15 +1,12 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Groups', {
+    return queryInterface.createTable('groups', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
-      },
-      id: {
-        type: Sequelize.UUID
       },
       id_project: {
         type: Sequelize.INTEGER
@@ -20,17 +17,18 @@ module.exports = {
       code: {
         type: Sequelize.STRING
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
+
+      createdAt: Sequelize.DATE,
+      updatedAt: Sequelize.DATE
+    },  {
+      charset: 'utf-8',
+      schema: 'terrama2'
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Groups');
+    return queryInterface.dropTable('groups',
+    {
+      schema: 'terrama2'
+    });
   }
 };
