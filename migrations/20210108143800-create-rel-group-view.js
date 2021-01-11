@@ -1,15 +1,12 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('RelGroupViews', {
+    return queryInterface.createTable('rel_group_views', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
-      },
-      id: {
-        type: Sequelize.UUID
       },
       id_group: {
         type: Sequelize.INTEGER
@@ -17,17 +14,17 @@ module.exports = {
       id_view: {
         type: Sequelize.INTEGER
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
+      created_at: Sequelize.DATE,
+      updated_at: Sequelize.DATE
+    }, {
+      charset: 'utf-8',
+      schema: 'terrama2'
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('RelGroupViews');
+    return queryInterface.dropTable('rel_group_views',
+    {
+      schema: 'terrama2'
+    });
   }
 };

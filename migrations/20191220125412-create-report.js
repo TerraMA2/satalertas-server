@@ -35,8 +35,8 @@ module.exports = {
           allowNull: false,
           type: Sequelize.STRING
         },
-        created_at: Sequelize.DATE,
-        updated_at: Sequelize.DATE
+        createdAt: Sequelize.DATE,
+        updatedAt: Sequelize.DATE
       },
       {
         charset: 'utf-8',
