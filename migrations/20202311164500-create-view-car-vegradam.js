@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.query(`
+    return queryInterface.sequelize.query(`
         CREATE or REPLACE VIEW car_x_vegradam AS
         SELECT c.gid, c.numero_do1, c.numero_do2, v.fisionomia, c.area_ha_,
                  SUM(ST_Area(ST_Intersection(c.geom, v.geom)::geography) / 10000.0) AS area_ha_car_vegradam
