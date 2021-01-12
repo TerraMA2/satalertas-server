@@ -1,5 +1,5 @@
 const models = require('../models')
-const Group = models.group_management
+const Group = models.group
 const Project = models.project
 const RelGroupView = models.rel_group_view
 const View = models.views
@@ -11,6 +11,7 @@ module.exports = GroupService = {
   async getAll() {
     try {
       const groups = await Group.findAll();
+      console.log('>>> ', groups.group);
       for(const group of groups) {
         group.dataValues.project = await Project.findByPk(group.idProject);
         const where = {
