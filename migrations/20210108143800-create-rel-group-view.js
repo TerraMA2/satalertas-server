@@ -6,13 +6,11 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.UUID
+        type: Sequelize.INTEGER
       },
       id_view: {
         type: Sequelize.INTEGER
       },
-      created_at: Sequelize.DATE,
-      updated_at: Sequelize.DATE
     }, {
       charset: 'utf-8',
       schema: 'terrama2'

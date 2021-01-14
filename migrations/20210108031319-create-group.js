@@ -17,13 +17,8 @@ module.exports = {
       code: {
         type: Sequelize.STRING
       },
-
-      createdAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-      },
-      updatedAt: Sequelize.DATE
-    },  {
+    },
+    {
       charset: 'utf-8',
       schema: 'terrama2'
     });
