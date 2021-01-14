@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Group = sequelize.define('group_management', {
+  const Group = sequelize.define('groups', {
     id: {
       type: DataTypes.UUID,
       allowNull: false,

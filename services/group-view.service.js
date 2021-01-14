@@ -47,7 +47,7 @@ module.exports = GroupService = {
           id_group: {[Op.ne]: idGroup}
         }
       };
-
+      
       const groupViews = await RelGroupView.findAll(where)
       for (const groupView of groupViews) {
         const id = groupView.idView;
