@@ -17,16 +17,12 @@ module.exports = {
       code: {
         type: Sequelize.STRING
       },
+
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false,
-        field: 'create_at',
+        defaultValue: Sequelize.NOW
       },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        field: 'updated_at',
-      }
+      updatedAt: Sequelize.DATE
     },  {
       charset: 'utf-8',
       schema: 'terrama2'
