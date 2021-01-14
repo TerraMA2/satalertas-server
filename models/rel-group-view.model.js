@@ -14,14 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     idView: {
       type: DataTypes.INTEGER,
       field: 'id_view'
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false
     }
   }, {
     schema: 'terrama2',

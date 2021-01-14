@@ -1,5 +1,5 @@
 const models = require('../models')
-const Group = models.group
+const Group = models.groups
 const Project = models.project
 const RelGroupView = models.rel_group_view
 const View = models.views
