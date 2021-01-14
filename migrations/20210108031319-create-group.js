@@ -17,21 +17,13 @@ module.exports = {
       code: {
         type: Sequelize.STRING
       },
-
-      createdAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-      },
-      updatedAt: Sequelize.DATE
-    },  {
+    },
+    {
       charset: 'utf-8',
       schema: 'terrama2'
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('groups',
-    {
-      schema: 'terrama2'
-    });
+    return queryInterface.dropTable('groups');
   }
 };
