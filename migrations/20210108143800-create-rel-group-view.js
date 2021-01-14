@@ -6,10 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      id_group: {
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID
       },
       id_view: {
         type: Sequelize.INTEGER

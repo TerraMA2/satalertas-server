@@ -25,3 +25,8 @@ exports.update = async (req, res) => {
     const groupModify = req.body;
     res.json(await GroupService.update(groupModify));
 }
+
+exports.deleteGroup = async (req, res) => {
+    const groupDelete = req.params.id;
+    res.json( await GroupService.deleteGroup(groupDelete))
+}

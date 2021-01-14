@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     idView: {
       type: DataTypes.INTEGER,
       field: 'id_view'
-    },
+    }
   }, {
     schema: 'terrama2',
     underscored: true,
