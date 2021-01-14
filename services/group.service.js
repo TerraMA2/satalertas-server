@@ -11,20 +11,6 @@ module.exports = GroupService = {
   async getAll() {
     try {
       const groups = await Group.findAll();
-      // for(const group of groups) {
-      //   group.dataValues.project = await Project.findByPk(group.idProject);
-      //   const where = {
-      //     where: {
-      //       id_group: group.id
-      //     }
-      //   };
-      //   group.dataValues.relViews = await RelGroupView.findAll(where)
-      //   for(const relViews of group.dataValues.relViews){
-      //     const id = relViews.idView;
-      //     const views = await View.findAll();
-      //     relViews.dataValues.view = await View.findByPk(id);
-      //   }
-      // }
       return await groups;
     } catch (e) {
       const msgErr = `In unit group.service, method getAll:${e}`;
