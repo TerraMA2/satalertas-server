@@ -24,9 +24,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('groups',
-    {
-      schema: 'terrama2'
-    });
+    return queryInterface.dropTable('groups');
   }
 };
