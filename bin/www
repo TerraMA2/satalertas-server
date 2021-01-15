@@ -5,7 +5,6 @@ const app = require('../app')
       http = require('http')
       killPort = require('kill-port')
 
-
 const port = normalizePort(process.env.PORT || '3200')
 
 app.set('port', port)

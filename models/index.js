@@ -7,6 +7,7 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
+const Umzug = require('umzug');
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
@@ -25,6 +26,20 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db)
   }
 });
+
+const umzug = new Umzug({
+  storage: 'sequelize',
+  storageOptions: { sequelize },
+  migrations: {
+    params: [
+      sequelize.getQueryInterface(),
+      Sequelize
+    ],
+    path: path.resolve(__dirname, '../migrations')
+  }
+});
+
+umzug.up({})
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

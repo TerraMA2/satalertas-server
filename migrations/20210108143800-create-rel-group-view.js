@@ -9,7 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       id_view: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: { model: 'views', key: 'id' }
+      },
+      id_group: {
+        type: Sequelize.INTEGER,
+        references: { model: 'groups', key: 'id' }
       },
     }, {
       charset: 'utf-8',
