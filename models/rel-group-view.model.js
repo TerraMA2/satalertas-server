@@ -7,14 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    idGroup: {
-      type: DataTypes.INTEGER,
-      field: 'id_group'
-    },
-    idView: {
-      type: DataTypes.INTEGER,
-      field: 'id_view'
-    }
   }, {
     schema: 'terrama2',
     underscored: true,
@@ -28,6 +20,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id_view',
       as: 'views',
       otherKey: 'id_view'
+    });
+    RelGroupView.belongsTo(models.groups, {
+      through: 'groups',
+      onDelete: 'RESTRICT',
+      foreignKey: 'id_group',
+      as: 'groups',
+      otherKey: 'id_group'
     });
   };
   return RelGroupView;
