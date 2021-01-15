@@ -10,7 +10,7 @@ module.exports = GroupService = {
     try {
       const groupViews = await RelGroupView.findAll()
       for (const groupView of groupViews) {
-        const id = groupView.idView;
+        const id = groupView.id_view;
         groupView.dataValues.view = await View.findByPk(id);
       }
       return await groupViews;
@@ -30,7 +30,7 @@ module.exports = GroupService = {
 
       const groupViews = await RelGroupView.findAll(where)
       for (const groupView of groupViews) {
-        const id = groupView.idView;
+        const id = groupView.id_view;
         groupView.dataValues.view = await View.findByPk(id);
       }
       return groupViews;
@@ -69,22 +69,18 @@ module.exports = GroupService = {
     return await RelGroupView.create(groupView.dataValues).then(groupView => groupView.dataValues);
   },
   async update(groupViewModify) {
-    const groupView = await RelGroupView.findByPk(groupViewModify.id);
+    console.log(groupViewModify);
+    await RelGroupView.destroy({where: {id_group: groupViewModify.id_group}}).then(result => result);
+    
+    
+    //const groupView = await RelGroupView.findByPk(groupViewModify.id);
+    
+    //RelGroupView.bulkCreate(groupViewModify);
+    //groupView.idGroup = groupViewModify.id_group;
+    //groupView.idView = groupViewModify.idView;
 
-    groupView.idGroup = groupModify.idGroup;
-    groupView.idView = groupModify.idView;
-
-    await groupView.save();
-    return groupView.dataValues;
-  },
-  async update(groupViewModify) {
-    const groupView = await RelGroupView.findByPk(groupViewModify.id);
-
-    groupView.idGroup = groupViewModify.idGroup;
-    groupView.idView = groupViewModify.idView;
-
-    await groupView.save();
-    return groupView.dataValues;
+    //await groupView.save();
+    //return groupView.dataValues;
   },
   async delete(id) {
     await RelGroupView.delete(id);

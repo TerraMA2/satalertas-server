@@ -31,7 +31,7 @@ module.exports = GroupService = {
       };
       group.dataValues.relViews = await RelGroupView.findAll(where)
       for(const relViews of group.dataValues.relViews){
-        const id = relViews.idView;
+        const id = relViews.id_view;
         const views = await View.findAll();
         relViews.dataValues.view = await View.findByPk(id);
       }

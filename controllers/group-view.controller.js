@@ -10,7 +10,7 @@ exports.getAll = async (req, res) => {
 
 exports.getByIdGroup = async (req, res) => {
     try {
-        res.json(await GroupViewService.getByIdGroup(req.query.idGroup));
+        res.json(await GroupViewService.getByIdGroup(req.query.id_group));
     } catch (e) {
         res.json(e);
     }
@@ -18,7 +18,7 @@ exports.getByIdGroup = async (req, res) => {
 
 exports.getNotBelongingToTheGroup = async (req, res) => {
     try {
-        res.json(await GroupViewService.getNotBelongingToTheGroup(req.query.idGroup));
+        res.json(await GroupViewService.getNotBelongingToTheGroup(req.query.id_group));
     } catch (e) {
         res.json(e);
     }
@@ -29,6 +29,6 @@ exports.add = async (req, res) => {
 }
 
 exports.update = async (req, res) => {
-    const groupModify = req.body;
+    const groupModify = req.body.params;
     res.json(await GroupViewService.update(groupModify));
 }
