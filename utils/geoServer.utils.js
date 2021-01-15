@@ -165,9 +165,7 @@ const geoServerUtil = {
     }
   },
   setJsonView(json, view){
-    const viewJson = setViewJson(json, view);
-
-    return viewJson;
+    return setViewJson(json, view);
   }
 };
 
