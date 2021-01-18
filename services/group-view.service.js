@@ -42,18 +42,16 @@ module.exports = GroupService = {
   },
   async getNotBelongingToTheGroup(idGroup) {
     try {
-      // const listIdViews = await RelGroupView.findAll({ where: {id_group: idGroup}, attributes: ['id_view'] }).then();
+      const idViews = await RelGroupView.findAll({ where: {id_group: idGroup}, attributes: ['id_view'] })
+        .then(list => list.map(({ id_view }) => id_view));
 
-      // verificar se está trazendo objeto , se estiver corrigir para lista de inteiros.
+      const option = {
+        where: {
+          id: {[Op.notIn]: idViews }
+        }
+      };
 
-      // const where = {
-      //   where: {
-      //     id: {[Op.not]: { [Op.in]: listIdViews} }
-      //   },
-      //   attribute: ['name', 'id_view']
-      // };
-
-      const listViews = await View.findAll();
+      const listViews = await View.findAll(option);
       return listViews;
     } catch (e) {
       const msgErr = `In unit GroupService.service, method getNotBelongingToTheGroup:${e}`;
