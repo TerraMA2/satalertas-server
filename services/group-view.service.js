@@ -44,7 +44,6 @@ module.exports = GroupService = {
     try {
       const listIdViews = await RelGroupView.findAll({ where: {id_group: idGroup}, attributes: ['id_view'] }).then();
 
-      // verificar se está trazendo objeto , se estiver corrigir para lista de inteiros.
       const idViews = [];
       for (const ids of listIdViews) {
         idViews.push(ids.id_view);
