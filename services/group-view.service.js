@@ -42,12 +42,8 @@ module.exports = GroupService = {
   },
   async getNotBelongingToTheGroup(idGroup) {
     try {
-      const listIdViews = await RelGroupView.findAll({ where: {id_group: idGroup}, attributes: ['id_view'] }).then();
-
-      const idViews = [];
-      for (const ids of listIdViews) {
-        idViews.push(ids.id_view);
-      }
+      const idViews = await RelGroupView.findAll({ where: {id_group: idGroup}, attributes: ['id_view'] })
+        .then(list => list.map(({ id_view }) => id_view));
 
       const option = {
         where: {
