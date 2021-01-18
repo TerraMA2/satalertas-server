@@ -69,18 +69,8 @@ module.exports = GroupService = {
     return await RelGroupView.create(groupView.dataValues).then(groupView => groupView.dataValues);
   },
   async update(groupViewModify) {
-    console.log(groupViewModify);
     await RelGroupView.destroy({where: {id_group: groupViewModify.id_group}}).then(result => result);
-    
-    
-    //const groupView = await RelGroupView.findByPk(groupViewModify.id);
-    
-    //RelGroupView.bulkCreate(groupViewModify);
-    //groupView.idGroup = groupViewModify.id_group;
-    //groupView.idView = groupViewModify.idView;
-
-    //await groupView.save();
-    //return groupView.dataValues;
+    RelGroupView.bulkCreate(groupViewModify.layers);
   },
   async delete(id) {
     await RelGroupView.delete(id);
