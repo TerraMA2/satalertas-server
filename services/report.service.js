@@ -869,7 +869,8 @@ setImages = async function(reportData){
   reportData['images']['partnerImage6'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/terrama2-large.png', 'base64')}`], [100, 60], [0, 30, 30, 0], 'right');
   reportData['images']['partnerImage7'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/mt.png', 'base64')}`], [100, 60], [80, 30, 0, 0], 'left');
   reportData['images']['partnerImage8'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/sema.png', 'base64')}`], [100, 60], [130, 25, 0, 0], 'center');
-  reportData['images']['partnerImage9'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logo-patria-amada-brasil-horizontal.png', 'base64')}`], [100, 60], [0, 30, 25, 0], 'right');
+  reportData['images']['partnerImage9'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/logo-patria-amada-brasil-horizontal.png', 'base64')}`], [100, 60], [0, 30, 25, 0], 'center');
+  reportData['images']['partnerImage10'] = getImageObject([`data:image/png;base64,${fs.readFileSync('assets/img/logos/brasao_bpma.png', 'base64')}`], [80, 60], [20, 20, 20, 0], 'right');
 }
 
 module.exports = FileReport = {
