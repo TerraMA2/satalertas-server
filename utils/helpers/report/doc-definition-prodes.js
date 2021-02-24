@@ -1189,6 +1189,11 @@ module.exports = function (headerDocument, reportData, title) {
         columns: [
           reportData.images.partnerImage7,
           reportData.images.partnerImage8,
+          reportData.images.partnerImage10
+        ]
+      },
+      {
+        columns: [
           reportData.images.partnerImage9
         ]
       }
