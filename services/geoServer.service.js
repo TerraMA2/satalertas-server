@@ -144,7 +144,6 @@ module.exports = geoServerService = {
 
     if (method === 'post') {
       let data = geoServerUtil.setWorkSpace(name);
-      console.log(await this.saveGeoServer(data.workspace.name, method, urlW, data, CONFIG_JSON));
     }
   },
 
@@ -155,7 +154,6 @@ module.exports = geoServerService = {
 
       if (method === 'post') {
         const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
-        console.log(await this.saveGeoServer(data.dataStore.name, method, urlD, data, CONFIG_JSON));
       }
     }
   },
@@ -170,7 +168,6 @@ module.exports = geoServerService = {
     const isPostGis = await this.getDataStoreData(nameWorkspace, nameDataStore);
     if (isPostGis && (isPostGis.type === 'PostGIS')) {
       const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
-      console.log(await this.saveGeoServer(data.dataStore.name, 'put', urlD, data, CONFIG_JSON))
     }
   },
 
@@ -350,7 +347,6 @@ module.exports = geoServerService = {
         mosaic.groupLayer.workspaceName, mosaic.groupLayer.layers, mosaic.groupLayer.styles));
     } catch (e) {
       response.push(e);
-      console.log(e);
     }
 
     return response;
