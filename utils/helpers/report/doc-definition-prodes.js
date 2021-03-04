@@ -1167,7 +1167,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: 'Relatório técnico produzido em parceria com: ',
-        margin: [30, 20, 30, 15],
+        margin: [30, 100, 30, 15],
         alignment: 'center',
         style: 'body'
       },
