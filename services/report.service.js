@@ -408,7 +408,8 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     const deflorestationHistory = await Report.sequelize.query(sqlDeforestationHistory, QUERY_TYPES_SELECT);
 
 
-    propertyData['period']  = await Report.sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
+    // propertyData['period']  = await Report.sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
+    propertyData['period']  = await Report.sequelize.query(  ` SELECT  2006 AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
 
     propertyData['deflorestationHistory'] = setAnalysisYear(deflorestationHistory, { startYear:  propertyData['period'][0]['start_year'], endYear:  propertyData['period'][0]['end_year'] }, 'area');
     // ---------------------------------------------------------------------------------------------------------------
