@@ -145,7 +145,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: 'Mapa de Localização e do Perímetro do Imóvel',
+            text: `Mapa de Localização e do Perímetro do Imóvel, imagem Planet de ${reportData.currentYear}.`,
             bold: false
           }
         ],
@@ -1061,7 +1061,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         columns: [
           reportData.images.geoserverImage4,
-          reportData.images.geoserverImage5,
+          reportData.images.geoserverImage6,
         ],
         margin: [30, 0, 30, 0]
       },
@@ -1082,7 +1082,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         columns: [
-          reportData.images.geoserverImage6,
+          reportData.images.geoserverImage5,
           reportData.images.geoserverImage7
         ],
         margin: [30, 0, 30, 0]
@@ -1109,7 +1109,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Sentinel de 2019, (c) Landsat de 2018 e (d) Planet de ${reportData.currentYear}`,
+            text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Landsat de 2018, (c) Sentinel de 2019 e (d) Planet de ${reportData.currentYear}`,
             bold: false
           }
         ],
@@ -1167,7 +1167,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text: 'Relatório técnico produzido em parceria com: ',
-        margin: [30, 20, 30, 15],
+        margin: [30, 100, 30, 15],
         alignment: 'center',
         style: 'body'
       },
@@ -1189,6 +1189,11 @@ module.exports = function (headerDocument, reportData, title) {
         columns: [
           reportData.images.partnerImage7,
           reportData.images.partnerImage8,
+          reportData.images.partnerImage10
+        ]
+      },
+      {
+        columns: [
           reportData.images.partnerImage9
         ]
       }
