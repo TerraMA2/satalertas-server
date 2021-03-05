@@ -996,7 +996,7 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: 'Dinâmica de desmatamento - ' + reportData.prodesStartYear + '/' + reportData.currentYear,
+            text: 'Dinâmica de desmatamento - ' + reportData.prodesTableData[0].date + '/' + reportData.currentYear,
             bold: false
           }
         ],
