@@ -636,16 +636,23 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
         ndviContext.push(
             {
               columns: [{
-                text: `Os gráficos a seguir representam os NDVI das áreas de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
-                margin: [30, 20, 30, 15],
+                text: `Os gráficos a seguir representam os NDVIs das áreas de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
+                margin: [30, 20, 30, 5],
                 style: 'body'
               }]
             });
       } else {
         ndviContext.push({text: '', pageBreak: 'after'});
       }
-      ndviContext.push({columns: [chartImages[i].geoserverImageNdvi]});
-      ndviContext.push({columns: [chartImages[i].myChart]});
+      ndviContext.push({
+        margin: [30, 0, 30, 0],
+        alignment: 'center',
+        columns: [chartImages[i].geoserverImageNdvi]
+      });
+      ndviContext.push({
+        margin: [30, 0, 30, 0],
+        alignment: 'center',columns: [chartImages[i].myChart]
+      });
     }
     ndviContext.push(
         {
@@ -657,69 +664,71 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
   return ndviContext;
 }
 
-getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDeforestationHistory) {
-  const deflorestationHistoryContext = [];
+// Existe uma função idêntica no server que é usada no lugar dessa, essa aqui não tem uso em nenhum lugar.
+// getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDeforestationHistory) {
+//   const deflorestationHistoryContext = [];
 
-  if (deflorestationHistory && deflorestationHistory.length > 0) {
-    let images = [];
-    let titles = [];
-    let subTitles = [];
+//   if (deflorestationHistory && deflorestationHistory.length > 0) {
+//     let images = [];
+//     let titles = [];
+//     let subTitles = [];
 
-    deflorestationHistoryContext.push({
-      text: '',
-      pageBreak: 'after'
-    });
+//     deflorestationHistoryContext.push({
+//       text: '',
+//       pageBreak: 'after'
+//     });
 
-    for (let i = 0; i < deflorestationHistory.length; ++i) {
-      let url = urlGsDeforestationHistory.replace(new RegExp('#{image}#', ''), `LANDSAT_5_${deflorestationHistory[i].date}`);
-      url = url.replace(new RegExp('#{year}#', ''), deflorestationHistory[i].date);
+//     for (let i = 0; i < deflorestationHistory.length; ++i) {
+//       let url = urlGsDeforestationHistory.replace(new RegExp('#{image}#', ''), `LANDSAT_5_${deflorestationHistory[i].date}`);
+//       url = url.replace(new RegExp('#{year}#', ''), deflorestationHistory[i].date);
 
-      let image = await axios.get(url, config).then(resp => resp);
-      let buff = new Buffer(image.data, 'binary');
-      let imgBase64 = `data:image/png;base64,${buff.toString('base64')}`;
+//       let image = await axios.get(url, config).then(resp => resp);
+//       let buff = new Buffer(image.data, 'binary');
+//       let imgBase64 = `data:image/png;base64,${buff.toString('base64')}`;
 
-      images.push(getImageObject([`data:image/png;base64,${fs.readSync(image.data, 'base64')}`], [200, 200], [0, 10], 'center'));
-      titles.push({
-        text: `${deflorestationHistory[i].date}`,
-        style: 'body',
-        alignment: 'center'
-      });
-      subTitles.push({
-        text: `${deflorestationHistory[i].area} ha`,
-        style: 'body',
-        alignment: 'center'
-      });
+//       images.push(getImageObject([`data:image/png;base64,${fs.readSync(image.data, 'base64')}`], [200, 200], [0, 10], 'center'));
+//       titles.push({
+//         text: `${deflorestationHistory[i].date}`,
+//         style: 'body',
+//         alignment: 'center'
+//       });
+//       subTitles.push({
+//         text: `${deflorestationHistory[i].area} ha`,
+//         style: 'body',
+//         alignment: 'center'
+//       });
 
-      if ((i % 3) === 0) {
-        deflorestationHistoryContext.push(
-          {
-            columns: titles,
-            margin: [30, 0, 30, 0]
-          },
-          {
-            columns: images,
-            margin: [30, 0, 30, 0]
-          },
-          {
-            columns: subTitles,
-            margin: [30, 0, 30, 0]
-          }
-        );
+//       console.log('&&&&&&&&&&&')
+//       console.log(titles);
+//       if ((i % 3) === 0) {
+//         deflorestationHistoryContext.push(
+//           {
+//             columns: titles,
+//             margin: [30, 0, 30, 0]
+//           },
+//           {
+//             columns: images,
+//             margin: [30, 0, 30, 0]
+//           },
+//           {
+//             columns: subTitles,
+//             margin: [30, 0, 30, 0]
+//           }
+//         );
 
-        images = [];
-        titles = [];
-        subTitles = [];
-      }
-    }
+//         images = [];
+//         titles = [];
+//         subTitles = [];
+//       }
+//     }
 
-    deflorestationHistoryContext.push( {
-      text: '',
-      pageBreak: 'after'
-    });
-  }
-
-  return deflorestationHistoryContext;
-}
+//     deflorestationHistoryContext.push( {
+//       text: '',
+//       pageBreak: 'after'
+//     });
+//   }
+//   return deflorestationHistoryContext;
+// }
 
 getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionContent, reportData) {
   moment.locale('pt-br');
@@ -728,7 +737,7 @@ getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionConte
 
   const content = [];
   for (let j = 0; j < docDefinitionContent.length; j++) {
-    if (j === 98) {
+    if (j === 79) {
       reportData.desflorestationHistoryContext.forEach(desflorestationHistory => {
         content.push(desflorestationHistory);
       });
@@ -741,7 +750,6 @@ getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionConte
 
     content.push(docDefinitionContent[j]);
   }
-
   return content;
 }
 
@@ -841,7 +849,7 @@ getContentConclusion = async function(docDefinitionContent, conclusionText, line
 
 setDocDefinitions = async function(reportData, docDefinition) {
   if (reportData.type === 'prodes') {
-    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 99);
+    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 80);
     docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(docDefinition.content, reportData);
   }
 
