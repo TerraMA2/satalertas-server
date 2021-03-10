@@ -351,5 +351,5 @@ module.exports = geoServerService = {
     }
 
     return response;
-  }
+  },
 };

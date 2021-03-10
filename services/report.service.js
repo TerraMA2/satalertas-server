@@ -94,6 +94,11 @@ setBoundingBox = function(bBox) {
 
 const analysisReportFormat = {
   prodes(reportData, views, resultReportData, carColumn, carColumnSema, date, filter = null) {
+    const layers = [`${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
+    `${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}`];
+    const filters = `cql_filter=${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}`
+    resultReportData.vectorViews = {layers, filters};
+
     resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=400&height=400&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
 
     resultReportData['prodesStartYear'] = resultReportData.property['period'][0]['start_year'];
@@ -122,6 +127,11 @@ const analysisReportFormat = {
   },
   deter (reportData, views, resultReportData, carColumn, carColumnSema, date, filter = null) {
     const cql_filter_deter = `${carColumn}='${resultReportData.property.gid}' ${getFilterClassSearch('', filter, views.DETER.children.CAR_X_DETER, views.DETER.tableOwner)}`;
+    const layers = [`${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
+    `${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}`];
+    const filters = `cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${cql_filter_deter}`
+    resultReportData.vectorViews = {layers, filters};
+
     resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=400&height=400&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
     resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
 
@@ -146,8 +156,13 @@ const analysisReportFormat = {
         alert['urlGsImagePlanetCurrentAndCar'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=400&height=400&time=P1Y/${alert.year}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${views.DETER.children.CAR_X_DETER.table_name}_id='${alert.id}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
       });
     }
+
   },
   queimada (reportData, views, resultReportData, carColumn, carColumnSema, date, filter = null) {
+    const layers = [`${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
+    `${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}`];
+    const filters = `cql_filter=${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}`
+    resultReportData.vectorViews = {layers, filters};
     resultReportData['urlGsImage']  = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
     resultReportData['urlGsImage1'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bboxplanet}&time=${date[0]}/${date[1]}&width=400&height=400&cql_filter=RED_BAND>0;${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
   }
@@ -155,6 +170,7 @@ const analysisReportFormat = {
 
 setReportFormat = async function(reportData, views, type, carColumn, carColumnSema, date, filter) {
   const resultReportData = {};
+
 
   resultReportData['bbox'] = setBoundingBox(reportData.bbox);
 
@@ -664,72 +680,6 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
   return ndviContext;
 }
 
-// Existe uma função idêntica no server que é usada no lugar dessa, essa aqui não tem uso em nenhum lugar.
-// getContextDesflorestationHistory = async function(deflorestationHistory, urlGsDeforestationHistory) {
-//   const deflorestationHistoryContext = [];
-
-//   if (deflorestationHistory && deflorestationHistory.length > 0) {
-//     let images = [];
-//     let titles = [];
-//     let subTitles = [];
-
-//     deflorestationHistoryContext.push({
-//       text: '',
-//       pageBreak: 'after'
-//     });
-
-//     for (let i = 0; i < deflorestationHistory.length; ++i) {
-//       let url = urlGsDeforestationHistory.replace(new RegExp('#{image}#', ''), `LANDSAT_5_${deflorestationHistory[i].date}`);
-//       url = url.replace(new RegExp('#{year}#', ''), deflorestationHistory[i].date);
-
-//       let image = await axios.get(url, config).then(resp => resp);
-//       let buff = new Buffer(image.data, 'binary');
-//       let imgBase64 = `data:image/png;base64,${buff.toString('base64')}`;
-
-//       images.push(getImageObject([`data:image/png;base64,${fs.readSync(image.data, 'base64')}`], [200, 200], [0, 10], 'center'));
-//       titles.push({
-//         text: `${deflorestationHistory[i].date}`,
-//         style: 'body',
-//         alignment: 'center'
-//       });
-//       subTitles.push({
-//         text: `${deflorestationHistory[i].area} ha`,
-//         style: 'body',
-//         alignment: 'center'
-//       });
-
-//       console.log('&&&&&&&&&&&')
-//       console.log(titles);
-//       if ((i % 3) === 0) {
-//         deflorestationHistoryContext.push(
-//           {
-//             columns: titles,
-//             margin: [30, 0, 30, 0]
-//           },
-//           {
-//             columns: images,
-//             margin: [30, 0, 30, 0]
-//           },
-//           {
-//             columns: subTitles,
-//             margin: [30, 0, 30, 0]
-//           }
-//         );
-
-//         images = [];
-//         titles = [];
-//         subTitles = [];
-//       }
-//     }
-
-//     deflorestationHistoryContext.push( {
-//       text: '',
-//       pageBreak: 'after'
-//     });
-//   }
-//   return deflorestationHistoryContext;
-// }
-
 getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionContent, reportData) {
   moment.locale('pt-br');
   const startDate = moment(reportData.date[0]).format('L');
@@ -737,7 +687,7 @@ getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionConte
 
   const content = [];
   for (let j = 0; j < docDefinitionContent.length; j++) {
-    if (j === 79) {
+    if (j === 72) {
       reportData.desflorestationHistoryContext.forEach(desflorestationHistory => {
         content.push(desflorestationHistory);
       });
@@ -849,7 +799,7 @@ getContentConclusion = async function(docDefinitionContent, conclusionText, line
 
 setDocDefinitions = async function(reportData, docDefinition) {
   if (reportData.type === 'prodes') {
-    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 80);
+    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 74);
     docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(docDefinition.content, reportData);
   }
 
@@ -1326,8 +1276,6 @@ module.exports = FileReport = {
           .then( async resp => {
             const labels = resp['listaDatas'];
             const data = resp['listaSerie'];
-            logger.error(labels)
-            logger.error(data)
             return this.getChartOptions(labels, data);
           });
       }

@@ -524,21 +524,6 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 9,
         style: 'body',
       },
-      {
-        text: [
-          { text: `2   Disponível em: ` },
-          {
-            text:
-              'https://www.satveg.cnptia.embrapa.br/satveg/login.html?faces-redirect=true. ',
-            link:
-              'https://www.satveg.cnptia.embrapa.br/satveg/login.html?faces-redirect=true',
-            color: 'blue',
-          },
-          { text: 'Acessado em 07.01.2020.' },
-        ],
-        fontSize: 8,
-        margin: [30, 20, 30, 0],
-      },
       reportData.images.chartImage3,
       {
         text: [
@@ -598,35 +583,64 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'bodyIndentFirst',
       },
       {
-        text: [
-          {
-            text:
-              '3    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
-          },
-          {
-            text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf`,
-            link:
-              'text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
-            color: 'blue',
-          },
-          {
-            text: '. Acessado em 13.10.2019.',
-          },
-        ],
-        fontSize: 8,
-        margin: [30, 30, 30, 0],
-      },
-      {
-        text: '',
-        pageBreak: 'after',
-      },
-      {
         text:
           'O detalhamento da metodologia PRODES pode ser consultado em ' +
           'Souza et al. (2019)(6). Em suma, a metodologia do PRODES parte dos seguintes pressupostos: ',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
+      [
+        {
+          text: [
+            {
+              text:
+                '3    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
+            },
+            {
+              text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf`,
+              link:
+                'text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+              color: 'blue',
+            },
+            {
+              text: '. Acessado em 13.10.2019.',
+            },
+          ],
+          fontSize: 8,
+          margin: [30, 30, 30, 0],
+        },
+        {
+          text: `4    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.`,
+          fontSize: 8,
+          margin: [30, 5, 30, 0],
+        },
+        {
+          text: '5    MAURANO, L.E.P.; ESCADA, M.I.S.; RENNO, C.D. Padrões espaciais de desmatamento e a estimativa da exatidão dos mapas do PRODES para Amazônia Legal Brasileira. Ciência Florestal, Santa Maria-RS, v.29, n.4, p.1763-1775, 2019.',
+          fontSize: 8,
+          margin: [30, 5, 30, 0],
+        },
+        {
+          text: [
+            {
+              text: '6    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
+            },
+            {
+              text: 'http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+              link: 'http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+              color: 'blue',
+            },
+            {
+              text: '. Acessado em 13.10.2019.',
+            },
+          ],
+          fontSize: 8,
+          margin: [30, 5, 30, 0],
+        },
+        {
+          text: '',
+          pageBreak: 'after',
+        },
+      ],
       {
         columns: [
           {
@@ -738,48 +752,36 @@ module.exports = function (headerDocument, reportData, title) {
           'gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o ' +
           'Termo de Ajustamento de Conduta (TAC) da carne, Moratória da Soja e outros acordos intergovernamentais, como ' +
           'o feito na Conferência das Nações Unidas Sobre Mudanças Climáticas (COP21) para a redução das emissões de gases ' +
-          'de efeito estufa por',
-        margin: [30, 0, 30, 5],
-        style: 'bodyIndentFirst',
-      },
-      {
-        text: `4    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.`,
-        fontSize: 8,
-        margin: [30, 5, 30, 0],
-      },
-      {
-        text: `5    MAURANO, L.E.P.; ESCADA, M.I.S.; RENNO, C.D. Padrões espaciais de desmatamento e a estimativa da exatidão dos mapas do PRODES para Amazônia Legal Brasileira. Ciência Florestal, Santa Maria-RS, v.29, n.4, p.1763-1775, 2019.`,
-        fontSize: 8,
-        margin: [30, 5, 30, 0],
-      },
-      {
-        text: [
-          {
-            text: `6    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: `,
-          },
-          {
-            text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf`,
-            link: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf`,
-            color: 'blue',
-          },
-          {
-            text: `. Acessado em 13.10.2019.`,
-          },
-        ],
-        fontSize: 8,
-        margin: [30, 5, 30, 0],
-      },
-      {
-        text: '',
-        pageBreak: 'after',
-      },
-      {
-        text:
-          'desflorestamento e degradação florestal(7). Ainda, a importância e credibilidade dos dados gerados pelo INPE é refletida pelas milhares de publicações científicas ' +
+          'de efeito estufa por desflorestamento e degradação florestal(7). Ainda, a importância e credibilidade dos dados gerados pelo INPE é refletida pelas milhares de publicações científicas ' +
           'que utilizaram essas informações para realização de ' +
           'pesquisas, que podem ser encontrada no Google Scholar(8)',
         margin: [30, 0, 30, 5],
-        style: 'body',
+        style: 'bodyIndentFirst',
+      },
+      
+        {
+          text: '7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.',
+          fontSize: 8,
+          margin: [30, 65, 30, 0],
+        },
+        {
+          text: [
+            { text: '8     Disponível em ' },
+            {
+              text: 'https://scholar.google.com.br/',
+              link: 'https://scholar.google.com.br/',
+              color: 'blue',
+            },
+            {
+              text: ', acessado em 13.01.2020.',
+            },
+          ],
+          fontSize: 8,
+          margin: [30, 5, 30, 0],
+        },
+      {
+        text: '',
+        pageBreak: 'after',
       },
       {
         text: '3 ANÁLISE TÉCNICA',
@@ -799,25 +801,6 @@ module.exports = function (headerDocument, reportData, title) {
           'no imóvel rural). O proprietário/posseiro do imóvel rural foi identificado com base nos dados do SIMCAR / INCRA.',
         margin: [30, 0, 30, 15],
         style: 'bodyIndentFirst',
-      },
-      {
-        text: [
-          {
-            text: 'Quadro 1 ',
-            bold: true,
-          },
-          {
-            text:
-              ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' +
-              reportData.property.name +
-              ' a  partir da análise do PRODES, no período ' +
-              reportData.formattedFilterDate +
-              '.',
-          },
-        ],
-        margin: [30, 0, 30, 5],
-        style: 'body',
-        fontSize: 9,
       },
       {
         style: 'tableStyle',
@@ -898,24 +881,23 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 9,
       },
       {
-        text: `7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.`,
-        fontSize: 8,
-        margin: [30, 65, 30, 0],
-      },
-      {
         text: [
-          { text: `8     Disponível em ` },
           {
-            text: `https://scholar.google.com.br/`,
-            link: `https://scholar.google.com.br/`,
-            color: 'blue',
+            text: 'Quadro 1 ',
+            bold: true,
           },
           {
-            text: `, acessado em 13.01.2020.`,
+            text:
+              ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' +
+              reportData.property.name +
+              ' a  partir da análise do PRODES, no período ' +
+              reportData.formattedFilterDate +
+              '.',
           },
         ],
-        fontSize: 8,
-        margin: [30, 5, 30, 0],
+        margin: [30, 0, 30, 5],
+        style: 'body',
+        fontSize: 9,
       },
       {
         text: '',
