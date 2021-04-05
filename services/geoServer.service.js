@@ -168,7 +168,7 @@ module.exports = geoServerService = {
     const isPostGis = await this.getDataStoreData(nameWorkspace, nameDataStore);
     if (isPostGis && (isPostGis.type === 'PostGIS')) {
       const data = geoServerUtil.setDataStore(confDb, nameWorkspace, nameDataStore);
-      console.log(await this.saveGeoServer(data.dataStore.name, 'put', urlD, data, CONFIG_JSON));
+      console.log(await this.saveGeoServer(data.dataStore.name, 'put', urlD, data, CONFIG_JSON)); // Dont remove this console.log
     }
   },
 
