@@ -330,15 +330,16 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
 };
 
 setProdesData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnExecutionDate, carRegister) {
+
   if (propertyData && views.PRODES && type === 'prodes') {
-    let consultas = ''
     // --- Prodes area grouped by year ---------------------------------------------------------------------------------
     const sqlProdesYear =
       `SELECT
         extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
         ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area
       FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS cp
-      WHERE cp.${columnCarEstadual} = '${carRegister}'
+      WHERE cp.${columnCarEstadual} = '${carRegister}' 
+        ${dateSql}
       GROUP BY date
       ORDER BY date `;
       propertyData['analyzesYear'] = await Report.sequelize.query(sqlProdesYear, QUERY_TYPES_SELECT);
@@ -364,7 +365,9 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Total area of prodes ----------------------------------------------------------------------------------------
-    const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}'`;
+    const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+      FROM public.${views.PRODES.children.CAR_X_PRODES.table_name}
+      WHERE ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
     const resultProdesTotalArea = await Report.sequelize.query(sqlProdesTotalArea, QUERY_TYPES_SELECT);
     propertyData['prodesTotalArea'] = resultProdesTotalArea[0]['area'];
     // -----------------------------------------------------------------------------------------------------------------
@@ -653,7 +656,7 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
         ndviContext.push(
             {
               columns: [{
-                text: `Os gráficos a seguir representam os NDVIs das áreas de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
+                text: `Os gráficos a seguir representam os NDVIs dos 5 (cinco) maiores polígonos de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
                 margin: [30, 20, 30, 5],
                 style: 'body'
               }]
