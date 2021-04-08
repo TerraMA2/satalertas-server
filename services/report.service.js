@@ -653,7 +653,7 @@ getContextChartNdvi = async function(chartImages, startDate, endDate) {
         ndviContext.push(
             {
               columns: [{
-                text: `Os gráficos a seguir representam os NDVIs das áreas de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
+                text: `Os gráficos a seguir representam os NDVIs dos 5 (cinco) maiores polígonos de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
                 margin: [30, 20, 30, 5],
                 style: 'body'
               }]

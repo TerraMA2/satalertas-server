@@ -442,7 +442,7 @@ module.exports = function (headerDocument, reportData, title) {
         text:
           'Por fim, foi gerado um relatório com o histórico de imagens de satélites' +
           ' e dos desmatamentos e queimadas ocorridos no imóvel rural, contendo ainda, o perfil ' +
-          'histórico de NDVI e EVI das áreas desmatadas, a fim de melhorar a interpretação das intervenções ' +
+          'histórico de NDVI e EVI dos 5 (cinco) maiores polígonos de desmatamento detectados, a fim de melhorar a interpretação das intervenções ' +
           'antrópicas ocorridas. As séries temporais de índices vegetativos representam as variações de biomassa, sendo ' +
           'que o perfil ao longo de um ciclo hidrológico varia dependendo do tipo de vegetação, impactos ou uso alternativo da área.',
         margin: [30, 0, 30, 5],
