@@ -365,7 +365,9 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
     // -----------------------------------------------------------------------------------------------------------------
 
     // --- Total area of prodes ----------------------------------------------------------------------------------------
-    const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}'`;
+    const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+      FROM public.${views.PRODES.children.CAR_X_PRODES.table_name}
+      WHERE ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
     const resultProdesTotalArea = await Report.sequelize.query(sqlProdesTotalArea, QUERY_TYPES_SELECT);
     propertyData['prodesTotalArea'] = resultProdesTotalArea[0]['area'];
     // -----------------------------------------------------------------------------------------------------------------
