@@ -1,0 +1,186 @@
+{
+  "deter": {
+    "car": {
+      "name": "view73_style",
+      "workspace": "terrama2_73"
+    },
+    "app": {
+      "name": "view74_style",
+      "workspace": "terrama2_74"
+    },
+    "reserva": {
+      "name": "view76_style",
+      "workspace": "terrama2_76"
+    },
+    "ti": {
+      "name": "view80_style",
+      "workspace": "terrama2_80"
+    },
+    "usoant": {
+      "name": "view75_style",
+      "workspace": "terrama2_75"
+    },
+    "veg": {
+      "name": "view77_style",
+      "workspace": "terrama2_77"
+    },
+    "desmate": {
+      "name": "view84_style",
+      "workspace": "terrama2_84"
+    },
+    "emb": {
+      "name": "view82_style",
+      "workspace": "terrama2_82"
+    },
+    "desemb": {
+      "name": "view83_style",
+      "workspace": "terrama2_83"
+    },
+    "uc": {
+      "name": "view81_style",
+      "workspace": "terrama2_81"
+    },
+    "queima": {
+      "name": "view85_style",
+      "workspace": "terrama2_85"
+    }
+  },
+  "prodes": {
+    "app": {
+      "name": "view87_style",
+      "workspace": "terrama2_87"
+    },
+    "car": {
+      "name": "view86_style",
+      "workspace": "terrama2_86"
+    },
+    "reserva": {
+      "name": "view89_style",
+      "workspace": "terrama2_89"
+    },
+    "ti": {
+      "name": "view92_style",
+      "workspace": "terrama2_92"
+    },
+    "uc": {
+      "name": "view93_style",
+      "workspace": "terrama2_93"
+    },
+    "usoant": {
+      "name": "view88_style",
+      "workspace": "terrama2_88"
+    },
+    "veg": {
+      "name": "view90_style",
+      "workspace": "terrama2_90"
+    },
+    "desmate": {
+      "name": "view96_style",
+      "workspace": "terrama2_96"
+    },
+    "emb": {
+      "name": "view94_style",
+      "workspace": "terrama2_94"
+    },
+    "desemb": {
+      "name": "view95_style",
+      "workspace": "terrama2_95"
+    },
+    "queima": {
+      "name": "view97_style",
+      "workspace": "terrama2_97"
+    }
+  },
+  "focos": {
+    "app": {
+      "name": "view98_style",
+      "workspace": "terrama2_98"
+    },
+    "car": {
+      "name": "view103_style",
+      "workspace": "terrama2_103"
+    },
+    "reserva": {
+      "name": "view100_style",
+      "workspace": "terrama2_100"
+    },
+    "ti": {
+      "name": "view104_style",
+      "workspace": "terrama2_104"
+    },
+    "uc": {
+      "name": "view105_style",
+      "workspace": "terrama2_105"
+    },
+    "usoant": {
+      "name": "view99_style",
+      "workspace": "terrama2_99"
+    },
+    "veg": {
+      "name": "view101_style",
+      "workspace": "terrama2_101"
+    },
+    "desmate": {
+      "name": "view108_style",
+      "workspace": "terrama2_108"
+    },
+    "emb": {
+      "name": "view106_style",
+      "workspace": "terrama2_106"
+    },
+    "desemb": {
+      "name": "view107_style",
+      "workspace": "terrama2_107"
+    },
+    "queima": {
+      "name": "view109_style",
+      "workspace": "terrama2_109"
+    }
+  },
+  "aq": {
+    "car": {
+      "name": "view110_style",
+      "workspace": "terrama2_110"
+    },
+    "app": {
+      "name": "view111_style",
+      "workspace": "terrama2_111"
+    },
+    "reserva": {
+      "name": "view113_style",
+      "workspace": "terrama2_113"
+    },
+    "usoant": {
+      "name": "view112_style",
+      "workspace": "terrama2_112"
+    },
+    "veg": {
+      "name": "view114_style",
+      "workspace": "terrama2_114"
+    },
+    "desmate": {
+      "name": "view120_style",
+      "workspace": "terrama2_120"
+    },
+    "emb": {
+      "name": "view118_style",
+      "workspace": "terrama2_118"
+    },
+    "desemb": {
+      "name": "view119_style",
+      "workspace": "terrama2_119"
+    },
+    "queima": {
+      "name": "view121_style",
+      "workspace": "terrama2_121"
+    },
+    "ti": {
+      "name": "view117_style",
+      "workspace": "terrama2_117"
+    },
+    "uc": {
+      "name": "view117_style",
+      "workspace": "terrama2_117"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+node_modules
+build
+npm-debug.log
+.env
+.DS_Store
+logs
+thumbs.db
+*.log
+*.gz
+.vscode/
+logs/
+.history/
+config/config.json
+.idea/
+documentos/*.pdf
+geoserver-conf/config.json
+tmp/*

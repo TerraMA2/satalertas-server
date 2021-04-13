@@ -1,0 +1,89 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "geoserver",
+    "workspace": "mpmt_alertas",
+    "datastore": "mpmt_alertas_datastore",
+    "baseHost": "http://localhost:8080/geoserver",
+    "baseHostDeter": "/api",
+    "host": "http://localhost:8080/geoserver/rest/",
+    "sridPlanet": 3857,
+    "sridTerraMa": 4674,
+    "mosaic": {
+      "wmsStore": {
+        "name": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Wms Store",
+        "workspaceName": "CarWorkspaceName",
+        "capabilitiesURL": "http://imagens.seplan.mt.gov.br/arcgis/services/SPOT/MosaicSpot2008/ImageServer/WMSServer"
+      },
+      "wmsLayer": {
+        "name": "MosaicSpot2008",
+        "title": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Layer",
+        "workspaceName": "CarWorkspaceName",
+        "wmsStoreName": "MosaicSpot2008",
+        "abstract": "MosaicSpot2008"
+      },
+      "groupLayer": {
+        "name": "MosaicSpot2008_car_validado",
+        "title": "MosaicSpot2008_car_validado",
+        "workspaceName": "CarWorkspaceName",
+        "layers": [
+          {
+            "name": "MosaicSpot2008"
+          },
+          {
+            "name": "CarViewName"
+          }
+        ],
+        "styles": []
+      }
+    },
+    "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
+    "imgWidth": 256,
+    "imgHeigh": 256
+  },
+  "production": {
+    "username": "admin",
+    "password": "geoserver",
+    "workspace": "mpmt_alertas",
+    "datastore": "mpmt_alertas_datastore",
+    "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
+    "baseHostDeter": "http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
+    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "sridPlanet": 3857,
+    "sridTerraMa": 4674,
+    "mosaic": {
+      "wmsStore": {
+        "name": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Wms Store",
+        "workspaceName": "CarWorkspaceName",
+        "capabilitiesURL":  "http://imagens.seplan.mt.gov.br/arcgis/services/SPOT/MosaicSpot2008/ImageServer/WMSServer"
+      },
+      "wmsLayer": {
+        "name": "MosaicSpot2008",
+        "title": "MosaicSpot2008",
+        "description": "SPOT/MosaicSpot2008 - Layer",
+        "workspaceName": "CarWorkspaceName",
+        "wmsStoreName": "MosaicSpot2008",
+        "abstract": "MosaicSpot2008"
+      },
+      "groupLayer": {
+        "name": "MosaicSpot2008_car_validado",
+        "title": "MosaicSpot2008_car_validado",
+        "workspaceName": "CarWorkspaceName",
+        "layers": [
+          {
+            "name": "MosaicSpot2008"
+          },
+          {
+            "name": "viewCAR"
+          }],
+        "styles": []
+      }
+    },
+    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
+    "imgWidth": 256,
+    "imgHeigh": 256
+  }
+}
