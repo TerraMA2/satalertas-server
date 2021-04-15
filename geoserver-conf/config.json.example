@@ -4,9 +4,9 @@
     "password": "geoserver",
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
-    "baseHost": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver",
+    "baseHost": "http://localhost:8080/geoserver",
     "baseHostDeter": "/api",
-    "host": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/rest/",
+    "host": "http://localhost:8080/geoserver/rest/",
     "sridPlanet": 3857,
     "sridTerraMa": 4674,
     "mosaic": {
@@ -39,7 +39,9 @@
         "styles": []
       }
     },
-    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
+    "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
+    "imgWidth": 256,
+    "imgHeigh": 256
   },
   "production": {
     "username": "admin",
@@ -80,6 +82,8 @@
         "styles": []
       }
     },
-    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER="
+    "legendUrl": "http://www.terrama2.dpi.inpe.br/mpmt/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
+    "imgWidth": 256,
+    "imgHeigh": 256
   }
 }
