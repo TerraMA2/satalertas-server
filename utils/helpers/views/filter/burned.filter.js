@@ -45,12 +45,14 @@ module.exports = function(view_burned, workspacekAlertas, cod_view, tableOwner, 
     },
     uc: {
       view: `${workspacekAlertas}:${cod_view}_uc_sql`,
-      field: `gid`,
+      param: true,
+      field: `param`,
       value: `gid`
     },
     ti: {
       view: `${workspacekAlertas}:${cod_view}_ti_sql`,
-      field: `gid`,
+      param: true,
+      field: `param`,
       value: `gid`
     },
     car: {
