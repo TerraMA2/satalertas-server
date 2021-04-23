@@ -1253,7 +1253,7 @@ module.exports = FileReport = {
         FROM public.${views[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
         WHERE main_table.${carColumnSemas} = '${carRegister}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
-        ORDER BY main_table.calculated_area_ha
+        ORDER BY main_table.calculated_area_ha DESC
         LIMIT 5
     `;
 
