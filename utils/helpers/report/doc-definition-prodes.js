@@ -576,7 +576,7 @@ module.exports = function (headerDocument, reportData, title) {
           'seus provedores já ortorretificadas, com correção geométrica de sistema refinada pelo uso de pontos de ' +
           'controle e de modelos digitais de elevação do terreno, o que confere um nível mais alto de qualidade das ' +
           'informações, em concordância com as normas cartográficas vigentes. A avaliação da acurácia da metodologia ' +
-          'do PRODES foi feita por Adami' +
+          'do PRODES foi feita por Adami ' +
           'et al. (2017)(4) para o Estado de Mato Grosso e por Maurano et al. (2019)(5) para a Amazônia ' +
           'Legal, ambas para o ano 2014, resultando em uma precisão global de 94,5%±2,05 e exatidão global de 93%, respectivamente.',
         margin: [30, 0, 30, 5],

@@ -112,7 +112,6 @@ const analysisReportFormat = {
 
     resultReportData['urlGsLegend'] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on;forceTitles:off;layout:vertical;columns:2;fontSize:16&LAYER=${views.STATIC.children.CAR_VALIDADO.workspace}:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`;
 
-
     resultReportData['urlGsImage3'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox.replace(/\s+/g, '')}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/2019&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
     
     resultReportData['urlGsImage4'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/2018&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
@@ -156,7 +155,6 @@ const analysisReportFormat = {
         alert['urlGsImagePlanetCurrentAndCar'] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/${alert.year}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${views.DETER.children.CAR_X_DETER.table_name}_id='${alert.id}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
       });
     }
-
   },
   queimada (reportData, views, resultReportData, carColumn, carColumnSema, date, filter = null) {
     const layers = [`${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
@@ -170,7 +168,6 @@ const analysisReportFormat = {
 
 setReportFormat = async function(reportData, views, type, carColumn, carColumnSema, date, filter) {
   const resultReportData = {};
-
 
   resultReportData['bbox'] = setBoundingBox(reportData.bbox);
 
@@ -330,7 +327,6 @@ setDeterData = async function(type, views, propertyData, dateSql, columnCarEstad
 };
 
 setProdesData = async function(type, views, propertyData, dateSql, columnCarEstadual, columnCalculatedAreaHa, columnExecutionDate, carRegister) {
-
   if (propertyData && views.PRODES && type === 'prodes') {
     // --- Prodes area grouped by year ---------------------------------------------------------------------------------
     const sqlProdesYear =
@@ -338,7 +334,7 @@ setProdesData = async function(type, views, propertyData, dateSql, columnCarEsta
         extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
         ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area
       FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS cp
-      WHERE cp.${columnCarEstadual} = '${carRegister}' 
+      WHERE cp.${columnCarEstadual} = '${carRegister}'
         ${dateSql}
       GROUP BY date
       ORDER BY date `;
@@ -1256,7 +1252,7 @@ module.exports = FileReport = {
         FROM public.${views[type.toUpperCase()].children[groupType[type]].table_name} AS main_table
         WHERE main_table.${carColumnSemas} = '${carRegister}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
-        ORDER BY main_table.calculated_area_ha
+        ORDER BY main_table.calculated_area_ha DESC
         LIMIT 5
     `;
 
