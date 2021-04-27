@@ -691,7 +691,7 @@ getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionConte
 
   const content = [];
   for (let j = 0; j < docDefinitionContent.length; j++) {
-    if (j === 72) {
+    if (j === 73) {
       reportData.desflorestationHistoryContext.forEach(desflorestationHistory => {
         content.push(desflorestationHistory);
       });
