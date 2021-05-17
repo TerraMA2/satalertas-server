@@ -10,11 +10,25 @@ module.exports = {
       },
       id_view: {
         type: Sequelize.INTEGER,
-        references: { model: 'views', key: 'id' }
+        references: { 
+          model: {
+            schema: 'terrama2',
+            tableName: 'views'
+          },
+          key: 'id'
+        },
+        onDelete: 'SET NULL'
       },
       id_group: {
         type: Sequelize.INTEGER,
-        references: { model: 'groups', key: 'id' }
+        references: { 
+          model: {
+            tableName: 'groups',
+            schema: 'terrama2'
+          },
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
     }, {
       charset: 'utf-8',
