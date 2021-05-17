@@ -10,7 +10,9 @@ exports.getAll = async (req, res) => {
 
 exports.getById = async (req, res) => {
     try {
-        res.json(await GroupService.getById(req.query.id));
+        const result = await GroupService.getById(req.query.id);
+        console.log("controller.getById\n", result);
+        res.json(result);
     } catch (e) {
         res.json(e);
     }
