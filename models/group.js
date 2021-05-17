@@ -1,6 +1,20 @@
 'use strict';
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  const Group = sequelize.define('groups', {
+  class Group extends Model {
+    static associate(models) {
+      const { views } = models;
+
+      this.belongsToMany(views, {
+        through: 'rel_group_view',
+        as: 'relGroupView',
+        foreignKey: 'id_group',
+      })
+    }
+  }
+
+  Group.init({
     id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -17,26 +31,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       comment: "Code of the group"
     }
-  }, {
+  },{
+    sequelize,
+    modelName: 'Group',
+    tableName: 'groups',
     schema: 'terrama2',
     underscored: true,
     underscoredAll: true,
     timestamps: false
-  });
-  Group.associate = function(models) {
-    Group.belongsTo(models.project, {
-      onDelete: 'RESTRICT',
-      foreignKey: 'idProject',
-      as: 'projetc',
-      otherKey: 'idProject'
-    });
-    Group.belongsToMany(models.rel_group_view, {
-      through: 'RelGroupView',
-      onDelete: 'CASCADE',
-      foreignKey: 'idGroup',
-      as: 'relGroupVSiew',
-      otherKey: 'idView'
-    });
-  };
+  })
   return Group;
-};
+}
