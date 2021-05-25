@@ -20,7 +20,37 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: models.view,
         key: 'id',
-      }
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        comment: "View name"
+      },
+      description: {
+        type: DataTypes.TEXT,
+        comment: "View description"
+      },
+      active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        default: true,
+        comment: "It defines view can be used and retrieved. Default is true."
+      },
+      private: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        default: false,
+        comment: "It defines if the view is private. Default is false."
+      },
+      schedule_type: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      source_type: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        comment: "It defines the type of data source that create the view. Alert, Analysis, Static Data or Dynamic Data"
+      },
     },
   }, {
     sequelize,

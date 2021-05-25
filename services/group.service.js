@@ -10,7 +10,7 @@ const QUERY_TYPES_SELECT = { type: "SELECT" }
 module.exports = GroupService = {
   async getAll() {
     try {
-      const groups = await Group.findAll();
+      const groups = await Group.findAll({include: "relGroupView"});
       return await groups;
     } catch (e) {
       const msgErr = `In unit group.service, method getAll:${e}`;
@@ -24,27 +24,19 @@ module.exports = GroupService = {
       let where = {};
 
       const group = await Group.findByPk(id);
-      // console.log("dentrdo do group.service");
-      // console.log(group);
+
       group.dataValues.project = await Project.findByPk(group.idProject);
       where = {
         where: {
           id_group: group.id
         }
       };
-      // const teste = await Group.findByPk(id, {include: 'relGroupsView' });
-      // console.log('Dentro de group.services - getById');
-      // console.log(">>>",teste.relGroupsView.map((dataValues, idx) => ({id: idx, 
-      //   dv: dataValues.id})));
-      //   console.log("----------------------------")
       group.dataValues.relViews = await RelGroupView.findAll(where)
-      // console.log('group\n', group);
+
       for(const relViews of group.dataValues.relViews){
         const id = relViews.id_view;
-        const views = await View.findAll();
         relViews.dataValues.view = await View.findByPk(id);
       }
-      // return teste;
       return group;
 
     } catch (e) {
@@ -63,18 +55,15 @@ module.exports = GroupService = {
   },
   async update(groupModify) {
     const group = await Group.findByPk(groupModify.id);
-
     group.name = groupModify.name;
     group.idProject = groupModify.idProject;
     group.code = groupModify.code;
-
     await group.save();
     return group.dataValues;
   },
 
   async deleteGroup(groupId) {
     const group = await Group.findByPk(groupId);
-
-   return await group.destroy().then(result => result);
+    return await group.destroy().then(result => result);
   }
 };

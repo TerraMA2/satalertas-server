@@ -1,4 +1,5 @@
 'use strict'
+
 module.exports = (sequelize, DataTypes) => {
   const View = sequelize.define('views', {
     id: {
@@ -50,6 +51,13 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   })
   View.associate = function(models) {
+    View.belongsToMany(models.Group, {
+      through: 'rel_group_view',
+      as: 'relGroupView',
+      foreignKey: 'id_view',
+      onDelete: "SET NULL",
+      otherKey: 'id_group'
+    })
   }
   return View
 }
