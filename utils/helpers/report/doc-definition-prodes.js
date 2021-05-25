@@ -139,7 +139,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
         alignment: 'justify',
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 05],
         style: 'bodyIndentFirst',
       },
       {
@@ -147,7 +147,7 @@ module.exports = function (headerDocument, reportData, title) {
           reportData.images.geoserverImage1,
           reportData.images.geoserverImage2,
         ],
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 10],
       },
       {
         text: [
@@ -162,7 +162,7 @@ module.exports = function (headerDocument, reportData, title) {
         ],
         alignment: 'center',
         fontSize: 9,
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 10],
       },
       {
         columns: [
@@ -185,7 +185,7 @@ module.exports = function (headerDocument, reportData, title) {
             alignment: 'right',
           },
         ],
-        margin: [30, 25, 30, 15],
+        margin: [30, 10, 30, 15],
       },
       {
         text: '',
