@@ -7,6 +7,7 @@ const models = require('../models')
 module.exports = carService = {
   async getAllSimplified(params) {
     const specificParameters = JSON.parse(params.specificParameters);
+    const filterReceived = JSON.parse(params.filter);
     const layer = JSON.parse(specificParameters.view);
 
     try {
@@ -59,6 +60,9 @@ module.exports = carService = {
       filter.sqlWhere += specificParameters.isDynamic ?
         ` AND property.gid = ${specificParameters.tableAlias}.de_car_validado_sema_gid ` : '';
 
+      if (filterReceived.themeSelected && specificParameters.isDynamic) {
+        filter.sqlWhere += ' AND property.geocodigo = county.geocodigo '
+      }
       const sqlWhere =
         filter.sqlHaving ?
           ` ${filter.sqlWhere}
@@ -68,16 +72,15 @@ module.exports = carService = {
                             GROUP BY tableWhere.de_car_validado_sema_gid
                             ${filter.sqlHaving}) ` :
           filter.sqlWhere;
-
       let sql =
         ` ${sqlSelect}
-                    ${sqlFrom}
-                    ${filter.secondaryTables}
-                    ${sqlWhere}
-                    ${sqlGroupBy}
-                    ${filter.order}
-                    ${filter.limit}
-                    ${filter.offset}`;
+            ${sqlFrom}
+            ${filter.secondaryTables}
+            ${sqlWhere}
+            ${sqlGroupBy}
+            ${filter.order}
+            ${filter.limit}
+            ${filter.offset}`;
 
       const carResult = await Car.sequelize.query(sql, QUERY_TYPES_SELECT);
 
