@@ -3,6 +3,7 @@ const express = require('express');
         GroupViewController = require('../controllers/group-view.controller');
 
 router.put('/', GroupViewController.update);
+router.put('/advanced', GroupViewController.updateAdvanced);
 router.post('/', GroupViewController.add);
 router.get('/', GroupViewController.getAll);
 router.get('/getByIdGroup?:idGroup*', GroupViewController.getByIdGroup);
