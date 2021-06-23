@@ -32,3 +32,8 @@ exports.update = async (req, res) => {
     const groupModify = req.body.params;
     res.json(await GroupViewService.update(groupModify));
 }
+
+exports.updateAdvanced = async (req, res) => {
+    const groupModify = req.body.params;
+    res.json(await GroupViewService.updateAdvanced(groupModify));
+}
