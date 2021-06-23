@@ -18,6 +18,19 @@ module.exports = GroupService = {
       throw new Error(msgErr);
     }
   },
+  async getCodGroups() {
+    const codGroup = [
+      {id: 1, cod_group: 'STATIC', label: 'Dados Estáticos'},
+      {id: 2, cod_group: 'DYNAMIC', label: 'Dados Dinâmicos'},
+      {id: 3, cod_group: 'ANALYSIS', label: ''},
+      {id: 4, cod_group: 'ALERT', label: ''},
+      {id: 5, cod_group: 'BURNED', label: 'Análise FOCOS'},
+      {id: 6, cod_group: 'BURNED_AREA', label: 'Análise Área Queimada'},
+      {id: 7, cod_group: 'DETER', label: 'Análise Deter'},
+      {id: 8, cod_group: 'PRODES', label: 'Análise Prodes'},
+    ];
+    return codGroup;
+  },
   async getById(id) {
     // Melhorar usando o include das relações
     try {
