@@ -1,6 +1,5 @@
 'use strict';
 const { Model } = require('sequelize');
-const allModels = require('./index')
 
 module.exports = (sequelize, DataTypes) => {
   const { models } = sequelize;
@@ -51,6 +50,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "It defines the type of data source that create the view. Alert, Analysis, Static Data or Dynamic Data"
       },
+      is_primary: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        default: false,
+        comment: "It defines if the layer is parent or not. Default is false."
+      },
+      sub_layers: {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        comment: "It defines which layers are sub layers of this layer."
+      }
     },
   }, {
     sequelize,
