@@ -2,7 +2,7 @@ const   models = require('../models')
         ConservationUnit = models.de_unidade_cons_sema
         logger = require('../utils/logger');
 
-exports.getAll = async (req, res) => {
+exports.getAll = async (_req, res) => {
     try {
         res.json(await ConservationUnit.findAll());
     } catch (e) {

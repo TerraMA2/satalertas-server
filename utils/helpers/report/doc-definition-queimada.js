@@ -129,7 +129,7 @@ module.exports = function (headerDocument, reportData, title) {
             text:
               'Trata-se de relatório técnico sobre incêndio identificado com o ' +
               'uso de Sistema de Informações Geográficas no imóvel rural ' +
-              `${reportData.property.city}`,
+              `${reportData.property.name}`,
           },
           {
             text: ' (Figura 1) ',
