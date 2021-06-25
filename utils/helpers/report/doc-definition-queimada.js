@@ -157,7 +157,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
         alignment: 'justify',
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 0],
         style: 'bodyIndentFirst',
       },
       reportData.images.geoserverImage1,
@@ -411,14 +411,16 @@ module.exports = function (headerDocument, reportData, title) {
         text: (
           'Para validação dos incêndios ilegais, os focos de fogo foram ' +
           'intersectados com os dados geospaciais das autorizações de queima ' +
-          'controlada (AQC) emitidas pela SEMA, assim como foi verificada a existência ' +
-          'de cicatriz causada pela passagem de fogo na vegetação a partir da ' +
-          'interpretação das imagens de satélite após ou durante o período de ' +
-          `${reportData.formattedFilterDate}. Ainda, foram elaborados gráficos contendo as séries ` +
+          'controlada (AQC) emitidas pela SEMA ' +
+          // ', assim como foi verificada a existência ' +
+          // 'de cicatriz causada pela passagem de fogo na vegetação a partir da ' +
+          // 'interpretação das imagens de satélite após ou '+
+          'durante o período de ' +
+          `${reportData.formattedFilterDate}. Permitindo a elaboração de gráficos contendo as séries ` +
           'temporais de focos de fogo que incidiram no imóvel rural ao longo dos anos ' +
-          '(a partir de 1999) e no período de 15 de julho até 15 de setembro desde 2006 ' +
-          '(período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
-          'Lei Estadual n. 233, de 21 de dezembro de 2005).'
+          '(série histórica desde 1999) e no período ' +
+          'período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
+          'Lei Estadual n. 233, de 21 de dezembro de 2005.'
           ),
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
@@ -450,15 +452,15 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
-      {
-        text:
-          'As cicatrizes das áreas queimadas são produzidas sistematicamente ' +
-          'para o bioma Cerrado com uso das imagens do satélite Landsat-8 ' +
-          'e estes dados, com resolução espacial de 30 metros, confirmam a localização e extensão ' +
-          'da superfície queimada.',
-        margin: [30, 0, 30, 5],
-        style: 'bodyIndentFirst',
-      },
+      // {
+      //   text:
+      //     'As cicatrizes das áreas queimadas são produzidas sistematicamente ' +
+      //     'para o bioma Cerrado com uso das imagens do satélite Landsat-8 ' +
+      //     'e estes dados, com resolução espacial de 30 metros, confirmam a localização e extensão ' +
+      //     'da superfície queimada.',
+      //   margin: [30, 0, 30, 5],
+      //   style: 'bodyIndentFirst',
+      // },
       {
         text:
           'Os dados do INPE constituem fonte de acentuada importância ' +
@@ -468,8 +470,25 @@ module.exports = function (headerDocument, reportData, title) {
           'de efeito estufa por desflorestamento e degradação florestal. Ainda, a importância e credibilidade dos dados gerados ' +
           'pelo INPE é refletida pelas milhares de publicações científicas que utilizaram essas informações para realização de ' +
           'pesquisas, que podem ser encontrada no Google Scholar².',
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 0],
         style: 'bodyIndentFirst',
+      },
+      {
+        text:  [
+          {
+            text: '²Disponível em ',
+          },
+          {
+            text: 'https://scholar.google.com.br',
+            link: 'https://scholar.google.com.br',
+            color: 'blue',
+          },
+          {
+            text: ', acessado em 13.01.2020.'
+          }
+        ],
+        fontSize: 8,
+        margin: [30, 30, 30, 30],
       },
       {
         text: '5 ANÁLISE TÉCNICA',
@@ -485,9 +504,7 @@ module.exports = function (headerDocument, reportData, title) {
             'a',
             'até',
           )}. Na figura 02 é possível ` +
-          'observar em imagem de satélite a cicatriz de incêndio na vegetação do ' +
-          'imóvel rural causada pela passagem de fogo (feições de cor roxa na imagem ' +
-          'de satélite), assim como os focos de fogo que incidiram na região do ' +
+          'observar em imagem de satélite os focos de fogo que incidiram na região do ' +
           'incêndio. Nas figuras 03 e 04 constam os gráficos com as séries temporais de ' +
           'focos de fogo que incidiram no imóvel rural ao longo dos anos (a partir de ' +
           '1999) e no período de 15 de julho até 15 de setembro desde o ano 2006 (ano ' +
@@ -506,7 +523,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de fogo ativos na vegetação ' +
+              '- imagem de satélite evidenciando os focos de fogo ativos na vegetação ' +
               'da ' +
               reportData.property.name +
               ' em ' +
@@ -518,23 +535,6 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 0],
         style: 'body',
         fontSize: 10,
-      },
-      {
-        text:  [
-          {
-            text: '²Disponível em ',
-          },
-          {
-            text: 'https://scholar.google.com.br',
-            link: 'https://scholar.google.com.br',
-            color: 'blue',
-          },
-          {
-            text: ', acessado em 13.01.2020.'
-          }
-        ],
-        fontSize: 8,
-        margin: [30, 100, 30, 0],
       },
       {
         text: '',

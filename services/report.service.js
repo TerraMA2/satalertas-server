@@ -1308,7 +1308,7 @@ module.exports = FileReport = {
       const title =
         reportData['type'] === 'deter' ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code}` :
           reportData['type'] === 'prodes' ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code}` :
-            reportData['type'] === 'queimada' ? `RELATÓRIO SOBRE CICATRIZ DE QUEIMADA Nº ${code}` :
+            reportData['type'] === 'queimada' ? `RELATÓRIO DE FOCOS DE INCÊNCIO Nº ${code}` :
               `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
 
       await setImages(reportData);
