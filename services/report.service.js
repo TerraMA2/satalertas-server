@@ -721,63 +721,16 @@ getContentForDeflorestionAlertsContext = async function(docDefinitionContent, de
 }
 
 getConclusion = async function(conclusionText) {
-  const firstLineMargin = 152;
-  const margin = 30;
-  const numberOfCharactersInTheFirstLine = 70;
   const conclusionParagraphs = conclusionText ? conclusionText.split('\n') : [ 'XXXXXXXXXXXXX.' ];
   const conclusion = [];
 
-  for(let i = 0; i < conclusionParagraphs.length; i++) {
-    const alignment = conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine ? 'right' : 'left';
-
-    const paragraph =  [];
-
-    let firstLine = conclusionParagraphs[i].substring(0, numberOfCharactersInTheFirstLine).trim();
-
-    let numberOfCharacters = 0;
-    if ((conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine) && (conclusionParagraphs[i][numberOfCharactersInTheFirstLine + 1] !== '')) {
-      for (let j = 0 ; j < numberOfCharactersInTheFirstLine - 1 ; j++) {
-        numberOfCharacters++;
-        if (firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters] && firstLine[numberOfCharactersInTheFirstLine - numberOfCharacters].trim() === '') {
-          firstLine = firstLine.substring(0, numberOfCharactersInTheFirstLine - numberOfCharacters).trim();
-          j = numberOfCharactersInTheFirstLine;
-        }
-      }
-
-      if (numberOfCharacters > 0) {
-        let text = '';
-        let number = 0;
-        for (let j = 0 ; j < (firstLine.length); j++) {
-          text += firstLine[j];
-          if ((number < (numberOfCharacters - 5)) && (firstLine[j].trim() === '')) {
-            text += ' ';
-            number++;
-          }
-        }
-        firstLine = text;
-      }
+  for (paragraph in conclusionParagraphs) {
+    const paragraphObj = {
+      text: (conclusionParagraphs[paragraph]),
+      margin: [30, 0, 30, 5],
+      style: 'bodyIndentFirst'
     }
-
-    if (firstLine.trim() !== '') {
-      conclusion.push({
-        text: `${firstLine}`,
-        alignment: `${alignment}`,
-        margin: [firstLineMargin, 0, margin, 0],
-        style: 'body'
-      });
-    }
-
-    if (conclusionParagraphs[i].length > numberOfCharactersInTheFirstLine) {
-      const restOfText = conclusionParagraphs[i].substring(numberOfCharactersInTheFirstLine - numberOfCharacters).trim();
-      if (restOfText.trim() !== '') {
-        conclusion.push({
-          text: `${restOfText}`,
-          margin: [30, 0, 30, 5],
-          style: 'body'
-        });
-      }
-    }
-
+    conclusion.push(paragraphObj);
   }
   return conclusion;
 }
