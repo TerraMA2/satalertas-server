@@ -810,7 +810,7 @@ setDocDefinitions = async function(reportData, docDefinition) {
   }
   
   if (reportData.type === 'queimada') {
-    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 45);
+    docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments, 44);
   }
 
   return await docDefinition;
