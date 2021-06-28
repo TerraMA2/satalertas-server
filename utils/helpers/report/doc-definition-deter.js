@@ -710,6 +710,12 @@ module.exports = function (headerDocument, reportData, title) {
         alignment: 'justify',
         lineHeight: 1.5
       },
+      bodyIndentFirst: {
+        fontSize: 11,
+        alignment: 'justify',
+        lineHeight: 1.5,
+        leadingIndent: 120,
+      },
       title: {
         bold: true,
         fontSize: 11,
