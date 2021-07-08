@@ -700,7 +700,6 @@ getDesflorestationHistoryAndChartNdviContext = async function(docDefinitionConte
 
     content.push(docDefinitionContent[j]);
   }
-
   return content;
 }
 
@@ -857,7 +856,7 @@ module.exports = FileReport = {
           bold: 'fonts/Roboto-Medium.ttf',
           italics: 'fonts/Roboto-Italic.ttf',
           bolditalics: 'fonts/Roboto-MediumItalic.ttf'
-        }
+        },
       };
 
       const pathDoc = `documentos/`;
@@ -1261,7 +1260,7 @@ module.exports = FileReport = {
       const title =
         reportData['type'] === 'deter' ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code}` :
           reportData['type'] === 'prodes' ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code}` :
-            reportData['type'] === 'queimada' ? `RELATÓRIO DE FOCOS DE INCÊNCIO Nº ${code}` :
+            reportData['type'] === 'queimada' ? `RELATÓRIO DE FOCOS DE INCÊNDIO Nº ${code}` :
               `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
 
       await setImages(reportData);
