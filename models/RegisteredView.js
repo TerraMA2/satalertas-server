@@ -1,6 +1,6 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-  const RegisteredView = sequelize.define('registered_views', {
+  const RegisteredView = sequelize.define('RegisteredView', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -18,13 +18,14 @@ module.exports = (sequelize, DataTypes) => {
       comment: "Map server URI"
     }
   }, {
+    tableName: 'registered_views',
     schema: 'terrama2',
     underscored: true,
     underscoredAll: true,
     timestamps: false,
   })
   RegisteredView.associate = function(models) {
-    RegisteredView.belongsTo(models.views, {
+    RegisteredView.belongsTo(models.View, {
       onDelete: "CASCADE",
       foreignKey: 'view_id',
       as: 'view'

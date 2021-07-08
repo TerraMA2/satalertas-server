@@ -4,6 +4,10 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const { models } = sequelize;
   class RelGroupView extends Model {
+    static assosciate(models) {
+      // const { Groups } = models;
+      // this.hasOne
+    }
   }
 
   RelGroupView.init({
