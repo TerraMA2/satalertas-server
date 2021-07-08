@@ -256,12 +256,12 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              'Informações e dados geográficos do SIMCAR Parceiros e Público, da Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA). Os ' +
+              'Informações e dados geográficos do SIMCAR Parceiros e Público, ' +
+              'da Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA). Os ' +
               'dados declarados no SIMCAR foram unidos em uma única base, ' +
-              'compreendendo os CAR validades, aguardando ' +
+              'compreendendo os CAR validados, aguardando ' +
               'complementação, em análise e migrados do Sistema de Cadastro ' +
-              'Ambiental Rural (SICAR). Foram excluídos da base os CAR com status ' +
-              'cancelado e indeferido;',
+              'Ambiental Rural (SICAR).',
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body',
@@ -505,7 +505,7 @@ module.exports = function (headerDocument, reportData, title) {
             'até',
           )}. Na figura 02 é possível ` +
           'observar em imagem de satélite os focos de fogo que incidiram na região do ' +
-          'incêndio. Nas figuras 03 e 04 constam os gráficos com as séries temporais de ' +
+          'incêndio. Na figura 03 consta o gráfico com a série temporal de ' +
           'focos de fogo que incidiram no imóvel rural ao longo dos anos (a partir de ' +
           '1999) e no período de 15 de julho até 15 de setembro desde o ano 2006 (ano ' +
           'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que ' +
