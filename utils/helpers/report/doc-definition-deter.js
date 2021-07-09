@@ -625,25 +625,11 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true
           },
           {
-            text: ` – Informações sobre o CAR ${reportData.property.register ? reportData.property.register : reportData.property.federalregister};`,
+            text: '– Informações complementares;',
             style: 'body'
           }
         ],
         margin: [30, 0, 30, 0]
-      },
-      {
-        text: [
-          {
-            text: 'Anexo 2.',
-            style: 'body',
-            bold: true
-          },
-          {
-            text: ' – Relatório do SINESP-INFOSEG referente aos proprietários/posseiros do imóvel rural. ',
-            style: 'body'
-          }
-        ],
-        margin: [30, 0, 30, 0],
       },
       {
         text: '',
@@ -655,7 +641,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem'
       },
       {
-        text: `Este relatório técnico foi validado em ${ reportData.currentDate} por: `,
+        text: `Este relatório técnico foi validado em ${reportData.currentDate} por: `,
         margin: [30, 0, 30, 250],
         alignment: 'center',
         style: 'body'

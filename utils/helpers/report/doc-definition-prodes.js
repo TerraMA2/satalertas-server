@@ -1084,30 +1084,15 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true,
           },
           {
-            text: ` – Informações sobre o CAR ${
-              reportData.property.register
-                ? reportData.property.register
-                : reportData.property.federalregister
-            };`,
+            text: '– Informações complementares;',
             style: 'body',
           },
         ],
         margin: [30, 0, 30, 0],
       },
       {
-        text: [
-          {
-            text: 'Anexo 2.',
-            style: 'body',
-            bold: true,
-          },
-          {
-            text:
-              ' – Relatório do SINESP-INFOSEG referente aos proprietários/posseiros do imóvel rural. ',
-            style: 'body',
-          },
-        ],
-        margin: [30, 0, 30, 0],
+        text: '',
+        pageBreak: 'after',
       },
       {
         text: '6 VALIDAÇÃO',
