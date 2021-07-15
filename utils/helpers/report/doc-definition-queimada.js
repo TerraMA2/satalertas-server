@@ -133,7 +133,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text:
-              'Trata-se de relatório técnico sobre incêndio identificado com o ' +
+              'Trata-se de relatório técnico sobre focos de calor identificado com o ' +
               'uso de Sistema de Informações Geográficas no imóvel rural ' +
               `${reportData.property.name}`,
           },
@@ -187,7 +187,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'As informações sobre os incêndios foram integradas no âmbito ' +
+          'As informações sobre os focos de calor foram integradas no âmbito ' +
           'do Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
           'e Instituto Nacional de Pesquisas Espaciais (INPE), cujo objeto consiste na ',
         margin: [30, 0, 30, 15],
@@ -243,7 +243,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              'Dados históricos dos focos de fogo ativos no Estado de Mato Grosso ' +
+              'Dados históricos dos focos de calor ativos no Estado de Mato Grosso ' +
               'mapeados pelo Programa Queimadas desenvolvido pelo INPE;',
             margin: [20, 0, 30, 5],
             width: 'auto',
@@ -401,15 +401,15 @@ module.exports = function (headerDocument, reportData, title) {
         text:
           'Os dados do Programa Queimadas (pontos representando a ' +
           'área nominal do píxel de fogo), foram cruzados com ' +
-          'informações geoespaciais de fontes oficiais para identificação de incêndios ' +
-          'florestais em imóveis rurais no Estado de Mato Grosso, bem como para ' +
+          'informações geoespaciais de fontes oficiais para identificação de focos ' +
+          'de calor em imóveis rurais no Estado de Mato Grosso, bem como para ' +
           'identificação dos responsáveis pelo imóvel rural atingido.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
       {
         text:
-          'Para validação dos incêndios ilegais, os focos de fogo foram ' +
+          'Para validação foram ' +
           'intersectados com os dados geospaciais das autorizações de queima ' +
           'controlada (AQC) emitidas pela SEMA ' +
           // ', assim como foi verificada a existência ' +
@@ -417,7 +417,7 @@ module.exports = function (headerDocument, reportData, title) {
           // 'interpretação das imagens de satélite após ou '+
           'durante o período de ' +
           `${reportData.formattedFilterDate}. Permitindo a elaboração de gráficos contendo as séries ` +
-          'temporais de focos de fogo que incidiram no imóvel rural ao longo dos anos ' +
+          'temporais de focos de calor que incidiram no imóvel rural ao longo dos anos ' +
           '(série histórica desde 1999) e no período ' +
           'período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
           'Lei Estadual n. 233, de 21 de dezembro de 2005.',
@@ -441,7 +441,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'Os dados de queimadas possuem características distintas pois ' +
+          'Os dados do programa Queimadas possuem características distintas pois ' +
           'os focos representados na forma de um ponto são a indicação do centro de um píxel de uma imagem de um dos ' +
           'satélites recebidos e processados pelo INPE. A quantidade de satélites pode variar ao longo do tempo e por este ' +
           'motivo as comparações interanuais são realizadas apenas pelos dados do satélite AQUA. No entanto, para ' +
@@ -451,15 +451,6 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
-      // {
-      //   text:
-      //     'As cicatrizes das áreas queimadas são produzidas sistematicamente ' +
-      //     'para o bioma Cerrado com uso das imagens do satélite Landsat-8 ' +
-      //     'e estes dados, com resolução espacial de 30 metros, confirmam a localização e extensão ' +
-      //     'da superfície queimada.',
-      //   margin: [30, 0, 30, 5],
-      //   style: 'bodyIndentFirst',
-      // },
       {
         text:
           'Os dados do INPE constituem fonte de acentuada importância ' +
@@ -497,15 +488,14 @@ module.exports = function (headerDocument, reportData, title) {
         text:
           'O INPE, a partir dos dados do Programa Queimadas identificou ' +
           `${reportData.property.burnCount['total_focus']} ` +
-          ' focos de fogo ativos no imóvel rural denominado ' +
+          ' focos de calor ativos no imóvel rural denominado ' +
           `${reportData.property.name} ` +
           `no período de ${reportData.formattedFilterDate.replace(
             'a',
             'até',
           )}. Na figura 02 é possível ` +
-          'observar em imagem de satélite os focos de fogo que incidiram na região do ' +
-          'incêndio. Na figura 03 consta o gráfico com a série temporal de ' +
-          'focos de fogo que incidiram no imóvel rural ao longo dos anos (a partir de ' +
+          'observar em imagem de satélite os focos de calor que incidiram no ' +
+          'imóvel rural ao longo dos anos (a partir de ' +
           '1999) e no período de 15 de julho até 15 de setembro desde o ano 2006 (ano ' +
           'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que ' +
           'estabelece o período proibitivo de uso do fogo para limpeza e manejo de ' +
@@ -522,7 +512,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- imagem de satélite evidenciando os focos de fogo ativos na vegetação ' +
+              '- imagem de satélite evidenciando os focos de calor ativos na vegetação ' +
               'da ' +
               reportData.property.name +
               ' em ' +
@@ -548,7 +538,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- Série histórica de focos de fogo ativos na ' +
+              '- Série histórica de focos de calor ativos na ' +
               reportData.property.name +
               ' em ' +
               reportData.property.city +
