@@ -409,12 +409,9 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'Para validação foram ' +
+          'Para validação dos incêndios ilegais, os focos de calor foram ' +
           'intersectados com os dados geospaciais das autorizações de queima ' +
           'controlada (AQC) emitidas pela SEMA ' +
-          // ', assim como foi verificada a existência ' +
-          // 'de cicatriz causada pela passagem de fogo na vegetação a partir da ' +
-          // 'interpretação das imagens de satélite após ou '+
           'durante o período de ' +
           `${reportData.formattedFilterDate}. Permitindo a elaboração de gráficos contendo as séries ` +
           'temporais de focos de calor que incidiram no imóvel rural ao longo dos anos ' +
@@ -494,8 +491,9 @@ module.exports = function (headerDocument, reportData, title) {
             'a',
             'até',
           )}. Na figura 02 é possível ` +
-          'observar em imagem de satélite os focos de calor que incidiram no ' +
-          'imóvel rural ao longo dos anos (a partir de ' +
+          'observar em imagem de satélite os focos de calor que incidiram na ' +
+          'propriedade. Na figura 03 consta o gráfico com a série temporal de ' +
+          'focos de calor que incidiram no imóvel rural ao longo dos anos (a partir de ' +
           '1999) e no período de 15 de julho até 15 de setembro desde o ano 2006 (ano ' +
           'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que ' +
           'estabelece o período proibitivo de uso do fogo para limpeza e manejo de ' +
