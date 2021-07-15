@@ -409,7 +409,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'Para validação foram dos incêndios ilegais, os focos de calor foram ' +
+          'Para validação dos incêndios ilegais, os focos de calor foram ' +
           'intersectados com os dados geospaciais das autorizações de queima ' +
           'controlada (AQC) emitidas pela SEMA ' +
           'durante o período de ' +
