@@ -1,17 +1,18 @@
 const Result = require("../utils/result")
-  models = require('../models')
-  Report = models.reports
-  env = process.env.NODE_ENV || 'development'
-  confDb = require(__dirname + '/../config/config.json')[env]
-  PdfPrinter = require('pdfmake')
-  fs = require('fs')
-  env = process.env.NODE_ENV || 'development'
-  confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
-  ViewUtil = require("../utils/view.utils")
-  SatVegService = require("../services/sat-veg.service")
-  axios = require('axios')
-  logger = require('../utils/logger')
-  moment = require('moment')
+const models = require('../models')
+const Report = models.reports
+const env = process.env.NODE_ENV || 'development'
+const confDb = require(__dirname + '/../config/config.json')[env]
+const PdfPrinter = require('pdfmake')
+const fs = require('fs')
+const env = process.env.NODE_ENV || 'development'
+const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
+const ViewUtil = require("../utils/view.utils")
+const SatVegService = require("../services/sat-veg.service")
+const axios = require('axios')
+const logger = require('../utils/logger')
+const moment = require('moment')
+const { msgError } =  require('../utils/messageError')
 
 const config = {
   headers: {'X-My-Custom-Header': 'Header-Value'}
@@ -813,6 +814,7 @@ module.exports = FileReport = {
 
       return Result.ok(result)
     } catch (e) {
+      msgError(__filename, 'get', e )
       return Result.err(e);
     }
   },
@@ -836,6 +838,7 @@ module.exports = FileReport = {
 
       return Result.ok(result)
     } catch (e) {
+      msgError(__filename, 'newNumber', e )
       return Result.err(e);
     }
   },
@@ -844,7 +847,8 @@ module.exports = FileReport = {
       const confWhere = {where: { carGid: carCode.trim() }};
 
       return Result.ok(await Report.findAll(confWhere));
-    } catch (e) {
+    } catch (e) { 
+      msgError(__filename, 'getReportsByCARCod', e )
       return Result.err(e);
     }
   },
@@ -875,6 +879,7 @@ module.exports = FileReport = {
 
       return Result.ok(report)
     } catch (e) {
+      msgError(__filename, 'generatePdf', e )
       return Result.err(e)
     }
   },
@@ -890,6 +895,7 @@ module.exports = FileReport = {
 
       return await Report.create(report.dataValues).then(report => report.dataValues)
     } catch (e) {
+      msgError(__filename, 'saveReport', e )
       throw e
     }
   },
@@ -908,6 +914,7 @@ module.exports = FileReport = {
         `Arquivo ${report.dataValues.name}, id = ${id}, não encontrado!`
       return Result.ok(result)
     } catch (err) {
+      msgError(__filename, 'delete', e )
       return Result.err(err)
     }
   },
@@ -935,6 +942,7 @@ module.exports = FileReport = {
 
       return Result.ok(result)
     } catch (e) {
+      msgError(__filename, 'save', e )
       return Result.err(e)
     }
   },
@@ -989,6 +997,7 @@ module.exports = FileReport = {
 
       return Result.ok(await setReportFormat(propertyData, views, type, columnCar, columnCarSemas, date, filter));
     } catch (e) {
+      msgError(__filename, 'getReportCARData', e )
       return Result.err(e)
     }
   },
@@ -1158,6 +1167,7 @@ module.exports = FileReport = {
         return Result.ok(propertyData);
       }
     } catch (e) {
+      msgError(__filename, 'getSynthesisCarData', e )
       return Result.err(e)
     }
   },
@@ -1238,6 +1248,7 @@ module.exports = FileReport = {
 
       return Result.ok(points);
     } catch (e) {
+      msgError(__filename, 'getPointAlerts', e );
       throw new Error(e);
     }
   },
@@ -1251,6 +1262,7 @@ module.exports = FileReport = {
       const options = this.getChartOptions(labels, data);
       return Result.ok(options);
     } catch (e) {
+      msgError(__filename, 'getBurnlightCharts', e );
       return Result.err(e)
     }
   },
@@ -1275,6 +1287,7 @@ module.exports = FileReport = {
 
       return { docDefinitions: await setDocDefinitions(reportData, docDefinitions), headerDocument: headerDocument };
     } catch (e) {
+      msgError(__filename, 'getDocDefinitions', e );
       logger.error(e)
     }
   },
@@ -1282,6 +1295,7 @@ module.exports = FileReport = {
     try {
       return Result.ok(await this.getDocDefinitions(reportData));
     } catch (e) {
+      msgError(__filename, 'createPdf', e );
       logger.error(e)
     }
   }

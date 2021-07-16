@@ -1,6 +1,6 @@
 const express = require('express');
-        router = express.Router();
-        reportController = require('../controllers/report');
+const router = express.Router();
+const reportController = require('../controllers/report');
 
 router.post('/createPdf', reportController.createPdf);
 router.post('/add', reportController.upload);

@@ -1,7 +1,6 @@
-const
-  models = require('../models');
-  Report = models.Report;
-  ReportService = require("../services/report.service");
+const models = require('../models');
+const Report = models.Report;
+const ReportService = require("../services/report.service");
 
 exports.get = async (req, res) => {
     const id = req.query.id;
