@@ -1,18 +1,17 @@
-const Result = require("../utils/result")
-const models = require('../models')
-const Report = models.reports
-const env = process.env.NODE_ENV || 'development'
-const confDb = require(__dirname + '/../config/config.json')[env]
-const PdfPrinter = require('pdfmake')
-const fs = require('fs')
-const env = process.env.NODE_ENV || 'development'
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env]
-const ViewUtil = require("../utils/view.utils")
-const SatVegService = require("../services/sat-veg.service")
-const axios = require('axios')
-const logger = require('../utils/logger')
-const moment = require('moment')
-const { msgError } =  require('../utils/messageError')
+const Result = require("../utils/result");
+const models = require('../models');
+const Report = models.reports;
+const env = process.env.NODE_ENV || 'development';
+const confDb = require(__dirname + '/../config/config.json')[env];
+const PdfPrinter = require('pdfmake');
+const fs = require('fs');
+const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+const ViewUtil = require("../utils/view.utils");
+const SatVegService = require("../services/sat-veg.service");
+const axios = require('axios');
+const logger = require('../utils/logger');
+const moment = require('moment');
+const { msgError } =  require('../utils/messageError');
 
 const config = {
   headers: {'X-My-Custom-Header': 'Header-Value'}
