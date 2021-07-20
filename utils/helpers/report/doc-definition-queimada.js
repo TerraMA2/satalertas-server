@@ -244,7 +244,9 @@ module.exports = function (headerDocument, reportData, title) {
           {
             text:
               'Dados históricos dos focos de calor ativos no Estado de Mato Grosso ' +
-              'mapeados pelo Programa Queimadas desenvolvido pelo INPE;',
+              'mapeados pelo Programa Queimadas dados de desmatamentos mapeados ' +
+              'pelo PRODES e dados de desmatamentos e degradações florestais ' +
+              'mapeados pelo DETER, todos desenvolvidos pelo INPE',
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body',
@@ -351,7 +353,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text: 'Dados pessoais dos responsáveis pelo imóvel rural obtidos no Sistema Nacional de Informações de Segurança Pública (SINESP-INFOSEG).',
-            margin: [20, 0, 30, 15],
+            margin: [20, 0, 30, 10],
             width: 'auto',
             style: 'body',
           },
@@ -373,7 +375,7 @@ module.exports = function (headerDocument, reportData, title) {
           'por queimadas. Para ' +
           'isso, dados dinâmicos e estáticos foram processados para produzirem as informações ' +
           'que foram sistematizadas neste relatório.',
-        margin: [30, 0, 30, 5],
+        margin: [30, 0, 30, 0],
         style: 'bodyIndentFirst',
       },
       {
@@ -390,7 +392,7 @@ module.exports = function (headerDocument, reportData, title) {
             text: '. Acessado em 07.10.2019.',
           },
         ],
-        margin: [30, 20, 30, 0],
+        margin: [30, 0, 30, 0],
         fontSize: 8,
       },
       {
@@ -409,14 +411,13 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'Para validação dos incêndios ilegais, os focos de calor foram ' +
+          'Os focos de calor foram ' +
           'intersectados com os dados geospaciais das autorizações de queima ' +
           'controlada (AQC) emitidas pela SEMA ' +
           'durante o período de ' +
-          `${reportData.formattedFilterDate}. Permitindo a elaboração de gráficos contendo as séries ` +
+          `${reportData.formattedFilterDate}, permitindo a elaboração de gráficos contendo as séries ` +
           'temporais de focos de calor que incidiram no imóvel rural ao longo dos anos ' +
-          '(série histórica desde 1999) e no período ' +
-          'período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
+          'e no período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
           'Lei Estadual n. 233, de 21 de dezembro de 2005.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
@@ -478,6 +479,46 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 30, 30, 30],
       },
       {
+        text: '4.2 Os sistemas de mapeamento dos desmatamentos e degradações florestais PRODES e DETER',
+        style: 'listItem',
+      },
+      {
+        text:
+          'Os projetos PRODES e DETER, utilizados para identificação e quantificação ' +
+          'dos desmatamentos, fazem parte do Programa de Monitoramento da Amazônia ' +
+          'e Demais Biomas (PAMZ +) desenvolvido pela Coordenação Feral de Observação ' +
+          'da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
+          'Além do PRODES e DETER, o PAMZ + conta também com o Sistema de ' +
+          'Mapeamento do Uso e Ocupação da Terra (TerraClass). Estes três ' +
+          'projetos são complementares e concebidos para atender diferentes objetivos.',
+        margin: [30, 0, 30, 5],
+        style: 'bodyIndentFirst',
+      },
+      {
+        text:
+          'O objetivo do PRODES é estimar a taxa anual de desmatamento por corte ' +
+          'raso da floresta primária, excluídas as áreas de “não florestas”. ' +
+          'Importante ressaltar que o termo “desmatamento” é definido como ' +
+          '“a supressão de áreas de fisionomia florestal primária por ações ' +
+          'antropogênicas” (SOUZA et al., 2019)³, ou seja, tratam-se de áreas ' +
+          'sem histórico de intervenções pelo Homem que foram suprimidas a partir de 1988 por ação antrópica.',
+        margin: [30, 0, 30, 5],
+        style: 'bodyIndentFirst',
+      },
+      {
+        text:
+          'O objetivo do DETER é identificar as alterações da vegetação natural ' +
+          'em biomas da Amazônia Legal (Amazônia e Cerrado), em áreas acima de 3 ha, ' +
+          'com a emissão de alertas para apoio à fiscalização em tempo quase real. ' +
+          'Para fisionomias florestais no bioma Amazônia, os alertas indicam ' +
+          'áreas que sofreram corte raso ou intervenções pela exploração madeireira, ' +
+          'mineração ou queimadas, ou seja, identificam e mapeiam áreas ' +
+          'desflorestadas e degradadas, enquanto para o bioma Cerrado, ' +
+          'é identificada apenas o corte raso da vegetação natural.',
+        margin: [30, 0, 30, 5],
+        style: 'bodyIndentFirst',
+      },
+      {
         text: '5 ANÁLISE TÉCNICA',
         style: 'listItem',
       },
@@ -501,6 +542,25 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 15],
         style: 'bodyIndentFirst',
       },
+      {
+        text: [
+          {
+            text:
+              '3    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
+          },
+          {
+            text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf`,
+            link:
+              'text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+            color: 'blue',
+          },
+          {
+            text: '. Acessado em 13.10.2019.',
+          },
+        ],
+        fontSize: 8,
+        margin: [30, 80, 30, 0],
+      },
       reportData.images.geoserverImage2,
       {
         text: [
@@ -522,10 +582,6 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 0],
         style: 'body',
         fontSize: 10,
-      },
-      {
-        text: '',
-        pageBreak: 'after',
       },
       reportData.FocusChartImage,
       {
@@ -552,6 +608,10 @@ module.exports = function (headerDocument, reportData, title) {
         reportData.property,
         reportData.formattedFilterDate,
       ),
+      {
+        text: '',
+        pageBreak: 'after',
+      },
       {
         text: '6 CONCLUSÃO',
         style: 'listItem',
