@@ -263,7 +263,7 @@ function historyBurnlight(chartData) {
     },
     {
       label: 'Focos de fogo ativo (período proibitivo)',
-      rawValues: dataFocus,
+      rawValues: prohibitivePeriod,
       fill: false,
       backgroundColor: prohibitivePeriodColor,
       borderColor: prohibitivePeriodColor,
