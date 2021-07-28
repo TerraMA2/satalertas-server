@@ -1,8 +1,7 @@
 const models = require('../models');
-    View = models.views;
-    RegisteredView = models.registered_views;
-    LayerType = require('../enum/layerType');
-    ViewService = require("../services/view.service");
+const RegisteredView = models.registered_views;
+const LayerType = require('../enum/layerType');
+const ViewService = require("../services/view.service");
 
 exports.get = (req, res, next) => {
     const viewId = req.params.id;

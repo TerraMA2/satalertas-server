@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       const { View } = models;
 
       this.belongsToMany(View, {
-        through: 'rel_group_view',
+        through: 'RelGroupView',
         as: 'relGroupView',
         foreignKey: 'id_group',
       })

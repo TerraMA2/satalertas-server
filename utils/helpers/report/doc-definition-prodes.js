@@ -1,3 +1,16 @@
+const superscripts = {
+  0: '\u2070',
+  1: '\u00B9',
+  2: '\u00B2',
+  3: '\u00B3',
+  4: '\u2074',
+  5: '\u2075',
+  6: '\u2076',
+  7: '\u2077',
+  8: '\u2078',
+  9: '\u2079',
+};
+
 getInformationVegRadam = function (vegRadam) {
   let textRadam = '';
   vegRadam.forEach((veg) => {
@@ -351,7 +364,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              'Perfil histórico dos índices de vegetação NDFI e EVI obtidos Land Processes Distributed Active Center (LP-DAAC);',
+              'Perfil histórico dos índices de vegetação NDVI e EVI obtidos Land Processes Distributed Active Center (LP-DAAC);',
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body',
@@ -416,7 +429,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'Anformações sobre o imóvel rural onde incidiu o desmatamento e' +
+          'As formações sobre o imóvel rural onde incidiu o desmatamento e' +
           ' sua titularidade foram coletadas na base de dados do SIMCAR e/ou INCRA.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
@@ -443,7 +456,7 @@ module.exports = function (headerDocument, reportData, title) {
           'Por fim, foi gerado um relatório com o histórico de imagens de satélites' +
           ' e dos desmatamentos e queimadas ocorridos no imóvel rural, contendo ainda, o perfil ' +
           'histórico de NDVI e EVI dos 5 (cinco) maiores polígonos de desmatamento detectados, a fim de melhorar a interpretação das intervenções ' +
-          'antrópicas ocorridas. As séries temporais de índices vegetativos representam as variações de biomassa, sendo ' +
+          'antrópicas ocorridas. As séries temporais de índices vegetativos representam as variações de vigor da vegetação, sendo ' +
           'que o perfil ao longo de um ciclo hidrológico varia dependendo do tipo de vegetação, impactos ou uso alternativo da área.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
@@ -562,7 +575,7 @@ module.exports = function (headerDocument, reportData, title) {
           'O objetivo do PRODES é estimar a taxa anual de desmatamento por ' +
           'corte raso da floresta primária, excluídas as áreas de “não florestas”. Importante ressaltar que ' +
           'o termo “desmatamento” é definido como “a supressão de áreas de fisionomia florestal primária por ações ' +
-          'antropogênicas” (SOUZA et al., 2019)(3), ou seja, tratam-se de áreas sem histórico de intervenções pelo Homem ' +
+          'antropogênicas” (SOUZA et al., 2019)³, ou seja, tratam-se de áreas sem histórico de intervenções pelo Homem ' +
           'que foram suprimidas a partir de 1988 por ação antrópica.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
@@ -577,7 +590,7 @@ module.exports = function (headerDocument, reportData, title) {
           'controle e de modelos digitais de elevação do terreno, o que confere um nível mais alto de qualidade das ' +
           'informações, em concordância com as normas cartográficas vigentes. A avaliação da acurácia da metodologia ' +
           'do PRODES foi feita por Adami ' +
-          'et al. (2017)(4) para o Estado de Mato Grosso e por Maurano et al. (2019)(5) para a Amazônia ' +
+          'et al. (2017)' + superscripts[4] + ' para o Estado de Mato Grosso e por Maurano et al. (2019)(5) para a Amazônia ' +
           'Legal, ambas para o ano 2014, resultando em uma precisão global de 94,5%±2,05 e exatidão global de 93%, respectivamente.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
@@ -796,9 +809,11 @@ module.exports = function (headerDocument, reportData, title) {
           ' no período de ' +
           reportData.formattedFilterDate +
           ', conforme desmatamento explicitado ' +
-          'no Quadro 1 (quantificação e descrição das áreas desmatadas que foram identificadas com o cruzamento dos dados descritos no histórico desse relatório) ' +
-          'e no Anexo 2 (relatório do histórico de imagens de satélite e desmatamentos e queimadas ' +
-          'no imóvel rural). O proprietário/posseiro do imóvel rural foi identificado com base nos dados do SIMCAR / INCRA.',
+          'no Quadro 1 (quantificação e descrição das áreas desmatadas que ' +
+          'foram identificadas com o cruzamento dos dados descritos no histórico desse relatório) ' +
+          // 'e no Anexo 2 (relatório do histórico de imagens de satélite e desmatamentos e queimadas no imóvel rural). ' +
+          'e no histórico de imagens de satélite e desmatamentos no imóvel rural. ' +
+          'O proprietário/posseiro do imóvel rural foi identificado com base nos dados do SIMCAR / INCRA.',
         margin: [30, 0, 30, 15],
         style: 'bodyIndentFirst',
       },
@@ -964,8 +979,8 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'Anota-se que os  dados acima  indicados  indicam  extreme de  dúvidas, ' +
-          'com grau de acurácia com mais de 90% de acerto, no entanto, alterações nos valores poderão ocorrer ' +
+          'Anota-se que os dados acima indicam extreme de dúvidas, ' +
+          'com grau de acurácia superior a 90% de acerto, no entanto, alterações nos valores poderão ocorrer ' +
           'em decorrência de trabalhos de campo, pelo uso de outras imagens de satélite com diferentes ' +
           'resoluções espaciais, radiométricas e temporais, bem como pela fotointerpretação do analista durante a vetorização das áreas.',
         margin: [30, 0, 30, 15],
@@ -1069,30 +1084,15 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true,
           },
           {
-            text: ` – Informações sobre o CAR ${
-              reportData.property.register
-                ? reportData.property.register
-                : reportData.property.federalregister
-            };`,
+            text: '– Informações complementares;',
             style: 'body',
           },
         ],
         margin: [30, 0, 30, 0],
       },
       {
-        text: [
-          {
-            text: 'Anexo 2.',
-            style: 'body',
-            bold: true,
-          },
-          {
-            text:
-              ' – Relatório do SINESP-INFOSEG referente aos proprietários/posseiros do imóvel rural. ',
-            style: 'body',
-          },
-        ],
-        margin: [30, 0, 30, 0],
+        text: '',
+        pageBreak: 'after',
       },
       {
         text: '6 VALIDAÇÃO',

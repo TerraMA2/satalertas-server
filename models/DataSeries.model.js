@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
 
       DataSeries.hasMany(models.DataSet, {
         onDelete: "CASCADE",
+        as: "dataSet",
         foreignKey: {
           name: "data_series_id",
           allowNull: false

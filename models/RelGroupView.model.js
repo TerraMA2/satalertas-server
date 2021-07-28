@@ -5,8 +5,6 @@ module.exports = (sequelize, DataTypes) => {
   const { models } = sequelize;
   class RelGroupView extends Model {
     static assosciate(models) {
-      // const { Groups } = models;
-      // this.hasOne
     }
   }
 
@@ -28,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         comment: "View name"
+      },
+      short_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: "Short name"
       },
       description: {
         type: DataTypes.TEXT,
@@ -60,6 +63,11 @@ module.exports = (sequelize, DataTypes) => {
         default: false,
         comment: "It defines if the layer is parent or not. Default is false."
       },
+      is_sublayer: {
+        type: DataTypes.BOOLEAN,
+        default: false,
+        comment: "It defines if the layer is a sublayer or not. Default is false."
+      },
       sub_layers: {
         type: DataTypes.ARRAY(DataTypes.INTEGER),
         allowNull: true,
@@ -68,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'rel_group_view',
+    modelName: 'RelGroupView',
     tableName: 'rel_group_views',
     schema: 'terrama2',
     underscored: true,

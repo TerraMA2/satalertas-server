@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     
   DataSetFormat.associate = function(models) {
       DataSetFormat.belongsTo(models.DataSet, {
+        as: "dataSet",
         onDelete: "CASCADE",
         foreignKey: {
           allowNull: false

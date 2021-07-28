@@ -53,13 +53,40 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   View.associate = function(models) {
+
     View.belongsToMany(models.Group, {
-      through: 'rel_group_view',
+      through: 'RelGroupView',
       as: 'relGroupView',
       foreignKey: 'id_view',
       onDelete: "SET NULL",
       otherKey: 'id_group'
     })
+
+    View.belongsTo(models.DataSeries, {
+      onDelete: "CASCADE",
+      as: 'dataSeries',
+      foreignKey: {
+        name: "data_series_id",
+        allowNull: false
+      }
+    });
+
+    View.hasOne(models.RegisteredView, {
+      onDelete: "CASCADE",
+      as: "registeredView",
+      foreignKey: {
+        name: "view_id",
+        allowNull: false
+      }
+    });
+
+    View.belongsTo(models.Project, {
+      onDelete: "CASCADE",
+      foreignKey: {
+        name: "project_id",
+        allowNull: false
+      }
+    });
   }
   return View
 }

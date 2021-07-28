@@ -9,7 +9,11 @@
     "define": {
       "schema": "alertas"
     },
-    "basePath": ""
+    "basePath": "",
+    "chartPath": {
+      "host": "localhost:8081",
+      "protocol": "http"
+    }
   },
   "test": {
     "username": "postgres",
@@ -21,7 +25,11 @@
     "define": {
       "schema": "alertas"
     },
-    "basePath": ""
+    "basePath": "",
+    "chartPath": {
+      "host": "localhost:8081",
+      "protocol": "http"
+    }
   },
   "production": {
     "username": "postgres",
@@ -34,6 +42,10 @@
     "define": {
       "schema": "alertas"
     },
-    "basePath": "/mpmt/alertaServer"
+    "basePath": "/mpmt/alertaServer",
+    "chartPath": {
+      "host": "localhost:8081",
+      "protocol": "http"
+    }
   }
 }

@@ -3,6 +3,6 @@ const express = require('express');
         ConfigController = require('../controllers/config');
 
 router.get('/getSynthesisConfig', ConfigController.getSynthesisConfig);
-router.get('/getInfoColumns/:codGroup?', ConfigController.getInfoColumns);
+router.get('/getInfoColumns/:viewId?', ConfigController.getInfoColumns);
 
 module.exports = router;

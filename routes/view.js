@@ -1,6 +1,6 @@
-const express = require('express')
-        router = express.Router()
-        viewController = require('../controllers/view')
+const express = require('express');
+const router = express.Router();
+const viewController = require('../controllers/view');
 
 router.get('/getSqlExport?:carRegister?:date?:filter', viewController.getSqlExport);
 router.get('/getReportLayers', viewController.getReportLayers)
