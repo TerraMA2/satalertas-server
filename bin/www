@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 const app = require('../app')
-      debug = require('debug')('terrama2-server:server')
-      http = require('http')
-      killPort = require('kill-port')
+const debug = require('debug')(namespace = 'development')
+const http = require('http')
+const killPort = require('kill-port')
 
 
 const port = normalizePort(process.env.PORT || '3200')

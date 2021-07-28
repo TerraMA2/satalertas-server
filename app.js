@@ -1,8 +1,8 @@
-const express = require('express'),
-    compression = require('compression'),
-    morgan = require('morgan'),
-    helmet = require('helmet'),
-    cors = require('cors')
+const express = require('express');
+const compression = require('compression');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const cors = require('cors');
 
 const viewRouter = require('./routes/view')
 const geoserverRouter = require('./routes/geoserver')
@@ -31,7 +31,7 @@ const app = express()
 app.use(cors())
 app.use(compression({}))
 app.use(helmet())
-app.use(morgan('combined', {}))
+app.use(morgan(env === 'satalertas-server:development' ? 'dev' : 'combined'))
 app.use(express.json({limit: '200mb', inflate: true, strict: true, type: 'application/json'}))
 
 app.use(basePath+'/view', viewRouter)
