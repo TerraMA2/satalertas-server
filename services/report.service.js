@@ -1430,22 +1430,29 @@ setImages = async function (reportData) {
 };
 
 async function setCharts(reportData) {
-  if (!reportData.chartsImages) {
-    reportData.chartsImages = {};
+  try {
+    if (!reportData.chartsImages) {
+      reportData.chartsImages = {};
+    }
+    const charts = reportData.chartsImages;
+  
+    if(reportData.type === 'queimada') {
+      charts['firstFiringChart'] = {
+        image: await FiringCharts.historyBurnlight(
+          reportData.property.historyBurnlight,
+        ).toDataUrl(),
+        fit: [450, 450],
+        alignment: 'center',
+      };
+      charts['secondFiringChart'] = {
+        image: await FiringCharts.chartBase64(reportData.property.gid),
+        fit: [450, 200],
+        alignment: 'center',
+      };
+    }
+  } catch (e) {
+    msgError(__filename, 'setCharts', e);
   }
-  const charts = reportData.chartsImages;
-  charts['firstFiringChart'] = {
-    image: await FiringCharts.historyBurnlight(
-      reportData.property.historyBurnlight,
-    ).toDataUrl(),
-    fit: [450, 450],
-    alignment: 'center',
-  };
-  charts['secondFiringChart'] = {
-    image: await FiringCharts.chartBase64(reportData.property.gid),
-    fit: [450, 200],
-    alignment: 'center',
-  };
 }
 
 module.exports = FileReport = {
