@@ -1,3 +1,4 @@
+const FiringCharts = require('../../../charts/FiringCharts');
 function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
   const paragraph = [];
   const authNumbers = firingAuthData.firingAuth.map(
@@ -10,7 +11,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
         'Verificou-se que não há autorização de queima controlada emitida ' +
         'para o imóvel rural em análise.',
       alignment: 'left',
-      margin: [30, 15, 30, 15],
+      margin: [30, 0, 30, 5],
       style: 'bodyIndentFirst',
     });
   } else {
@@ -21,7 +22,7 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
           ', ',
         )}.`,
       alignment: 'left',
-      margin: [30, 15, 30, 15],
+      margin: [30, 0, 30, 5],
       style: 'bodyIndentFirst',
     });
   }
@@ -545,13 +546,11 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: [
           {
-            text:
-              '3    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
+            text: '3    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
           },
           {
             text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf`,
-            link:
-              'text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+            link: 'text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
             color: 'blue',
           },
           {
@@ -583,7 +582,8 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body',
         fontSize: 10,
       },
-      reportData.FocusChartImage,
+      // reportData.FocusChartImage,
+      reportData.chartsImages.firstFiringChart,
       {
         text: [
           {
@@ -608,6 +608,15 @@ module.exports = function (headerDocument, reportData, title) {
         reportData.property,
         reportData.formattedFilterDate,
       ),
+      {
+        text:
+          'A fim de verificar a relação entre focos de calor e desmatamento ' +
+          'abaixo é apresentado gráfico de desmatamentos e degradações florestais ' +
+          'mapeados pelo PRODES e DETER',
+        margin: [30, 0, 30, 0],
+        style: 'bodyIndentFirst',
+      },
+      reportData.chartsImages.secondFiringChart,
       {
         text: '',
         pageBreak: 'after',
