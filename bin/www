@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const app = require('../app')
-const debug = require('debug')(namespace = 'development')
+const debug = require('debug')('satalertas-server:development')
 const http = require('http')
 const killPort = require('kill-port')
 
