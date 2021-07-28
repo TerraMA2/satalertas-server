@@ -1,3 +1,4 @@
+const FiringCharts = require('../charts/FiringCharts');
 const Result = require('../utils/result');
 const models = require('../models');
 const Report = models.reports;
@@ -10,14 +11,9 @@ const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[
 ];
 const ViewUtil = require('../utils/view.utils');
 const SatVegService = require('../services/sat-veg.service');
-const axios = require('axios');
 const logger = require('../utils/logger');
 const moment = require('moment');
 const { msgError } = require('../utils/messageError');
-
-const config = {
-  headers: { 'X-My-Custom-Header': 'Header-Value' },
-};
 
 const DocDefinitions = require(__dirname +
   '/../utils/helpers/report/doc-definition.js');
@@ -45,25 +41,26 @@ getFilterClassSearch = function (sql, filter, view, tableOwner) {
   return sql;
 };
 
-getImageObject = function (image, fit, margin, alignment) {
-  if (
-    image &&
-    image[0] &&
-    !image[0].includes('data:application/vnd.ogc.se_xml') &&
-    !image[0].includes('data:text/xml;')
-  ) {
-    return new Image(image, fit, margin, alignment);
-  } else {
-    return {
-      text: 'Imagem não encontrada.',
-      alignment: 'center',
-      color: '#ff0000',
-      fontSize: 9,
-      italics: true,
-      margin: [30, 60, 30, 60],
-    };
-  }
-};
+// 
+// getImageObject = function (image, fit, margin, alignment) {
+//   if (
+//     image &&
+//     image[0] &&
+//     !image[0].includes('data:application/vnd.ogc.se_xml') &&
+//     !image[0].includes('data:text/xml;')
+//   ) {
+//     return new Image(image, fit, margin, alignment);
+//   } else {
+//     return {
+//       text: 'Imagem não encontrada.',
+//       alignment: 'center',
+//       color: '#ff0000',
+//       fontSize: 9,
+//       italics: true,
+//       margin: [30, 60, 30, 60],
+//     };
+//   }
+// };
 
 setAnalysisYear = function (data, period, variable) {
   const analysisYears = [];
@@ -1186,19 +1183,15 @@ getConclusion = async function (conclusionText) {
   return conclusion;
 };
 
-getContentConclusion = async function (
-  docDefinitionContent,
-  conclusionText,
-) {
+getContentConclusion = async function (docDefinitionContent, conclusionText) {
   // const content = [];
   const conclusion = await getConclusion(conclusionText);
   const conclusionIdx =
     docDefinitionContent.findIndex(
       ({ text }) => text && text.includes('CONCLUSÃO'),
     ) + 1;
-  console.log('>>> ', docDefinitionContent[conclusionIdx]);
+
   docDefinitionContent.splice(conclusionIdx, 0, conclusion);
-  console.log('id do paragrafo > ', conclusionIdx);
   // for (let j = 0; j < docDefinitionContent.length; j++) {
   //   if (docDefinitionContent[j].text) {
   //     if (docDefinitionContent[j]["text"].includes("CONCLUSÃO")) {
@@ -1219,8 +1212,8 @@ getContentConclusion = async function (
 };
 
 setDocDefinitions = async function (reportData, docDefinition) {
-  // Precisa refatorar essa parte
-  // pois não é mais necessário indicar em qual parágrafo será inserido a 
+  // refatorar essa parte
+  // pois não é mais necessário indicar em qual parágrafo será inserido a
   // conclusão
   docDefinition.content = await getContentConclusion(
     docDefinition.content,
@@ -1436,10 +1429,28 @@ setImages = async function (reportData) {
   );
 };
 
+async function setCharts(reportData) {
+  if (!reportData.chartsImages) {
+    reportData.chartsImages = {};
+  }
+  const charts = reportData.chartsImages;
+  charts['firstFiringChart'] = {
+    image: await FiringCharts.historyBurnlight(
+      reportData.property.historyBurnlight,
+    ).toDataUrl(),
+    fit: [450, 450],
+    alignment: 'center',
+  };
+  charts['secondFiringChart'] = {
+    image: await FiringCharts.chartBase64(reportData.property.gid),
+    fit: [450, 200],
+    alignment: 'center',
+  };
+}
+
 module.exports = FileReport = {
   async saveBase64(document, code, type, path, docName) {
     const binaryData = new Buffer(document, 'base64').toString('binary');
-
     await fs.writeFile(path, binaryData, 'binary', (err) => {
       if (err) {
         throw err;
@@ -1802,7 +1813,7 @@ module.exports = FileReport = {
         QUERY_TYPES_SELECT,
       );
       // ---------------------------------------------------------------------------------------------------------------
-      // GRAFICOJOVENERD -> Focos de calor
+
       // ---------------------------------------------------------------------------------------------------------------
       const sqlSpotlightsYear = ` SELECT
                   extract(year from date_trunc('year', cf.${columnExecutionDate})) AS date,
@@ -2099,6 +2110,7 @@ module.exports = FileReport = {
           : `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
 
       await setImages(reportData);
+      await setCharts(reportData);
 
       const headerDocument = [
         reportData.images.headerImage0,
