@@ -1,6 +1,6 @@
 const express = require('express');
-        router = express.Router();
-        GroupController = require('../controllers/group.controller');
+const router = express.Router();
+const GroupController = require('../controllers/group.controller');
 
 router.delete('/:id', GroupController.deleteGroup);
 router.put('/', GroupController.update);

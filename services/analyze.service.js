@@ -1,6 +1,7 @@
 const models = require('../models');
-      View = models.views;logger = require('../utils/logger');
-      ViewUtil = require("../utils/view.utils");
+const { View } = models;
+const logger = require('../utils/logger');
+const ViewUtil = require("../utils/view.utils");
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
 const analyses = {

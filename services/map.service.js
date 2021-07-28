@@ -1,10 +1,11 @@
-const   models = require('../models')
-        View = models.views
-        Filter = require("../utils/filter/filter.utils")
-        ConfigService = require("../services/config.service")
-        QUERY_TYPES_SELECT = { type: "SELECT" }
-        logger = require('../utils/logger');
-        confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+const models = require('../models');
+const { View } = models;
+const Filter = require("../utils/filter/filter.utils");
+const ConfigService = require("../services/config.service");
+const QUERY_TYPES_SELECT = { type: "SELECT" };
+const logger = require('../utils/logger');
+const env = process.env.NODE_ENV || 'development';
+const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];;
 
 getColumnsTable = async function(tableName, schema, alias = '') {
   const sql =
@@ -126,7 +127,7 @@ setInfoColumns = async function (data, codGroup) {
         changedRow.push({key, value});
       }
     }
-  }
+  };
   return changedRow;
 }
 

@@ -1,7 +1,9 @@
+const FiringCharts = require('../../../charts/FiringCharts');
 function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
   const paragraph = [];
   const authNumbers = firingAuthData.firingAuth.map(
-    (auth) => `de ${auth.data_apro} a ${auth.data_venc}, AQC n. ${auth['titulo_nu1']}`,
+    (auth) =>
+      `de ${auth.data_apro} a ${auth.data_venc}, AQC n. ${auth['titulo_nu1']}`,
   );
   if (firingAuthData.firingAuth.length === 0) {
     paragraph.push({
@@ -9,16 +11,18 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
         'Verificou-se que não há autorização de queima controlada emitida ' +
         'para o imóvel rural em análise.',
       alignment: 'left',
-      margin: [30, 15, 30, 0],
+      margin: [30, 0, 30, 5],
       style: 'bodyIndentFirst',
     });
   } else {
     paragraph.push({
       text:
         'Verificou-se que há autorização de queima controlada emitida ' +
-        `para o imóvel rural em análise para o período ${authNumbers.join(', ')}.`,
+        `para o imóvel rural em análise para o período ${authNumbers.join(
+          ', ',
+        )}.`,
       alignment: 'left',
-      margin: [30, 15, 30, 0],
+      margin: [30, 0, 30, 5],
       style: 'bodyIndentFirst',
     });
   }
@@ -26,6 +30,9 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
 }
 
 module.exports = function (headerDocument, reportData, title) {
+  const registerToUse = reportData.property.register
+    ? reportData.property.register
+    : reportData.property.federalregister;
   return {
     info: {
       title: 'Relatório QUEIMADA',
@@ -127,7 +134,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: [
           {
             text:
-              'Trata-se de relatório técnico sobre incêndio identificado com o ' +
+              'Trata-se de relatório técnico sobre focos de calor identificado com o ' +
               'uso de Sistema de Informações Geográficas no imóvel rural ' +
               `${reportData.property.name}`,
           },
@@ -145,7 +152,7 @@ module.exports = function (headerDocument, reportData, title) {
               `${reportData.property.owner}` +
               ', conforme informações declaradas no ' +
               ' Sistema Sistema Nacional de Cadastro Ambiental Rural (SICAR), protocolo CAR ' +
-              reportData.property.register,
+              `${registerToUse}`,
           },
           {
             text: ' (Anexo 1) ',
@@ -156,7 +163,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
         alignment: 'justify',
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 0],
         style: 'bodyIndentFirst',
       },
       reportData.images.geoserverImage1,
@@ -181,7 +188,7 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-          'As informações sobre os incêndios foram integradas no âmbito ' +
+          'As informações sobre os focos de calor foram integradas no âmbito ' +
           'do Termo de Cooperação Técnica n. 30/2018 firmado entre Ministério Público do Estado de Mato Grosso ' +
           'e Instituto Nacional de Pesquisas Espaciais (INPE), cujo objeto consiste na ',
         margin: [30, 0, 30, 15],
@@ -215,17 +222,17 @@ module.exports = function (headerDocument, reportData, title) {
         pageBreak: 'after',
       },
       {
-        text: '3 Dados utilizados',
-        style: 'listItem',
+        text:
+          'coleta automática, armazenamento ' +
+          'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
+          'INPE, com os dados de fontes estatais ' +
+          'oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.',
+        margin: [30, 0, 30, 15],
+        style: 'body',
       },
       {
-          text:
-            'coleta automática, armazenamento ' +
-            'e tratamento de dados geoespaciais para interseções entre produtos do PRODES, DETER e Programa Queimadas do ' +
-            'INPE, com os dados de fontes estatais ' +
-            'oficiais para quantificação e descrição das áreas afetadas por desmatamento ou queimada.',
-          margin: [30, 0, 30, 0],
-          style: 'body',
+        text: '3 Dados utilizados',
+        style: 'listItem',
       },
       {
         columns: [
@@ -237,8 +244,10 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              'Dados históricos dos focos de fogo ativos no Estado de Mato Grosso ' +
-              'mapeados pelo Programa Queimadas desenvolvido pelo INPE;',
+              'Dados históricos dos focos de calor ativos no Estado de Mato Grosso ' +
+              'mapeados pelo Programa Queimadas dados de desmatamentos mapeados ' +
+              'pelo PRODES e dados de desmatamentos e degradações florestais ' +
+              'mapeados pelo DETER, todos desenvolvidos pelo INPE',
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body',
@@ -255,12 +264,12 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              'Informações e dados geográficos do SIMCAR Parceiros e Público, da Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA). Os ' +
+              'Informações e dados geográficos do SIMCAR Parceiros e Público, ' +
+              'da Secretaria de Meio Ambiente do Estado de Mato Grosso (SEMA). Os ' +
               'dados declarados no SIMCAR foram unidos em uma única base, ' +
-              'compreendendo os CAR validades, aguardando ' +
+              'compreendendo os CAR validados, aguardando ' +
               'complementação, em análise e migrados do Sistema de Cadastro ' +
-              'Ambiental Rural (SICAR). Foram excluídos da base os CAR com status ' +
-              'cancelado e indeferido;',
+              'Ambiental Rural (SICAR).',
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body',
@@ -312,8 +321,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body',
           },
           {
-            text:
-              'Dados geográficos das Terras Indígenas no Estado de Mato Grosso, disponíveis no sítio eletrônico da Fundação Nacional do Índio (FUNAI);',
+            text: 'Dados geográficos das Terras Indígenas no Estado de Mato Grosso, disponíveis no sítio eletrônico da Fundação Nacional do Índio (FUNAI);',
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body',
@@ -329,8 +337,7 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body',
           },
           {
-            text:
-              'Imagens dos Satélites Landsat, SPOT, Planet, Sentinel-2, CBERS-4 e de outras fontes que estiverem disponíveis;',
+            text: 'Imagens dos Satélites Landsat, SPOT, Planet, Sentinel-2, CBERS-4 e de outras fontes que estiverem disponíveis;',
             margin: [20, 0, 30, 5],
             width: 'auto',
             style: 'body',
@@ -346,9 +353,8 @@ module.exports = function (headerDocument, reportData, title) {
             style: 'body',
           },
           {
-            text:
-              'Dados pessoais dos responsáveis pelo imóvel rural obtidos no Sistema Nacional de Informações de Segurança Pública (SINESP-INFOSEG).',
-            margin: [20, 0, 30, 15],
+            text: 'Dados pessoais dos responsáveis pelo imóvel rural obtidos no Sistema Nacional de Informações de Segurança Pública (SINESP-INFOSEG).',
+            margin: [20, 0, 30, 10],
             width: 'auto',
             style: 'body',
           },
@@ -359,7 +365,7 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'listItem',
       },
       {
-        text: (
+        text:
           'Todas as informações acima descritas foram integradas utilizando ' +
           'a plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
           'análise e emissão de alertas sobre extremos ambientais¹. Assim, ' +
@@ -369,16 +375,14 @@ module.exports = function (headerDocument, reportData, title) {
           'dos mapas), visualizar e consultar dados sobre danos ambientais causados ' +
           'por queimadas. Para ' +
           'isso, dados dinâmicos e estáticos foram processados para produzirem as informações ' +
-          'que foram sistematizadas neste relatório.'
-        ),
-        margin: [30, 0, 30, 5],
+          'que foram sistematizadas neste relatório.',
+        margin: [30, 0, 30, 0],
         style: 'bodyIndentFirst',
       },
       {
         text: [
           {
-            text:
-              '1    Informações mais detalhadas sobre o funcionamento do TerraMA² podem ser obtidas em ',
+            text: '1    Informações mais detalhadas sobre o funcionamento do TerraMA² podem ser obtidas em ',
           },
           {
             text: 'http://www.TerraMA2.dpi.inpe.br/sobre',
@@ -389,7 +393,7 @@ module.exports = function (headerDocument, reportData, title) {
             text: '. Acessado em 07.10.2019.',
           },
         ],
-        margin: [30, 20, 30, 0],
+        margin: [30, 0, 30, 0],
         fontSize: 8,
       },
       {
@@ -397,28 +401,25 @@ module.exports = function (headerDocument, reportData, title) {
         pageBreak: 'after',
       },
       {
-        text: (
+        text:
           'Os dados do Programa Queimadas (pontos representando a ' +
           'área nominal do píxel de fogo), foram cruzados com ' +
-          'informações geoespaciais de fontes oficiais para identificação de incêndios ' +
-          'florestais em imóveis rurais no Estado de Mato Grosso, bem como para ' +
-          'identificação dos responsáveis pelo imóvel rural atingido.'),
+          'informações geoespaciais de fontes oficiais para identificação de focos ' +
+          'de calor em imóveis rurais no Estado de Mato Grosso, bem como para ' +
+          'identificação dos responsáveis pelo imóvel rural atingido.',
         margin: [30, 0, 30, 5],
-        style: 'bodyIndentFirst'
+        style: 'bodyIndentFirst',
       },
       {
-        text: (
-          'Para validação dos incêndios ilegais, os focos de fogo foram ' +
+        text:
+          'Os focos de calor foram ' +
           'intersectados com os dados geospaciais das autorizações de queima ' +
-          'controlada (AQC) emitidas pela SEMA, assim como foi verificada a existência ' +
-          'de cicatriz causada pela passagem de fogo na vegetação a partir da ' +
-          'interpretação das imagens de satélite após ou durante o período de ' +
-          `${reportData.formattedFilterDate}. Ainda, foram elaborados gráficos contendo as séries ` +
-          'temporais de focos de fogo que incidiram no imóvel rural ao longo dos anos ' +
-          '(a partir de 1999) e no período de 15 de julho até 15 de setembro desde 2006 ' +
-          '(período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
-          'Lei Estadual n. 233, de 21 de dezembro de 2005).'
-          ),
+          'controlada (AQC) emitidas pela SEMA ' +
+          'durante o período de ' +
+          `${reportData.formattedFilterDate}, permitindo a elaboração de gráficos contendo as séries ` +
+          'temporais de focos de calor que incidiram no imóvel rural ao longo dos anos ' +
+          'e no período proibitivo de uso do fogo para limpeza e manejo de áreas conforme ' +
+          'Lei Estadual n. 233, de 21 de dezembro de 2005.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
@@ -428,33 +429,24 @@ module.exports = function (headerDocument, reportData, title) {
       },
       {
         text:
-        'Os projetos PRODES e DETER, utilizados para identificação e ' +
-        'quantificação dos desamatentos, fazem parte do Programa de Monitoramento da Amazônia e ' +
-        'Demais Biomas (PAMZ+) ' +
-        'desenvolvido pela Coordenação-geral de Observação da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
-        'Além do PRODES e DETER, o PAMZ+ conta também com o Sistema de Mapeamento do Uso e Ocupação da Terra (TerraClass). ' +
-        'Estes três projetos são complementares e concebidos para atender diferentes objetivos.',
+          'Os projetos PRODES e DETER, utilizados para identificação e ' +
+          'quantificação dos desamatentos, fazem parte do Programa de Monitoramento da Amazônia e ' +
+          'Demais Biomas (PAMZ+) ' +
+          'desenvolvido pela Coordenação-geral de Observação da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
+          'Além do PRODES e DETER, o PAMZ+ conta também com o Sistema de Mapeamento do Uso e Ocupação da Terra (TerraClass). ' +
+          'Estes três projetos são complementares e concebidos para atender diferentes objetivos.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
       {
         text:
-          'Os dados de queimadas possuem características distintas pois ' +
+          'Os dados do programa Queimadas possuem características distintas pois ' +
           'os focos representados na forma de um ponto são a indicação do centro de um píxel de uma imagem de um dos ' +
           'satélites recebidos e processados pelo INPE. A quantidade de satélites pode variar ao longo do tempo e por este ' +
           'motivo as comparações interanuais são realizadas apenas pelos dados do satélite AQUA. No entanto, para ' +
           'identificar e confirmar a ocorrência de fogo na vegetação este relatório considera todos os focos dos satélites AQUA,' +
           'TERRA, SNPP e NOAA-20 pelo fato de possuírem uma precisão geométrica maior. Devido a alta frequência de imageamento ' +
           ' os pontos de todos os satélites são utilizados para indicar o primeiro e último dia de ocorrência de fogo numa dada propriedade.',
-        margin: [30, 0, 30, 5],
-        style: 'bodyIndentFirst',
-      },
-      {
-        text:
-          'As cicatrizes das áreas queimadas são produzidas sistematicamente ' +
-          'para o bioma Cerrado com uso das imagens do satélite Landsat-8 ' +
-          'e estes dados, com resolução espacial de 30 metros, confirmam a localização e extensão ' +
-          'da superfície queimada.',
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
@@ -467,7 +459,64 @@ module.exports = function (headerDocument, reportData, title) {
           'de efeito estufa por desflorestamento e degradação florestal. Ainda, a importância e credibilidade dos dados gerados ' +
           'pelo INPE é refletida pelas milhares de publicações científicas que utilizaram essas informações para realização de ' +
           'pesquisas, que podem ser encontrada no Google Scholar².',
-        margin: [30, 0, 30, 15],
+        margin: [30, 0, 30, 0],
+        style: 'bodyIndentFirst',
+      },
+      {
+        text: [
+          {
+            text: '²Disponível em ',
+          },
+          {
+            text: 'https://scholar.google.com.br',
+            link: 'https://scholar.google.com.br',
+            color: 'blue',
+          },
+          {
+            text: ', acessado em 13.01.2020.',
+          },
+        ],
+        fontSize: 8,
+        margin: [30, 30, 30, 30],
+      },
+      {
+        text: '4.2 Os sistemas de mapeamento dos desmatamentos e degradações florestais PRODES e DETER',
+        style: 'listItem',
+      },
+      {
+        text:
+          'Os projetos PRODES e DETER, utilizados para identificação e quantificação ' +
+          'dos desmatamentos, fazem parte do Programa de Monitoramento da Amazônia ' +
+          'e Demais Biomas (PAMZ +) desenvolvido pela Coordenação Feral de Observação ' +
+          'da Terra (CGOBT) e Centro Regional da Amazônia (CRA) do INPE. ' +
+          'Além do PRODES e DETER, o PAMZ + conta também com o Sistema de ' +
+          'Mapeamento do Uso e Ocupação da Terra (TerraClass). Estes três ' +
+          'projetos são complementares e concebidos para atender diferentes objetivos.',
+        margin: [30, 0, 30, 5],
+        style: 'bodyIndentFirst',
+      },
+      {
+        text:
+          'O objetivo do PRODES é estimar a taxa anual de desmatamento por corte ' +
+          'raso da floresta primária, excluídas as áreas de “não florestas”. ' +
+          'Importante ressaltar que o termo “desmatamento” é definido como ' +
+          '“a supressão de áreas de fisionomia florestal primária por ações ' +
+          'antropogênicas” (SOUZA et al., 2019)³, ou seja, tratam-se de áreas ' +
+          'sem histórico de intervenções pelo Homem que foram suprimidas a partir de 1988 por ação antrópica.',
+        margin: [30, 0, 30, 5],
+        style: 'bodyIndentFirst',
+      },
+      {
+        text:
+          'O objetivo do DETER é identificar as alterações da vegetação natural ' +
+          'em biomas da Amazônia Legal (Amazônia e Cerrado), em áreas acima de 3 ha, ' +
+          'com a emissão de alertas para apoio à fiscalização em tempo quase real. ' +
+          'Para fisionomias florestais no bioma Amazônia, os alertas indicam ' +
+          'áreas que sofreram corte raso ou intervenções pela exploração madeireira, ' +
+          'mineração ou queimadas, ou seja, identificam e mapeiam áreas ' +
+          'desflorestadas e degradadas, enquanto para o bioma Cerrado, ' +
+          'é identificada apenas o corte raso da vegetação natural.',
+        margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
       {
@@ -478,23 +527,38 @@ module.exports = function (headerDocument, reportData, title) {
         text:
           'O INPE, a partir dos dados do Programa Queimadas identificou ' +
           `${reportData.property.burnCount['total_focus']} ` +
-          ' focos de fogo ativos no imóvel rural denominado ' +
+          ' focos de calor ativos no imóvel rural denominado ' +
           `${reportData.property.name} ` +
           `no período de ${reportData.formattedFilterDate.replace(
             'a',
             'até',
           )}. Na figura 02 é possível ` +
-          'observar em imagem de satélite a cicatriz de incêndio na vegetação do ' +
-          'imóvel rural causada pela passagem de fogo (feições de cor roxa na imagem ' +
-          'de satélite), assim como os focos de fogo que incidiram na região do ' +
-          'incêndio. Nas figuras 03 e 04 constam os gráficos com as séries temporais de ' +
-          'focos de fogo que incidiram no imóvel rural ao longo dos anos (a partir de ' +
+          'observar em imagem de satélite os focos de calor que incidiram na ' +
+          'propriedade. Na figura 03 consta o gráfico com a série temporal de ' +
+          'focos de calor que incidiram no imóvel rural ao longo dos anos (a partir de ' +
           '1999) e no período de 15 de julho até 15 de setembro desde o ano 2006 (ano ' +
           'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que ' +
           'estabelece o período proibitivo de uso do fogo para limpeza e manejo de ' +
           'áreas no Estado de Mato Grosso).',
         margin: [30, 0, 30, 15],
         style: 'bodyIndentFirst',
+      },
+      {
+        text: [
+          {
+            text: '3    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
+          },
+          {
+            text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf`,
+            link: 'text: `http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+            color: 'blue',
+          },
+          {
+            text: '. Acessado em 13.10.2019.',
+          },
+        ],
+        fontSize: 8,
+        margin: [30, 80, 30, 0],
       },
       reportData.images.geoserverImage2,
       {
@@ -505,7 +569,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- imagem de satélite evidenciando as cicatrizes de incêndios e focos de fogo ativos na vegetação ' +
+              '- imagem de satélite evidenciando os focos de calor ativos na vegetação ' +
               'da ' +
               reportData.property.name +
               ' em ' +
@@ -518,28 +582,8 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'body',
         fontSize: 10,
       },
-      {
-        text:  [
-          {
-            text: '²Disponível em ',
-          },
-          {
-            text: 'https://scholar.google.com.br',
-            link: 'https://scholar.google.com.br',
-            color: 'blue',
-          },
-          {
-            text: ', acessado em 13.01.2020.'
-          }
-        ],
-        fontSize: 8,
-        margin: [30, 100, 30, 0],
-      },
-      {
-        text: '',
-        pageBreak: 'after'
-      },
-      reportData.FocusChartImage,
+      // reportData.FocusChartImage,
+      reportData.chartsImages.firstFiringChart,
       {
         text: [
           {
@@ -548,7 +592,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
           {
             text:
-              '- Série histórica de focos de fogo ativos na ' +
+              '- Série histórica de focos de calor ativos na ' +
               reportData.property.name +
               ' em ' +
               reportData.property.city +
@@ -565,6 +609,19 @@ module.exports = function (headerDocument, reportData, title) {
         reportData.formattedFilterDate,
       ),
       {
+        text:
+          'A fim de verificar a relação entre focos de calor e desmatamento ' +
+          'abaixo é apresentado gráfico de desmatamentos e degradações florestais ' +
+          'mapeados pelo PRODES e DETER',
+        margin: [30, 0, 30, 0],
+        style: 'bodyIndentFirst',
+      },
+      reportData.chartsImages.secondFiringChart,
+      {
+        text: '',
+        pageBreak: 'after',
+      },
+      {
         text: '6 CONCLUSÃO',
         style: 'listItem',
       },
@@ -580,51 +637,15 @@ module.exports = function (headerDocument, reportData, title) {
             bold: true,
           },
           {
-            text: ` – Informações sobre o CAR ${
-              reportData.property.register
-                ? reportData.property.register
-                : reportData.property.federalregister
-            };`,
+            text: '– Informações complementares;',
             style: 'body',
           },
         ],
         margin: [30, 0, 30, 0],
-      },
-      {
-        text: [
-          {
-            text: 'Anexo 2.',
-            style: 'body',
-            bold: true,
-          },
-          {
-            text:
-              ' – Relatório do SINESP-INFOSEG referente aos proprietários/posseiros do imóvel rural. ',
-            style: 'body',
-          },
-        ],
-        margin: [30, 0, 30, 0],
-      },
-      {
-        text: [
-          {
-            text: 'Anexo 3.',
-            style: 'body',
-            bold: true,
-          },
-          {
-            text:
-              ' – Relação de propostas de medidas preventivas ' +
-              'e de combate aos incêndios florestais para serem implementadas no imóvel ' +
-              'rural.',
-            style: 'body',
-          },
-        ],
-        margin: [30, 0, 30, 30],
       },
       {
         text: '',
-        pageBreak: 'after'
+        pageBreak: 'after',
       },
       {
         text: '8 VALIDAÇÃO',
@@ -689,7 +710,7 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 11,
         alignment: 'justify',
         lineHeight: 1.5,
-        leadingIndent: 176,
+        leadingIndent: 120,
       },
       title: {
         bold: true,

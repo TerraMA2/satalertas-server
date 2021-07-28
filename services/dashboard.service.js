@@ -1,7 +1,7 @@
-const   models = require('../models');
-        View = models.views;
-        Filter = require("../utils/filter/filter.utils");
-        QUERY_TYPES_SELECT = { type: "SELECT" };
+const models = require('../models');
+const { View } = models;
+const Filter = require("../utils/filter/filter.utils");
+const QUERY_TYPES_SELECT = { type: "SELECT" };
 
 // ==== Analysis Totals =========================================
 getSqlAnalysisTotals = async function(params) {

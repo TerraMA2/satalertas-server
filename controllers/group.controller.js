@@ -19,7 +19,8 @@ exports.getCodGroups = async (_req, res, _next) => {
 
 exports.getById = async (req, res) => {
   try {
-    const result = await GroupService.getById(req.query.id);
+    const { query } = req;
+    const result = await GroupService.getById(query.id);
     res.json(result);
   } catch (e) {
     res.json(msgError('group.controller', 'getById', e));

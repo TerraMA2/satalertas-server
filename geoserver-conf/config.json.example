@@ -5,7 +5,7 @@
     "workspace": "mpmt_alertas",
     "datastore": "mpmt_alertas_datastore",
     "baseHost": "http://localhost:8080/geoserver",
-    "baseHostDeter": "/api",
+    "baseHostDeter": "http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
     "host": "http://localhost:8080/geoserver/rest/",
     "sridPlanet": 3857,
     "sridTerraMa": 4674,

@@ -1,5 +1,5 @@
-const   models = require('../models');
-        View = models.views;
+const models = require('../models');
+const { View } = models;
 
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
