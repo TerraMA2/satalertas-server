@@ -5,8 +5,6 @@ const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[
   env
 ];
 const Sequelize = require('sequelize');
-const { QueryTypes } = Sequelize;
-const models = require('../models');
 
 module.exports = ConfigService = {
   async getSynthesisConfig() {

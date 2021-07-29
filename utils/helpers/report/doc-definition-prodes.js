@@ -1,3 +1,5 @@
+// noinspection JSOctalInteger
+
 const superscripts = {
   0: '\u2070',
   1: '\u00B9',
@@ -152,7 +154,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
         alignment: 'justify',
-        margin: [30, 0, 30, 05],
+        margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
       {

@@ -1,6 +1,6 @@
 
 setViewJson = function(json, view){
-  let result = {};
+  let result;
   if (json.status && json.status === 200 && json.data){
     result = json.data;
 

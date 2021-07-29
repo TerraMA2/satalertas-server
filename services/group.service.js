@@ -16,7 +16,7 @@ module.exports = GroupService = {
     }
   },
   async getCodGroups() {
-    const codGroup = [
+    return [
       {id: 1, cod_group: 'STATIC', label: 'Dado Estático'},
       {id: 2, cod_group: 'DYNAMIC', label: 'Dado Dinâmico'},
       {id: 3, cod_group: 'ANALYSIS', label: 'Análise'},
@@ -26,7 +26,6 @@ module.exports = GroupService = {
       {id: 7, cod_group: 'DETER', label: 'Análise Deter'},
       {id: 8, cod_group: 'PRODES', label: 'Análise Prodes'},
     ];
-    return codGroup;
   },
   async getById(id) {
     // Melhorar usando o include das relações

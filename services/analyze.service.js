@@ -18,7 +18,7 @@ const analyses = {
 module.exports = AnalyzeService = {
   async getAllClassByType(type) {
     try {
-      const groupView =  await ViewUtil.getGrouped();
+      const groupView = await ViewUtil.getGrouped();
 
       return await analyses[type](groupView['DYNAMIC'].children[type.toUpperCase()]);
     } catch (e) {

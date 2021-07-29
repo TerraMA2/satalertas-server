@@ -5,7 +5,7 @@ const ConfigService = require("../services/config.service");
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 const logger = require('../utils/logger');
 const env = process.env.NODE_ENV || 'development';
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];;
+const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
 
 getColumnsTable = async function(tableName, schema, alias = '') {
   const sql =
