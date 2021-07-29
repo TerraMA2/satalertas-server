@@ -18,7 +18,7 @@ function adjustGroupData(group, relationships = []) {
     code: group.code,
     name: group.name,
   }
-  if (relationships.length() = 0) {
+  if (relationships.length() == 0) {
     return groupData
   }
 

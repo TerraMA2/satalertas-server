@@ -17,6 +17,12 @@ module.exports = {
       code: {
         type: Sequelize.STRING
       },
+      active_area: {
+        type: Sequelize.BOOLEAN
+      },
+      view_graph: {
+        type: Sequelize.BOOLEAN
+      }
     },
     {
       charset: 'utf-8',

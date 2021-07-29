@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "DEBUG=satalertas-server:development NODE_ENV=development nodemon --inspect ./bin/www",
-    "dev": "NODE_ENV=development nodemon ./bin/www",
+    "dev": "DEBUG=satalertas-server:development NODE_ENV=development nodemon --inspect ./bin/www",
     "prod": "NODE_ENV=production node ./bin/www"
   },
   "dependencies": {
@@ -20,10 +20,10 @@
     "morgan": "^1.10.0",
     "pdfkit": "^0.11.0",
     "pdfmake": "=0.1.63",
-    "pg": "^8.5.1",
-    "pg-hstore": "^2.3.3",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
     "quickchart-js": "^1.2.0",
-    "sequelize": "^5.22.3",
+    "sequelize": "^5.22.4",
     "umzug": "^2.3.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^3.10.0"
