@@ -10,12 +10,14 @@ module.exports = {
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
     return Promise.all([
-      queryInterface.changeColumn('rel_group_views', 'id_view', {
-        onDelete: 'SET NULL',
+      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'id_view', {
+        type: Sequelize.INTEGER,
+        onDelete: 'SET NULL'
       }),
-      queryInterface.changeColumn('rel_group_views', 'id_group', {
-        onDelete: 'CASCADE',
-      }),
+      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'id_group', {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE'
+      })
     ])
   },
 
