@@ -131,17 +131,17 @@ setViews = function (groupViews, data_view) {
       {
         icon: 'fas fa-info',
         name: 'description',
-        title: 'Descrição',
+        title: 'description',
       },
       {
         icon: 'fas fa-save',
         name: 'export',
-        title: 'Exportar',
+        title: 'export',
       },
       {
         icon: 'fas fa-adjust',
         name: 'opacity',
-        title: 'Opacidade',
+        title: 'opacity',
       },
       // {
       //     icon: "fas fa-expand-alt",
