@@ -29,5 +29,15 @@ module.exports = {
       Example:
       return queryInterface.dropTable('users');
     */
+    return Promise.all([
+      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'id_view', {
+        type: Sequelize.INTEGER,
+        onDelete: 'NO ACTION'
+      }),
+      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'id_group', {
+        type: Sequelize.INTEGER,
+        onDelete: 'NO ACTION'
+      })
+    ])
   },
 };
