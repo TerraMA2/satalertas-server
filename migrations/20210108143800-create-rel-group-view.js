@@ -36,6 +36,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('rel_group_views', { schema: 'terrama2' });
+    return queryInterface.dropTable({schema: 'terrama2', tableName: 'rel_group_views'});
   }
 };
