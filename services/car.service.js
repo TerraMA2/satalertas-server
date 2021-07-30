@@ -24,7 +24,7 @@ module.exports = carService = {
             sqlWhere: '',
             secondaryTables: '',
             sqlHaving: '',
-            order: layer.codgroup != 'BURNED' && (specificParameters.sortField && specificParameters.sortOrder) ? ` ORDER BY ${specificParameters.sortField} ${specificParameters.sortOrder == '1'?'ASC':'DESC'} ` : ``,
+            order: layer.codgroup !== 'BURNED' && (specificParameters.sortField && specificParameters.sortOrder) ? ` ORDER BY ${specificParameters.sortField} ${specificParameters.sortOrder == '1'?'ASC':'DESC'} ` : ``,
             limit: specificParameters.limit ? ` LIMIT ${specificParameters.limit}` : '',
             offset: specificParameters.offset ? ` OFFSET ${specificParameters.offset}` : ''
           };
@@ -74,7 +74,7 @@ module.exports = carService = {
             filter.sqlWhere;
 
       let sql =
-        ` ${sqlSelect}
+            `${sqlSelect}
             ${sqlFrom}
             ${filter.secondaryTables}
             ${sqlWhere}

@@ -8,8 +8,7 @@ const Group = models.Group;
 
 
 async function getModelFields(model) {
-  const fields = await model.describe();
-  return fields;
+  return await model.describe();
 }
 
 function adjustGroupData(group, relationships = []) {
@@ -18,7 +17,7 @@ function adjustGroupData(group, relationships = []) {
     code: group.code,
     name: group.name,
   }
-  if (relationships.length() == 0) {
+  if (relationships.length === 0) {
     return groupData
   }
 
@@ -125,8 +124,7 @@ async function getNotBelongingToTheGroup(idGroup) {
       }
     };
 
-    const listViews = await View.findAll(option);
-    return listViews;
+    return await View.findAll(option);
   } catch (e) {
     throw new Error(msgError('group-view.service', 'getNotBelonginToTheGroup', e));
   }
@@ -171,7 +169,7 @@ async function updateAdvanced(groupViewModify) {
       Object.keys(edition)
       .forEach(field => {
         bind[field] = edition[field];
-        if (field != 'id') {
+        if (field !== 'id') {
           setSQL.push(`\t${field} = $${field}`)
         }
       });

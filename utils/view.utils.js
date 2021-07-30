@@ -19,7 +19,7 @@ const ViewUtils = {
                    </parameter>`
             : ``;
 
-        const xml = `   <featureType>
+        return `   <featureType>
                     <name>${json.name}</name>
                     <nativeName>${json.name}</nativeName>
                     <title>${json.title}</title>
@@ -75,8 +75,6 @@ const ViewUtils = {
                     <maxFeatures>0</maxFeatures>
                     <numDecimals>0</numDecimals>
                 </featureType>`;
-
-        return xml;
     },
     async getGrouped() {
         const sqlGroupViews = `
@@ -188,9 +186,9 @@ const ViewUtils = {
                         WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN true
                         ELSE false
                        END)                AS is_primary
-            FROM terrama2.data_series AS ds
+            FROM terrama2.data_sets AS ds
                      INNER JOIN terrama2.data_set_formats AS dsf ON ds.id = dsf.data_set_id
-                     INNER JOIN terrama2.views AS view ON ds.id = view.data_series_id
+                     INNER JOIN terrama2.views AS view ON ds.data_series_id = view.data_series_id
                      LEFT JOIN terrama2.registered_views AS r_view ON view.id = r_view.view_id
                      LEFT JOIN terrama2.analysis AS ana ON dsf.data_set_id = ana.dataset_output
             WHERE dsf.key = 'table_name'`;

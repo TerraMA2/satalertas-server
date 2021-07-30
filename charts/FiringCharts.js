@@ -239,7 +239,7 @@ function historyBurnlight(chartData) {
   const allDatasets = [];
   const dataFocus = [];
   const prohibitivePeriod = [];
-  let labels = [];
+  let labels;
   labels = genLabels([chartData], 'month_year_occurrence');
   chartData.forEach((item) => {
     dataFocus.push({
