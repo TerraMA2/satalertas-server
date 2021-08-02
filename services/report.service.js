@@ -3,7 +3,6 @@ const Result = require('../utils/result');
 const models = require('../models');
 const Report = models.reports;
 const env = process.env.NODE_ENV || 'development';
-const confDb = require(__dirname + '/../config/config.json')[env];
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[
@@ -41,35 +40,14 @@ getFilterClassSearch = function (sql, filter, view, tableOwner) {
   return sql;
 };
 
-//
-// getImageObject = function (image, fit, margin, alignment) {
-//   if (
-//     image &&
-//     image[0] &&
-//     !image[0].includes('data:application/vnd.ogc.se_xml') &&
-//     !image[0].includes('data:text/xml;')
-//   ) {
-//     return new Image(image, fit, margin, alignment);
-//   } else {
-//     return {
-//       text: 'Imagem não encontrada.',
-//       alignment: 'center',
-//       color: '#ff0000',
-//       fontSize: 9,
-//       italics: true,
-//       margin: [30, 60, 30, 60],
-//     };
-//   }
-// };
-
 setAnalysisYear = function (data, period, variable) {
   const analysisYears = [];
   for (let year = period['startYear']; year <= period['endYear']; year++) {
     analysisYears.push({
       date: year,
       [`${variable}`]: data.find((analise) => analise.date === year)
-        ? data.find((analise) => analise.date === year)[variable]
-        : '0.0000',
+          ? data.find((analise) => analise.date === year)[variable]
+          : '0.0000',
     });
   }
   return analysisYears;
@@ -1442,62 +1420,6 @@ async function setCharts(reportData) {
 }
 
 module.exports = FileReport = {
-  async saveBase64(document, code, type, path, docName) {
-    const binaryData = new Buffer(document, 'base64').toString('binary');
-    await fs.writeFile(path, binaryData, 'binary', (err) => {
-      if (err) {
-        throw err;
-      }
-      logger.error(`Arquivo salvo em .. ${path}`);
-    });
-  },
-  async get(id) {
-    const result = id ? await Report.findByPk(id) : await Report.findAll();
-
-    try {
-      if (result.length && result.length > 0) {
-        result.forEach((report) => {
-          report.dataValues.base64 = fs.readFileSync(
-            `${report.path}/${report.name}`,
-            'base64',
-          );
-        });
-      } else {
-        result.dataValues.base64 = fs.readFileSync(
-          `${result.path}/${result.name}`,
-          'base64',
-        );
-      }
-
-      return Result.ok(result);
-    } catch (e) {
-      msgError(__filename, 'get', e);
-      return Result.err(e);
-    }
-  },
-  async newNumber(type) {
-    const sql = ` SELECT '${type.trim()}' AS type,
-               EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
-               LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS newNumber,
-               CONCAT(
-                    LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0'),
-                    '/',
-                    EXTRACT(YEAR FROM CURRENT_TIMESTAMP)
-               ) AS code
-        FROM alertas.reports AS rep
-        WHERE rep.type = '${type.trim()}'
-          AND rep.created_at BETWEEN
-            CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
-
-    try {
-      const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
-
-      return Result.ok(result);
-    } catch (e) {
-      msgError(__filename, 'newNumber', e);
-      return Result.err(e);
-    }
-  },
   async getReportsByCARCod(carCode) {
     try {
       const confWhere = { where: { carGid: carCode.trim() } };
@@ -1652,8 +1574,6 @@ module.exports = FileReport = {
       const columnCarEstadualSemas = 'numero_do1';
       const columnCarFederalSemas = 'numero_do2';
       const columnAreaHaCar = 'area_ha_';
-      const columnCarEstadual = 'de_car_validado_sema_numero_do1';
-      const columnCarFederal = 'de_car_validado_sema_numero_do2';
       const columnCalculatedAreaHa = 'calculated_area_ha';
       const columnExecutionDate = 'execution_date';
 
@@ -1728,232 +1648,6 @@ module.exports = FileReport = {
       return Result.err(e);
     }
   },
-  async getSynthesisCarData(query) {
-    const { carRegister, date } = query;
-
-    let dateFrom = null;
-    let dateTo = null;
-
-    if (date) {
-      dateFrom = date[0];
-      dateTo = date[1];
-    }
-
-    try {
-      const views = await getViewsReport();
-
-      const columnCarEstadualSemas = 'numero_do1';
-      const columnCarFederalSemas = 'numero_do2';
-      const columnAreaHaCar = 'area_ha_';
-      const columnCarEstadual = 'de_car_validado_sema_numero_do1';
-      const columnCarFederal = 'de_car_validado_sema_numero_do2';
-      const columnCalculatedAreaHa = 'calculated_area_ha';
-      const columnExecutionDate = 'execution_date';
-
-      const columnCarSemas = 'gid';
-      const columnCar = `de_car_validado_sema_gid`;
-
-      const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
-
-      const propertyData = await getCarData(
-        tableName,
-        views.STATIC.children.MUNICIPIOS.table_name,
-        columnCarEstadualSemas,
-        columnCarFederalSemas,
-        columnAreaHaCar,
-        carRegister,
-      );
-
-      // --- Implements vision of Burned Area of CAR for year ----------------------------------------------------------
-      const sqlBurnedAreasYear = ` SELECT
-                  extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
-                  COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-            FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} areaq
-            WHERE areaq.${columnCar} = '${carRegister}'
-            GROUP BY date
-            ORDER BY date`;
-      const burnedAreasYear = await Report.sequelize.query(
-        sqlBurnedAreasYear,
-        QUERY_TYPES_SELECT,
-      );
-      // ---------------------------------------------------------------------------------------------------------------
-
-      // ----- Area of Prodes for year---------------------------------------------------------------------------------------------------
-      const sqlProdesYear = ` SELECT
-                  extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
-                  COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-            FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} cp
-            WHERE cp.${columnCar} = '${carRegister}'
-            GROUP BY date
-            ORDER BY date`;
-      const prodesYear = await Report.sequelize.query(
-        sqlProdesYear,
-        QUERY_TYPES_SELECT,
-      );
-      // ---------------------------------------------------------------------------------------------------------------
-
-      // ---------------------------------------------------------------------------------------------------------------
-      const sqlDeterYear = ` SELECT
-                  extract(year from date_trunc('year', cd.${columnExecutionDate})) AS date,
-                  COALESCE(SUM(CAST(cd.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
-            FROM public.${views.DETER.children.CAR_X_DETER.table_name} cd
-            WHERE cd.${columnCar} = '${carRegister}'
-            GROUP BY date
-            ORDER BY date`;
-      const deterYear = await Report.sequelize.query(
-        sqlDeterYear,
-        QUERY_TYPES_SELECT,
-      );
-      // ---------------------------------------------------------------------------------------------------------------
-
-      // ---------------------------------------------------------------------------------------------------------------
-      const sqlSpotlightsYear = ` SELECT
-                  extract(year from date_trunc('year', cf.${columnExecutionDate})) AS date,
-                  COUNT(cf.*) AS spotlights
-            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} cf
-            WHERE cf.${columnCar} = '${carRegister}'
-            GROUP BY date
-            ORDER BY date`;
-      const spotlightsYear = await Report.sequelize.query(
-        sqlSpotlightsYear,
-        QUERY_TYPES_SELECT,
-      );
-      // ---------------------------------------------------------------------------------------------------------------
-
-      const dateSql = ` AND ${columnExecutionDate}::date >= '${dateFrom}' AND ${columnExecutionDate}::date <= '${dateTo}'`;
-      // ---------------------------------------------------------------------------------------------------------------
-      const sqlProdesArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCar} = '${carRegister}' ${dateSql}`;
-      const prodesArea = await Report.sequelize.query(
-        sqlProdesArea,
-        QUERY_TYPES_SELECT,
-      );
-
-      const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCar} = '${carRegister}'`;
-      const prodesTotalArea = await Report.sequelize.query(
-        sqlProdesTotalArea,
-        QUERY_TYPES_SELECT,
-      );
-      // ---------------------------------------------------------------------------------------------------------------
-
-      // ---- Detailed view of the property ----------------------------------------------------------------------------
-      const sqlIndigenousLand = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_TI.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlConservationUnit = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_UC.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlLegalReserve = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_RESERVA.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlAPP = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_APP.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlAnthropizedUse = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USOANT.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-      const sqlNativeVegetation = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEGNAT.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
-
-      const indigenousLand = await Report.sequelize.query(
-        sqlIndigenousLand,
-        QUERY_TYPES_SELECT,
-      );
-      const conservationUnit = await Report.sequelize.query(
-        sqlConservationUnit,
-        QUERY_TYPES_SELECT,
-      );
-      const legalReserve = await Report.sequelize.query(
-        sqlLegalReserve,
-        QUERY_TYPES_SELECT,
-      );
-      const app = await Report.sequelize.query(sqlAPP, QUERY_TYPES_SELECT);
-      const anthropizedUse = await Report.sequelize.query(
-        sqlAnthropizedUse,
-        QUERY_TYPES_SELECT,
-      );
-      const nativeVegetation = await Report.sequelize.query(
-        sqlNativeVegetation,
-        QUERY_TYPES_SELECT,
-      );
-
-      if (propertyData) {
-        //---- Year of beginning and end of each analysis --------------------------------------------------------------
-        const sqlDatesSynthesis = `
-          SELECT 'prodesYear' AS key, MIN(prodes.ano) AS start_year, MAX(prodes.ano) AS end_year
-          FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes
-          UNION ALL
-          SELECT 'deterYear'                                                    AS key,
-                 MIN(extract(year from date_trunc('year', deter.date))) AS start_year,
-                 MAX(extract(year from date_trunc('year', deter.date))) AS end_year
-          FROM ${views.DYNAMIC.children.DETER.table_name} AS deter
-          UNION ALL
-          SELECT 'spotlightsYear'                                                        AS key,
-                 MIN(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS start_year,
-                 MAX(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS end_year
-          FROM ${views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name}  AS spotlights
-          UNION ALL
-          SELECT 'burnedAreaYear'                                                           AS key,
-                 MIN(extract(year from date_trunc('year', burnedarea.timestamp))) AS start_year,
-                 MAX(extract(year from date_trunc('year', burnedarea.timestamp))) AS end_year
-          FROM ${views.DYNAMIC.children.AREAS_QUEIMADAS.table_name}  AS burnedarea;
-        `;
-
-        const datesSynthesis = await Report.sequelize.query(
-          sqlDatesSynthesis,
-          QUERY_TYPES_SELECT,
-        );
-
-        datesSynthesis.forEach((years) => {
-          if (!propertyData['analysisPeriod']) {
-            propertyData['analysisPeriod'] = {};
-          }
-          if (!propertyData['analysisPeriod'][years.key]) {
-            propertyData['analysisPeriod'][years.key] = {};
-          }
-
-          propertyData['analysisPeriod'][years.key]['startYear'] =
-            years.start_year;
-          propertyData['analysisPeriod'][years.key]['endYear'] = years.end_year;
-        });
-        //--------------------------------------------------------------------------------------------------------------
-
-        propertyData.prodesArea = prodesArea[0]['area'];
-        propertyData.prodesTotalArea = prodesTotalArea[0]['area'];
-
-        propertyData.deterYear = setAnalysisYear(
-          deterYear,
-          propertyData['analysisPeriod']['deterYear'],
-          'area',
-        );
-        propertyData.prodesYear = setAnalysisYear(
-          prodesYear,
-          {
-            startYear: 1999,
-            endYear: propertyData['analysisPeriod']['prodesYear']['endYear'],
-          },
-          'area',
-        );
-        propertyData.spotlightsYear = setAnalysisYear(
-          spotlightsYear,
-          propertyData['analysisPeriod']['spotlightsYear'],
-          'spotlights',
-        );
-        propertyData.burnedAreasYear = setAnalysisYear(
-          burnedAreasYear,
-          propertyData['analysisPeriod']['burnedAreaYear'],
-          'area',
-        );
-
-        propertyData.indigenousLand = indigenousLand[0];
-        propertyData.conservationUnit = conservationUnit[0];
-        propertyData.legalReserve = legalReserve[0];
-        propertyData.app = app[0];
-        propertyData.anthropizedUse = anthropizedUse[0];
-        propertyData.nativeVegetation = nativeVegetation[0];
-        // -------------------------------------------------------------------------------------------------------------
-
-        //---- Focus and standardization of the bbox to display a square image -----------------------------------------
-        propertyData['bbox'] = setBoundingBox(propertyData['bbox']);
-        propertyData['citybbox'] = setBoundingBox(propertyData['citybbox']);
-        propertyData['statebbox'] = setBoundingBox(propertyData['statebbox']);
-        //--------------------------------------------------------------------------------------------------------------
-
-        return Result.ok(propertyData);
-      }
-    } catch (e) {
-      msgError(__filename, 'getSynthesisCarData', e);
-      return Result.err(e);
-    }
-  },
   async getChartOptions(labels, data) {
     return {
       type: 'line',
@@ -1994,8 +1688,7 @@ module.exports = FileReport = {
     };
 
     const sql = `
-        SELECT
-               CAST(main_table.monitored_id AS integer),
+        SELECT CAST(main_table.monitored_id AS integer),
                main_table.a_carprodes_1_id,
                ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
                ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
@@ -2026,9 +1719,9 @@ module.exports = FileReport = {
       const currentYear = new Date().getFullYear();
       for (let index = 0; index < points.length; index++) {
         points[index]['url'] = `${
-          confGeoServer.baseHost
-        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${
-          views.STATIC.children.CAR_VALIDADO.workspace
+            confGeoServer.baseHost
+        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
+            views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view},${
           views.STATIC.children.CAR_X_USOCON.workspace
         }:${views.STATIC.children.CAR_X_USOCON.view},${
@@ -2067,23 +1760,6 @@ module.exports = FileReport = {
     } catch (e) {
       msgError(__filename, 'getPointAlerts', e);
       throw new Error(e);
-    }
-  },
-  async getBurnlightCharts(query) {
-    try {
-      const sql = '';
-      const burnlightData = await Report.sequelize.query(
-        sql,
-        QUERY_TYPES_SELECT,
-      );
-      const labels = burnlightData['labels'];
-      const data = burnlightData['data'];
-
-      const options = this.getChartOptions(labels, data);
-      return Result.ok(options);
-    } catch (e) {
-      msgError(__filename, 'getBurnlightCharts', e);
-      return Result.err(e);
     }
   },
   async getDocDefinitions(reportData) {

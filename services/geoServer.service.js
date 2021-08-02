@@ -352,4 +352,17 @@ module.exports = geoServerService = {
 
     return response;
   },
+
+  getGeoserverURL(layers, bbox, time, cqlFilter, styles){
+    let url =  `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${layers}&bbox=${bbox}&width=400&height=400&time=${time}&cql_filter=${cqlFilter}&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+    if (styles) {
+      url += `&styles=${styles}`
+    }
+    return url;
+  },
+  getGeoserverLegendURL(layer){
+    return {
+      url: `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${layer}`
+    };
+  }
 };
