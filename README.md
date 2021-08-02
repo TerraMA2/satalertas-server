@@ -1,4 +1,4 @@
-# Terrama² Report Server
+# Terrama² ReportController Server
 
 This project runs on node js version 12
 
