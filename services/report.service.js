@@ -41,7 +41,7 @@ getFilterClassSearch = function (sql, filter, view, tableOwner) {
   return sql;
 };
 
-// 
+//
 // getImageObject = function (image, fit, margin, alignment) {
 //   if (
 //     image &&
@@ -815,8 +815,8 @@ setBurnedData = async function (
             GROUP BY aut.titulo_nu1, aut.data_apro1, aut.data_venc1
     `;
     propertyData['firingAuth'] = await Report.sequelize.query(
-        sqlFiringAuth,
-        QUERY_TYPES_SELECT,
+      sqlFiringAuth,
+      QUERY_TYPES_SELECT,
     );
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -848,8 +848,8 @@ setBurnedData = async function (
             ORDER BY month_year_occurrence
     `;
     propertyData['historyBurnlight'] = await Report.sequelize.query(
-        sqlHistoryBurnlight,
-        QUERY_TYPES_SELECT,
+      sqlHistoryBurnlight,
+      QUERY_TYPES_SELECT,
     );
     // -----------------------------------------------------------------------------------------------------------------
   }
@@ -881,8 +881,8 @@ setBurnedAreaData = async function (
     `;
 
     const burnedAreas = await Report.sequelize.query(
-        sqlBurnedAreas,
-        QUERY_TYPES_SELECT,
+      sqlBurnedAreas,
+      QUERY_TYPES_SELECT,
     );
 
     const sqlBurnedAreasYear = `
@@ -895,8 +895,8 @@ setBurnedAreaData = async function (
       ORDER BY date`;
 
     const burnedAreasYear = await Report.sequelize.query(
-        sqlBurnedAreasYear,
-        QUERY_TYPES_SELECT,
+      sqlBurnedAreasYear,
+      QUERY_TYPES_SELECT,
     );
     const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_APP.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
     const sqlLegalReserveBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_RESERVA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
@@ -914,51 +914,51 @@ setBurnedAreaData = async function (
     // const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
 
     const restrictUseBURNEDAREASum = await Report.sequelize.query(
-        sqlRestrictUseBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlRestrictUseBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     const burnAuthorizationBURNEDAREASum = await Report.sequelize.query(
-        sqlBurnAuthorizationBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlBurnAuthorizationBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     // const resultFisionomiaBURNEDAREASum = await Report.sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
     // const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
 
     const aPPBURNEDAREASum = await Report.sequelize.query(
-        sqlAPPBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlAPPBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     const legalReserveBURNEDAREASum = await Report.sequelize.query(
-        sqlLegalReserveBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlLegalReserveBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     const indigenousLandBURNEDAREASum = await Report.sequelize.query(
-        sqlIndigenousLandBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlIndigenousLandBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     const explorationBURNEDAREASum = await Report.sequelize.query(
-        sqlExploraBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlExploraBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     const deforestationBURNEDAREASum = await Report.sequelize.query(
-        sqlDesmateBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlDesmateBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     const embargoedAreaBURNEDAREASum = await Report.sequelize.query(
-        sqlEmbargoedAreaBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlEmbargoedAreaBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     const landAreaBURNEDAREASum = await Report.sequelize.query(
-        sqlLandAreaBURNEDAREASum,
-        QUERY_TYPES_SELECT,
+      sqlLandAreaBURNEDAREASum,
+      QUERY_TYPES_SELECT,
     );
 
     propertyData['burnedAreas'] = burnedAreas;
@@ -1417,23 +1417,27 @@ setImages = async function (reportData) {
 };
 
 async function setCharts(reportData) {
-  if (!reportData.chartsImages) {
-    reportData.chartsImages = {};
-  }
-  const charts = reportData.chartsImages;
-  if (charts && reportData.type === 'queimada') {
-    charts['firstFiringChart'] = {
-      image: await FiringCharts.historyBurnlight(
-        reportData.property.historyBurnlight,
-      ).toDataUrl(),
-      fit: [450, 450],
-      alignment: 'center',
-    };
-    charts['secondFiringChart'] = {
-      image: await FiringCharts.chartBase64(reportData.property.gid),
-      fit: [450, 200],
-      alignment: 'center',
-    };
+  try {
+    if (!reportData.chartsImages) {
+      reportData.chartsImages = {};
+    }
+    const charts = reportData.chartsImages;
+    if (charts && reportData.type === 'queimada') {
+      charts['firstFiringChart'] = {
+        image: await FiringCharts.historyBurnlight(
+          reportData.property.historyBurnlight,
+        ).toDataUrl(),
+        fit: [450, 450],
+        alignment: 'center',
+      };
+      charts['secondFiringChart'] = {
+        image: await FiringCharts.chartBase64(reportData.property.gid),
+        fit: [450, 200],
+        alignment: 'center',
+      };
+    }
+  } catch (e) {
+    msgError(__filename, 'setCharts', e);
   }
 }
 
@@ -1769,8 +1773,8 @@ module.exports = FileReport = {
             GROUP BY date
             ORDER BY date`;
       const burnedAreasYear = await Report.sequelize.query(
-          sqlBurnedAreasYear,
-          QUERY_TYPES_SELECT,
+        sqlBurnedAreasYear,
+        QUERY_TYPES_SELECT,
       );
       // ---------------------------------------------------------------------------------------------------------------
 
@@ -2022,27 +2026,27 @@ module.exports = FileReport = {
       const currentYear = new Date().getFullYear();
       for (let index = 0; index < points.length; index++) {
         points[index]['url'] = `${
-            confGeoServer.baseHost
+          confGeoServer.baseHost
         }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${
-            views.STATIC.children.CAR_VALIDADO.workspace
+          views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view},${
-            views.STATIC.children.CAR_X_USOCON.workspace
+          views.STATIC.children.CAR_X_USOCON.workspace
         }:${views.STATIC.children.CAR_X_USOCON.view},${
-            views[type.toUpperCase()].children[groupType[type]].workspace
+          views[type.toUpperCase()].children[groupType[type]].workspace
         }:${views[type.toUpperCase()].children[groupType[type]].view}&styles=,${
-            views.STATIC.children.CAR_VALIDADO.workspace
+          views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${
-            views.STATIC.children.CAR_VALIDADO.workspace
+          views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${
-            views[type.toUpperCase()].children[groupType[type]].workspace
+          views[type.toUpperCase()].children[groupType[type]].workspace
         }:${
-            views[type.toUpperCase()].children[groupType[type]].view
+          views[type.toUpperCase()].children[groupType[type]].view
         }_red_style&bbox=${bbox}&width=256&height=256&time=${
-            points[index].startyear
+          points[index].startyear
         }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
-            views[type.toUpperCase()].children[groupType[type]].table_name
+          views[type.toUpperCase()].children[groupType[type]].table_name
         }_id=${points[index].a_carprodes_1_id}&srs=EPSG:${
-            confGeoServer.sridTerraMa
+          confGeoServer.sridTerraMa
         }&format=image/png`;
 
         points[index]['options'] = await SatVegService.get(
