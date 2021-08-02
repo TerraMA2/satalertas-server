@@ -615,12 +615,6 @@ module.exports = FileReport = {
             }
         );
 
-        propertyData.prodesAlerts = await this.getPointsAlerts({
-          carRegister,
-          date,
-          type: 'prodes'
-        });
-
         return Result.ok(propertyData);
       }
     } catch (e) {
@@ -653,93 +647,5 @@ module.exports = FileReport = {
         },
       },
     };
-  },
-  async getPointsAlerts(query) {
-    const { carRegister, date, type } = query;
-    const views = await ViewUtil.getGrouped();
-
-    const carColumn = 'gid';
-    const carColumnSemas = 'de_car_validado_sema_gid';
-
-    const groupType = {
-      prodes: 'CAR_X_PRODES',
-      deter: 'CAR_X_DETER',
-      queimada: '',
-    };
-
-    const sql = `
-        SELECT CAST(main_table.monitored_id AS integer),
-               main_table.a_carprodes_1_id,
-               ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
-               ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
-               extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
-               main_table.execution_date
-        FROM public.${
-          views[type.toUpperCase()].children[groupType[type]].table_name
-        } AS main_table
-        WHERE main_table.${carColumnSemas} = '${carRegister}'
-          AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
-        ORDER BY main_table.calculated_area_ha DESC
-        LIMIT 5
-    `;
-
-    const sqlBbox = `
-      SELECT
-            substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
-      FROM de_car_validado_sema AS car 
-      WHERE car.${carColumn} = '${carRegister}'
-      GROUP BY gid`;
-
-    try {
-      const carBbox = await Report.sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
-      const points = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
-
-      let bbox = setBoundingBox(carBbox[0].bbox);
-
-      const currentYear = new Date().getFullYear();
-      for (let index = 0; index < points.length; index++) {
-        points[index]['url'] = `${
-            confGeoServer.baseHost
-        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
-            views.STATIC.children.CAR_VALIDADO.workspace
-        }:${views.STATIC.children.CAR_VALIDADO.view},${
-            views.STATIC.children.CAR_X_USOCON.workspace
-        }:${views.STATIC.children.CAR_X_USOCON.view},${
-            views[type.toUpperCase()].children[groupType[type]].workspace
-        }:${views[type.toUpperCase()].children[groupType[type]].view}&styles=,${
-            views.STATIC.children.CAR_VALIDADO.workspace
-        }:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${
-            views.STATIC.children.CAR_VALIDADO.workspace
-        }:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${
-            views[type.toUpperCase()].children[groupType[type]].workspace
-        }:${
-            views[type.toUpperCase()].children[groupType[type]].view
-        }_red_style&bbox=${bbox}&width=256&height=256&time=${
-            points[index].startyear
-        }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
-            views[type.toUpperCase()].children[groupType[type]].table_name
-        }_id=${points[index].a_carprodes_1_id}&srs=EPSG:${
-            confGeoServer.sridTerraMa
-        }&format=image/png`;
-
-        points[index]['options'] = await SatVegService.get(
-          { long: points[index].long, lat: points[index].lat },
-          'ndvi',
-          3,
-          'wav',
-          '',
-          'aqua',
-        ).then(async (resp) => {
-          const labels = resp['listaDatas'];
-          const data = resp['listaSerie'];
-          return this.getChartOptions(labels, data);
-        });
-      }
-
-      return Result.ok(points);
-    } catch (e) {
-      msgError(__filename, 'getPointAlerts', e);
-      throw new Error(e);
-    }
-  },
+  }
 }
