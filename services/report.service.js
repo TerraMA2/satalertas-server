@@ -812,8 +812,8 @@ setBurnedData = async function (
     propertyData['burnCount'] = resultBurnCount[0];
     // -----------------------------------------------------------------------------------------------------------------
 
-    // ---  historyBurnlight ---------------------------------------------------------------------------------------
-    const sqlHistoryBurnlight = `
+    // ---  historyFireSpot ---------------------------------------------------------------------------------------
+    const sqlHistoryFireSpot = `
             SELECT  COUNT(1) AS total_focus,
                     0 AS authorized_focus,
                     0 AS  unauthorized_focus,
@@ -825,9 +825,9 @@ setBurnedData = async function (
             GROUP BY month_year_occurrence
             ORDER BY month_year_occurrence
     `;
-    propertyData['historyBurnlight'] = await Report.sequelize.query(
-      sqlHistoryBurnlight,
-      QUERY_TYPES_SELECT,
+    propertyData['historyFireSpot'] = await Report.sequelize.query(
+        sqlHistoryFireSpot,
+        QUERY_TYPES_SELECT,
     );
     // -----------------------------------------------------------------------------------------------------------------
   }
@@ -1035,8 +1035,8 @@ setBurnedAreaData = async function (
       burnAuthorizationBURNEDAREASum[0]['area'],
     );
 
-    if (!propertyData['foundBurnlight']) {
-      propertyData['foundBurnlight'] = !!burnedAreaSum;
+    if (!propertyData['foundFireSpot']) {
+      propertyData['foundFireSpot'] = !!burnedAreaSum;
     }
   }
 
@@ -1402,8 +1402,8 @@ async function setCharts(reportData) {
     const charts = reportData.chartsImages;
     if (charts && reportData.type === 'queimada') {
       charts['firstFiringChart'] = {
-        image: await FiringCharts.historyBurnlight(
-          reportData.property.historyBurnlight,
+        image: await FiringCharts.historyFireSpot(
+          reportData.property.historyFireSpot,
         ).toDataUrl(),
         fit: [450, 450],
         alignment: 'center',
