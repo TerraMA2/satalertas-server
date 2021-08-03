@@ -11,7 +11,7 @@ module.exports = {
     return Promise.all([
       queryInterface.addColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'name',  {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         comment: 'View name',
       }),
       queryInterface.addColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'short_name', {
@@ -25,13 +25,13 @@ module.exports = {
       }),
       queryInterface.addColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'active', {
         type: Sequelize.BOOLEAN,
-        allowNull: false,
+        // allowNull: false,
         default: true,
         comment: 'It defines view can be used and retrieved. Default is true.',
       }),
       queryInterface.addColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'private', {
         type: Sequelize.BOOLEAN,
-        allowNull: false,
+        // allowNull: false,
         default: false,
         comment: 'It defines if the view is private. Default is false.',
       }),
@@ -41,7 +41,7 @@ module.exports = {
       }),
       queryInterface.addColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'source_type', {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        // allowNull: false,
         comment:
           'It defines the type of data source that create the view. Alert, Analysis, Static Data or Dynamic Data',
       }),
