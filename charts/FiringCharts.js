@@ -211,7 +211,7 @@ function chartBase64(propertyGid) {
   });
 }
 
-function historyBurnlight(chartData) {
+function historyFireSpot(chartData) {
   const options = {
     responsive: false,
     legend: {
@@ -299,5 +299,5 @@ function generateDatasets(allDatasets, labels, configs = {}) {
 
 module.exports = {
   chartBase64,
-  historyBurnlight,
+  historyFireSpot,
 };
