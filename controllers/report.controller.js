@@ -1,5 +1,15 @@
 const ReportService = require("../services/report.service");
 
+exports.get = async (req, res) => {
+  const id = req.query.id;
+
+  res.json(await ReportService.get(id));
+};
+
+exports.newNumber = async (req, res) => {
+  res.json(await ReportService.newNumber(req.query.type));
+};
+
 exports.getReportsByCARCod = async (req, res) => {
   const register = req.query.carCode.length > 13 ? req.query.carCode : req.query.carCode.replace('_', '/');
   res.json(await ReportService.getReportsByCARCod(register));
