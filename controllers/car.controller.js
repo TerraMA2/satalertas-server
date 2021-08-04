@@ -1,7 +1,6 @@
 const carService = require(__dirname + '/../services/car.service');
 
-
-exports.getAllSimplified = async (req, res) => {
+exports.getAll = async (req, res) => {
     const params = {
         specificParameters,
         date,
@@ -9,16 +8,7 @@ exports.getAllSimplified = async (req, res) => {
     } = req.query;
 
     try {
-        res.json(await carService.getAllSimplified(params));
-    } catch (e) {
-        res.json(e);
-    }
-};
-
-exports.getAll = async (req, res) => {
-
-    try {
-        res.json(await carService.getAll());
+        res.json(await carService.getAll(params));
     } catch (e) {
         res.json(e);
     }

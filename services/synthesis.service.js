@@ -4,8 +4,6 @@ const Report = models.reports;
 const env = process.env.NODE_ENV || 'development';
 const GeoServerService = require("../services/geoServer.service");
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
-const ViewUtil = require('../utils/view.utils');
-const SatVegService = require('../services/sat-veg.service');
 const { msgError } = require('../utils/messageError');
 
 const QUERY_TYPES_SELECT = { type: 'SELECT' };

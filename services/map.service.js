@@ -1,7 +1,7 @@
 const models = require('../models');
 const { View } = models;
 const Filter = require("../utils/filter/filter.utils");
-const ConfigService = require("../services/config.service");
+const InfoColumnsService = require("../services/info-columns.service");
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 const logger = require('../utils/logger');
 const env = process.env.NODE_ENV || 'development';
@@ -112,7 +112,7 @@ getFilter = async function (params) {
 }
 
 setInfoColumns = async function (data, codGroup) {
-  const infoColumns = await ConfigService.getInfoColumns(codGroup);
+  const infoColumns = await InfoColumnsService.getInfoColumns(codGroup);
   const dataValue = data[0];
   const changedRow = [];
   for ( const e of Object.entries(dataValue)) {

@@ -5,7 +5,7 @@ const models = require('../models')
       logger = require('../utils/logger')
 
 module.exports = carService = {
-  async getAllSimplified(params) {
+  async getAll(params) {
     const specificParameters = JSON.parse(params.specificParameters);
     const filterReceived = JSON.parse(params.filter);
     const layer = JSON.parse(specificParameters.view);
@@ -97,15 +97,6 @@ module.exports = carService = {
 
       return carResult;
 
-    } catch (e) {
-      const msgErr = `In unit car.service, method getAllSimplified:${e}`;
-      logger.error(msgErr);
-      throw new Error(msgErr);
-    }
-  },
-  async getAll() {
-    try {
-      return await Car.findAll();
     } catch (e) {
       const msgErr = `In unit car.service, method getAll:${e}`;
       logger.error(msgErr);

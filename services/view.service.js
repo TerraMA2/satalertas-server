@@ -577,7 +577,7 @@ module.exports = FileReport = {
     }
   },
 
-  async getSidebarConfigDynamic() {
+  async getSidebarLayers() {
     try {
       const groupViews = await orderView(await getGroupViews());
       return Result.ok(await setResultSidebarConfig(groupViews));
@@ -600,5 +600,5 @@ module.exports = FileReport = {
     } catch (e) {
       return Result.err(e);
     }
-  },
+  }
 };

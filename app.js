@@ -4,14 +4,13 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 
-const viewRouter = require('./routes/view')
+const viewRouter = require('./routes/view.route')
 const groupRouter = require('./routes/group.router')
 const groupViewRouter = require('./routes/group-view.router')
-const geoserverRouter = require('./routes/geoserver')
+const geoserverRouter = require('./routes/geoserver.route')
 const reportRouter = require('./routes/report.route')
 const synthesisRouter = require('./routes/synthesis.route')
-const configRouter = require('./routes/config.router')
-const satVegRouter = require('./routes/sat-veg')
+const satVegRouter = require('./routes/sat-veg.route')
 const carRouter = require('./routes/car.router')
 const dashboardRouter = require('./routes/dashboard.router')
 const mapRouter = require('./routes/map.router')
@@ -22,12 +21,13 @@ const conservationUnitRouter = require('./routes/conservation-unit.router')
 const cityRouter = require('./routes/city.router')
 const analyzeRouter = require('./routes/analyze.router')
 const exportRouter = require('./routes/export.router')
+const infoColumnsRouter = require('./routes/info-columns.router')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
 const basePath = config.basePath;
 
-const errorController = require('./controllers/error')
+const errorController = require('./controllers/error.controller')
 
 const app = express()
 
@@ -43,7 +43,6 @@ app.use(basePath+'/view', viewRouter)
 app.use(basePath+'/geoserver', geoserverRouter)
 app.use(basePath+'/report', reportRouter)
 app.use(basePath+'/synthesis', synthesisRouter)
-app.use(basePath+'/config', configRouter)
 app.use(basePath+'/satveg', satVegRouter)
 app.use(basePath+'/car', carRouter)
 app.use(basePath+'/dashboard', dashboardRouter)
@@ -55,6 +54,7 @@ app.use(basePath+'/conservationUnit', conservationUnitRouter)
 app.use(basePath+'/city', cityRouter)
 app.use(basePath+'/analyze', analyzeRouter)
 app.use(basePath+'/export', exportRouter)
+app.use(basePath+'/infoColumns', infoColumnsRouter)
 
 // Error handler
 app.use(errorController.show404)
