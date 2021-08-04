@@ -27,7 +27,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
 const basePath = config.basePath;
 
-const errorController = require('./controllers/error.controllerjs')
+const errorController = require('./controllers/error.controller')
 
 const app = express()
 
