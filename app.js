@@ -4,14 +4,14 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 
-const viewRouter = require('./routes/view')
+const viewRouter = require('./routes/view.route')
 const groupRouter = require('./routes/group.router')
 const groupViewRouter = require('./routes/group-view.router')
-const geoserverRouter = require('./routes/geoserver')
+const geoserverRouter = require('./routes/geoserver.route')
 const reportRouter = require('./routes/report.route')
 const synthesisRouter = require('./routes/synthesis.route')
 const configRouter = require('./routes/config.router')
-const satVegRouter = require('./routes/sat-veg')
+const satVegRouter = require('./routes/sat-veg.route')
 const carRouter = require('./routes/car.router')
 const dashboardRouter = require('./routes/dashboard.router')
 const mapRouter = require('./routes/map.router')
@@ -27,7 +27,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json')[env];
 const basePath = config.basePath;
 
-const errorController = require('./controllers/error')
+const errorController = require('./controllers/error.controllerjs')
 
 const app = express()
 
