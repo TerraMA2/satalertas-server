@@ -159,13 +159,14 @@ async function updateAdvanced(groupViewModify) {
   try {
     const { editions, id_group } = groupViewModify
     for (const edition of editions) {
-      let updateSql = `UPDATE ${RelGroupView.getTableName().schema}.${RelGroupView.tableName}\nSET\n`;
-      // Map only sub_layer ID
-      if (edition.sub_layers) {
-        edition.sub_layers = edition.sub_layers.map(item => item.id);
-      }
+      const { sub_layers } = edition;
       const bind = {id_group};
+      let updateSql = `UPDATE ${RelGroupView.getTableName().schema}.${RelGroupView.tableName}\nSET\n`;
       let setSQL = [];
+      // Map only sub_layer ID
+      if(edition.hasOwnProperty('sub_layers') && sub_layers ) {
+          edition["sub_layers"] = sub_layers.map(item => item.id);
+      }
       Object.keys(edition)
       .forEach(field => {
         bind[field] = edition[field];
