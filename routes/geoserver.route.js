@@ -1,7 +1,7 @@
 
 const express = require('express')
         router = express.Router()
-        geoserverController = require('../controllers/geoserver')
+        geoserverController = require('../controllers/geoserver.controller')
 
 router.get('/insertViewsFilter', geoserverController.insertViews);
 router.get('/updateViewsFilter', geoserverController.updateViews);

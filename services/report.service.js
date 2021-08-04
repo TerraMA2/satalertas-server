@@ -1420,6 +1420,62 @@ async function setCharts(reportData) {
 }
 
 module.exports = FileReport = {
+  async saveBase64(document, code, type, path, docName) {
+    const binaryData = new Buffer(document, 'base64').toString('binary');
+    await fs.writeFile(path, binaryData, 'binary', (err) => {
+      if (err) {
+        throw err;
+      }
+      logger.error(`Arquivo salvo em .. ${path}`);
+    });
+  },
+  async get(id) {
+    const result = id ? await Report.findByPk(id) : await Report.findAll();
+
+    try {
+      if (result.length && result.length > 0) {
+        result.forEach((report) => {
+          report.dataValues.base64 = fs.readFileSync(
+              `${report.path}/${report.name}`,
+              'base64',
+          );
+        });
+      } else {
+        result.dataValues.base64 = fs.readFileSync(
+            `${result.path}/${result.name}`,
+            'base64',
+        );
+      }
+
+      return Result.ok(result);
+    } catch (e) {
+      msgError(__filename, 'get', e);
+      return Result.err(e);
+    }
+  },
+  async newNumber(type) {
+    const sql = ` SELECT '${type.trim()}' AS type,
+               EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
+               LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS newNumber,
+               CONCAT(
+                    LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0'),
+                    '/',
+                    EXTRACT(YEAR FROM CURRENT_TIMESTAMP)
+               ) AS code
+        FROM alertas.reports AS rep
+        WHERE rep.type = '${type.trim()}'
+          AND rep.created_at BETWEEN
+            CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
+
+    try {
+      const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+
+      return Result.ok(result);
+    } catch (e) {
+      msgError(__filename, 'newNumber', e);
+      return Result.err(e);
+    }
+  },
   async getReportsByCARCod(carCode) {
     try {
       const confWhere = { where: { carGid: carCode.trim() } };
