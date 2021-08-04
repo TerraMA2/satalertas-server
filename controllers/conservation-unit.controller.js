@@ -1,31 +1,11 @@
-const   models = require('../models')
-        ConservationUnit = models.de_unidade_cons_sema
-        logger = require('../utils/logger');
+const conservationUnitService = require(__dirname + '/../services/conservation-unit.service');
+const logger = require('../utils/logger');
 
-exports.getAll = async (_req, res) => {
+exports.getAll = async (req, res) => {
     try {
-        res.json(await ConservationUnit.findAll());
+        res.json(await conservationUnitService.getAll());
     } catch (e) {
       const msgErr = `In conservation-unit.controller, method getAll:${e}`;
-      logger.error(msgErr);
-      res.json(msgErr);
-    }
-};
-
-exports.getAllSimplified = async (req, res) => {
-    const options = {
-      attributes: [
-        'gid',
-        ['nome', 'name']
-      ],
-      order: [
-        ['name']
-      ]
-    };
-    try {
-        res.json(await ConservationUnit.findAll(options));
-    } catch (e) {
-      const msgErr = `In conservation-unit.controller, method getAllSimplified:${e}`;
       logger.error(msgErr);
       res.json(msgErr);
     }

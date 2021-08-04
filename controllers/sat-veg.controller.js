@@ -1,5 +1,4 @@
-const SatVegService = require(__dirname + '/../services/car.service');
-
+const SatVegService = require(__dirname + '/../services/sat-veg.service');
 
 exports.get = async (req, res) => {
     try {

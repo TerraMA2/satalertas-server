@@ -1,28 +1,12 @@
-const   models = require('../models');
-        Biome = models.de_biomas_mt;
+const biomeService = require(__dirname + '/../services/biome.service');
+const logger = require("../utils/logger");
 
 exports.getAll = async (req, res) => {
-
     try {
-        res.json(await Biome.findAll());
+        res.json(await biomeService.getAll());
     } catch (e) {
         res.json(res.err(e));
-    }
-};
-
-exports.getAllSimplified = async (req, res) => {
-    const options = {
-        attributes: [
-          'gid',
-          'name'
-        ],
-        order: [
-            ['name']
-        ]
-    };
-    try {
-        res.json(await Biome.findAll(options));
-    } catch (e) {
-        res.json(res.err(e));
+        const msgErr = `In biome.controller, method getAll:${e}`;
+        logger.error(msgErr);
     }
 };

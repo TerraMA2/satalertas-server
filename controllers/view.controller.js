@@ -152,8 +152,8 @@ exports.get = (req, res, next) => {
     }
 }
 
-exports.getSidebarConfigDynamic = async (req, res, next) => {
-    res.json(await ViewService.getSidebarConfigDynamic())
+exports.getSidebarLayers = async (req, res, next) => {
+    res.json(await ViewService.getSidebarLayers())
 }
 
 exports.getReportLayers = async (req, res, next) => {
