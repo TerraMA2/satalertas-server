@@ -2,7 +2,7 @@ const express = require('express');
         router = express.Router();
         dashboardController = require('../controllers/dashboard.controller');
 
-router.get('/getAnalysisTotals', dashboardController.getAnalysisTotals);
-router.get('/getDetailsAnalysisTotals', dashboardController.getDetailsAnalysisTotals);
+router.get('/getAnalysis', dashboardController.getAnalysis);
+router.get('/getAnalysisCharts', dashboardController.getAnalysisCharts);
 
 module.exports = router;

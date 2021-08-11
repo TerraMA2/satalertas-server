@@ -5,4 +5,4 @@ const layerType = {
     ALERT: 4
 }
 
-module.exports = layerType;
+module.exports = layerType

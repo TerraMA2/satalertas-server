@@ -1,3 +1,5 @@
+const env = process.env.NODE_ENV || 'development';
+const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
 
 setViewJson = function(json, view){
   let result;
