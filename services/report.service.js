@@ -411,7 +411,7 @@ setDeterData = async function (
             TO_CHAR(carxdeter.execution_date, 'dd/mm/yyyy') AS date,
             TO_CHAR(carxdeter.execution_date, 'yyyy') AS year,
             TRIM(carxdeter.dd_deter_inpe_sensor) AS sensor,
-            TRIM(TO_CHAR(CAST(REPLACE(carxdeter.dd_deter_inpe_path_row, '/', '') AS DECIMAL), '999_999')) AS path_row,
+            TRIM(TO_CHAR(CAST(REPLACE(REPLACE(carxdeter.dd_deter_inpe_path_row, '/', ''), '_', '') AS DECIMAL), '999_999')) AS path_row,
             TRIM(TO_CHAR(carxdeter.execution_date, 'ddmmyyyy')) AS date_code,
             ( CASE WHEN carxdeter.dd_deter_inpe_satellite = 'Cbers4' THEN 'CBERS-4'
                    ELSE UPPER(TRIM(carxdeter.dd_deter_inpe_satellite)) END) AS sat
