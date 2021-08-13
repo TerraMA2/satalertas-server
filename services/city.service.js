@@ -1,6 +1,5 @@
-const models = require('../models')
-City = models.de_municipios_sema
-logger = require('../utils/logger')
+const { City } = require('../models');
+const logger = require('../utils/logger');
 
 module.exports = cityService = {
     async getAll() {

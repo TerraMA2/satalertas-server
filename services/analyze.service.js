@@ -2,7 +2,8 @@ const models = require('../models');
 const { View } = models;
 const logger = require('../utils/logger');
 const ViewUtil = require("../utils/view.utils");
-const QUERY_TYPES_SELECT = { type: "SELECT" };
+const { QueryTypes } = require('sequelize');
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 
 const analyses = {
   async deter(group) {

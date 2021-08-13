@@ -1,7 +1,8 @@
+const { QueryTypes } = require('sequelize');
 const models = require('../models');
-const { View } = models;
+const { View, sequelize } = models;
 const Filter = require("../utils/filter/filter.utils");
-const QUERY_TYPES_SELECT = { type: "SELECT" };
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 
 // ==== Analysis Totals =========================================
 getSqlAnalysisTotals = async function(params) {
@@ -231,7 +232,7 @@ function generate_color() {
 module.exports = dashboardService = {
   async getAnalysisTotals(params) {
     const sqlTotals = await getSqlAnalysisTotals(params);
-    const result = await View.sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
+    const result = await sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
     result[0].activearea = true;
 
     return result;
@@ -243,9 +244,9 @@ module.exports = dashboardService = {
     if (alerts.length > 0) {
       for (let alert of alerts) {
         const sql = await getSqlDetailsAnalysisTotals(alert, params);
-        let resultAux =  await View.sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
+        let resultAux =  await sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
         const graphic1 = await setGraphic(resultAux, sql.value1, sql.subtitle);
-        resultAux = await View.sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
+        resultAux = await sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
         const graphic2 = await setGraphic(resultAux, sql.value1, sql.subtitle);
         result.push(setAlertGraphic(alert, graphic1, graphic2));
       }

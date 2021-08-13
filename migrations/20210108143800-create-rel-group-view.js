@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id_view: {
+      view_id: {
         type: Sequelize.INTEGER,
         references: { 
           model: {
@@ -19,7 +19,7 @@ module.exports = {
         },
         onDelete: 'SET NULL'
       },
-      id_group: {
+      group_id: {
         type: Sequelize.INTEGER,
         references: { 
           model: {
@@ -28,7 +28,8 @@ module.exports = {
           },
           key: 'id'
         },
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
+        allowNull: false,
       },
     }, {
       charset: 'utf-8',

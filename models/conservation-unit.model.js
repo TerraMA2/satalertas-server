@@ -1,6 +1,12 @@
 'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  const ConservationUnit = sequelize.define('de_unidade_cons_sema', {
+  class ConservationUnit extends Model {
+    static associate(models) {}
+  }
+
+  // const ConservationUnit = sequelize.define('de_unidade_cons_sema', 
+  ConservationUnit.init({
     gid: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -89,15 +95,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   }, {
+    sequelize,
     schema: 'public',
+    tableName: 'de_unidade_cons_sema',
+    modelName: 'ConservationUnit',
     underscored: true,
-    underscoredAll: true,
+    // underscoredAll: true,
     timestamps: false,
     freezeTableName: true
   });
-
-  ConservationUnit.associate = function(models) {
-  };
-
   return ConservationUnit
 }

@@ -1,8 +1,8 @@
-const models = require('../models')
-      Car = models.de_car_validado_sema
-      Filter = require("../utils/filter/filter.utils")
-      QUERY_TYPES_SELECT = { type: "SELECT" }
-      logger = require('../utils/logger')
+const { QueryTypes } = require('sequelize');
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
+const { CarValidado, sequelize } = require('../models');
+const Filter = require("../utils/filter/filter.utils");
+const logger = require('../utils/logger');
 
 module.exports = carService = {
   async getAll(params) {
@@ -19,7 +19,7 @@ module.exports = carService = {
 
       const filter =
         specificParameters.isDynamic ?
-          await Filter.setFilter(Car, params, table, layer) :
+          await Filter.setFilter(CarValidado, params, table, layer) :
           {
             sqlWhere: '',
             secondaryTables: '',
@@ -83,9 +83,9 @@ module.exports = carService = {
             ${filter.limit}
             ${filter.offset}`;
 
-      const carResult = await Car.sequelize.query(sql, QUERY_TYPES_SELECT);
+      const carResult = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
-      const resultCount = await Car.sequelize.query(
+      const resultCount = await sequelize.query(
                                               ` SELECT 1
                                                     ${sqlFrom} 
                                                     ${filter.secondaryTables}
@@ -111,7 +111,7 @@ module.exports = carService = {
         }
       };
 
-      return await Car.findAll(where);
+      return await CarValidado.findAll(where);
 
     } catch (e) {
       const msgErr = `In unit car.service, method getByCpf:${e}`;

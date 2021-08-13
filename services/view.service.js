@@ -1,5 +1,5 @@
 const models = require('../models');
-const { View, RegisteredView } = models;
+const { View, RegisteredView, sequelize } = models;
 const env = process.env.NODE_ENV || 'development';
 const Result = require(__dirname + '/../utils/result');
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[
@@ -383,7 +383,7 @@ getGroupViews = async function () {
         WHERE view.active = true
         GROUP BY cod, label, parent, view_graph, active_area, is_private `;
   try {
-    const dataset_group_views = await RegisteredView.sequelize.query(
+    const dataset_group_views = await sequelize.query(
       sqlGroupViews,
       QUERY_TYPES_SELECT,
     );
@@ -464,7 +464,7 @@ getViews = async function (groupViews) {
       `;
 
   try {
-    const dataset_views = await RegisteredView.sequelize.query(
+    const dataset_views = await sequelize.query(
       sqlViews,
       QUERY_TYPES_SELECT,
     );
@@ -567,7 +567,7 @@ module.exports = FileReport = {
 
     try {
       return Result.ok(
-        await RegisteredView.sequelize.query(
+        await sequelize.query(
           sqlReportLayers,
           QUERY_TYPES_SELECT,
         ),

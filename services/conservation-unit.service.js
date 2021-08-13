@@ -1,6 +1,5 @@
-const models = require('../models')
-const ConservationUnit = models.de_unidade_cons_sema
-const logger = require('../utils/logger')
+const { ConservationUnit } = require('../models');
+const logger = require('../utils/logger');
 
 module.exports = conservationUnitService = {
     async getAll() {

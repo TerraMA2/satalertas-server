@@ -1,8 +1,9 @@
+const { QueryTypes } = require('sequelize');
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 const enums = require('../utils/Enums');
 const SatAlertasChart = require('./SatAlertasChart.model');
-const QUERY_TYPES_SELECT = { type: 'SELECT' };
-const models = require('../models');
-const Report = models.reports;
+const { sequelize } = require('../models');
+// const Report = models.reports;
 
 const sqlDeter = (propertyGid) => `SELECT
 extract(year from date_trunc('year', cd.execution_date)) AS date,
@@ -34,7 +35,7 @@ function randomRGB(min, max) {
   return `rgb(${rand()}, ${rand()}, ${rand()})`;
 }
 async function getData(sql, queryTypes = QUERY_TYPES_SELECT) {
-  return await Report.sequelize.query(sql, queryTypes);
+  return await sequelize.query(sql, queryTypes);
 }
 
 function genLabels(data, colName = 'date') {

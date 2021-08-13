@@ -1,7 +1,6 @@
 const FiringCharts = require('../charts/FiringCharts');
 const Result = require('../utils/result');
-const models = require('../models');
-const Report = models.reports;
+const { Report, sequelize } = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
@@ -367,7 +366,7 @@ getCarData = async function (
       INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
       GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
     `;
-  const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+  const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
   return result[0];
 };
@@ -394,7 +393,7 @@ setDeterData = async function (
       views.DETER.children.CAR_X_DETER,
       views.DETER.tableOwner,
     )} `;
-    const resultDeterAreaPastDeforestation = await Report.sequelize.query(
+    const resultDeterAreaPastDeforestation = await sequelize.query(
       sqlDeterAreaPastDeforestation,
       QUERY_TYPES_SELECT,
     );
@@ -427,7 +426,7 @@ setDeterData = async function (
             AND st_intersects(bio.geom, carxdeter.intersection_geom)
       GROUP BY a_cardeter_31_id, bio.gid `;
 
-    propertyData['deflorestationAlerts'] = await Report.sequelize.query(
+    propertyData['deflorestationAlerts'] = await sequelize.query(
       sqlDeflorestationAlerts,
       QUERY_TYPES_SELECT,
     );
@@ -548,7 +547,7 @@ setDeterData = async function (
     )}
     `;
 
-    const resCrossings = await Report.sequelize.query(
+    const resCrossings = await sequelize.query(
       sqlCrossings,
       QUERY_TYPES_SELECT,
     );
@@ -597,7 +596,7 @@ setProdesData = async function (
         ${dateSql}
       GROUP BY date
       ORDER BY date `;
-    propertyData['analyzesYear'] = await Report.sequelize.query(
+    propertyData['analyzesYear'] = await sequelize.query(
       sqlProdesYear,
       QUERY_TYPES_SELECT,
     );
@@ -605,7 +604,7 @@ setProdesData = async function (
 
     // --- Radam View vegetation of area grouped by physiognomy --------------------------------------------------------
     const sqlVegRadam = ` SELECT gid, numero_do1, numero_do2, fisionomia, ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_, ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam FROM car_x_vegradam WHERE gid = ${carRegister} `;
-    propertyData['vegRadam'] = await Report.sequelize.query(
+    propertyData['vegRadam'] = await sequelize.query(
       sqlVegRadam,
       QUERY_TYPES_SELECT,
     );
@@ -621,7 +620,7 @@ setProdesData = async function (
        AND ST_Intersects(car_prodes.intersection_geom, radam.geom)
       GROUP BY radam.fisionomia`;
 
-    propertyData['prodesRadam'] = await Report.sequelize.query(
+    propertyData['prodesRadam'] = await sequelize.query(
       sqlFisionomiaPRODESSum,
       QUERY_TYPES_SELECT,
     );
@@ -631,7 +630,7 @@ setProdesData = async function (
     const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
       FROM public.${views.PRODES.children.CAR_X_PRODES.table_name}
       WHERE ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const resultProdesTotalArea = await Report.sequelize.query(
+    const resultProdesTotalArea = await sequelize.query(
       sqlProdesTotalArea,
       QUERY_TYPES_SELECT,
     );
@@ -640,7 +639,7 @@ setProdesData = async function (
 
     // --- Total area of prodes period ----------------------------------------------------------------------------------------
     const sqlProdesAreaPastDeforestation = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}' ${dateSql} `;
-    const resultProdesAreaPastDeforestation = await Report.sequelize.query(
+    const resultProdesAreaPastDeforestation = await sequelize.query(
       sqlProdesAreaPastDeforestation,
       QUERY_TYPES_SELECT,
     );
@@ -650,7 +649,7 @@ setProdesData = async function (
 
     // --- Total area of UsoCon ----------------------------------------------------------------------------------------
     const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${views.STATIC.children.CAR_X_USOCON.table_name} where gid_car = '${carRegister}'`;
-    const resultUsoConArea = await Report.sequelize.query(
+    const resultUsoConArea = await sequelize.query(
       sqlUsoConArea,
       QUERY_TYPES_SELECT,
     );
@@ -659,7 +658,7 @@ setProdesData = async function (
 
     // --- Prodes area by period ---------------------------------------------------------------------------------------
     const sqlProdesArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
-    const resultProdesArea = await Report.sequelize.query(
+    const resultProdesArea = await sequelize.query(
       sqlProdesArea,
       QUERY_TYPES_SELECT,
     );
@@ -699,13 +698,13 @@ setProdesData = async function (
             WHERE cp.${columnCarEstadual} = '${carRegister}'
             GROUP BY date
             ORDER BY date`;
-    const deflorestationHistory = await Report.sequelize.query(
+    const deflorestationHistory = await sequelize.query(
       sqlDeforestationHistory,
       QUERY_TYPES_SELECT,
     );
 
-    // propertyData['period']  = await Report.sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
-    propertyData['period'] = await Report.sequelize.query(
+    // propertyData['period']  = await sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
+    propertyData['period'] = await sequelize.query(
       ` SELECT  2006 AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes `,
       QUERY_TYPES_SELECT,
     );
@@ -720,7 +719,7 @@ setProdesData = async function (
     );
     // ---------------------------------------------------------------------------------------------------------------
 
-    const resCrossings = await Report.sequelize.query(
+    const resCrossings = await sequelize.query(
       sqlCrossings,
       QUERY_TYPES_SELECT,
     );
@@ -792,7 +791,7 @@ setBurnedData = async function (
             AND '${filter.date[1]}' >= data_venc1
             GROUP BY aut.titulo_nu1, aut.data_apro1, aut.data_venc1
     `;
-    propertyData['firingAuth'] = await Report.sequelize.query(
+    propertyData['firingAuth'] = await sequelize.query(
       sqlFiringAuth,
       QUERY_TYPES_SELECT,
     );
@@ -805,7 +804,7 @@ setBurnedData = async function (
         WHERE   car_focos.${columnCarEstadual} = ${carRegister}
             AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
     `;
-    const resultBurnCount = await Report.sequelize.query(
+    const resultBurnCount = await sequelize.query(
       sqlBurnCount,
       QUERY_TYPES_SELECT,
     );
@@ -825,7 +824,7 @@ setBurnedData = async function (
             GROUP BY month_year_occurrence
             ORDER BY month_year_occurrence
     `;
-    propertyData['historyFireSpot'] = await Report.sequelize.query(
+    propertyData['historyFireSpot'] = await sequelize.query(
         sqlHistoryFireSpot,
         QUERY_TYPES_SELECT,
     );
@@ -858,7 +857,7 @@ setBurnedAreaData = async function (
       group by date
     `;
 
-    const burnedAreas = await Report.sequelize.query(
+    const burnedAreas = await sequelize.query(
       sqlBurnedAreas,
       QUERY_TYPES_SELECT,
     );
@@ -872,7 +871,7 @@ setBurnedAreaData = async function (
       GROUP BY date
       ORDER BY date`;
 
-    const burnedAreasYear = await Report.sequelize.query(
+    const burnedAreasYear = await sequelize.query(
       sqlBurnedAreasYear,
       QUERY_TYPES_SELECT,
     );
@@ -891,50 +890,50 @@ setBurnedAreaData = async function (
     const sqlBurnAuthorizationBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_QUEIMA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
     // const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
 
-    const restrictUseBURNEDAREASum = await Report.sequelize.query(
+    const restrictUseBURNEDAREASum = await sequelize.query(
       sqlRestrictUseBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    const burnAuthorizationBURNEDAREASum = await Report.sequelize.query(
+    const burnAuthorizationBURNEDAREASum = await sequelize.query(
       sqlBurnAuthorizationBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    // const resultFisionomiaBURNEDAREASum = await Report.sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
+    // const resultFisionomiaBURNEDAREASum = await sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
     // const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
 
-    const aPPBURNEDAREASum = await Report.sequelize.query(
+    const aPPBURNEDAREASum = await sequelize.query(
       sqlAPPBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    const legalReserveBURNEDAREASum = await Report.sequelize.query(
+    const legalReserveBURNEDAREASum = await sequelize.query(
       sqlLegalReserveBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    const indigenousLandBURNEDAREASum = await Report.sequelize.query(
+    const indigenousLandBURNEDAREASum = await sequelize.query(
       sqlIndigenousLandBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    const explorationBURNEDAREASum = await Report.sequelize.query(
+    const explorationBURNEDAREASum = await sequelize.query(
       sqlExploraBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    const deforestationBURNEDAREASum = await Report.sequelize.query(
+    const deforestationBURNEDAREASum = await sequelize.query(
       sqlDesmateBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    const embargoedAreaBURNEDAREASum = await Report.sequelize.query(
+    const embargoedAreaBURNEDAREASum = await sequelize.query(
       sqlEmbargoedAreaBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
 
-    const landAreaBURNEDAREASum = await Report.sequelize.query(
+    const landAreaBURNEDAREASum = await sequelize.query(
       sqlLandAreaBURNEDAREASum,
       QUERY_TYPES_SELECT,
     );
@@ -1468,7 +1467,7 @@ module.exports = FileReport = {
             CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
 
     try {
-      const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+      const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
       return Result.ok(result);
     } catch (e) {
@@ -1767,8 +1766,8 @@ module.exports = FileReport = {
       GROUP BY gid`;
 
     try {
-      const carBbox = await Report.sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
-      const points = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+      const carBbox = await sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
+      const points = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
       let bbox = setBoundingBox(carBbox[0].bbox);
 
