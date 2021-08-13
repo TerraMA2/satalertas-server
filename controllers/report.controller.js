@@ -11,7 +11,7 @@ exports.newNumber = async (req, res) => {
 };
 
 exports.getReportsByCARCod = async (req, res) => {
-  const register = req.query.carCode.length > 13 ? req.query.carCode : req.query.carCode.replace('_', '/');
+  const register = req.query.carGid.length > 13 ? req.query.carGid : req.query.carGid.replace('_', '/');
   res.json(await ReportService.getReportsByCARCod(register));
 };
 
