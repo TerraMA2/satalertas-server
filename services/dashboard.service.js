@@ -3,100 +3,80 @@ const models = require('../models');
 const { View, sequelize } = models;
 const Filter = require("../utils/filter/filter.utils");
 const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
+const ViewService = require("../services/view.service");
+const LayerTypeName = require('../enum/layerTypeName');
 
-// ==== Analysis Totals =========================================
 getSqlAnalysisTotals = async function(params) {
-  const alerts = params.specificParameters && params.specificParameters !== 'null' ?
-    JSON.parse(params.specificParameters) : [];
+  const analysisList = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
 
   let sql = '';
-  if (alerts.length > 0) {
-    for (let alert of alerts) {
+  if (analysisList.length > 0) {
+    for (let analysis of analysisList) {
       sql += sql.trim() === '' ? '' : ' UNION ALL ';
 
-      if (alert.idview && alert.idview > 0 && alert.idview !== 'null') {
+      if (analysis.idview && analysis.idview > 0 && analysis.idview !== 'null') {
         const table = {
-          name: alert.tableName,
+          name: analysis.tableName,
           alias: 'main_table'
         };
-        const collumns = await Filter.getColumns(alert, '', table.alias);
-        const filter = await Filter.getFilter(View, table, params, alert, collumns);
-        const value1 = alert.codgroup === 'BURNED' ?
-          ` COALESCE( ( SELECT ROW_NUMBER() OVER(ORDER BY ${collumns.column1} ASC) AS Row
+        const columns = await Filter.getColumns(analysis, '', table.alias);
+        const filter = await Filter.getFilter(View, table, params, analysis, columns);
+        const alert = analysis.codgroup === 'BURNED' ?
+          ` COALESCE( ( SELECT ROW_NUMBER() OVER(ORDER BY ${columns.column1} ASC) AS Row
                FROM public.${table.name} AS ${table.alias}
                ${filter.secondaryTables}
                ${filter.sqlWhere}
-               GROUP BY ${collumns.column1}
+               GROUP BY ${columns.column1}
                ${filter.sqlHaving}
                ORDER BY Row DESC
                LIMIT 1
-            ), 00.00) AS value1 ` :
-          `  COALESCE(COUNT(1), 00.00) AS value1 `;
+            ), 00.00) AS alert ` :
+          `  COALESCE(COUNT(1), 00.00) AS alert `;
         const sqlWhere =
           filter.sqlHaving ?
             ` ${filter.sqlWhere} 
-                AND ${table.alias}.${collumns.column1} IN
-                ( SELECT tableWhere.${collumns.column1} AS subtitle
+                AND ${table.alias}.${columns.column1} IN
+                ( SELECT tableWhere.${columns.column1} AS subtitle
                   FROM public.${table.name} AS tableWhere
-                  GROUP BY tableWhere.${collumns.column1}
+                  GROUP BY tableWhere.${columns.column1}
               ${filter.sqlHaving}) ` :
-            filter.sqlWhere;
+              filter.sqlWhere;
 
-        const value2 = alert.codgroup === 'BURNED' ?
-          ` ( SELECT coalesce(sum(1), 0.00) as num_focos FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} ) AS value2 ` :
-          ` COALESCE(SUM(${collumns.columnArea}), 0.00) AS value2 `;
+        const area = analysis.codgroup === 'BURNED' ?
+          ` ( SELECT coalesce(sum(1), 0.00) as num_focos FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} ) AS area ` :
+          ` COALESCE(SUM(${columns.columnArea}), 0.00) AS area `;
 
-        const sqlFrom = alert.codgroup === 'BURNED' ?
+        const sqlFrom = analysis.codgroup === 'BURNED' ?
           ` ` :
           ` FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${filter.sqlWhere} `;
 
         sql +=
-          ` SELECT 
-                  '${alert.idview}' AS idview,
-                  '${alert.cod}' AS cod,
-                  '${alert.codgroup}' AS codgroup,
-                  '${alert.label}' AS label,
-                  ${value1},
-                  ${value2},
-                  ${alert.selected} AS selected,
-                  ${alert.activearea} AS activearea,
-                  false AS activealert,
-                  null AS alertsgraphics 
-             ${sqlFrom}`;
+          ` SELECT ${alert},
+                   ${area}
+                   ${sqlFrom}`;
       } else {
         sql +=
-          ` SELECT 
-                    '${alert.idview}' AS idview,
-                    '${alert.cod}' AS cod,
-                    '${alert.codgroup}' AS codgroup,
-                    '${alert.label}' AS label,
-                    0.00 AS value1,
-                    00.00 AS value2 ,
-                    ${alert.selected} AS selected,
-                    ${alert.activearea} AS activearea,
-                    false AS activealert,
-                    null AS alertsgraphics `;
+          ` SELECT 0.00 AS alert,
+                   00.00 AS area `;
       }
     }
   }
   return sql;
 }
-// --------------------------------------------------------------
 
-// ==== Charts - details ========================================
-function setAlertGraphic(alert, graphic1, graphic2) {
+function setAnalysisChart(analysis, chart1, chart2) {
   return {
-    cod: alert.cod,
-    codGroup: alert.codgroup,
-    label: alert.label,
-    active: alert.isPrimary,
-    isEmpty: graphic1.labels.length === 0 || graphic2.labels.length === 0,
-    graphics: [{
-      data: graphic1,
+    cod: analysis.cod,
+    codGroup: analysis.codgroup,
+    label: analysis.label,
+    active: analysis.isPrimary,
+    isEmpty: chart1.labels.length === 0 || chart2.labels.length === 0,
+    charts: [{
+      data: chart1,
       options: {
         title: {
           display: true,
-          text: alert.codgroup,
+          text: analysis.codgroup,
           fontSize: 16
         },
         legend: {
@@ -105,11 +85,11 @@ function setAlertGraphic(alert, graphic1, graphic2) {
       }
     },
       {
-        data: graphic2,
+        data: chart2,
         options: {
           title: {
             display: true,
-            text: alert.codgroup,
+            text: analysis.codgroup,
             fontSize: 16
           },
           legend: {
@@ -119,44 +99,45 @@ function setAlertGraphic(alert, graphic1, graphic2) {
       }]
   }
 }
-async function setGraphic(resultAux, value1, subtitle) {
+async function setChart(chartData, value, subtitle, label) {
   let labels = [];
   let data = [];
   let backgroundColor = [];
   let hoverBackgroundColor = [];
 
-  resultAux.forEach(value => {
-    labels.push(value[`${subtitle}`]);
-    data.push(value[`${value1}`]);
-    backgroundColor.push(generate_color());
-    hoverBackgroundColor.push(generate_color());
+  chartData.forEach(chart => {
+    labels.push(chart[`${subtitle}`]);
+    const chartValue = chart[`${value}`];
+    data.push(chartValue);
+    backgroundColor.push('#591111');
+    hoverBackgroundColor.push('#874847');
   });
 
   return {
     labels: labels,
     datasets: [{
+      label,
       data: data,
       backgroundColor: backgroundColor,
       hoverBackgroundColor: hoverBackgroundColor
     }]
   };
 }
-async function getSqlDetailsAnalysisTotals(alert, params) {
+async function getAnalysisChartSql(analysis, params) {
   let sql1 = '';
   let sql2 = '';
 
-  const value1 = 'value';
+  const value = 'value';
   const subtitle = 'subtitle';
 
-  if (alert.idview && alert.idview > 0 && alert.idview !== 'null') {
+  if (analysis.idview && analysis.idview > 0 && analysis.idview !== 'null') {
 
     const table = {
-      name: alert.tableName,
+      name: analysis.tableName,
       alias: 'main_table',
-      owner: alert.tableOwner
+      owner: analysis.tableOwner
     };
-
-    const columns = await Filter.getColumns(alert, table.owner, table.alias);
+    const columns = await Filter.getColumns(analysis, table.owner, table.alias);
 
     const limit = params.limit && params.limit !== 'null' && params.limit > 0 ?
       params.limit :
@@ -168,25 +149,25 @@ async function getSqlDetailsAnalysisTotals(alert, params) {
               WHEN ${columns.column1} IS NULL THEN ${columns.column5}
               ELSE ${columns.column1}
            END)   AS ${subtitle},
-          COALESCE(SUM(${columns.column3})) AS ${value1} `;
+          COALESCE(SUM(${columns.column3})) AS ${value} `;
 
-    const columnsFor2 = alert.codgroup && (alert.codgroup === 'BURNED_AREA') ?
+    const columnsFor2 = analysis.codgroup && (analysis.codgroup === 'BURNED_AREA') ?
       `   (CASE
                 WHEN ${columns.column2} IS NULL THEN ${columns.column5}
                 ELSE ${columns.column2}
             END)   AS ${subtitle},
-          COALESCE(SUM(${columns.column3})) AS ${value1} ` :
+          COALESCE(SUM(${columns.column3})) AS ${value} ` :
         `   ${columns.column2} AS ${subtitle},
-          COALESCE(SUM(${columns.column3})) AS ${value1} `
+          COALESCE(SUM(${columns.column3})) AS ${value} `
     ;
 
     const sqlFrom = ` FROM public.${table.name} AS ${table.alias}`;
 
-    const filter = await Filter.getFilter(View, table, params, alert, columns);
+    const filter = await Filter.getFilter(View, table, params, analysis, columns);
 
     const sqlGroupBy1 = ` GROUP BY ${subtitle} `;
-    const sqlGroupBy2 = ` GROUP BY ${alert.codgroup && (alert.codgroup === 'BURNED_AREA') ? subtitle : columns.column2}  `;
-    const sqlOrderBy = ` ORDER BY ${value1} DESC `;
+    const sqlGroupBy2 = ` GROUP BY ${analysis.codgroup && (analysis.codgroup === 'BURNED_AREA') ? subtitle : columns.column2}  `;
+    const sqlOrderBy = ` ORDER BY ${value} DESC `;
     const sqlLimit = ` LIMIT ${limit} `;
 
     sql1 +=
@@ -209,46 +190,94 @@ async function getSqlDetailsAnalysisTotals(alert, params) {
     sql1 +=
       ` SELECT 
           ' --- ' AS ${subtitle},
-          0.00 AS ${value1} 
+          0.00 AS ${value} 
         `;
     sql2 +=
       ` SELECT 
           ' --- ' AS ${subtitle},
-          0.00 AS ${value1}
+          0.00 AS ${value}
         `;
   }
-  return {sql1, sql2, value1, subtitle};
+  return {sql1, sql2, value, subtitle};
 }
-function generate_color() {
-  const hexadecimal = '0123456789ABCDEF';
-  let color = '#';
-
-  for (let i = 0; i < 6; i++) {
-    color += hexadecimal[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
+// function generate_color() {
+//   const hexadecimal = '0123456789ABCDEF';
+//   let color = '#';
+//
+//   for (let i = 0; i < 6; i++) {
+//     color += hexadecimal[Math.floor(Math.random() * 16)];
+//   }
+//   return color;
+// }
 // --------------------------------------------------------------
 module.exports = dashboardService = {
-  async getAnalysisTotals(params) {
+  async getAnalysis(params) {
+    let sidebarLayers = await ViewService.getSidebarLayers();
+    sidebarLayers = sidebarLayers.data;
+    if (!sidebarLayers) {
+      return null;
+    }
+    let analysisList = sidebarLayers
+        .filter(layerGroup => layerGroup.view_graph)
+        .map((layerGroup) => {
+          const children = layerGroup.children;
+          const primaryLayer = children.find((layer) => layer.isPrimary && layer.type === LayerTypeName["3"]);
+          const analysisCharts = children.map(layer => {
+            return {
+              idview: layer.value,
+              cod: layer.cod,
+              codgroup: layer.codgroup,
+              label: layer.label,
+              activearea: true,
+              isPrimary: layer.isPrimary,
+              isAnalysis: layer.type === LayerTypeName['3'],
+              tableOwner: layer.tableOwner,
+              tableName: layer.tableName
+            }
+          });
+          return {
+            idview: primaryLayer.value,
+            cod: primaryLayer.cod,
+            codgroup: layerGroup.cod,
+            label: layerGroup.label,
+            alert: 0,
+            area: 0,
+            selected: layerGroup.cod === 'DETER',
+            activearea: layerGroup.cod === 'DETER',
+            activealert: false,
+            analysischarts: analysisCharts,
+            isAnalysis: true,
+            isPrimary: true,
+            tableOwner: primaryLayer.tableOwner,
+            tableName: primaryLayer.tableName
+          };
+    });
+    params.specificParameters = JSON.stringify(analysisList);
     const sqlTotals = await getSqlAnalysisTotals(params);
     const result = await sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
     result[0].activearea = true;
-
-    return result;
+    analysisList = analysisList.map((analysis, index) => {
+      analysis.alert = result[index].alert;
+      analysis.area = result[index].area;
+      return analysis;
+    });
+    return analysisList;
   },
-  async getDetailsAnalysisTotals(params) {
-    const alerts = params.specificParameters && params.specificParameters !== 'null' ?
-      JSON.parse(params.specificParameters) : [];
+  async getAnalysisCharts(params) {
+    const analysisList = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
     const result = [];
-    if (alerts.length > 0) {
-      for (let alert of alerts) {
-        const sql = await getSqlDetailsAnalysisTotals(alert, params);
-        let resultAux =  await sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
-        const graphic1 = await setGraphic(resultAux, sql.value1, sql.subtitle);
+    if (analysisList.length > 0) {
+      let count = 0;
+      for (let analysis of analysisList) {
+        const labelChart1 = analysis.codGroup === 'BURNED' ? 'Quantidade de alertas de focos por CAR' : 'Área (ha) de alertas por CAR';
+        const labelChart2 = analysis.codGroup === 'BURNED' ? 'Quantidade de alertas de focos por Bioma' : 'Área (ha) de alertas por classe';
+        const sql = await getAnalysisChartSql(analysis, params);
+        let resultAux = await sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
+        const chart1 = await setChart(resultAux, sql.value, sql.subtitle, labelChart1);
         resultAux = await sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
-        const graphic2 = await setGraphic(resultAux, sql.value1, sql.subtitle);
-        result.push(setAlertGraphic(alert, graphic1, graphic2));
+        const chart2 = await setChart(resultAux, sql.value, sql.subtitle, labelChart2);
+        result.push(setAnalysisChart(analysis, chart1, chart2));
+        count++;
       }
     }
     return result;
