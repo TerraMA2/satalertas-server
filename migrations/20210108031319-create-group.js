@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id_project: {
+      project_id: {
         type: Sequelize.INTEGER
       },
       name: {
@@ -20,7 +20,7 @@ module.exports = {
       active_area: {
         type: Sequelize.BOOLEAN
       },
-      view_graph: {
+      dashboard: {
         type: Sequelize.BOOLEAN
       }
     },

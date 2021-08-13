@@ -1,6 +1,12 @@
 'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  const CarValidado = sequelize.define('de_car_validado_sema', {
+  class CarValidado extends Model {
+    static associate(models) {}
+  }
+ 
+  CarValidado.init(
+  {
     gid: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -100,15 +106,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   }, {
+    modelName: 'CarValidado',
     schema: 'public',
+    tableName: 'de_car_validado_sema',
     underscored: true,
-    underscoredAll: true,
+    // underscoredAll: true,
     timestamps: false,
-    freezeTableName: true
+    // freezeTableName: true,
+    sequelize
   });
-
-  CarValidado.associate = function(models) {
-  };
 
   return CarValidado
 }

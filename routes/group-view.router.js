@@ -1,11 +1,11 @@
 const express = require('express');
-        router = express.Router();
-        GroupViewController = require('../controllers/group-view.controller');
+const router = express.Router();
+const GroupViewController = require('../controllers/group-view.controller');
 
 router.put('/', GroupViewController.update);
 router.put('/advanced', GroupViewController.updateAdvanced);
 router.post('/', GroupViewController.add);
 router.get('/', GroupViewController.getAll);
-router.get('/getByIdGroup?:idGroup*', GroupViewController.getByIdGroup);
-router.get('/getNotBelongingToTheGroup?:idGroup*', GroupViewController.getNotBelongingToTheGroup);
+router.get('/getBygroupId?:groupId*', GroupViewController.getByGroupId);
+router.get('/getAvailableLayers?:groupId*', GroupViewController.getAvailableLayers);
 module.exports = router;

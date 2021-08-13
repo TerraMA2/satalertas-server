@@ -4,19 +4,26 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const { models } = sequelize;
   class RelGroupView extends Model {
-    static assosciate(models) {}
+    static associate(models) {}
   }
 
   RelGroupView.init(
     {
-      id_group: {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+      },
+      groupId: {
         type: DataTypes.INTEGER,
         references: {
           model: models.Group,
           key: 'id',
         },
+        allowNull: false,
       },
-      id_view: {
+      viewId: {
         type: DataTypes.INTEGER,
         references: {
           model: models.view,
@@ -27,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         comment: 'View name',
       },
-      short_name: {
+      shortName: {
         type: DataTypes.STRING,
         allowNull: true,
         comment: 'Short name',
@@ -47,29 +54,29 @@ module.exports = (sequelize, DataTypes) => {
         default: false,
         comment: 'It defines if the view is private. Default is false.',
       },
-      schedule_type: {
+      scheduleType: {
         type: DataTypes.INTEGER,
         // allowNull: true,
       },
-      source_type: {
+      sourceType: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        // allowNull: false,
         comment:
           'It defines the type of data source that create the view. Alert, Analysis, Static Data or Dynamic Data',
       },
-      is_primary: {
+      isPrimary: {
         type: DataTypes.BOOLEAN,
         // allowNull: false,
         default: false,
         comment: 'It defines if the layer is parent or not. Default is false.',
       },
-      is_sublayer: {
+      isSublayer: {
         type: DataTypes.BOOLEAN,
         default: false,
         comment:
           'It defines if the layer is a sublayer or not. Default is false.',
       },
-      sub_layers: {
+      subLayers: {
         type: DataTypes.ARRAY(DataTypes.INTEGER),
         // allowNull: true,
         comment: 'It defines which layers are sub layers of this layer.',
@@ -77,9 +84,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'RelGroupView',
-      tableName: 'rel_group_views',
       schema: 'terrama2',
+      tableName: 'rel_group_views',
+      modelName: 'RelGroupView',
       underscored: true,
       underscoredAll: true,
       timestamps: false,

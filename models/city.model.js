@@ -1,6 +1,12 @@
 'use strict';
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  const City = sequelize.define('de_municipios_sema', {
+  class City extends Model {
+    static associate(models) {}
+  }
+
+  City.init({
     gid: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -74,15 +80,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   }, {
+    modelName: 'City',
     schema: 'public',
+    tableName: 'de_municipios_sema',
     underscored: true,
-    underscoredAll: true,
+    // underscoredAll: true,
     timestamps: false,
-    freezeTableName: true
+    freezeTableName: true,
+    sequelize
   });
-
-  City.associate = function(models) {
-  };
 
   return City
 }

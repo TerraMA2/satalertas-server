@@ -1,5 +1,4 @@
-const models = require('../models')
-const IndigenousLand = models.de_terra_indigena_sema;
+const { IndigenousLand } = require('../models')
 const logger = require('../utils/logger')
 
 module.exports = indigenousLandService = {

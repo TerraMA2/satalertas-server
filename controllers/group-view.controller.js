@@ -8,17 +8,19 @@ exports.getAll = async (req, res) => {
     }
 };
 
-exports.getByIdGroup = async (req, res) => {
+exports.getByGroupId = async (req, res) => {
     try {
-        res.json(await GroupViewService.getByIdGroup(req.query.id_group));
+        res.json(await GroupViewService.getByGroupId(req.query.groupId));
     } catch (e) {
         res.json(e);
     }
 };
 
-exports.getNotBelongingToTheGroup = async (req, res) => {
+exports.getAvailableLayers = async (req, res) => {
     try {
-        res.json(await GroupViewService.getNotBelongingToTheGroup(req.query.id_group));
+        console.log("gv controller: ", req.query)
+        // console.log("gv controller body: ", req.body.params)
+        res.json(await GroupViewService.getAvailableLayers(req.query.groupId));
     } catch (e) {
         res.json(e);
     }

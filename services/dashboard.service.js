@@ -1,8 +1,9 @@
+const { QueryTypes } = require('sequelize');
 const models = require('../models');
-const { View } = models;
+const { View, sequelize } = models;
 const Filter = require("../utils/filter/filter.utils");
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 const ViewService = require("../services/view.service");
-const QUERY_TYPES_SELECT = { type: "SELECT" };
 const LayerTypeName = require('../enum/layerTypeName');
 
 getSqlAnalysisTotals = async function(params) {
@@ -253,7 +254,8 @@ module.exports = dashboardService = {
     });
     params.specificParameters = JSON.stringify(analysisList);
     const sqlTotals = await getSqlAnalysisTotals(params);
-    const result = await View.sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
+    const result = await sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
+    result[0].activearea = true;
     analysisList = analysisList.map((analysis, index) => {
       analysis.alert = result[index].alert;
       analysis.area = result[index].area;
@@ -270,9 +272,9 @@ module.exports = dashboardService = {
         const labelChart1 = analysis.codGroup === 'BURNED' ? 'Quantidade de alertas de focos por CAR' : 'Área (ha) de alertas por CAR';
         const labelChart2 = analysis.codGroup === 'BURNED' ? 'Quantidade de alertas de focos por Bioma' : 'Área (ha) de alertas por classe';
         const sql = await getAnalysisChartSql(analysis, params);
-        let resultAux = await View.sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
+        let resultAux = await sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
         const chart1 = await setChart(resultAux, sql.value, sql.subtitle, labelChart1);
-        resultAux = await View.sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
+        resultAux = await sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
         const chart2 = await setChart(resultAux, sql.value, sql.subtitle, labelChart2);
         result.push(setAnalysisChart(analysis, chart1, chart2));
         count++;

@@ -1,8 +1,9 @@
+const { QueryTypes } = require('sequelize');
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 const models = require('../models');
-const { View } = models;
+const { View, sequelize } = models;
 const Filter = require("../utils/filter/filter.utils");
 const InfoColumnsService = require("../services/info-columns.service");
-const QUERY_TYPES_SELECT = { type: "SELECT" };
 const logger = require('../utils/logger');
 const env = process.env.NODE_ENV || 'development';
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
@@ -14,7 +15,7 @@ getColumnsTable = async function(tableName, schema, alias = '') {
       WHERE table_name = '${tableName}'
         AND table_schema = '${schema}'
         AND column_name not like '%geom%' ` ;
-  const columns = await View.sequelize.query(sql, QUERY_TYPES_SELECT)
+  const columns = await sequelize.query(sql, QUERY_TYPES_SELECT)
 
   let columnsNameStr = '';
   alias = alias ? `${alias}.` : '';
@@ -31,7 +32,7 @@ getColumnByType = async function(tableName, schema, type) {
         AND table_schema = '${schema}'
         AND udt_name = '${type}'
       ORDER BY ordinal_position` ;
-  const columns = await View.sequelize.query(sql, QUERY_TYPES_SELECT)
+  const columns = await sequelize.query(sql, QUERY_TYPES_SELECT)
 
   return columns.length > 0 ? columns[0].column_name :  '' ;
 }
@@ -138,7 +139,7 @@ module.exports = mapService = {
         const filter = await getFilter(params);
         const sql = await getSql['burnedCentroid'](filter)
 
-        return await View.sequelize.query(sql, QUERY_TYPES_SELECT);
+        return await sequelize.query(sql, QUERY_TYPES_SELECT);
       } catch (e) {
         const msgErr = `In unit map.service, in getAnalysisCentroid method getAnalysisCentroid.BURNED: ${e}`;
         logger.error(msgErr);
@@ -190,7 +191,7 @@ module.exports = mapService = {
         let result;
         let resultCount;
 
-        result = await View.sequelize.query(sql, QUERY_TYPES_SELECT);
+        result = await sequelize.query(sql, QUERY_TYPES_SELECT);
         let dataJson = result;
 
         if (params.countTotal) {
@@ -199,7 +200,7 @@ module.exports = mapService = {
               ${filter.secondaryTables}
               ${sqlWhere} `;
 
-          resultCount = await View.sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+          resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
           dataJson.push(resultCount[0]['count']);
         }
 
@@ -233,7 +234,7 @@ module.exports = mapService = {
 
       const sql = await getSql[type](filter)
 
-      const data = await View.sequelize.query(sql, QUERY_TYPES_SELECT)
+      const data = await sequelize.query(sql, QUERY_TYPES_SELECT)
       return setInfoColumns(data, params.codGroup);
     } catch (e) {
       const msgErr = `In unit map.service, method getAnalysisData.BURNED:${e}`;
@@ -286,7 +287,7 @@ module.exports = mapService = {
       let result;
       let resultCount;
 
-      result = await View.sequelize.query(sql, QUERY_TYPES_SELECT);
+      result = await sequelize.query(sql, QUERY_TYPES_SELECT);
       let dataJson = result;
 
       if (params.countTotal) {
@@ -295,7 +296,7 @@ module.exports = mapService = {
             ${filter.secondaryTables}
             ${sqlWhere} `;
 
-        resultCount = await View.sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+        resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
         dataJson.push(resultCount[0]['count']);
       }
 
@@ -340,13 +341,13 @@ module.exports = mapService = {
       let result;
       let resultCount;
 
-      result = await View.sequelize.query(sql, QUERY_TYPES_SELECT);
+      result = await sequelize.query(sql, QUERY_TYPES_SELECT);
       let dataJson = result;
 
       let sqlCount;
       if (specificParameters.countTotal) {
         sqlCount = `SELECT COUNT(1) AS count FROM public.${layer.tableName}`;
-        resultCount = await View.sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+        resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
 
         dataJson.push(resultCount[0]['count']);
       }
@@ -402,10 +403,10 @@ module.exports = mapService = {
 
       const sql = sqlSelect + sqlWhere;
 
-      let dataJson = await View.sequelize.query(sql);
+      let dataJson = await sequelize.query(sql);
 
       if (specificParameters.countTotal) {
-        const resultCount = await View.sequelize.query(`SELECT COUNT(1) AS count FROM public.${tableName}`);
+        const resultCount = await sequelize.query(`SELECT COUNT(1) AS count FROM public.${tableName}`);
         dataJson.push(resultCount[0]['count'])
       }
 

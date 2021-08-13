@@ -1,4 +1,5 @@
-const QUERY_TYPES_SELECT = { type: "SELECT" };
+const { QueryTypes } = require('sequelize');
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 const env = process.env.NODE_ENV || 'development';
 const confGeoServer = require('../../geoserver-conf/config.json')[env];
 

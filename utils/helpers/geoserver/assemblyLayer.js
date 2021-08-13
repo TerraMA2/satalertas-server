@@ -41,12 +41,12 @@ function setLegend(title, workspace, layer) {
 function setFilter(group, layer) {
   let filter = {};
   const view_default = `${group.workspace}:${layer.viewName}`;
-  if (VIEWS[layer.cod_group] && VIEWS[layer.cod_group].filter) {
-    filter = VIEWS[layer.cod_group].filter(
+  if (VIEWS[layer.codGroup] && VIEWS[layer.codGroup].filter) {
+    filter = VIEWS[layer.codGroup].filter(
       view_default,
       confGeoServer.workspace,
       layer.cod,
-      group[layer.cod_group].tableOwner,
+      group[layer.codGroup].tableOwner,
       layer.is_primary,
     );
   }

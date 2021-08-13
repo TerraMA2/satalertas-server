@@ -1,5 +1,4 @@
-const models = require('../models');
-const RegisteredView = models.registered_views;
+const { RegisteredView } = require('../models');
 const LayerType = require('../enum/layerType');
 const ViewService = require("../services/view.service");
 

@@ -1,6 +1,5 @@
 const Result = require('../utils/result');
-const models = require('../models');
-const Report = models.reports;
+const { Report, sequelize } = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const GeoServerService = require("../services/geoServer.service");
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
@@ -131,7 +130,7 @@ getCarData = async function (
       INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
       GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
     `;
-  const result = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
+  const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
   return result[0];
 };
@@ -185,7 +184,7 @@ module.exports = FileReport = {
             WHERE areaq.${columnCar} = '${carRegister}'
             GROUP BY date
             ORDER BY date`;
-      const burnedAreaHistory = await Report.sequelize.query(
+      const burnedAreaHistory = await sequelize.query(
           burnedAreasHistorySql,
           QUERY_TYPES_SELECT,
       );
@@ -197,7 +196,7 @@ module.exports = FileReport = {
             WHERE cp.${columnCar} = '${carRegister}'
             GROUP BY date
             ORDER BY date`;
-      const prodesHistory = await Report.sequelize.query(
+      const prodesHistory = await sequelize.query(
           prodesHistorySql,
           QUERY_TYPES_SELECT,
       );
@@ -209,7 +208,7 @@ module.exports = FileReport = {
             WHERE cd.${columnCar} = '${carRegister}'
             GROUP BY date
             ORDER BY date`;
-      const deterHistory = await Report.sequelize.query(
+      const deterHistory = await sequelize.query(
           deterHistorySql,
           QUERY_TYPES_SELECT,
       );
@@ -221,7 +220,7 @@ module.exports = FileReport = {
             WHERE cf.${columnCar} = '${carRegister}'
             GROUP BY date
             ORDER BY date`;
-      const fireSpotHistory = await Report.sequelize.query(
+      const fireSpotHistory = await sequelize.query(
           fireSpotHistorySql,
           QUERY_TYPES_SELECT,
       );
@@ -235,32 +234,32 @@ module.exports = FileReport = {
       const anthropizedUseSql = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USOANT.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
       const nativeVegetationSql = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_VEGNAT.table_name} where ${views.PRODES.tableOwner}_${columnCar} = '${carRegister}' ${dateSql}`;
 
-      let indigenousLand = await Report.sequelize.query(
+      let indigenousLand = await sequelize.query(
         indigenousLandSql,
         QUERY_TYPES_SELECT,
       );
       indigenousLand = indigenousLand[0];
-      let conservationUnit = await Report.sequelize.query(
+      let conservationUnit = await sequelize.query(
         conservationUnitSql,
         QUERY_TYPES_SELECT,
       );
       conservationUnit = conservationUnit[0];
-      let legalReserve = await Report.sequelize.query(
+      let legalReserve = await sequelize.query(
         legalReserveSql,
         QUERY_TYPES_SELECT,
       );
       legalReserve = legalReserve[0];
-      let app = await Report.sequelize.query(
+      let app = await sequelize.query(
           aPPSql,
           QUERY_TYPES_SELECT
       );
       app = app[0];
-      let anthropizedUse = await Report.sequelize.query(
+      let anthropizedUse = await sequelize.query(
         anthropizedUseSql,
         QUERY_TYPES_SELECT,
       );
       anthropizedUse = anthropizedUse[0];
-      let nativeVegetation = await Report.sequelize.query(
+      let nativeVegetation = await sequelize.query(
         nativeVegetationSql,
         QUERY_TYPES_SELECT,
       );
@@ -288,7 +287,7 @@ module.exports = FileReport = {
           FROM ${views.DYNAMIC.children.AREAS_QUEIMADAS.table_name}  AS burnedarea;
         `;
 
-        const datesSynthesis = await Report.sequelize.query(
+        const datesSynthesis = await sequelize.query(
           sqlDatesSynthesis,
           QUERY_TYPES_SELECT,
         );

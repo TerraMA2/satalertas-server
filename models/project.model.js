@@ -1,23 +1,44 @@
-'use strict'
+'use strict';
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  const Project = sequelize.define("Project", {
+  class Project extends Model {
+    static associate(models) {
+      const { DataSeries, View } = models;
+      this.hasMany(View, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          name: 'project_id',
+          allowNull: false,
+        },
+      });
+      this.hasMany(DataSeries, {
+        onDelete: 'CASCADE',
+        foreignKey: {
+          name: 'project_id',
+          allowNull: false,
+        },
+      });
+    }
+  }
+  Project.init(
+    {
       id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       version: DataTypes.INTEGER,
       name: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
-        comment: "Project name"
+        comment: 'Project name',
       },
       description: {
         type: DataTypes.TEXT,
-        comment: "Project description."
+        comment: 'Project description.',
       },
       protected: DataTypes.BOOLEAN,
       active: DataTypes.BOOLEAN,
@@ -25,10 +46,13 @@ module.exports = (sequelize, DataTypes) => {
         field: 'user_id',
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: "Id. of the user in project"
-      }
-    }, {
+        comment: 'Id. of the user in project',
+      },
+    },
+    {
+      sequelize,
       schema: 'terrama2',
+      modelName: 'Project',
       underscored: true,
       underscoredAll: true,
       timestamps: false,
@@ -46,28 +70,7 @@ module.exports = (sequelize, DataTypes) => {
       //     }
       //   }
       // },
-
-    }
-    );
-    Project.associate= function(models) {
-
-      Project.hasMany(models.DataSeries, {
-        onDelete: "CASCADE",
-        foreignKey: {
-          name: 'project_id',
-          allowNull: false
-        }
-      });
-
-      // Setting project to View. A project has many views
-      Project.hasMany(models.View, {
-        onDelete: "CASCADE",
-        foreignKey: {
-          name: "project_id",
-          allowNull: false
-        }
-      });
-    }
-    
+    },
+  );
   return Project;
 };

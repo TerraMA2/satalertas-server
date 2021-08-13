@@ -1,7 +1,8 @@
 const models = require('../models');
-const { View } = models;
+const { View, sequelize } = models;
 
-const QUERY_TYPES_SELECT = { type: "SELECT" };
+const { QueryTypes } = require('sequelize');
+const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 
 const ViewUtils = {
     setXml(json) {
@@ -193,8 +194,8 @@ const ViewUtils = {
                      LEFT JOIN terrama2.analysis AS ana ON dsf.data_set_id = ana.dataset_output
             WHERE dsf.key = 'table_name'`;
         try {
-            const dataset_views = await View.sequelize.query(sql, QUERY_TYPES_SELECT);
-            const dataset_group_views = await View.sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
+            const dataset_views = await sequelize.query(sql, QUERY_TYPES_SELECT);
+            const dataset_group_views = await sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
 
             let groupViews = {};
             dataset_group_views.forEach(group => {

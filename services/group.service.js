@@ -1,7 +1,4 @@
 const models = require('../models')
-// const Group = models.Group
-// const Project = models.project;
-// const RelGroupView = models.rel_group_view;
 const { View, Project, Group, RelGroupView } = models;
 const logger = require('../utils/logger');
 
@@ -32,24 +29,26 @@ module.exports = GroupService = {
     try {
       let where = {};
 
-      const group = await Group.findByPk(id).then((resul) => result);
-      // const groupTest = await Group.findByPk(id, {
-      //   include: {
-      //     model: 'relGroupView',
-      //     attributes: [ 'name', 'description', 'source_type', 'sub_layers' ]
-      //   }
-      // })
+      const group = await Group.findByPk(id).then((result) => result);
+      Group.findByPk(id, {
+        include: "relGroupView",
+        raw: true
+      }).then(data => 
+        console.log('Resposta do Group.findByPk: ', data))
 
       group.dataValues.project = await Project.findByPk(group.idProject);
       where = {
         where: {
-          id_group: group.id
-        }
+          groupId: group.id,
+        },
+        // raw: true
       };
-      group.dataValues.relViews = await RelGroupView.findAll(where)
+      const relViews = await RelGroupView.findAll(where)
+      // console.log('relViews:', relViews)
+      group.dataValues.relViews = await relViews
 
       for(const relViews of group.dataValues.relViews){
-        const id = relViews.id_view;
+        const id = relViews.idView;
         relViews.dataValues.view = await View.findByPk(id);
       }
       return group;
@@ -65,8 +64,8 @@ module.exports = GroupService = {
       name: newGroup.name,
       idProject: newGroup.idProject,
       code: newGroup.code,
-      view_graph: newGroup.view_graph,
-      active_area: newGroup.active_area
+      dashboard: newGroup.dashboard,
+      active_area: newGroup.activeArea
     })
     return await Group.create(group.dataValues).then(group => group.dataValues);
   },
