@@ -43,6 +43,7 @@ async function getByGroupId(groupId) {
   try {
     const viewsGroup = [];
     if (groupId) {
+      const { code: groupCode } = await Group.findByPk(groupId, { raw: true })
       const where = {
         where: {
           groupId,
@@ -57,11 +58,12 @@ async function getByGroupId(groupId) {
       });
       for (const groupView of groupViews) {
         const { viewId } = groupView;
-        let layer = {};
+        let layer = {groupCode};
         await View.findByPk(viewId, {
           attributes: { exclude: ['id', 'project_id', 'data_series_id'] },
           raw: true,
         }).then((response) => {
+          layer.code = response.name.split(' ').join('_').toUpperCase()
           const filteredResponse = removeNullProperties(response);
           Object.assign(layer, filteredResponse);
         });
@@ -97,6 +99,9 @@ async function getByGroupId(groupId) {
           const groupData = await Group.findByPk(groupId, { raw: true });
           const layerFilterOptions = { codGroup: groupData.code, viewName };
           layer.filter = setFilter({ workspace }, layerFilterOptions);
+          if(!layer['shortName']) {
+            layer.shortName = layer.name;
+          }
         }
         viewsGroup.push(layer);
       }
@@ -115,7 +120,7 @@ async function getByGroupId(groupId) {
         }
       });
     }
-    return viewsGroup;
+    return viewsGroup.filter(child => !child.isSublayer);
   } catch (e) {
     throw new Error(msgError('group-view.service', 'getByGroupId', e));
   }
