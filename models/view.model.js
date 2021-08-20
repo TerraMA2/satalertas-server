@@ -4,7 +4,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class View extends Model {
     static associate(models) {
-      const { DataSeries, Group, Project, RegisteredView } = models;
+      const { DataSeries, Group, Project, RegisteredView, DataSet } = models;
       this.belongsToMany(Group, {
         through: 'RelGroupView',
         as: 'relGroupView',
@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'SET NULL',
         otherKey: 'group_id',
       });
-
       this.belongsTo(DataSeries, {
         onDelete: 'CASCADE',
         as: 'dataSeries',
@@ -21,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false,
         },
       });
-
       this.hasOne(RegisteredView, {
         onDelete: 'CASCADE',
         as: 'registeredView',
@@ -30,7 +28,12 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false,
         },
       });
-
+      this.hasOne(DataSet, {
+        sourceKey: 'data_series_id',
+        foreignKey: 'data_series_id',
+        as: 'dataSet',
+        onDelete: 'NO ACTION'
+      })
       this.belongsTo(Project, {
         onDelete: 'CASCADE',
         foreignKey: {
