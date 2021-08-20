@@ -3,7 +3,9 @@ const {
   View,
   RelGroupView,
   RegisteredView,
+  DataSetFormat,
   Group,
+  DataSet,
   sequelize,
 } = require('../models');
 const { msgError } = require('../utils/messageError');
@@ -13,6 +15,18 @@ const {
   setLegend,
   setFilter,
 } = require('../utils/helpers/geoserver/assemblyLayer');
+
+const viewTableName = {
+  model: DataSet,
+  as: 'dataSet',
+  attributes: [],
+  include: {
+    model: DataSetFormat,
+    as: 'dataSetFormat',
+    where: { key: { [Op.eq]: 'table_name' } },
+    attributes: [['value', 'tableName']],
+  },
+};
 
 async function getModelFields(model) {
   return await model.describe();
@@ -39,11 +53,20 @@ async function getAll() {
   }
 }
 
+function setTableName(data) {
+  const tableName = data['dataSet.dataSetFormat.tableName'];
+  if (tableName) {
+    data['tableName'] = tableName;
+    delete data['dataSet.dataSetFormat.tableName'];
+    delete data['dataSet.dataSetFormat.id'];
+  }
+}
+
 async function getByGroupId(groupId) {
   try {
     const viewsGroup = [];
     if (groupId) {
-      const { code: groupCode } = await Group.findByPk(groupId, { raw: true })
+      const { code: groupCode } = await Group.findByPk(groupId, { raw: true });
       const where = {
         where: {
           groupId,
@@ -58,12 +81,15 @@ async function getByGroupId(groupId) {
       });
       for (const groupView of groupViews) {
         const { viewId } = groupView;
-        let layer = {groupCode};
-        await View.findByPk(viewId, {
+        let layer = { groupCode };
+        const options = {
           attributes: { exclude: ['id', 'project_id', 'data_series_id'] },
+          include: [viewTableName],
           raw: true,
-        }).then((response) => {
-          layer.code = response.name.split(' ').join('_').toUpperCase()
+        };
+        await View.findByPk(viewId, options).then((response) => {
+          setTableName(response)
+          layer.code = response.name.split(' ').join('_').toUpperCase();
           const filteredResponse = removeNullProperties(response);
           Object.assign(layer, filteredResponse);
         });
@@ -81,11 +107,12 @@ async function getByGroupId(groupId) {
               type: QueryTypes.SELECT,
             })
             .then((response) => (layer.tableName = response[0].value));
+          await getTableName(viewId);
           const viewName = `view${viewId}`;
           layer.viewName = viewName;
           const registeredData = await RegisteredView.findOne({
             where: {
-              id: viewId,
+              view_id: viewId,
             },
             raw: true,
           });
@@ -96,11 +123,18 @@ async function getByGroupId(groupId) {
             layerDataOptions,
           );
           layer.legend = setLegend(layer.name, workspace, viewName);
-          const groupData = await Group.findByPk(groupId, { raw: true });
-          const layerFilterOptions = { codGroup: groupData.code, viewName };
-          layer.filter = setFilter({ workspace }, layerFilterOptions);
-          if(!layer['shortName']) {
+          if (!layer['shortName']) {
             layer.shortName = layer.name;
+          }
+          if (layer.isPrimary) {
+            const layerFilterOptions = { groupCode, viewName };
+            const tableOwner = layer.tableName;
+            layer.tableOwner = tableOwner;
+            const gp = {
+              workspace,
+              tableOwner,
+            };
+            layer.filter = setFilter(gp, layerFilterOptions);
           }
         }
         viewsGroup.push(layer);
@@ -120,7 +154,7 @@ async function getByGroupId(groupId) {
         }
       });
     }
-    return viewsGroup.filter(child => !child.isSublayer);
+    return viewsGroup.filter((child) => !child.isSublayer);
   } catch (e) {
     throw new Error(msgError('group-view.service', 'getByGroupId', e));
   }
@@ -139,9 +173,16 @@ async function getAvailableLayers(groupId) {
       where: {
         id: { [Op.notIn]: viewIds },
       },
+      include: [viewTableName],
+      raw: true,
     };
-
-    return await View.findAll(option);
+    const allViews = await View.findAll(option).then(async (views) => {
+      views.forEach(async (vw) => {
+        setTableName(vw)
+      });
+      return views;
+    });
+    return await allViews;
   } catch (e) {
     throw new Error(msgError('group-view.service', 'getAvailableLayers', e));
   }
@@ -195,7 +236,7 @@ async function updateAdvanced(groupViewModify) {
     });
     return await getByGroupId(groupId);
   } catch (e) {
-    throw new Error(msgError('group-view.service', 'updateAdvanced', e));
+    throw new Error(msgError(__filename, 'updateAdvanced', e));
   }
 }
 
@@ -205,6 +246,21 @@ async function deleteGroupView(id) {
   } catch (e) {
     throw new Error(msgError('group-view.service', 'delete', e));
   }
+}
+
+async function getTableName(viewId) {
+  const sqlTableName = `SELECT dsf.value
+    FROM terrama2.views AS vw
+    INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
+    INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
+    WHERE vw.id = $viewId AND dsf.key = 'table_name'
+    LIMIT 1;`;
+  return await sequelize
+    .query(sqlTableName, {
+      bind: { viewId },
+      type: QueryTypes.SELECT,
+    })
+    .then((response) => response[0].value);
 }
 
 module.exports = GroupService = {
