@@ -387,7 +387,6 @@ getGroupViews = async function () {
       sqlGroupViews,
       QUERY_TYPES_SELECT,
     );
-
     let groupViews = {};
     dataset_group_views.forEach((group) => {
       if (group.cod) {
@@ -464,12 +463,10 @@ getViews = async function (groupViews) {
       `;
 
   try {
-    const dataset_views = await sequelize.query(
-      sqlViews,
-      QUERY_TYPES_SELECT,
-    );
+    const dataset_views = await sequelize.query(sqlViews, QUERY_TYPES_SELECT);
     dataset_views.forEach((dataView) => {
       if (dataView.is_primary) {
+        //TABLEOWNER
         groupViews[dataView.cod_group].tableOwner = `${dataView.table_name}`;
       }
     });
@@ -567,10 +564,7 @@ module.exports = FileReport = {
 
     try {
       return Result.ok(
-        await sequelize.query(
-          sqlReportLayers,
-          QUERY_TYPES_SELECT,
-        ),
+        await sequelize.query(sqlReportLayers, QUERY_TYPES_SELECT),
       );
     } catch (e) {
       return Result.err(e);
@@ -580,7 +574,8 @@ module.exports = FileReport = {
   async getSidebarLayers() {
     try {
       const groupViews = await orderView(await getGroupViews());
-      return Result.ok(await setResultSidebarConfig(groupViews));
+      const sideBarConfig = await setResultSidebarConfig(groupViews);
+      return Result.ok(await sideBarConfig);
     } catch (e) {
       return Result.err(e);
     }
@@ -600,5 +595,5 @@ module.exports = FileReport = {
     } catch (e) {
       return Result.err(e);
     }
-  }
+  },
 };
