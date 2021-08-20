@@ -18,8 +18,6 @@ exports.getByGroupId = async (req, res) => {
 
 exports.getAvailableLayers = async (req, res) => {
     try {
-        console.log("gv controller: ", req.query)
-        // console.log("gv controller body: ", req.body.params)
         res.json(await GroupViewService.getAvailableLayers(req.query.groupId));
     } catch (e) {
         res.json(e);
