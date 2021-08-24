@@ -2111,7 +2111,7 @@ module.exports = FileReport = {
         reportData['type'] === 'deter'
           ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code}`
           : reportData['type'] === 'prodes'
-          ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code}`
+          ? `RELATÓRIO TÉCNICO SOBRE DESMATAMENTO Nº ${code}`
           : reportData['type'] === 'queimada'
           ? `RELATÓRIO DE FOCOS DE CALOR Nº ${code}`
           : `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
