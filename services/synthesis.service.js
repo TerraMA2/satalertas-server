@@ -1,9 +1,10 @@
 const Result = require('../utils/result');
-const { Report, sequelize } = require('../models');
+const { sequelize } = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const GeoServerService = require("../services/geoServer.service");
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
 const { msgError } = require('../utils/messageError');
+const synthesisConfig = require(__dirname + '/../config/synthesis.json');
 
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
@@ -138,8 +139,6 @@ getCarData = async function (
 module.exports = FileReport = {
   async getSynthesis(query) {
     const { carRegister, date, formattedFilterDate } = query;
-
-    let { synthesisConfig } = query;
 
     let dateFrom = null;
     let dateTo = null;
@@ -293,17 +292,15 @@ module.exports = FileReport = {
         );
         let analysisPeriod = [];
         datesSynthesis.forEach((years) => {
-          const period =
-            {
-              startYear: years.start_year,
-              endYear: years.end_year
-            }
-          analysisPeriod[years.key] = period;
+          analysisPeriod[years.key] = {
+            startYear: years.start_year,
+            endYear: years.end_year
+          };
         });
+        const cardsConfig = synthesisConfig.cards;
+        const chartsConfig = synthesisConfig.charts;
 
-        synthesisConfig = JSON.parse(synthesisConfig);
-
-        const visionsConfig = synthesisConfig.visions;
+        const visionsConfig = cardsConfig.visions;
 
         const stateVisionCard = getSynthesisCard({
           data: null,
@@ -377,6 +374,18 @@ module.exports = FileReport = {
           propertyData
         });
 
+        const titleDeter = cardsConfig.histories.titleDeter
+        const titleProdes = cardsConfig.histories.titleProdes
+        const titleFireSpot = cardsConfig.histories.titleFireSpot
+        const titleBurnedArea = cardsConfig.histories.titleBurnedArea
+        const titleDetailedVisions = cardsConfig.detailedVisions.title
+        const titleDeforestation = cardsConfig.deforestation.title
+
+        const historyDeterChartOptions = chartsConfig.deter;
+        const historyProdesChartOptions = chartsConfig.prodes;
+        const historyFireSpotChartOptions = chartsConfig.fireSpot;
+        const historyBurnedChartOptions = chartsConfig.burnedArea;
+
         const visions = [
           stateVisionCard,
           cityVisionCard,
@@ -386,7 +395,7 @@ module.exports = FileReport = {
           burnedAreaVisionCard
         ]
 
-        const legendsConfig = synthesisConfig.legends;
+        const legendsConfig = cardsConfig.legends;
 
         const municipalBoundariesLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.municipalBoundaries.layer);
         const nativeVegetationAreaLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.nativeVegetationArea.layer);
@@ -412,7 +421,7 @@ module.exports = FileReport = {
           carProdesLegend
         ]
 
-        const detailedVisionsConfig = synthesisConfig.detailedVisions;
+        const detailedVisionsConfig = cardsConfig.detailedVisions;
 
         const indigenousLandCard = getSynthesisCard({
           data: indigenousLand,
@@ -491,7 +500,7 @@ module.exports = FileReport = {
             nativeVegetationCard
         ];
 
-        const deforestationConfig = synthesisConfig.deforestation;
+        const deforestationConfig = cardsConfig.deforestation;
 
         const spotCard = getSynthesisCard({
           data: null,
@@ -536,6 +545,18 @@ module.exports = FileReport = {
             sentinelCard
         ];
 
+        propertyData.titleDeter = titleDeter;
+        propertyData.titleProdes = titleProdes;
+        propertyData.titleFireSpot = titleFireSpot;
+        propertyData.titleBurnedArea = titleBurnedArea;
+        propertyData.titleDetailedVisions = titleDetailedVisions;
+        propertyData.titleDeforestation = titleDeforestation;
+
+        propertyData.historyDeterChartOptions = historyDeterChartOptions;
+        propertyData.historyProdesChartOptions = historyProdesChartOptions;
+        propertyData.historyFireSpotChartOptions = historyFireSpotChartOptions;
+        propertyData.historyBurnedChartOptions = historyBurnedChartOptions;
+
         propertyData.bbox = bbox;
         propertyData.citybbox = cityBBox;
         propertyData.statebbox = stateBBox;
@@ -545,11 +566,11 @@ module.exports = FileReport = {
         propertyData.detailedVisions = detailedVisions;
         propertyData.deforestations = deforestations;
 
-        const deterHistoryConfig = synthesisConfig.histories.deterHistory;
-        const prodesHistoryConfig = synthesisConfig.histories.prodesHistory;
-        const fireSpotHistoryConfig = synthesisConfig.histories.fireSpotHistory;
-        const burnedAreaHistoryConfig = synthesisConfig.histories.burnedAreaHistory;
-        const landsatLayers = synthesisConfig.histories.landsatLayers;
+        const deterHistoryConfig = cardsConfig.histories.deterHistory;
+        const prodesHistoryConfig = cardsConfig.histories.prodesHistory;
+        const fireSpotHistoryConfig = cardsConfig.histories.fireSpotHistory;
+        const burnedAreaHistoryConfig = cardsConfig.histories.burnedAreaHistory;
+        const landsatLayers = cardsConfig.histories.landsatLayers;
 
        propertyData.deterHistory = getSynthesisHistory(
            {
