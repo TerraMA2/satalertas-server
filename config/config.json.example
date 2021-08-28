@@ -1,51 +1,20 @@
 {
-  "development": {
+  "db": {
     "username": "postgres",
     "password": "postgres",
     "database": "terrama2",
-    "host": "localhost",
-    "dialect": "postgres",
-    "port": 5432,
-    "define": {
-      "schema": "alertas"
-    },
-    "basePath": "",
-    "chartPath": {
-      "host": "localhost:8081",
-      "protocol": "http"
-    }
-  },
-  "test": {
-    "username": "postgres",
-    "password": "postgres",
-    "database": "terrama2-test",
     "host": "127.0.0.1",
     "dialect": "postgres",
     "port": 5432,
     "define": {
       "schema": "alertas"
-    },
-    "basePath": "",
-    "chartPath": {
-      "host": "localhost:8081",
-      "protocol": "http"
     }
   },
-  "production": {
-    "username": "postgres",
-    "password": "postgres",
-    "database": "terrama2-prod",
-    "host": "localhost",
-    "dialect": "postgres",
-    "port": 5432,
-    "logging": false,
-    "define": {
-      "schema": "alertas"
-    },
-    "basePath": "/mpmt/alertaServer",
-    "chartPath": {
-      "host": "localhost:8081",
-      "protocol": "http"
-    }
+  "project": "mpmt",
+  "basePath": "",
+  "geoserverApi": "http://localhost:3300",
+  "chartPath": {
+    "host": "localhost:8081",
+    "protocol": "http"
   }
 }

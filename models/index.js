@@ -5,11 +5,10 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const Umzug = require('umzug');
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const dbConfig = require(__dirname + '/../config/config.json')['db'];
 
 const db = {};
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, dbConfig);
 
 fs
   .readdirSync(__dirname)

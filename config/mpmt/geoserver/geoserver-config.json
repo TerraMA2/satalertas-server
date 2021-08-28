@@ -1,0 +1,584 @@
+{
+  "workspaces": [
+    {
+      "data": {
+        "workspace": {
+          "name": "mpmt_alertas"
+        }
+      }
+    }
+  ],
+  "datastores": [
+    {
+      "workspaceName": "terrama2_35",
+      "type": "wms",
+      "data": {
+        "wmsStore": {
+          "name": "LANDSAT_SEMA",
+          "description": "LANDSAT_SEMA",
+          "type": "WMS",
+          "enabled": true,
+          "workspace": {
+            "name": "terrama2_35",
+            "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_35.json"
+          },
+          "metadata": {
+            "entry": {
+              "@key": "useConnectionPooling",
+              "text": true
+            }
+          },
+          "__default__": false,
+          "capabilitiesURL": "http://geo.sema.mt.gov.br/geoserver/Mosaicos/wms",
+          "maxConnections": 60,
+          "readTimeout": "120",
+          "connectTimeout": "360"
+        }
+      }
+    },
+    {
+      "workspaceName": "terrama2_119",
+      "type": "wms",
+      "data": {
+        "wmsStore": {
+          "name": "MosaicSpot2008",
+          "description": "SPOT/MosaicSpot2008 - Wms Store",
+          "type": "WMS",
+          "enabled": true,
+          "workspace": {
+            "name": "terrama2_119",
+            "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119.json"
+          },
+          "metadata": {
+            "entry": {
+              "@key": "useConnectionPooling",
+              "text": true
+            }
+          },
+          "__default__": false,
+          "capabilitiesURL": "http://imagens.seplan.mt.gov.br/arcgis/services/SPOT/MosaicSpot2008/ImageServer/WMSServer",
+          "maxConnections": 60,
+          "readTimeout": "120",
+          "connectTimeout": "360"
+        }
+      }
+    },
+    {
+      "workspaceName": "terrama2_119",
+      "type": "wmts",
+      "data": {
+        "wmtsStore": {
+          "name": "Planet Basemaps Tile Service",
+          "description": "Planet Basemaps Tile Service",
+          "type": "WMTS",
+          "enabled": true,
+          "workspace": {
+            "name": "terrama2_119",
+            "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119.json"
+          },
+          "metadata": {
+            "entry": {
+              "@key": "useConnectionPooling",
+              "text": true
+            }
+          },
+          "__default__": false,
+          "capabilitiesURL": "https://api.planet.com/basemaps/v1/mosaics/wmts?api_key=8e928c25f946486d9e41a279370b9739",
+          "maxConnections": 60,
+          "readTimeout": "240",
+          "connectTimeout": "360"
+        }
+      }
+    }
+  ],
+  "styles": [
+    {
+      "workspaceName": "terrama2_119",
+      "data": {
+        "style": {
+          "name": "view106_color_style",
+          "filename": "view106_color_style.sld"
+        }
+      }
+    },
+    {
+      "workspaceName": "terrama2_119",
+      "data": {
+        "style": {
+          "name": "view119_Mod_style",
+          "filename": "view119_Mod_style.sld"
+        }
+      }
+    },
+    {
+      "workspaceName": "terrama2_119",
+      "data": {
+        "style": {
+          "name": "view119_yellow_style",
+          "filename": "view119_yellow_style.sld"
+        }
+      }
+    },
+    {
+      "workspaceName": "terrama2_119",
+      "data": {
+        "style": {
+          "name": "view122_hatched_style",
+          "filename": "view122_hatched_style.sld"
+        }
+      }
+    }
+  ],
+  "layerGroups": [
+    {
+      "data": {
+        "layerGroup": {
+          "name": "CAR_VALIDADO_X_CAR_PRODES_X_USOCON",
+          "mode": "SINGLE",
+          "title": "CAR_VALIDADO_X_CAR_PRODES_X_USOCON",
+          "abstractTxt": "CAR_VALIDADO_X_CAR_PRODES_X_USOCON",
+          "workspace": {
+            "name": "terrama2_119",
+            "href": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119.json"
+          },
+          "publishables": {
+            "published": [
+              {
+                "@type": "layer",
+                "name": "terrama2_119:view119",
+                "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119/layers/view119.json"
+              },
+              {
+                "@type": "layer",
+                "name": "terrama2_119:CAR x PRODES",
+                "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119/layers/CAR x PRODES.json"
+              },
+              {
+                "@type": "layer",
+                "name": "terrama2_119:CAR X USOCON",
+                "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119/layers/CAR X USOCON.json"
+              }
+            ]
+          },
+          "styles": {
+            "style": [
+              {
+                "name": "view119_yellow_style",
+                "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119/styles/view119_yellow_style.json"
+              },
+              {
+                "name": "view106_color_style",
+                "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119/styles/view106_color_style.json"
+              },
+              {
+                "name": "view122_hatched_style",
+                "link": "http://localhost:8080/geoserver/rest/workspaces/terrama2_119/styles/view122_hatched_style.json"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "layers": {
+    "landsat": [
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_5_1999",
+            "nativeName": "LANDSAT_5_1999",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_5_1999",
+            "description": "LANDSAT_5_1999",
+            "abstract": "LANDSAT_5_1999",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_5_2008",
+            "nativeName": "LANDSAT_5_2008",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_5_2008",
+            "description": "LANDSAT_5_2008",
+            "abstract": "LANDSAT_5_2008",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_5_2009",
+            "nativeName": "LANDSAT_5_2009",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_5_2009",
+            "description": "LANDSAT_5_2009",
+            "abstract": "LANDSAT_5_2009",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_5_2010",
+            "nativeName": "LANDSAT_5_2010",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_5_2010",
+            "description": "LANDSAT_5_2010",
+            "abstract": "LANDSAT_5_2010",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_5_2011",
+            "nativeName": "LANDSAT_5_2011",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_5_2011",
+            "description": "LANDSAT_5_2011",
+            "abstract": "LANDSAT_5_2011",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_8_2013",
+            "nativeName": "LANDSAT_8_2013",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_8_2013",
+            "description": "LANDSAT_8_2013",
+            "abstract": "LANDSAT_8_2013",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_8_2014",
+            "nativeName": "LANDSAT_8_2014",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_8_2014",
+            "description": "LANDSAT_8_2014",
+            "abstract": "LANDSAT_8_2014",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_8_2015",
+            "nativeName": "LANDSAT_8_2015",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_8_2015",
+            "description": "LANDSAT_8_2015",
+            "abstract": "LANDSAT_8_2015",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_8_2016",
+            "nativeName": "LANDSAT_8_2016",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_8_2016",
+            "description": "LANDSAT_8_2016",
+            "abstract": "LANDSAT_8_2016",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_8_2017",
+            "nativeName": "LANDSAT_8_2017",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_8_2017",
+            "description": "LANDSAT_8_2017",
+            "abstract": "LANDSAT_8_2017",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "LANDSAT_5_2018",
+            "nativeName": "LANDSAT_5_2018",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "LANDSAT_5_2018",
+            "description": "LANDSAT_5_2018",
+            "abstract": "LANDSAT_5_2018",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      }
+    ],
+    "sentinel": [
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "SENTINEL_2_2017",
+            "nativeName": "SENTINEL_2_2017",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "SENTINEL_2_2017",
+            "description": "SENTINEL_2_2017",
+            "abstract": "SENTINEL_2_2017",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "SENTINEL_2_2018",
+            "nativeName": "SENTINEL_2_2018",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "SENTINEL_2_2018",
+            "description": "SENTINEL_2_2018",
+            "abstract": "SENTINEL_2_2018",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "SENTINEL_2_2019",
+            "nativeName": "SENTINEL_2_2019",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "SENTINEL_2_2019",
+            "description": "SENTINEL_2_2019",
+            "abstract": "SENTINEL_2_2019",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      },
+      {
+        "workspaceName": "terrama2_35",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "SENTINEL_2_2020",
+            "nativeName": "SENTINEL_2_2020",
+            "namespace": {
+              "name": "terrama2_35"
+            },
+            "title": "SENTINEL_2_2020",
+            "description": "SENTINEL_2_2020",
+            "abstract": "SENTINEL_2_2020",
+            "srs": "EPSG:4326",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_35:LANDSAT_SEMA"
+            }
+          }
+        }
+      }
+    ],
+    "spot": [
+      {
+        "workspaceName": "terrama2_119",
+        "type": "wms",
+        "data": {
+          "wmsLayer": {
+            "name": "MosaicSpot2008",
+            "nativeName": 0,
+            "namespace": {
+              "name": "terrama2_119"
+            },
+            "title": "MosaicSpot2008",
+            "description": "MosaicSpot2008",
+            "abstract": "MosaicSpot2008",
+            "srs": "EPSG:4674",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmsStore",
+              "name": "terrama2_119:MosaicSpot2008"
+            }
+          }
+        }
+      }
+    ],
+    "planet": [
+      {
+        "workspaceName": "terrama2_119",
+        "type": "wmts",
+        "data": {
+          "wmtsLayer": {
+            "name": "planet_latest_global_monthly",
+            "nativeName": "Latest Global Monthly",
+            "namespace": {
+              "name": "terrama2_119"
+            },
+            "title": "planet_latest_global_monthly",
+            "description": "planet_latest_global_monthly",
+            "abstract": "planet_latest_global_monthly",
+            "srs": "EPSG:3857",
+            "projectionPolicy": "FORCE_DECLARED",
+            "enabled": true,
+            "store": {
+              "@class": "wmtsStore",
+              "name": "terrama2_119:Planet Basemaps Tile Service"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

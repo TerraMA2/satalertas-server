@@ -3,8 +3,9 @@ const { sequelize } = require('../models');
 const env = process.env.NODE_ENV || 'development';
 const GeoServerService = require("../services/geoServer.service");
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+const config = require(__dirname + '/../config/config.json');
 const { msgError } = require('../utils/messageError');
-const synthesisConfig = require(__dirname + '/../config/synthesis.json');
+const synthesisConfig = require(__dirname + `/../config/${config.project}/synthesis.json`);
 
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 

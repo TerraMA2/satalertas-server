@@ -5,7 +5,6 @@ const debug = require('debug')('satalertas-server:development')
 const http = require('http')
 const killPort = require('kill-port')
 
-
 const port = normalizePort(process.env.PORT || '3200')
 
 app.set('port', port)

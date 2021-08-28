@@ -1,6 +1,5 @@
 const QuickChart = require('quickchart-js');
-const env = process.env.NODE_ENV || 'development';
-const { chartPath } = require('../config/config.json')[env];
+const { chartPath } = require('../config/config.json');
 
 class SatAlertasChart extends QuickChart {
   constructor() {
