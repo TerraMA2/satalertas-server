@@ -316,8 +316,8 @@ module.exports = mapService = {
 
       const sqlSelect =
         ` SELECT  ${columnsTable},
-                  ST_Y(ST_Transform (ST_Centroid(geom), ${config.sridTerraMa})) AS "lat",
-                  ST_X(ST_Transform (ST_Centroid(geom), ${config.sridTerraMa})) AS "long" `;
+                  ST_Y(ST_Transform (ST_Centroid(geom), ${config.geoserver.sridTerraMa})) AS "lat",
+                  ST_X(ST_Transform (ST_Centroid(geom), ${config.geoserver.sridTerraMa})) AS "long" `;
       let sqlFrom = '';
       let sqlWhere = '';
 
@@ -373,8 +373,8 @@ module.exports = mapService = {
 
       const sqlSelect =
         ` SELECT  ${columnsTable}
-                  , ST_Y(ST_Transform (ST_Centroid(${geomColumn}), ${config.sridTerraMa})) AS "lat"
-                  , ST_X(ST_Transform (ST_Centroid(${geomColumn}), ${config.sridTerraMa})) AS "long"
+                  , ST_Y(ST_Transform (ST_Centroid(${geomColumn}), ${config.geoserver.sridTerraMa})) AS "lat"
+                  , ST_X(ST_Transform (ST_Centroid(${geomColumn}), ${config.geoserver.sridTerraMa})) AS "long"
           FROM public.${tableName} 
         `;
 

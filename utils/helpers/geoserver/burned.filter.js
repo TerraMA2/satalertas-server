@@ -1,8 +1,8 @@
 const config = require(__dirname + '/../../../config/config.json');
 
 module.exports = function(layer, cityTable, carTable, spotlightTable) {
-  const workspaceAlertas = config.workspace;
-  const dataStore = config.datastore;
+  const workspaceAlertas = config.geoserver.workspace;
+  const dataStore = config.geoserver.datastore;
   const {cod, tableOwner, tableName, isPrimary, workspace, view } = layer;
   return [
     {
@@ -33,7 +33,7 @@ module.exports = function(layer, cityTable, carTable, spotlightTable) {
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: config.sridTerraMa
+        srid: config.geoserver.sridTerraMa
         },
       dataStore: `${dataStore}`,
       addParameter: true,
@@ -68,7 +68,7 @@ module.exports = function(layer, cityTable, carTable, spotlightTable) {
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: config.sridTerraMa
+        srid: config.geoserver.sridTerraMa
       },
       dataStore: `${dataStore}`,
       addParameter: true,
@@ -103,7 +103,7 @@ module.exports = function(layer, cityTable, carTable, spotlightTable) {
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: config.sridTerraMa
+        srid: config.geoserver.sridTerraMa
       },
       dataStore: `${dataStore}`,
       addParameter: true,
@@ -144,7 +144,7 @@ module.exports = function(layer, cityTable, carTable, spotlightTable) {
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: config.sridTerraMa
+        srid: config.geoserver.sridTerraMa
       },
       dataStore: `${dataStore}`,
       addParameter: true,

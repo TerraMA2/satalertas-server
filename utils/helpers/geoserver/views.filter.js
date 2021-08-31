@@ -1,8 +1,8 @@
 const config = require(__dirname + '/../../../config/config.json');
 
 module.exports = function(layer) {
-  const workspaceAlertas = config.workspace;
-  const dataStore = config.datastore;
+  const workspaceAlertas = config.geoserver.workspace;
+  const dataStore = config.geoserver.datastore;
   const {cod, tableName, workspace, view } = layer;
   return [
     {

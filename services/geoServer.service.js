@@ -2,7 +2,6 @@ const ViewUtil = require("../utils/view.utils");
 const geoServerUtil = require("../utils/geoServer.utils");
 const axios = require('axios');
 const config = require(__dirname + '/../config/config.json');
-const confDb = require(__dirname + '/../config/config.json')['db'];
 const geoserverConfig = require(__dirname + `/../config/${ config.project }/geoserver/geoserver-config.json`);
 const ViewService = require(__dirname + "/view.service");
 const FILTER = require(__dirname + '/../utils/helpers/geoserver/filter');
@@ -29,7 +28,7 @@ setViewsDynamic = async function () {
 
 module.exports = geoServerService = {
     async configGeoserver() {
-        const geoserverApi = config.geoserverApi;
+        const geoserverApi = config.geoserver.geoserverApi;
         const workspacesConfig = geoserverConfig.workspaces;
         const dataStoresConfig = geoserverConfig.dataStores;
         const stylesConfig = geoserverConfig.styles;
@@ -106,6 +105,8 @@ module.exports = geoServerService = {
             data: planetConfig
         }).then(res => res.data);
 
+        const filterLayersResponse = await this.addUpdateFilterLayers();
+
         return Promise.all([
             workspacesResponse,
             dataStoresResponse,
@@ -114,132 +115,96 @@ module.exports = geoServerService = {
             sentinelsResponse,
             spotsResponse,
             planetsResponse,
-            layerGroupsResponse
+            layerGroupsResponse,
+            filterLayersResponse
         ])
     },
 
-    async updateLayer(view) {
-        let result = null;
-
-        if (view.title.substring(view.title.length - 3, view.title.length) === 'sql') {
-            const url = `${ config.geoserverApiURL }layers`;
-
-            const layer =
-            {
-                workspaceName: view.view_workspace,
-                data: {
-                    layer: {
-                        name: view.title,
-                        type: "VECTOR",
-                        defaultStyle: {
-                            name: `${ view.view_workspace }:${ view.view }_style`,
-                            workspace: view.view_workspace,
-                            href: `${ config.geoserverApiURL }workspaces/${ view.view_workspace }/styles/${ view.view }_style.json`
-                        }
-                    }
-                }
-            };
-
-            result = await axios['put'](url, layer).then(resp => resp).catch(err => err);
-
-        }
-        return result;
-    },
-
-    async saveGeoServer(name, method, url, xmlOrJson, config) {
-        const urlMethod = (method === 'put') ? `${ url }/${ name }` : url;
-        const result = await axios[method](urlMethod, xmlOrJson, config).then(resp => resp).catch(err => err);
-
-        const message = result.status && (result.status === 200) ? ' successfully modified! ' : '';
-        return result.statusText =
-            result.status ?
-                `${ result.status }/${ result.statusText } - ${ name } ${ message }` :
-                `${ result.response.status }/${ result.response.statusText } - ${ result.response.data }`
-    },
-
-    async getDataStoreData(nameWorkspace, nameDataStore) {
-        const url = `${ config.geoserverApiURL }workspaces/${ nameWorkspace }/datastores/${ nameDataStore }.json`;
-        return axios.get(url).then(resp => resp.data.dataStore).catch(err => err);
-    },
-
-    async updateDataStore({workspaceName, datastoreName}) {
-        const url = `${ config.geoserverApiURL }workspaces/${ workspaceName }/datastores`;
-        const datastore = await this.getDataStoreData(workspaceName, datastoreName);
-        if (datastore && (datastore.type === 'PostGIS')) {
-            const dataStoreJson = geoServerUtil.detDataStoreJson(confDb, workspaceName, datastoreName);
-            console.log(await this.saveGeoServer(data.dataStore.name, 'put', url, dataStoreJson)); // Dont remove this console.log
-        }
-    },
-
-    async getWorkspaces() {
-        const urlWorkspaces = `${ config.geoserverApiURL }workspaces.json`;
-        const result = await axios.get(urlWorkspaces).then(resp => resp).catch(err => err)
-        return result.status && (result.status === 200) ? result.data.workspaces.workspace : `${ result.response.status }/${ result.response.statusText } - ${ result.response.data }`;
-    },
-
-    async getDataStores(nameWorkspace) {
-        const urlWorkspace = `${ config.geoserverApiURL }workspaces/${ nameWorkspace }/datastores.json`;
-        return await axios.get(urlWorkspace).then(resp => resp.data.dataStores.dataStore).catch(err => err);
-    },
-
-    async updateDataStores(workspaceName) {
-        const dataStores = await this.getDataStores(workspaceName);
-        if (dataStores) {
-            return Promise.all(dataStores.map(({name}) => {
-                const ds = {workspaceName, nameDataStore: name}
-                return this.updateDataStore(ds);
-            }));
-        }
-    },
-
-    async updateAllDataStores() {
-        const workspaces = await this.getWorkspaces();
-        if (workspaces) {
-            return Promise.all(workspaces.map(({name}) => this.updateDataStores(name)));
-        }
-    },
-
-    async deleteView(views) {
-        let response = [];
-
-        for (let view of views) {
-
-            view.name = view.name ? view.name : view.title;
-
-            const urli = `${ config.geoserverApiURL }workspaces/${ view.workspace }/featuretypes/${ view.name }?recurse=true`;
-
-            const res = await axios.delete(urli).then(resp => resp).catch(err => err);
-
-            res.statusText = res.status ? `${ res.status }/${ res.statusText } - ${ view.name } successfully deleted!` : `${ res.response.status }/${ res.response.statusText } - ${ res.response.data }`;
-            response.push(res.statusText);
-        }
-
-        return response;
-    },
-
-    async saveViewsJsonGeoServer() {
-        const response = [];
+    async addUpdateFilterLayers() {
         const views = await setViewsDynamic();
-        for (let view of views) {
-            view.name = view.name ? view.name : view.title;
+        const responses = [];
+        for (const view of views) {
+            const viewFeatureTypeJson = await this.get({
+                type: 'featuretype',
+                workspaceName: view.workspace,
+                name: view.name
+            });
 
-            const featureTypesUrl = `${ config.geoserverApiURL }workspaces/${ view.workspace }/featuretypes`;
+            const method = (viewFeatureTypeJson['featureType']) ? 'put' : 'post';
 
-            const viewFeatureTypeUrl = `${ featureTypesUrl }/${ view.name }.json`;
-            const viewFeatureTypeJson = await axios.get(viewFeatureTypeUrl).then(resp => resp).catch(err => err);
+            const featureJson = await geoServerUtil.getFeatureJson(viewFeatureTypeJson, view);
 
-            const method = (viewFeatureTypeJson.data && viewFeatureTypeJson && viewFeatureTypeJson.status && viewFeatureTypeJson.status === 200 && viewFeatureTypeJson.data) ? 'put' : 'post';
-
-            const jsonView = geoServerUtil.setJsonView(viewFeatureTypeJson, view);
-            response.push(await this.saveGeoServer(view.name, method, featureTypesUrl, jsonView));
-
-            await this.updateLayer(view);
+            const response = await axios({
+                method,
+                url: `${ config.geoserver.geoserverApi }featuretype`,
+                data: {
+                    data: featureJson,
+                    workspaceName: view.workspace,
+                    featureTypeName: view.name
+                }
+            }).then(response => response.data);
+            responses.push(response);
+            if (response.status === 201) {
+                if (view.title.substring(view.title.length - 3, view.title.length) === 'sql') {
+                    const url = `${ config.geoserver.geoserverApi }layer`;
+                    const data = geoServerUtil.getLayerJson(view);
+                    await axios({method: 'put', url, data}).then(resp => resp).catch(err => err);
+                }
+            }
         }
-        return response;
+        return responses;
+    },
+
+    async get({type, workspaceName = null, dataStoreName = '', name = ''}) {
+        const url = `${ config.geoserver.geoserverApi }${ type }`;
+        const options = {};
+        let params = {};
+        switch (type) {
+            case 'workspace':
+                params = {
+                    workspaceName
+                }
+                break;
+            case 'featuretype':
+                params = {
+                    workspaceName,
+                    featureTypeName: name,
+                    dataStoreName
+                }
+                break;
+            case 'datastore':
+                params = {
+                    workspaceName,
+                    type: type + 's',
+                    dataStoreName
+                }
+                break;
+            case 'layer':
+                params = {
+                    workspaceName,
+                    type: type + 's',
+                    layerName: name
+                }
+                break;
+            case 'layergroup':
+                params = {
+                    workspaceName,
+                    layerGroupName: name
+                }
+                break;
+            case 'style':
+                params = {
+                    workspaceName,
+                    styleName: name
+                }
+                break;
+        }
+        options['params'] = params;
+        return await axios.get(url, options).then(response => response.data.data);
     },
 
     getGeoserverURL(layers, bbox, time, cqlFilter, styles) {
-        let url = `${ config.geoserverBasePath }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ layers }&bbox=${ bbox }&width=400&height=400&time=${ time }&cql_filter=${ cqlFilter }&srs=EPSG:${ config.sridTerraMa }&format=image/png`;
+        let url = `${ config.geoserver.geoserverBasePath }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ layers }&bbox=${ bbox }&width=400&height=400&time=${ time }&cql_filter=${ cqlFilter }&srs=EPSG:${ config.geoserver.sridTerraMa }&format=image/png`;
         if (styles) {
             url += `&styles=${ styles }`
         }
@@ -247,7 +212,7 @@ module.exports = geoServerService = {
     },
     getGeoserverLegendURL(layer) {
         return {
-            url: `${ config.geoserverBasePath }/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${ layer }`
+            url: `${ config.geoserver.geoserverBasePath }/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${ layer }`
         };
     }
 };

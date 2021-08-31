@@ -2,7 +2,7 @@
   "db": {
     "username": "postgres",
     "password": "postgres",
-    "database": "terrama2",
+    "database": "mpmt",
     "host": "127.0.0.1",
     "dialect": "postgres",
     "port": 5432,
@@ -12,19 +12,20 @@
   },
   "project": "mpmt",
   "basePath": "",
-  "geoserverApi": "http://localhost:3300",
   "chartPath": {
     "host": "localhost:8081",
     "protocol": "http"
   },
-  "workspace": "mpmt_alertas",
-  "datastore": "mpmt_alertas_datastore",
-  "geoserverBasePath": "http://localhost:8080/geoserver",
-  "baseHostDeter": "http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
-  "geoserverApiURL": "http://localhost:8080/geoserver/rest/",
-  "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
-  "sridPlanet": 3857,
-  "sridTerraMa": 4674,
-  "imgWidth": 256,
-  "imgHeigh": 256
+  "geoserver": {
+    "geoserverApi": "http://localhost:3300/",
+    "workspace": "mpmt_alertas",
+    "datastore": "mpmt_alertas_datastore",
+    "geoserverBasePath": "http://localhost:8080/geoserver",
+    "baseHostDeter": "http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
+    "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
+    "sridPlanet": 3857,
+    "sridTerraMa": 4674,
+    "imgWidth": 256,
+    "imgHeight": 256
+  }
 }

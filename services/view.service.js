@@ -50,7 +50,7 @@ setFilter = function (groupViews, data_view) {
   return VIEWS[data_view.cod_group] && VIEWS[data_view.cod_group].filter
     ? VIEWS[data_view.cod_group].filter(
         view_default,
-        config.workspace,
+        config.geoserver.workspace,
         data_view.cod,
         groupViews[data_view.cod_group].tableOwner,
         data_view.is_primary,
@@ -61,13 +61,13 @@ setFilter = function (groupViews, data_view) {
 setLegend = function (data_view) {
   return {
     title: data_view.cod,
-    url: `${config.legendUrl}${data_view.workspace}:${data_view.view}`,
+    url: `${config.geoserver.legendUrl}${data_view.workspace}:${data_view.view}`,
   };
 };
 
 setlayerData = function (data_view) {
   return {
-    url: `${config.geoserverBasePath}/wms`,
+    url: `${config.geoserver.geoserverBasePath}/wms`,
     layers: `${data_view.workspace}:${data_view.view}`,
     transparent: true,
     format: 'image/png',

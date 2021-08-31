@@ -120,7 +120,7 @@ getCarData = async function (
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${config.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.sridPlanet}))::TEXT) - 5) AS bboxplanet,
+              substring(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.sridPlanet}))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car

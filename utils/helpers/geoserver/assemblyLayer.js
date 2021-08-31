@@ -3,7 +3,7 @@ const VIEWS = require('../views/view');
 
 function layerData(layersList, options = undefined) {
   const {
-    geoserverUrl = config.geoserverBasePath,
+    geoserverUrl = config.geoserver.geoserverBasePath,
     transparent = true,
     geoservice = undefined,
   } = options;
@@ -29,7 +29,7 @@ function layerData(layersList, options = undefined) {
 }
 
 function setLegend(title, workspace, layer) {
-  const url = `${config.legendUrl}${workspace}:${layer}`;
+  const url = `${config.geoserver.legendUrl}${workspace}:${layer}`;
   return {
     title,
     url,
@@ -43,7 +43,7 @@ function setFilter(group, layer) {
   if (VIEWS[layer.codGroup] && VIEWS[layer.codGroup].filter) {
     filter = VIEWS[layer.codGroup].filter(
       view_default,
-      config.workspace,
+      config.geoserver.workspace,
       layer.cod,
       group[layer.codGroup].tableOwner,
       layer.is_primary,

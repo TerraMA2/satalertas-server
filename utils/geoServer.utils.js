@@ -1,26 +1,24 @@
 const config = require(__dirname + '/../config/config.json');
-setViewJson = function(json, view){
-  let result;
-  if (json.status && json.status === 200 && json.data){
-    result = json.data;
-
-    if (result.featureType.metadata.entry && (result.featureType.metadata.entry["@key"] === "JDBC_VIRTUAL_TABLE")) {
-      result.featureType.metadata.entry.virtualTable.sql = view.sql;
+exports.getFeatureJson = function(featureJson, view){
+  let json = featureJson;
+  if (json && json.length > 0){
+    if (json.featureType.metadata.entry && (json.featureType.metadata.entry["@key"] === "JDBC_VIRTUAL_TABLE")) {
+      json.featureType.metadata.entry.virtualTable.sql = view.sql;
     } else {
-      result.featureType.metadata.entry.forEach(entry => {
+      json.featureType.metadata.entry.forEach(entry => {
         if (entry["@key"] === "JDBC_VIRTUAL_TABLE") {
           entry.virtualTable.sql = view.sql;
         }
       });
     }
   } else {
-    result = {
+    json = {
       "featureType": {
         "name": view.name,
         "nativeName": view.name,
         "title": view.title,
         "keywords": { "string": [ "features", view.title ] },
-        "srs": `EPSG:${config.sridTerraMa}`,
+        "srs": `EPSG:${config.geoserver.sridTerraMa}`,
         "nativeBoundingBox": { },
         "latLonBoundingBox": { },
         "projectionPolicy": "FORCE_DECLARED",
@@ -67,15 +65,32 @@ setViewJson = function(json, view){
     };
   }
 
-  updateBoundingBox(result);
+  this.updateBoundingBox(json);
   if (view.addParameter) {
-    addParameter(result);
+    this.addParameter(json);
   }
 
-  return result;
+  return json;
 };
 
-addParameter = function(json) {
+exports.getLayerJson = function (view) {
+  return {
+    workspaceName: view.view_workspace,
+    data: {
+      layer: {
+        name: view.title,
+        type: "VECTOR",
+        defaultStyle: {
+          name: `${ view.view_workspace }:${ view.view }_style`,
+          workspace: view.view_workspace,
+          href: `${ config.geoserver.geoserverApi }workspaces/${ view.view_workspace }/styles/${ view.view }_style.json`
+        }
+      }
+    }
+  };
+}
+
+exports.addParameter = function(json) {
   json.featureType.metadata.entry[0].virtualTable.parameter = [
     {
       name: 'min',
@@ -90,76 +105,19 @@ addParameter = function(json) {
   ];
 };
 
-updateBoundingBox = function(json){
+exports.updateBoundingBox = function(json){
   json.featureType.nativeBoundingBox = {
       "minx": -180,
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": `EPSG:${config.sridTerraMa}`
+      "crs": `EPSG:${config.geoserver.sridTerraMa}`
   };
   json.featureType.latLonBoundingBox = {
       "minx": -180,
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": `EPSG:${config.sridTerraMa}`
+      "crs": `EPSG:${config.geoserver.sridTerraMa}`
   };
 };
-
-const geoServerUtil = {
-  detDataStoreJson(confDb, nameWorkspace, nameDatastore){
-    return  {
-      "dataStore": {
-        "name": nameDatastore,
-        "type": "PostGIS",
-        "enabled": true,
-        "workspace": {
-          "name": nameWorkspace,
-          "href": `${config.geoserverApiURL}workspaces/${nameWorkspace}.json`
-        },
-        "connectionParameters": {
-          "entry": [
-            {
-              "@key": "database",
-              "$": confDb.database
-            },
-            {
-              "@key": "host",
-              "$": confDb.host
-            },
-            {
-              "@key": "port",
-              "$": confDb.port
-            },
-            {
-              "@key": "passwd",
-              "$": confDb.password
-            },
-            {
-              "@key": "dbtype",
-              "$": "postgis"
-            },
-            {
-              "@key": "namespace",
-              "$": `http://${nameWorkspace}`
-            },
-            {
-              "@key": "max connections",
-              "$": "50"
-            },
-            {
-              "@key": "user",
-              "$": confDb.username
-            }
-          ]
-        }
-      }
-    }
-  },
-  setJsonView(json, view){
-    return setViewJson(json, view);
-  }
-};
-
-module.exports = geoServerUtil;
