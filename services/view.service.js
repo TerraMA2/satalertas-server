@@ -1,10 +1,7 @@
 const models = require('../models');
-const { View, RegisteredView, sequelize } = models;
-const env = process.env.NODE_ENV || 'development';
+const { View, sequelize } = models;
 const Result = require(__dirname + '/../utils/result');
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[
-  env
-];
+const config = require(__dirname + '/../config/config.json');
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
 
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
@@ -53,7 +50,7 @@ setFilter = function (groupViews, data_view) {
   return VIEWS[data_view.cod_group] && VIEWS[data_view.cod_group].filter
     ? VIEWS[data_view.cod_group].filter(
         view_default,
-        confGeoServer.workspace,
+        config.workspace,
         data_view.cod,
         groupViews[data_view.cod_group].tableOwner,
         data_view.is_primary,
@@ -64,13 +61,13 @@ setFilter = function (groupViews, data_view) {
 setLegend = function (data_view) {
   return {
     title: data_view.cod,
-    url: `${confGeoServer.legendUrl}${data_view.workspace}:${data_view.view}`,
+    url: `${config.legendUrl}${data_view.workspace}:${data_view.view}`,
   };
 };
 
 setlayerData = function (data_view) {
   return {
-    url: `${confGeoServer.baseHost}/wms`,
+    url: `${config.geoserverBasePath}/wms`,
     layers: `${data_view.workspace}:${data_view.view}`,
     transparent: true,
     format: 'image/png',

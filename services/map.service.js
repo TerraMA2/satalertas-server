@@ -5,8 +5,7 @@ const { View, sequelize } = models;
 const Filter = require("../utils/filter/filter.utils");
 const InfoColumnsService = require("../services/info-columns.service");
 const logger = require('../utils/logger');
-const env = process.env.NODE_ENV || 'development';
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+const config = require(__dirname + '/../config/config.json');
 
 getColumnsTable = async function(tableName, schema, alias = '') {
   const sql =
@@ -317,8 +316,8 @@ module.exports = mapService = {
 
       const sqlSelect =
         ` SELECT  ${columnsTable},
-                  ST_Y(ST_Transform (ST_Centroid(geom), ${confGeoServer.sridTerraMa})) AS "lat",
-                  ST_X(ST_Transform (ST_Centroid(geom), ${confGeoServer.sridTerraMa})) AS "long" `;
+                  ST_Y(ST_Transform (ST_Centroid(geom), ${config.sridTerraMa})) AS "lat",
+                  ST_X(ST_Transform (ST_Centroid(geom), ${config.sridTerraMa})) AS "long" `;
       let sqlFrom = '';
       let sqlWhere = '';
 
@@ -374,8 +373,8 @@ module.exports = mapService = {
 
       const sqlSelect =
         ` SELECT  ${columnsTable}
-                  , ST_Y(ST_Transform (ST_Centroid(${geomColumn}), ${confGeoServer.sridTerraMa})) AS "lat"
-                  , ST_X(ST_Transform (ST_Centroid(${geomColumn}), ${confGeoServer.sridTerraMa})) AS "long"
+                  , ST_Y(ST_Transform (ST_Centroid(${geomColumn}), ${config.sridTerraMa})) AS "lat"
+                  , ST_X(ST_Transform (ST_Centroid(${geomColumn}), ${config.sridTerraMa})) AS "long"
           FROM public.${tableName} 
         `;
 

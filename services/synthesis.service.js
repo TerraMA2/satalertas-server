@@ -1,8 +1,6 @@
 const Result = require('../utils/result');
 const { sequelize } = require('../models');
-const env = process.env.NODE_ENV || 'development';
 const GeoServerService = require("../services/geoServer.service");
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
 const config = require(__dirname + '/../config/config.json');
 const { msgError } = require('../utils/messageError');
 const synthesisConfig = require(__dirname + `/../config/${config.project}/synthesis.json`);
@@ -122,7 +120,7 @@ getCarData = async function (
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT) - 5) AS bboxplanet,
+              substring(ST_EXTENT(ST_Transform(car.geom, ${config.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.sridPlanet}))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car

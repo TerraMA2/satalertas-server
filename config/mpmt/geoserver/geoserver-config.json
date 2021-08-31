@@ -8,7 +8,7 @@
       }
     }
   ],
-  "datastores": [
+  "dataStores": [
     {
       "workspaceName": "terrama2_35",
       "type": "wms",

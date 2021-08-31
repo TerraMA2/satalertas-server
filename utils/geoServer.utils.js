@@ -1,5 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+const config = require(__dirname + '/../config/config.json');
 setViewJson = function(json, view){
   let result;
   if (json.status && json.status === 200 && json.data){
@@ -9,19 +8,19 @@ setViewJson = function(json, view){
       result.featureType.metadata.entry.virtualTable.sql = view.sql;
     } else {
       result.featureType.metadata.entry.forEach(entry => {
-        if (entry["@key"]  === "JDBC_VIRTUAL_TABLE") {
+        if (entry["@key"] === "JDBC_VIRTUAL_TABLE") {
           entry.virtualTable.sql = view.sql;
         }
       });
     }
   } else {
-    result =  {
+    result = {
       "featureType": {
         "name": view.name,
         "nativeName": view.name,
         "title": view.title,
         "keywords": { "string": [ "features", view.title ] },
-        "srs": `EPSG:${confGeoServer.sridTerraMa}`,
+        "srs": `EPSG:${config.sridTerraMa}`,
         "nativeBoundingBox": { },
         "latLonBoundingBox": { },
         "projectionPolicy": "FORCE_DECLARED",
@@ -97,26 +96,19 @@ updateBoundingBox = function(json){
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": `EPSG:${confGeoServer.sridTerraMa}`
+      "crs": `EPSG:${config.sridTerraMa}`
   };
   json.featureType.latLonBoundingBox = {
       "minx": -180,
       "maxx": 180,
       "miny": -90,
       "maxy": 90,
-      "crs": `EPSG:${confGeoServer.sridTerraMa}`
+      "crs": `EPSG:${config.sridTerraMa}`
   };
 };
 
 const geoServerUtil = {
-  setWorkSpace(name) {
-    return {
-      "workspace": {
-        "name": name
-      }
-    }
-  },
-  setDataStore(confDb, nameWorkspace, nameDatastore){
+  detDataStoreJson(confDb, nameWorkspace, nameDatastore){
     return  {
       "dataStore": {
         "name": nameDatastore,
@@ -124,7 +116,7 @@ const geoServerUtil = {
         "enabled": true,
         "workspace": {
           "name": nameWorkspace,
-          "href": `${confGeoServer.host}workspaces/${nameWorkspace}.json`
+          "href": `${config.geoserverApiURL}workspaces/${nameWorkspace}.json`
         },
         "connectionParameters": {
           "entry": [

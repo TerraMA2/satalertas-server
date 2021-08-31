@@ -1,13 +1,17 @@
+const config = require(__dirname + '/../../../config/config.json');
 
-module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tableName, isPrimary) {
-  return {
-    biome: {
-      name: `${cod_view}_biome_sql`,
-      title: `${cod_view}_biome_sql`,
+module.exports = function(layer) {
+  const workspaceAlertas = config.workspace;
+  const dataStore = config.datastore;
+  const {cod, tableName, workspace, view } = layer;
+  return [
+    {
+      name: `${cod}_biome_sql`,
+      title: `${cod}_biome_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
         SELECT main_table.*, secondary_table.gid  FROM public.${tableName} AS main_table
-        ,public.de_biomas_mt secondary_table  WHERE ST_Intersects(intersection_geom, secondary_table.geom)
+        ,public.de_biomas_mt secondary_table WHERE ST_Intersects(intersection_geom, secondary_table.geom)
       `,
       keyColumn: `monitored_id`,
       geometry: {
@@ -15,11 +19,13 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: -1
       },
-      dataStore: dataStore
+      dataStore: dataStore,
+      view_workspace: workspace,
+      view
     },
-    city: {
-      name: `${cod_view}_city_sql`,
-      title: `${cod_view}_city_sql`,
+    {
+      name: `${cod}_city_sql`,
+      title: `${cod}_city_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
         SELECT main_table.*, secondary_table.geocodigo, secondary_table.gid, secondary_table.comarca,
@@ -34,11 +40,13 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: -1
         },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      view_workspace: workspace,
+      view
     },
-    uc: {
-      name: `${cod_view}_uc_sql`,
-      title: `${cod_view}_uc_sql`,
+    {
+      name: `${cod}_uc_sql`,
+      title: `${cod}_uc_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
         SELECT main_table.*, secondary_table.gid
@@ -51,11 +59,13 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: -1
       },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      view_workspace: workspace,
+      view
     },
-    ti: {
-      name: `${cod_view}_ti_sql`,
-      title: `${cod_view}_ti_sql`,
+    {
+      name: `${cod}_ti_sql`,
+      title: `${cod}_ti_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
         SELECT main_table.*, secondary_table.gid
@@ -68,11 +78,13 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: -1
       },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      view_workspace: workspace,
+      view
     },
-    projus: {
-      name: `${cod_view}_projus_sql`,
-      title: `${cod_view}_projus_sql`,
+    {
+      name: `${cod}_projus_sql`,
+      title: `${cod}_projus_sql`,
       workspace: `${workspaceAlertas}`,
       sql: `
         SELECT main_table.*, secondary_table.gid
@@ -85,7 +97,9 @@ module.exports = function(workspaceAlertas, dataStore, cod_view, tableOwner, tab
         type: `Geometry`,
         srid: -1
       },
-      dataStore: `${dataStore}`
+      dataStore: `${dataStore}`,
+      view_workspace: workspace,
+      view
     }
-  }
+  ]
 };

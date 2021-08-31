@@ -1,13 +1,13 @@
-const env = process.env.NODE_ENV || 'development';
-const confGeoServer = require('../../../geoserver-conf/config.json')[env];
-ViewUtil = require("../../view.utils")
+const config = require(__dirname + '/../../../config/config.json');
 
-module.exports = async function(workspaceAlertas, dataStore, cod_view, tableOwner, tableName, isPrimary) {
-  const views = await ViewUtil.getGrouped();
-  return {
-    city: {
-      name: `${cod_view}_city_sql`,
-      title: `${cod_view}_city_sql`,
+module.exports = function(layer, cityTable, carTable, spotlightTable) {
+  const workspaceAlertas = config.workspace;
+  const dataStore = config.datastore;
+  const {cod, tableOwner, tableName, isPrimary, workspace, view } = layer;
+  return [
+    {
+      name: `${cod}_city_sql`,
+      title: `${cod}_city_sql`,
       workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
         `
@@ -33,14 +33,16 @@ module.exports = async function(workspaceAlertas, dataStore, cod_view, tableOwne
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: confGeoServer.sridTerraMa
+        srid: config.sridTerraMa
         },
       dataStore: `${dataStore}`,
-      addParameter: true
+      addParameter: true,
+      view_workspace: workspace,
+      view
     },
-    uc: {
-      name: `${cod_view}_uc_sql`,
-      title: `${cod_view}_uc_sql`,
+    {
+      name: `${cod}_uc_sql`,
+      title: `${cod}_uc_sql`,
       workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
         `
@@ -66,14 +68,16 @@ module.exports = async function(workspaceAlertas, dataStore, cod_view, tableOwne
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: confGeoServer.sridTerraMa
+        srid: config.sridTerraMa
       },
       dataStore: `${dataStore}`,
-      addParameter: true
+      addParameter: true,
+      view_workspace: workspace,
+      view
     },
-    ti: {
-      name: `${cod_view}_ti_sql`,
-      title: `${cod_view}_ti_sql`,
+    {
+      name: `${cod}_ti_sql`,
+      title: `${cod}_ti_sql`,
       workspace: `${workspaceAlertas}`,
       sql: isPrimary ?
         `
@@ -99,24 +103,26 @@ module.exports = async function(workspaceAlertas, dataStore, cod_view, tableOwne
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: confGeoServer.sridTerraMa
+        srid: config.sridTerraMa
       },
       dataStore: `${dataStore}`,
-      addParameter: true
+      addParameter: true,
+      view_workspace: workspace,
+      view
     },
-    default: {
-      name: `${cod_view}_sql`,
-      title: `${cod_view}_sql`,
+    {
+      name: `${cod}_sql`,
+      title: `${cod}_sql`,
       workspace: `${workspaceAlertas}`,
-      sql: 
+      sql:
         `WITH group_result AS (
           SELECT COUNT(1) AS num_car_focos,
-                cf.${views.STATIC.children.CAR_VALIDADO.table_name}_gid,
-                cf.${views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name}_bioma
+                cf.${carTable}_gid,
+                cf.${spotlightTable}_bioma
           FROM public.${tableName} AS cf
           WHERE cf.execution_date BETWEEN %date1% AND %date2%
-          GROUP BY cf.${views.STATIC.children.CAR_VALIDADO.table_name}_gid,
-                  cf.${views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name}_bioma
+          GROUP BY cf.${carTable}_gid,
+                  cf.${spotlightTable}_bioma
         )
         SELECT group_result.*,
               c.area_ha_,
@@ -128,20 +134,22 @@ module.exports = async function(workspaceAlertas, dataStore, cod_view, tableOwne
               mun.nm_rgint,
               MUN.pjbh,
               c.geom
-          FROM ${views.STATIC.children.CAR_VALIDADO.table_name} AS c,
+          FROM ${carTable} AS c,
               group_result,
-              public.${views.STATIC.children.MUNICIPIOS.table_name} AS mun
-          WHERE group_result.${views.STATIC.children.CAR_VALIDADO.table_name}_gid = c.gid
+              public.${cityTable} AS mun
+          WHERE group_result.${carTable}_gid = c.gid
             AND c.geocodigo = mun.geocodigo
         `,
       keyColumn: `monitored_id`,
       geometry: {
         name:`intersection_geom`,
         type: `Geometry`,
-        srid: confGeoServer.sridTerraMa
+        srid: config.sridTerraMa
       },
       dataStore: `${dataStore}`,
-      addParameter: true
+      addParameter: true,
+      view_workspace: workspace,
+      view
     }
-  }
+  ]
 };
