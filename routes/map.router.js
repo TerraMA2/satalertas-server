@@ -1,6 +1,6 @@
-const   express = require('express');
-        router = express.Router();
-        mapController = require('../controllers/map.controller');
+const express = require('express');
+router = express.Router();
+mapController = require('../controllers/map.controller');
 
 
 router.get('/getAnalysisCentroid', mapController.getAnalysisCentroid);

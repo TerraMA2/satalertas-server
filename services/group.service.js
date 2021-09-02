@@ -2,7 +2,6 @@ const models = require('../models');
 const { View, Project, Group, RelGroupView } = models;
 const logger = require('../utils/logger');
 const { msgError } = require('../utils/messageError');
-const { getByGroupId } = require('./group-view.service');
 
 module.exports = GroupService = {
   async getAll() {

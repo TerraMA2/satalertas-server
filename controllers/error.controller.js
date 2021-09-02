@@ -1,13 +1,13 @@
 const createError = require('http-errors')
-      logger = require('../utils/logger')
+logger = require('../utils/logger')
 
 exports.showError = (err, req, res, next) => {
     let message = err.message
     let status = err.status
     logger.error(status + " - " + message)
     res.json({
-        'error-status': `${status}`,
-        'error-message': `${message}`
+        'error-status': `${ status }`,
+        'error-message': `${ message }`
     })
 }
 

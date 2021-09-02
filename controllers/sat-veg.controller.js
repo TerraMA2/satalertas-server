@@ -3,12 +3,12 @@ const SatVegService = require(__dirname + '/../services/sat-veg.service');
 exports.get = async (req, res) => {
     try {
         res.json(await SatVegService.get(JSON.parse(
-          req.query.coordinates,
-          req.query.type,
-          req.query.preFilter,
-          req.query.filter,
-          req.query.filterParam,
-          req.query.sat))
+            req.query.coordinates,
+            req.query.type,
+            req.query.preFilter,
+            req.query.filter,
+            req.query.filterParam,
+            req.query.sat))
         );
     } catch (e) {
         res.json(e);

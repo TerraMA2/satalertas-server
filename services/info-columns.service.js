@@ -124,10 +124,7 @@ async function getInfocolumnsByViewId(viewId) {
     };
     const tableNames = await sequelize.query(sql, options);
     const infocolumn = await getInfocolumnsByTableName(tableNames.map(({tableName}) => tableName));
-    infocolumn.forEach(element => {
-      const viewId = tableNames.find((table) => table.tableName === element.tableName )['viewId']
-      element['viewId'] = viewId;
-    });
+    infocolumn.forEach(element => element['viewId'] = tableNames.find((table) => table.tableName === element.tableName )['viewId']);
     if(Array.isArray(viewId)) {
       return Promise.all(infocolumn);
     } else {
@@ -3414,10 +3411,9 @@ module.exports = ConfigService = {
     // }
 
     try {
-      const result = await (viewId && viewId !== 'undefined'
+      return await (viewId && viewId !== 'undefined'
         ? infoColumns[viewId]
         : infoColumns);
-      return result;
     } catch (e) {
       throw new Error(e);
     }

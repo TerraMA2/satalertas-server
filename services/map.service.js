@@ -5,8 +5,7 @@ const { View, sequelize } = models;
 const Filter = require("../utils/filter/filter.utils");
 const InfoColumnsService = require("../services/info-columns.service");
 const logger = require('../utils/logger');
-const env = process.env.NODE_ENV || 'development';
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[env];
+const config = require(__dirname + '/../config/config.json');
 
 getColumnsTable = async function(tableName, schema, alias = '') {
   const sql =
@@ -315,12 +314,12 @@ module.exports = mapService = {
 
       const columnsTable = await getColumnsTable(layer.tableName, 'public')
 
-      const sqlSelect =
-        ` SELECT  ${columnsTable},
-                  ST_Y(ST_Transform (ST_Centroid(geom), ${confGeoServer.sridTerraMa})) AS "lat",
-                  ST_X(ST_Transform (ST_Centroid(geom), ${confGeoServer.sridTerraMa})) AS "long" `;
-      let sqlFrom = '';
-      let sqlWhere = '';
+            const sqlSelect =
+                ` SELECT  ${ columnsTable },
+                  ST_Y(ST_Transform (ST_Centroid(geom), ${ config.geoserver.defaultSRID })) AS "lat",
+                  ST_X(ST_Transform (ST_Centroid(geom), ${ config.geoserver.defaultSRID })) AS "long" `;
+            let sqlFrom = '';
+            let sqlWhere = '';
 
       sqlFrom += ` FROM public.${layer.tableName}`;
 
@@ -372,11 +371,11 @@ module.exports = mapService = {
       const timeStampColumn = await getColumnByType(tableName,'public',  'timestamptz')
       const columnsTable = await getColumnsTable(layer.tableName, 'public')
 
-      const sqlSelect =
-        ` SELECT  ${columnsTable}
-                  , ST_Y(ST_Transform (ST_Centroid(${geomColumn}), ${confGeoServer.sridTerraMa})) AS "lat"
-                  , ST_X(ST_Transform (ST_Centroid(${geomColumn}), ${confGeoServer.sridTerraMa})) AS "long"
-          FROM public.${tableName} 
+            const sqlSelect =
+                ` SELECT  ${ columnsTable }
+                  , ST_Y(ST_Transform (ST_Centroid(${ geomColumn }), ${ config.geoserver.defaultSRID })) AS "lat"
+                  , ST_X(ST_Transform (ST_Centroid(${ geomColumn }), ${ config.geoserver.defaultSRID })) AS "long"
+          FROM public.${ tableName } 
         `;
 
       let sqlWhere = '';

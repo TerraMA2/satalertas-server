@@ -23,9 +23,9 @@ exports.get = (req, res, next) => {
                 const isPrivate = view.dataValues.private
                 const sourceType = view.dataValues.source_type
                 const uri = registeredView.dataValues.uri
-                const geoserverUrl = `http://${uri.substr(uri.lastIndexOf("@")+1)}/wms`
+                const geoserverUrl = `http://${ uri.substr(uri.lastIndexOf("@") + 1) }/wms`
                 const workspace = registeredView.dataValues.workspace
-                const layerId = `${workspace}:view${viewId}`
+                const layerId = `${ workspace }:view${ viewId }`
                 let cod = ''
                 let groupCode = ''
 
@@ -41,8 +41,8 @@ exports.get = (req, res, next) => {
                 }
 
                 const layerData = {
-                    url: `${geoserverUrl}`,
-                    layers: `${layerId}`,
+                    url: `${ geoserverUrl }`,
+                    layers: `${ layerId }`,
                     transparent: true,
                     format: "image/png",
                     version: "1.1.0",
@@ -50,8 +50,8 @@ exports.get = (req, res, next) => {
                 }
 
                 const legend = {
-                    title: `${viewName}`,
-                    url: `${geoserverUrl}?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=${layerId}`
+                    title: `${ viewName }`,
+                    url: `${ geoserverUrl }?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=${ layerId }`
                 }
 
                 return {
@@ -61,8 +61,8 @@ exports.get = (req, res, next) => {
                     shortLabel: `${viewName}`,
                     value: `${viewId}`,
                     carRegisterColumn: "de_car_validado_sema_numero_do1",
-                    type: `${layerType[sourceType]}`,
-                    isPrivate: `${isPrivate}`,
+                    type: `${ layerType[sourceType] }`,
+                    isPrivate: `${ isPrivate }`,
                     isPrimary: false,
                     isDisabled: false,
                     isHidden: false,

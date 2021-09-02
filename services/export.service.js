@@ -1,11 +1,10 @@
-const { execSync, spawnSync } = require('child_process')
-    path = require('path')
-    fs = require('fs')
-    env = process.env.NODE_ENV || 'development'
-    config = require(__dirname + '/../config/config.json')[env]
-    Filter = require("../utils/filter/filter.utils")
-    ViewService = require("../services/view.service")
-    crypto = require('crypto');
+const {execSync, spawnSync} = require('child_process')
+path = require('path')
+fs = require('fs')
+config = require(__dirname + '/../config/config.json')
+Filter = require("../utils/filter/filter.utils")
+ViewService = require("../services/view.service")
+crypto = require('crypto');
 
 module.exports = exportService = {
     async get(params) {
@@ -13,10 +12,10 @@ module.exports = exportService = {
         const layer = JSON.parse(params.specificParameters)
         const tableName = layer.tableName;
         const formats = await this.getFormats(fileFormats);
-        const connectionString = "PG:host=" + config.host + " port=" + config.port + " user=" + config.username + " password=" + config.password + " dbname=" + config.database;
+        const connectionString = "PG:host=" + config.db.host + " port=" + config.db.port + " user=" + config.db.username + " password=" + config.db.password + " dbname=" + config.db.database;
         const sql = await ViewService.getSqlExport(params);
         const tmpFolder = path.resolve(__dirname, '..', 'tmp');
-        fs.rmdirSync(tmpFolder, { recursive: true });
+        fs.rmdirSync(tmpFolder, {recursive: true});
         const formatsLength = formats.length;
         if (!formatsLength) {
             console.error('Formats not found.');
@@ -28,9 +27,9 @@ module.exports = exportService = {
             const fileName = tableName + format.fileExtention;
             const filePath = path.resolve(tmpFolder, (format.fileExtention === '.shp' ? 'shapefile/' : ''));
             file = filePath + '/' + fileName;
-            fs.mkdirSync(filePath, { recursive: true })
+            fs.mkdirSync(filePath, {recursive: true})
             let args = ['-progress', '-F', format.ogr2ogrFormat, filePath + '/' + fileName, connectionString, '-fieldTypeToString', 'Date,Time,DateTime', '-sql', sql, '-skipfailures'];
-            if(format.fileExtention === '.csv') {
+            if (format.fileExtention === '.csv') {
                 args.push('-lco', 'LINEFORMAT=CRLF', '-lco', 'SEPARATOR=COMMA');
             }
             await spawnSync('ogr2ogr', args);
@@ -62,7 +61,7 @@ module.exports = exportService = {
         let contentType = '';
         for (let i = 0; i < formats.length; i++) {
             const f = formats[i];
-            switch(f) {
+            switch (f) {
                 case 'csv':
                     fileExtention = '.csv';
                     ogr2ogrFormat = 'CSV';

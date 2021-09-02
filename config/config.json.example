@@ -1,57 +1,33 @@
 {
-  "development": {
+  "db": {
     "username": "postgres",
     "password": "postgres",
-    "database": "terrama2",
-    "host": "localhost",
-    "dialect": "postgres",
-    "port": 5432,
-    "define": {
-      "schema": "alertas"
-    },
-    "basePath": "",
-    "chartPath": {
-      "host": "localhost:8081",
-      "protocol": "http"
-    },
-    "seederStorage": "sequelize",
-    "seederStorageTableName": "SequelizeSeed"
-  },
-  "test": {
-    "username": "postgres",
-    "password": "postgres",
-    "database": "terrama2-test",
+    "database": "mpmt",
     "host": "127.0.0.1",
     "dialect": "postgres",
     "port": 5432,
     "define": {
       "schema": "alertas"
     },
-    "basePath": "",
-    "chartPath": {
-      "host": "localhost:8081",
-      "protocol": "http"
-    },
     "seederStorage": "sequelize",
     "seederStorageTableName": "SequelizeSeed"
   },
-  "production": {
-    "username": "postgres",
-    "password": "postgres",
-    "database": "terrama2-prod",
-    "host": "localhost",
-    "dialect": "postgres",
-    "port": 5432,
-    "logging": false,
-    "define": {
-      "schema": "alertas"
-    },
-    "basePath": "/mpmt/alertaServer",
-    "chartPath": {
-      "host": "localhost:8081",
-      "protocol": "http"
-    },
-    "seederStorage": "sequelize",
-    "seederStorageTableName": "SequelizeSeed"
+  "project": "mpmt",
+  "basePath": "",
+  "chartPath": {
+    "host": "localhost:8081",
+    "protocol": "http"
+  },
+  "geoserver": {
+    "geoserverApi": "http://localhost:3300/",
+    "workspace": "mpmt_alertas",
+    "datastore": "mpmt_alertas_datastore",
+    "geoserverBasePath": "http://localhost:8080/geoserver",
+    "baseHostDeter": "http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
+    "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
+    "planetSRID": 3857,
+    "defaultSRID": 4674,
+    "imgWidth": 256,
+    "imgHeight": 256
   }
 }
