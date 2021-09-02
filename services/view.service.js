@@ -48,7 +48,6 @@ getSql = async function (params) {
 };
 
 setFilter = function (groupViews, viewData) {
-  console.log('viewData>>>>>:', viewData[0])
   const view_default = `${viewData.workspace}:${viewData.view}`;
   return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter
     ? VIEWS[viewData.groupCode].filter(
@@ -265,7 +264,6 @@ orderView = async function (groupViews) {
             );
           })
         : [];
-    // console.log('groupViews -> other: ', other)
     owner.forEach((p) => {
       if (groupViews[layer] && groupViews[layer].children) {
         groupViews[layer].children.push(p);

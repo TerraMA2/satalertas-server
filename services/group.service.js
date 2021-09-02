@@ -31,20 +31,14 @@ module.exports = GroupService = {
       let where = {};
 
       const group = await Group.findByPk(id).then((result) => result);
-      Group.findByPk(id, {
-        include: 'relGroupView',
-        raw: true,
-      }).then((data) => console.log('Resposta do Group.findByPk: ', data));
 
       group.dataValues.project = await Project.findByPk(group.idProject);
       where = {
         where: {
           groupId: group.id,
         },
-        // raw: true
       };
       const relViews = await RelGroupView.findAll(where);
-      // console.log('relViews:', relViews)
       group.dataValues.relViews = await relViews;
 
       for (const relViews of group.dataValues.relViews) {

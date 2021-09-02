@@ -3417,7 +3417,6 @@ module.exports = ConfigService = {
       const result = await (viewId && viewId !== 'undefined'
         ? infoColumns[viewId]
         : infoColumns);
-      console.log('to no info-columns.service result: ', result);
       return result;
     } catch (e) {
       throw new Error(e);

@@ -57,7 +57,6 @@ exports.getInfocolumnsByTableName = async (req, res) => {
 exports.getInfocolumnsByViewId = async (req, res) => {
   try {
     const { viewId } = req.body;
-    console.log('info-columns.contoler byViewId:', req.body, `é array ${typeof viewId}`)
     res.json(Result.ok(await InfoColumnsService.getInfocolumnsByViewId(viewId)))
   } catch (e) {
     throw new Error(msgError(__filename, 'getInfocolumnsByViewId', e))
