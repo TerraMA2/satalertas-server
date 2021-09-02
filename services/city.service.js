@@ -1,4 +1,4 @@
-const { City } = require('../models');
+const {City} = require('../models');
 const logger = require('../utils/logger');
 
 module.exports = cityService = {
@@ -16,7 +16,7 @@ module.exports = cityService = {
         try {
             return await City.findAll(options);
         } catch (e) {
-            const msgErr = `In city.controller, method getAll:${e}`;
+            const msgErr = `In city.controller, method getAll:${ e }`;
             logger.error(msgErr);
         }
     },
@@ -33,7 +33,7 @@ module.exports = cityService = {
         try {
             return await City.findAll(options);
         } catch (e) {
-            const msgErr = `In city.controller, method getAllRegions:${e}`;
+            const msgErr = `In city.controller, method getAllRegions:${ e }`;
             logger.error(msgErr);
         }
     },
@@ -50,7 +50,7 @@ module.exports = cityService = {
         try {
             return await City.findAll(options);
         } catch (e) {
-            const msgErr = `In city.controller, method getAllMesoregions:${e}`;
+            const msgErr = `In city.controller, method getAllMesoregions:${ e }`;
             logger.error(msgErr);
         }
     },
@@ -67,7 +67,7 @@ module.exports = cityService = {
         try {
             return await City.findAll(options);
         } catch (e) {
-            const msgErr = `In city.controller, method getAllImmediateRegion:${e}`;
+            const msgErr = `In city.controller, method getAllImmediateRegion:${ e }`;
             logger.error(msgErr);
         }
     },
@@ -84,7 +84,7 @@ module.exports = cityService = {
         try {
             return await City.findAll(options);
         } catch (e) {
-            const msgErr = `In city.controller, method getAllIntermediateRegion:${e}`;
+            const msgErr = `In city.controller, method getAllIntermediateRegion:${ e }`;
             logger.error(msgErr);
         }
     },
@@ -101,7 +101,7 @@ module.exports = cityService = {
         try {
             return await City.findAll(options);
         } catch (e) {
-            const msgErr = `In city.controller, method getAllPjbh:${e}`;
+            const msgErr = `In city.controller, method getAllPjbh:${ e }`;
             logger.error(msgErr);
         }
     },
@@ -118,7 +118,7 @@ module.exports = cityService = {
         try {
             return await City.findAll(options);
         } catch (e) {
-            const msgErr = `In city.controller, method getAllMicroregions:${e}`;
+            const msgErr = `In city.controller, method getAllMicroregions:${ e }`;
             logger.error(msgErr);
         }
     }

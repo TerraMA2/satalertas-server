@@ -23,8 +23,8 @@
     "geoserverBasePath": "http://localhost:8080/geoserver",
     "baseHostDeter": "http://www.dpi.inpe.br/fipcerrado-geoserver/ows",
     "legendUrl": "http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=",
-    "sridPlanet": 3857,
-    "sridTerraMa": 4674,
+    "planetSRID": 3857,
+    "defaultSRID": 4674,
     "imgWidth": 256,
     "imgHeight": 256
   }

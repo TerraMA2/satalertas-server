@@ -1,30 +1,8 @@
-const ViewUtil = require("../utils/view.utils");
-const geoServerUtil = require("../utils/geoServer.utils");
 const axios = require('axios');
 const config = require(__dirname + '/../config/config.json');
 const geoserverConfig = require(__dirname + `/../config/${ config.project }/geoserver/geoserver-config.json`);
-const ViewService = require(__dirname + "/view.service");
-const FILTER = require(__dirname + '/../utils/helpers/geoserver/filter');
 const path = require("path");
 const fs = require("fs");
-
-setViewsDynamic = async function () {
-    const GROUP_FILTER = ['DETER', 'PRODES', 'BURNED', 'BURNED_AREA'];
-    const groupViews = await ViewService.fetchGroupOfOrderedLayers();
-    const views = await ViewUtil.getGrouped();
-    const cityTable = views.STATIC.children.MUNICIPIOS.table_name;
-    const carTable = views.STATIC.children.CAR_VALIDADO.table_name;
-    const spotlightTable = views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name;
-    return Object.values(groupViews)
-        .filter(groupView => GROUP_FILTER.includes(groupView.cod))
-        .map(groupView => groupView.children ? groupView.children : null)
-        .reduce((layers, current) => [...layers, ...current])
-        .map(layer => {
-            const groupCode = layer.codgroup;
-            const type = groupCode === 'BURNED' ? groupCode.toLowerCase() : 'default';
-            return FILTER[type](layer, cityTable, carTable, spotlightTable);
-        }).reduce((layer, current) => [...layer, ...current]);
-};
 
 module.exports = geoServerService = {
     async configGeoserver() {
@@ -38,6 +16,7 @@ module.exports = geoServerService = {
         const sentinelConfig = layersConfig.sentinel;
         const spotConfig = layersConfig.spot;
         const planetConfig = layersConfig.planet;
+        const featureTypesConfig = geoserverConfig.featureTypes;
 
         const workspacesResponse = await axios({
             url: "/workspace/createAll",
@@ -64,7 +43,7 @@ module.exports = geoServerService = {
                 const sldPath = `${ stylesFolder }/${ filename }`;
                 const stats = fs.statSync(sldPath);
                 const fileSizeInBytes = stats.size;
-                style.sldFile = Buffer.from(fs.readFileSync(sldPath, 'utf8')).toString('base64');
+                style.sldFile = Buffer.from(fs.readFileSync(sldPath, {encoding: 'utf8'})).toString('base64');
                 style.sldFileSize = fileSizeInBytes;
                 return style;
             })
@@ -105,7 +84,12 @@ module.exports = geoServerService = {
             data: planetConfig
         }).then(res => res.data);
 
-        const filterLayersResponse = await this.addUpdateFilterLayers();
+        const featureTypesResponse = await axios({
+            url: "/featuretype/createAll",
+            method: 'post',
+            baseURL: geoserverApi,
+            data: featureTypesConfig
+        }).then(res => res.data);
 
         return Promise.all([
             workspacesResponse,
@@ -116,43 +100,8 @@ module.exports = geoServerService = {
             spotsResponse,
             planetsResponse,
             layerGroupsResponse,
-            filterLayersResponse
+            featureTypesResponse
         ])
-    },
-
-    async addUpdateFilterLayers() {
-        const views = await setViewsDynamic();
-        const responses = [];
-        for (const view of views) {
-            const viewFeatureTypeJson = await this.get({
-                type: 'featuretype',
-                workspaceName: view.workspace,
-                name: view.name
-            });
-
-            const method = (viewFeatureTypeJson['featureType']) ? 'put' : 'post';
-
-            const featureJson = await geoServerUtil.getFeatureJson(viewFeatureTypeJson, view);
-
-            const response = await axios({
-                method,
-                url: `${ config.geoserver.geoserverApi }featuretype`,
-                data: {
-                    data: featureJson,
-                    workspaceName: view.workspace,
-                    featureTypeName: view.name
-                }
-            }).then(response => response.data);
-            responses.push(response);
-            if (response.status === 201) {
-                if (view.title.substring(view.title.length - 3, view.title.length) === 'sql') {
-                    const url = `${ config.geoserver.geoserverApi }layer`;
-                    const data = geoServerUtil.getLayerJson(view);
-                    await axios({method: 'put', url, data}).then(resp => resp).catch(err => err);
-                }
-            }
-        }
-        return responses;
     },
 
     async get({type, workspaceName = null, dataStoreName = '', name = ''}) {
@@ -204,7 +153,7 @@ module.exports = geoServerService = {
     },
 
     getGeoserverURL(layers, bbox, time, cqlFilter, styles) {
-        let url = `${ config.geoserver.geoserverBasePath }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ layers }&bbox=${ bbox }&width=400&height=400&time=${ time }&cql_filter=${ cqlFilter }&srs=EPSG:${ config.geoserver.sridTerraMa }&format=image/png`;
+        let url = `${ config.geoserver.geoserverBasePath }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ layers }&bbox=${ bbox }&width=400&height=400&time=${ time }&cql_filter=${ cqlFilter }&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
         if (styles) {
             url += `&styles=${ styles }`
         }
@@ -212,7 +161,8 @@ module.exports = geoServerService = {
     },
     getGeoserverLegendURL(layer) {
         return {
-            url: `${ config.geoserver.geoserverBasePath }/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on&LAYER=${ layer }`
+            title: layer,
+            url: `${ config.geoserver.legendUrl }${ layer }`
         };
     }
 };

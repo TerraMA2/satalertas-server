@@ -1,14 +1,14 @@
-const { RegisteredView } = require('../models');
+const {RegisteredView} = require('../models');
 const LayerType = require('../enum/layerType');
 const ViewService = require("../services/view.service");
 
 exports.get = (req, res, next) => {
     const viewId = req.params.id;
-    if(viewId){
+    if (viewId) {
         RegisteredView.findOne({include: ['view'], where: {'view_id': viewId}}).then(view => {
             res.json(view)
         })
-    }else{
+    } else {
         RegisteredView.findAll({include: ['view']}).then(registeredViews => {
             const layerType = {
                 1: 'static',
@@ -23,15 +23,15 @@ exports.get = (req, res, next) => {
                 const isPrivate = view.dataValues.private
                 const sourceType = view.dataValues.source_type
                 const uri = registeredView.dataValues.uri
-                const geoserverUrl = `http://${uri.substr(uri.lastIndexOf("@")+1)}/wms`
+                const geoserverUrl = `http://${ uri.substr(uri.lastIndexOf("@") + 1) }/wms`
                 const workspace = registeredView.dataValues.workspace
-                const layerId = `${workspace}:view${viewId}`
+                const layerId = `${ workspace }:view${ viewId }`
                 let cod = ''
                 let codgroup = ''
 
                 if (sourceType === LayerType.ANALYSIS) {
                     cod = viewName.replace(/ /g, '_').toUpperCase()
-                    codgroup = cod.substr(cod.lastIndexOf("_")+1)
+                    codgroup = cod.substr(cod.lastIndexOf("_") + 1)
                 }
                 if (sourceType === LayerType.STATIC) {
                     codgroup = 'STATIC';
@@ -41,8 +41,8 @@ exports.get = (req, res, next) => {
                 }
 
                 const layerData = {
-                    url: `${geoserverUrl}`,
-                    layers: `${layerId}`,
+                    url: `${ geoserverUrl }`,
+                    layers: `${ layerId }`,
                     transparent: true,
                     format: "image/png",
                     version: "1.1.0",
@@ -50,19 +50,19 @@ exports.get = (req, res, next) => {
                 }
 
                 const legend = {
-                    title: `${viewName}`,
-                    url: `${geoserverUrl}?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=${layerId}`
+                    title: `${ viewName }`,
+                    url: `${ geoserverUrl }?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER=${ layerId }`
                 }
 
                 return {
-                    cod: `${cod}`,
-                    codgroup: `${codgroup}`,
-                    label: `${viewName}`,
-                    shortLabel: `${viewName}`,
-                    value: `${viewId}`,
+                    cod: `${ cod }`,
+                    codgroup: `${ codgroup }`,
+                    label: `${ viewName }`,
+                    shortLabel: `${ viewName }`,
+                    value: `${ viewId }`,
                     carRegisterColumn: "de_car_validado_sema_numero_do1",
-                    type: `${layerType[sourceType]}`,
-                    isPrivate: `${isPrivate}`,
+                    type: `${ layerType[sourceType] }`,
+                    isPrivate: `${ isPrivate }`,
                     isPrimary: false,
                     isDisabled: false,
                     isHidden: false,

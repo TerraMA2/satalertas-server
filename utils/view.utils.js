@@ -1,82 +1,9 @@
 const models = require('../models');
-const { View, sequelize } = models;
-
+const { sequelize } = models;
 const { QueryTypes } = require('sequelize');
 const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 
 const ViewUtils = {
-    setXml(json) {
-        const parameter =
-          json.addParameter
-            ? `    <parameter>
-                        <name>min</name>
-                        <defaultValue>0</defaultValue>
-                        <regexpValidator>^[\\d]+$</regexpValidator>
-                   </parameter>
-                   <parameter>
-                        <name>max</name>
-                        <defaultValue>99999999999</defaultValue>
-                        <regexpValidator>^[\\d]+$</regexpValidator>
-                   </parameter>`
-            : ``;
-
-        return `   <featureType>
-                    <name>${json.name}</name>
-                    <nativeName>${json.name}</nativeName>
-                    <title>${json.title}</title>
-                    <keywords>
-                        <string>features</string>
-                        <string>${json.title}</string>
-                    </keywords>
-                    <srs>EPSG:${config.geoserver.sridTerraMa}</srs>
-                    <nativeBoundingBox>
-                        <minx>-180</minx>
-                        <maxx>180</maxx>
-                        <miny>-90</miny>
-                        <maxy>90</maxy>
-                        <crs>EPSG:${config.geoserver.sridTerraMa}</crs>
-                    </nativeBoundingBox>
-                    <latLonBoundingBox>
-                        <minx>-180</minx>
-                        <maxx>180</maxx>
-                        <miny>-90</miny>
-                        <maxy>90</maxy>
-                        <crs>EPSG:${config.geoserver.sridTerraMa}</crs>
-                    </latLonBoundingBox>
-                    <projectionPolicy>FORCE_DECLARED</projectionPolicy>
-                    <enabled>true</enabled>
-                    <metadata>
-                        <entry key="cachingEnabled">false</entry>
-                        <entry key="JDBC_VIRTUAL_TABLE">
-                            <virtualTable>
-                                <name>${json.name}</name>
-                                <sql>${json.sql}</sql>
-                                <escapeSql>false</escapeSql>
-                                <keyColumn>${json.keyColumn}</keyColumn>
-                                <geometry>
-                                    <name>${json.geometry.name}</name>
-                                    <type>${json.geometry.type}</type>
-                                    <srid>${json.geometry.srid}</srid>
-                                </geometry>
-                                ${parameter}
-                            </virtualTable>
-                        </entry>
-                        <entry key="time">
-                            <dimensionInfo>
-                                <enabled>true</enabled>
-                                <attribute>execution_date</attribute>
-                                <presentation>CONTINUOUS_INTERVAL</presentation>
-                                <units>ISO8601</units>
-                                <defaultValue>
-                                    <strategy>MAXIMUM</strategy>
-                                </defaultValue>
-                            </dimensionInfo>
-                        </entry>
-                    </metadata>
-                    <maxFeatures>0</maxFeatures>
-                    <numDecimals>0</numDecimals>
-                </featureType>`;
-    },
     async getGrouped() {
         const sqlGroupViews = `
             SELECT (CASE

@@ -1,4 +1,4 @@
-const { IndigenousLand } = require('../models')
+const {IndigenousLand} = require('../models')
 const logger = require('../utils/logger')
 
 module.exports = indigenousLandService = {
@@ -16,7 +16,7 @@ module.exports = indigenousLandService = {
         try {
             return await IndigenousLand.findAll(options);
         } catch (e) {
-            const msgErr = `In conservation-unit.controller, method getAll:${e}`;
+            const msgErr = `In conservation-unit.controller, method getAll:${ e }`;
             logger.error(msgErr);
         }
     }

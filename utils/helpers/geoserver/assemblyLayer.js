@@ -43,7 +43,7 @@ function setFilter(group, layer) {
   if (VIEWS[layer.codGroup] && VIEWS[layer.codGroup].filter) {
     filter = VIEWS[layer.codGroup].filter(
       view_default,
-      config.geoserver.workspace,
+      `${config.project}_${config.geoserver.workspace}`,
       layer.cod,
       group[layer.codGroup].tableOwner,
       layer.is_primary,
