@@ -25,7 +25,7 @@ const exportRouter = require('./routes/export.router')
 const infoColumnsRouter = require('./routes/info-columns.router')
 
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/config/config.json')[env];
+const config = require(__dirname + '/config/config.json');
 const basePath = config.basePath;
 
 const errorController = require('./controllers/error.controller')

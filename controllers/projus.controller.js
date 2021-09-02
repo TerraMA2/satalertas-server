@@ -5,7 +5,7 @@ exports.getAll = async (req, res) => {
         res.json(await projusService.getAll());
     } catch (e) {
         res.json(e);
-        const msgErr = `In projus.controller, method getAll:${e}`;
+        const msgErr = `In projus.controller, method getAll:${ e }`;
         logger.error(msgErr);
     }
 };

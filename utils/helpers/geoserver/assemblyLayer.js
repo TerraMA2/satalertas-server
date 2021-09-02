@@ -1,11 +1,10 @@
-const env = process.env.NODE_ENV || 'development';
-const confGeoServer = require('../../../geoserver-conf/config.json')[env];
+const config = require(__dirname + '/../../../config/config.json');
 const VIEWS = require('../views/view');
 const { msgError } = require('../../../utils/messageError');
 
 function layerData(layersList, options = undefined) {
   const {
-    geoserverUrl = confGeoServer.baseHost,
+    geoserverUrl = config.geoserver.geoserverBasePath,
     transparent = true,
     geoservice = undefined,
   } = options;
@@ -31,7 +30,7 @@ function layerData(layersList, options = undefined) {
 }
 
 function setLegend(title, workspace, layer) {
-  const url = `${confGeoServer.legendUrl}${workspace}:${layer}`;
+  const url = `${config.geoserver.legendUrl}${workspace}:${layer}`;
   return {
     title,
     url,
@@ -46,16 +45,16 @@ function setFilter(group, layer) {
     if (VIEWS[layer.groupCode] && VIEWS[layer.groupCode].filter) {
       filter = VIEWS[layer.groupCode].filter(
         view_default,
-        confGeoServer.workspace,
+        `${config.project}_${config.geoserver.workspace}`,
         layer.cod,
         group[layer.groupCode].tableOwner,
-        layer.is_primary,
-        );
-      }
+        layer.is_primary
+      );
+    }
     return filter;
   } catch (e) {
     throw new Error(msgError(__filename, 'setFilter', e))
-    
+
   }
 }
 

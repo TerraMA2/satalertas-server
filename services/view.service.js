@@ -1,11 +1,8 @@
 const models = require('../models');
-const { View, RegisteredView, sequelize } = models;
+const { View, sequelize } = models;
 const { QueryTypes } = sequelize;
-const env = process.env.NODE_ENV || 'development';
 const Result = require(__dirname + '/../utils/result');
-const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[
-  env
-];
+const config = require(__dirname + '/../config/config.json')
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
 
 getSql = async function (params) {
@@ -52,7 +49,7 @@ setFilter = function (groupViews, viewData) {
   return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter
     ? VIEWS[viewData.groupCode].filter(
         view_default,
-        confGeoServer.workspace,
+        config.geoserver.workspace,
         viewData.cod,
         groupViews[viewData.groupCode].tableOwner,
         viewData.is_primary,
@@ -63,13 +60,13 @@ setFilter = function (groupViews, viewData) {
 setLegend = function (data_view) {
   return {
     title: data_view.cod,
-    url: `${confGeoServer.legendUrl}${data_view.workspace}:${data_view.view}`,
+    url: `${config.geoserver.legendUrl}${data_view.workspace}:${data_view.view}`,
   };
 };
 
 setlayerData = function (data_view) {
   return {
-    url: `${confGeoServer.baseHost}/wms`,
+    url: `${config.geoserver.geoserverBasePath}/wms`,
     layers: `${data_view.workspace}:${data_view.view}`,
     transparent: true,
     format: 'image/png',
@@ -585,15 +582,7 @@ module.exports = FileReport = {
     try {
       const groupViews = await orderView(await getGroupViews());
       const sideBarConfig = await setResultSidebarConfig(groupViews);
-      return Result.ok(await sideBarConfig);
-    } catch (e) {
-      return Result.err(e);
-    }
-  },
-
-  async fetchGroupOfOrderedLayers() {
-    try {
-      return await orderView(await getGroupViews());
+      return Result.ok(sideBarConfig);
     } catch (e) {
       return Result.err(e);
     }

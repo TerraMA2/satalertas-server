@@ -5,8 +5,8 @@ exports.getAll = async (req, res) => {
     try {
         res.json(await conservationUnitService.getAll());
     } catch (e) {
-      const msgErr = `In conservation-unit.controller, method getAll:${e}`;
-      logger.error(msgErr);
-      res.json(msgErr);
+        const msgErr = `In conservation-unit.controller, method getAll:${ e }`;
+        logger.error(msgErr);
+        res.json(msgErr);
     }
 };

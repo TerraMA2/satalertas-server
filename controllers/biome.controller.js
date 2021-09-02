@@ -6,7 +6,7 @@ exports.getAll = async (req, res) => {
         res.json(await biomeService.getAll());
     } catch (e) {
         res.json(res.err(e));
-        const msgErr = `In biome.controller, method getAll:${e}`;
+        const msgErr = `In biome.controller, method getAll:${ e }`;
         logger.error(msgErr);
     }
 };
