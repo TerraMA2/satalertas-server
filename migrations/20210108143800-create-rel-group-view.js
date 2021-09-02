@@ -17,7 +17,8 @@ module.exports = {
           },
           key: 'id'
         },
-        onDelete: 'SET NULL'
+        onDelete: 'SET NULL',
+        allowNull: true
       },
       group_id: {
         type: Sequelize.INTEGER,
