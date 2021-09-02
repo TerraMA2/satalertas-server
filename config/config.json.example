@@ -13,7 +13,9 @@
     "chartPath": {
       "host": "localhost:8081",
       "protocol": "http"
-    }
+    },
+    "seederStorage": "sequelize",
+    "seederStorageTableName": "SequelizeSeed"
   },
   "test": {
     "username": "postgres",
@@ -29,7 +31,9 @@
     "chartPath": {
       "host": "localhost:8081",
       "protocol": "http"
-    }
+    },
+    "seederStorage": "sequelize",
+    "seederStorageTableName": "SequelizeSeed"
   },
   "production": {
     "username": "postgres",
@@ -46,6 +50,8 @@
     "chartPath": {
       "host": "localhost:8081",
       "protocol": "http"
-    }
+    },
+    "seederStorage": "sequelize",
+    "seederStorageTableName": "SequelizeSeed"
   }
 }
