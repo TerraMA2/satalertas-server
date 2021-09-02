@@ -40,7 +40,6 @@ module.exports = function (sequelize, DataTypes) {
       schema: 'terrama2',
       modelName: 'DataSet',
       underscored: true,
-      // underscoredAll: true,
       timestamps: false,
     },
   );

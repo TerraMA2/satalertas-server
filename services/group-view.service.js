@@ -6,10 +6,10 @@ const {
   DataSetFormat,
   Group,
   DataSet,
-  sequelize,
 } = require('../models');
+const Tools = require('../utils/tool');
 const { msgError } = require('../utils/messageError');
-const { Op, QueryTypes } = Sequelize;
+const { Op } = Sequelize;
 const {
   layerData,
   setLegend,
@@ -19,7 +19,7 @@ const {
 const viewTableName = {
   model: DataSet,
   as: 'dataSet',
-  attributes: [],
+  attributes: ['id'],
   include: {
     model: DataSetFormat,
     as: 'dataSetFormat',
@@ -28,14 +28,39 @@ const viewTableName = {
   },
 };
 
+function setTableName(data) {
+  try {
+    const {
+      dataSet: {
+        dataSetFormat: [
+          {
+            dataValues: { tableName },
+          },
+        ],
+      },
+    } = data;
+    if (tableName) {
+      data.dataValues['tableName'] = tableName;
+      delete data.dataValues['dataSet'];
+    }
+  } catch (e) {
+    throw new Error(msgError(__filename, 'setTableName', e));
+  }
+}
+
 async function getModelFields(model) {
   return await model.describe();
 }
 
 function removeNullProperties(data) {
-  const filteredData = Object.entries(data).filter(([_, val]) => val);
-  return Object.fromEntries(filteredData);
+  try {
+    const filteredData = Object.entries(data).filter(([_, val]) => val);
+    return Object.fromEntries(filteredData);
+  } catch (e) {
+    throw new Error(msgError(__filename, 'removeNullProperties', e));
+  }
 }
+
 // use at routes?
 async function getAll() {
   try {
@@ -50,15 +75,6 @@ async function getAll() {
     return await groupViews;
   } catch (e) {
     throw new Error(msgError('group-view.service', 'getAll', e));
-  }
-}
-
-function setTableName(data) {
-  const tableName = data['dataSet.dataSetFormat.tableName'];
-  if (tableName) {
-    data['tableName'] = tableName;
-    delete data['dataSet.dataSetFormat.tableName'];
-    delete data['dataSet.dataSetFormat.id'];
   }
 }
 
@@ -81,33 +97,24 @@ async function getByGroupId(groupId) {
       });
       for (const groupView of groupViews) {
         const { viewId } = groupView;
-        let layer = { groupCode };
+        let layer = {
+          groupCode,
+          tools: Tools
+        };
         const options = {
           attributes: { exclude: ['id', 'project_id', 'data_series_id'] },
           include: [viewTableName],
-          raw: true,
         };
+
         await View.findByPk(viewId, options).then((response) => {
-          setTableName(response)
-          layer.code = response.name.split(' ').join('_').toUpperCase();
-          const filteredResponse = removeNullProperties(response);
+          setTableName(response);
+          const filteredResponse = removeNullProperties(response.toJSON());
           Object.assign(layer, filteredResponse);
         });
+
         const filteredGroupView = removeNullProperties(groupView);
         Object.assign(layer, filteredGroupView);
         if (viewId) {
-          const sqlTableName = `SELECT dsf.value
-          FROM terrama2.views AS vw
-          INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
-          INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
-          WHERE vw.id = $viewId AND dsf.key = 'table_name'`;
-          await sequelize
-            .query(sqlTableName, {
-              bind: { viewId },
-              type: QueryTypes.SELECT,
-            })
-            .then((response) => (layer.tableName = response[0].value));
-          await getTableName(viewId);
           const viewName = `view${viewId}`;
           layer.viewName = viewName;
           const registeredData = await RegisteredView.findOne({
@@ -174,13 +181,12 @@ async function getAvailableLayers(groupId) {
         id: { [Op.notIn]: viewIds },
       },
       include: [viewTableName],
-      raw: true,
     };
-    const allViews = await View.findAll(option).then(async (views) => {
-      views.forEach(async (vw) => {
-        setTableName(vw)
+    const allViews = await View.findAll(option).then((views) => {
+      views.forEach((vw) => {
+        setTableName(vw);
       });
-      return views;
+      return views.map((view) => view.toJSON());
     });
     return await allViews;
   } catch (e) {
@@ -204,7 +210,7 @@ async function add(newGroupView) {
 
 async function update(groupViewModify) {
   try {
-    const { layers, groupId } = groupViewModify;
+    const { layers, groupId, groupOwner } = groupViewModify;
     if (groupId) {
       await RelGroupView.destroy({ where: { groupId } }).then(async () => {
         const newLayers = layers.map((layer) => ({
@@ -246,21 +252,6 @@ async function deleteGroupView(id) {
   } catch (e) {
     throw new Error(msgError('group-view.service', 'delete', e));
   }
-}
-
-async function getTableName(viewId) {
-  const sqlTableName = `SELECT dsf.value
-    FROM terrama2.views AS vw
-    INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
-    INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
-    WHERE vw.id = $viewId AND dsf.key = 'table_name'
-    LIMIT 1;`;
-  return await sequelize
-    .query(sqlTableName, {
-      bind: { viewId },
-      type: QueryTypes.SELECT,
-    })
-    .then((response) => response[0].value);
 }
 
 module.exports = GroupService = {
