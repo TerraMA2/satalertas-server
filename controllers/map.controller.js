@@ -6,7 +6,7 @@ exports.getAnalysisCentroid = async (req, res) => {
         params.date = req.query.date;
         params.filter = req.query.filter;
         const layer = JSON.parse(params.view);
-        const type = layer.codgroup === 'BURNED' ? 'burned' : 'others'
+        const type = layer.groupCode === 'BURNED' ? 'burned' : 'others'
 
         res.json(await mapService.getAnalysisCentroid[type](params));
     } catch (e) {
@@ -20,7 +20,7 @@ exports.getPopupInfo = async (req, res) => {
             view: JSON.parse(JSON.parse(req.query.filter).specificParameters),
             date: JSON.parse(req.query.filter).date,
             filter: JSON.parse(req.query.filter).filter,
-            codGroup: req.query.codGroup,
+            groupCode: req.query.groupCode,
             carGid: parseInt(req.query.gid)
         };
 

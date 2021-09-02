@@ -15,14 +15,14 @@ module.exports = GroupService = {
   },
   async getCodGroups() {
     return [
-      { id: 1, cod_group: 'STATIC', label: 'Dado Estático' },
-      { id: 2, cod_group: 'DYNAMIC', label: 'Dado Dinâmico' },
-      { id: 3, cod_group: 'ANALYSIS', label: 'Análise' },
-      { id: 4, cod_group: 'ALERT', label: 'Alerta' },
-      { id: 5, cod_group: 'BURNED', label: 'Análise FOCOS' },
-      { id: 6, cod_group: 'BURNED_AREA', label: 'Análise Área Queimada' },
-      { id: 7, cod_group: 'DETER', label: 'Análise Deter' },
-      { id: 8, cod_group: 'PRODES', label: 'Análise Prodes' },
+      { id: 1, groupCode: 'STATIC', label: 'Dado Estático' },
+      { id: 2, groupCode: 'DYNAMIC', label: 'Dado Dinâmico' },
+      { id: 3, groupCode: 'ANALYSIS', label: 'Análise' },
+      { id: 4, groupCode: 'ALERT', label: 'Alerta' },
+      { id: 5, groupCode: 'BURNED', label: 'Análise FOCOS' },
+      { id: 6, groupCode: 'BURNED_AREA', label: 'Análise Área Queimada' },
+      { id: 7, groupCode: 'DETER', label: 'Análise Deter' },
+      { id: 8, groupCode: 'PRODES', label: 'Análise Prodes' },
     ];
   },
   async getById(id) {

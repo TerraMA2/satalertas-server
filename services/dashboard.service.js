@@ -21,7 +21,7 @@ getSqlAnalysisTotals = async function(params) {
         };
         const columns = await Filter.getColumns(analysis, '', table.alias);
         const filter = await Filter.getFilter(View, table, params, analysis, columns);
-        const alert = analysis.codgroup === 'BURNED' ?
+        const alert = analysis.groupCode === 'BURNED' ?
           ` COALESCE( ( SELECT ROW_NUMBER() OVER(ORDER BY ${columns.column1} ASC) AS Row
                FROM public.${table.name} AS ${table.alias}
                ${filter.secondaryTables}
@@ -42,11 +42,11 @@ getSqlAnalysisTotals = async function(params) {
               ${filter.sqlHaving}) ` :
               filter.sqlWhere;
 
-        const area = analysis.codgroup === 'BURNED' ?
+        const area = analysis.groupCode === 'BURNED' ?
           ` ( SELECT coalesce(sum(1), 0.00) as num_focos FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} ) AS area ` :
           ` COALESCE(SUM(${columns.columnArea}), 0.00) AS area `;
 
-        const sqlFrom = analysis.codgroup === 'BURNED' ?
+        const sqlFrom = analysis.groupCode === 'BURNED' ?
           ` ` :
           ` FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${filter.sqlWhere} `;
 
@@ -67,7 +67,7 @@ getSqlAnalysisTotals = async function(params) {
 function setAnalysisChart(analysis, chart1, chart2) {
   return {
     cod: analysis.cod,
-    codGroup: analysis.codgroup,
+    groupCode: analysis.groupCode,
     label: analysis.label,
     active: analysis.isPrimary,
     isEmpty: chart1.labels.length === 0 || chart2.labels.length === 0,
@@ -76,7 +76,7 @@ function setAnalysisChart(analysis, chart1, chart2) {
       options: {
         title: {
           display: true,
-          text: analysis.codgroup,
+          text: analysis.groupCode,
           fontSize: 16
         },
         legend: {
@@ -89,7 +89,7 @@ function setAnalysisChart(analysis, chart1, chart2) {
         options: {
           title: {
             display: true,
-            text: analysis.codgroup,
+            text: analysis.groupCode,
             fontSize: 16
           },
           legend: {
@@ -151,7 +151,7 @@ async function getAnalysisChartSql(analysis, params) {
            END)   AS ${subtitle},
           COALESCE(SUM(${columns.column3})) AS ${value} `;
 
-    const columnsFor2 = analysis.codgroup && (analysis.codgroup === 'BURNED_AREA') ?
+    const columnsFor2 = analysis.groupCode && (analysis.groupCode === 'BURNED_AREA') ?
       `   (CASE
                 WHEN ${columns.column2} IS NULL THEN ${columns.column5}
                 ELSE ${columns.column2}
@@ -166,7 +166,7 @@ async function getAnalysisChartSql(analysis, params) {
     const filter = await Filter.getFilter(View, table, params, analysis, columns);
 
     const sqlGroupBy1 = ` GROUP BY ${subtitle} `;
-    const sqlGroupBy2 = ` GROUP BY ${analysis.codgroup && (analysis.codgroup === 'BURNED_AREA') ? subtitle : columns.column2}  `;
+    const sqlGroupBy2 = ` GROUP BY ${analysis.groupCode && (analysis.groupCode === 'BURNED_AREA') ? subtitle : columns.column2}  `;
     const sqlOrderBy = ` ORDER BY ${value} DESC `;
     const sqlLimit = ` LIMIT ${limit} `;
 
@@ -226,7 +226,7 @@ module.exports = dashboardService = {
             return {
               idview: layer.value,
               cod: layer.cod,
-              codgroup: layer.codgroup,
+              groupCode: layer.groupCode,
               label: layer.label,
               activearea: true,
               isPrimary: layer.isPrimary,
@@ -238,7 +238,7 @@ module.exports = dashboardService = {
           return {
             idview: primaryLayer.value,
             cod: primaryLayer.cod,
-            codgroup: layerGroup.cod,
+            groupCode: layerGroup.cod,
             label: layerGroup.label,
             alert: 0,
             area: 0,
@@ -269,8 +269,8 @@ module.exports = dashboardService = {
     if (analysisList.length > 0) {
       let count = 0;
       for (let analysis of analysisList) {
-        const labelChart1 = analysis.codGroup === 'BURNED' ? 'Quantidade de alertas de focos por CAR' : 'Área (ha) de alertas por CAR';
-        const labelChart2 = analysis.codGroup === 'BURNED' ? 'Quantidade de alertas de focos por Bioma' : 'Área (ha) de alertas por classe';
+        const labelChart1 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por CAR' : 'Área (ha) de alertas por CAR';
+        const labelChart2 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por Bioma' : 'Área (ha) de alertas por classe';
         const sql = await getAnalysisChartSql(analysis, params);
         let resultAux = await sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
         const chart1 = await setChart(resultAux, sql.value, sql.subtitle, labelChart1);

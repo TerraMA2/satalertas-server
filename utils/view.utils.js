@@ -5,10 +5,9 @@ const { QueryTypes } = require('sequelize');
 const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
 
 const ViewUtils = {
-    setXml(json) {
-        const parameter =
-          json.addParameter
-            ? `    <parameter>
+  setXml(json) {
+    const parameter = json.addParameter
+      ? `    <parameter>
                         <name>min</name>
                         <defaultValue>0</defaultValue>
                         <regexpValidator>^[\\d]+$</regexpValidator>
@@ -18,9 +17,9 @@ const ViewUtils = {
                         <defaultValue>99999999999</defaultValue>
                         <regexpValidator>^[\\d]+$</regexpValidator>
                    </parameter>`
-            : ``;
+      : ``;
 
-        return `   <featureType>
+    return `   <featureType>
                     <name>${json.name}</name>
                     <nativeName>${json.name}</nativeName>
                     <title>${json.title}</title>
@@ -76,9 +75,9 @@ const ViewUtils = {
                     <maxFeatures>0</maxFeatures>
                     <numDecimals>0</numDecimals>
                 </featureType>`;
-    },
-    async getGrouped() {
-        const sqlGroupViews = `
+  },
+  async getGrouped() {
+    const sqlGroupViews = `
             SELECT (CASE
                         WHEN view.source_type = 1 THEN 'STATIC'
                         WHEN view.source_type = 2 THEN 'DYNAMIC'
@@ -148,7 +147,7 @@ const ViewUtils = {
             
             FROM terrama2.views AS view
             GROUP BY cod, label, parent, view_graph, active_area, is_private`;
-        const sql = `
+    const sql = `
             SELECT (CASE
                         WHEN view.source_type = 1 THEN 'STATIC'
                         WHEN view.source_type = 2 THEN 'DYNAMIC'
@@ -193,29 +192,36 @@ const ViewUtils = {
                      LEFT JOIN terrama2.registered_views AS r_view ON view.id = r_view.view_id
                      LEFT JOIN terrama2.analysis AS ana ON dsf.data_set_id = ana.dataset_output
             WHERE dsf.key = 'table_name'`;
-        try {
-            const dataset_views = await sequelize.query(sql, QUERY_TYPES_SELECT);
-            const dataset_group_views = await sequelize.query(sqlGroupViews, QUERY_TYPES_SELECT);
+    try {
+      const options = {
+        type: QueryTypes.SELECT,
+        fieldMap: { cod_group: 'groupCode' },
+      };
 
-            let groupViews = {};
-            dataset_group_views.forEach(group => {
-                groupViews[group.cod] = group;
-                groupViews[group.cod].children = {}
-            });
+      const dataset_views = await sequelize.query(sql, options);
+      const dataset_group_views = await sequelize.query(sqlGroupViews, {
+        type: QueryTypes.SELECT,
+      });
 
-            dataset_views.forEach(dataView => {
-                if(dataView.is_primary) {
-                    groupViews[dataView.cod_group].tableOwner = `${dataView.table_name}`;
-                }
+      let groupViews = {};
+      dataset_group_views.forEach((group) => {
+        groupViews[group.cod] = group;
+        groupViews[group.cod].children = {};
+      });
 
-                groupViews[dataView.cod_group].children[dataView.cod] = dataView
-            });
-
-            return groupViews
-        } catch (e) {
-            return {}
+      dataset_views.forEach((dataView) => {
+        if (dataView.is_primary) {
+          groupViews[dataView.groupCode].tableOwner = `${dataView.table_name}`;
         }
+
+        groupViews[dataView.groupCode].children[dataView.cod] = dataView;
+      });
+
+      return groupViews;
+    } catch (e) {
+      return {};
     }
+  },
 };
 
 module.exports = ViewUtils;

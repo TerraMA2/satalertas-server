@@ -1,13 +1,12 @@
 const models = require('../models');
 const { View, RegisteredView, sequelize } = models;
+const { QueryTypes } = sequelize;
 const env = process.env.NODE_ENV || 'development';
 const Result = require(__dirname + '/../utils/result');
 const confGeoServer = require(__dirname + '/../geoserver-conf/config.json')[
   env
 ];
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
-
-const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
 getSql = async function (params) {
   const view =
@@ -25,7 +24,7 @@ getSql = async function (params) {
     const filter = await Filter.getFilter(View, table, params, view, collumns);
 
     const columnGid =
-      view.codgroup === 'CAR' ? 'gid' : 'de_car_validado_sema_gid';
+      view.groupCode === 'CAR' ? 'gid' : 'de_car_validado_sema_gid';
 
     filter.sqlWhere = params.selectedGids
       ? filter.sqlWhere
@@ -48,15 +47,16 @@ getSql = async function (params) {
   return sql;
 };
 
-setFilter = function (groupViews, data_view) {
-  const view_default = `${data_view.workspace}:${data_view.view}`;
-  return VIEWS[data_view.cod_group] && VIEWS[data_view.cod_group].filter
-    ? VIEWS[data_view.cod_group].filter(
+setFilter = function (groupViews, viewData) {
+  console.log('viewData>>>>>:', viewData[0])
+  const view_default = `${viewData.workspace}:${viewData.view}`;
+  return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter
+    ? VIEWS[viewData.groupCode].filter(
         view_default,
         confGeoServer.workspace,
-        data_view.cod,
-        groupViews[data_view.cod_group].tableOwner,
-        data_view.is_primary,
+        viewData.cod,
+        groupViews[viewData.groupCode].tableOwner,
+        viewData.is_primary,
       )
     : {};
 };
@@ -81,28 +81,28 @@ setlayerData = function (data_view) {
 
 setViews = function (groupViews, data_view) {
   return {
-    codgroup: data_view.cod_group,
+    groupCode: data_view.groupCode,
     cod: data_view.cod,
     label: data_view.name_view,
     description: data_view.description,
     shortLabel:
-      VIEWS[data_view.cod_group] &&
-      VIEWS[data_view.cod_group][data_view.cod] &&
-      VIEWS[data_view.cod_group][data_view.cod].shortLabel
-        ? VIEWS[data_view.cod_group][data_view.cod].shortLabel
+      VIEWS[data_view.groupCode] &&
+      VIEWS[data_view.groupCode][data_view.cod] &&
+      VIEWS[data_view.groupCode][data_view.cod].shortLabel
+        ? VIEWS[data_view.groupCode][data_view.cod].shortLabel
         : data_view.name_view,
     value: data_view.view_id,
-    tableOwner: groupViews[data_view.cod_group].tableOwner,
+    tableOwner: groupViews[data_view.groupCode].tableOwner,
     tableName: data_view.table_name,
     carRegisterColumn:
-      VIEWS[data_view.cod_group] &&
-      VIEWS[data_view.cod_group][data_view.cod] &&
-      VIEWS[data_view.cod_group][data_view.cod].carRegisterColumn
+      VIEWS[data_view.groupCode] &&
+      VIEWS[data_view.groupCode][data_view.cod] &&
+      VIEWS[data_view.groupCode][data_view.cod].carRegisterColumn
         ? !data_view.is_primary
-          ? `${groupViews[data_view.cod_group].tableOwner}_${
-              VIEWS[data_view.cod_group][data_view.cod].carRegisterColumn
+          ? `${groupViews[data_view.groupCode].tableOwner}_${
+              VIEWS[data_view.groupCode][data_view.cod].carRegisterColumn
             }`
-          : VIEWS[data_view.cod_group][data_view.cod].carRegisterColumn
+          : VIEWS[data_view.groupCode][data_view.cod].carRegisterColumn
         : null,
     type: data_view.type,
     workspace: data_view.workspace,
@@ -110,16 +110,16 @@ setViews = function (groupViews, data_view) {
     dataStore: data_view.datastore ? data_view.datastore : '',
     isPrivate: data_view.type === 'analysis',
     isChild:
-      VIEWS[data_view.cod_group] &&
-      VIEWS[data_view.cod_group][data_view.cod] &&
-      VIEWS[data_view.cod_group][data_view.cod].isChild
-        ? VIEWS[data_view.cod_group][data_view.cod].isChild
+      VIEWS[data_view.groupCode] &&
+      VIEWS[data_view.groupCode][data_view.cod] &&
+      VIEWS[data_view.groupCode][data_view.cod].isChild
+        ? VIEWS[data_view.groupCode][data_view.cod].isChild
         : false,
     isHidden:
-      VIEWS[data_view.cod_group] &&
-      VIEWS[data_view.cod_group][data_view.cod] &&
-      VIEWS[data_view.cod_group][data_view.cod].isHidden
-        ? VIEWS[data_view.cod_group][data_view.cod].isHidden
+      VIEWS[data_view.groupCode] &&
+      VIEWS[data_view.groupCode][data_view.cod] &&
+      VIEWS[data_view.groupCode][data_view.cod].isHidden
+        ? VIEWS[data_view.groupCode][data_view.cod].isHidden
         : false,
     isPrimary: data_view.is_primary,
     isDisabled: data_view.is_disable,
@@ -165,20 +165,20 @@ setViews = function (groupViews, data_view) {
 orderView = async function (groupViews) {
   const layers = [
     'DETER',
-    'PRODES',
-    'BURNED',
-    'BURNED_AREA',
-    'STATIC',
-    'DYNAMIC',
+    // 'PRODES',
+    // 'BURNED',
+    // 'BURNED_AREA',
+    // 'STATIC',
+    // 'DYNAMIC',
   ];
-
+  
   let child = [];
   let owner = [];
   let other = [];
-
+  
   layers.forEach((layer) => {
     child =
-      groupViews[layer] &&
+    groupViews[layer] &&
       groupViews[layer].children &&
       groupViews[layer].children.child
         ? groupViews[layer].children.child.sort(function (a, b) {
@@ -235,6 +235,7 @@ orderView = async function (groupViews) {
             );
           })
         : [];
+    
     other =
       groupViews[layer] &&
       groupViews[layer].children &&
@@ -264,7 +265,7 @@ orderView = async function (groupViews) {
             );
           })
         : [];
-
+    // console.log('groupViews -> other: ', other)
     owner.forEach((p) => {
       if (groupViews[layer] && groupViews[layer].children) {
         groupViews[layer].children.push(p);
@@ -383,9 +384,12 @@ getGroupViews = async function () {
         WHERE view.active = true
         GROUP BY cod, label, parent, view_graph, active_area, is_private `;
   try {
+    const options = {
+      type: QueryTypes.SELECT,
+    }
     const dataset_group_views = await sequelize.query(
       sqlGroupViews,
-      QUERY_TYPES_SELECT,
+      options,
     );
     let groupViews = {};
     dataset_group_views.forEach((group) => {
@@ -463,17 +467,21 @@ getViews = async function (groupViews) {
       `;
 
   try {
-    const dataset_views = await sequelize.query(sqlViews, QUERY_TYPES_SELECT);
+    const options = {
+      type: QueryTypes.SELECT,
+      fieldMap: {cod_group: 'groupCode'}
+    }
+    const dataset_views = await sequelize.query(sqlViews, options);
     dataset_views.forEach((dataView) => {
       if (dataView.is_primary) {
         //TABLEOWNER
-        groupViews[dataView.cod_group].tableOwner = `${dataView.table_name}`;
+        groupViews[dataView.groupCode].tableOwner = `${dataView.table_name}`;
       }
     });
 
     dataset_views.forEach((dataView) => {
-      if (!groupViews[dataView.cod_group].children) {
-        groupViews[dataView.cod_group].children = [];
+      if (!groupViews[dataView.groupCode].children) {
+        groupViews[dataView.groupCode].children = [];
       }
 
       const view = setViews(groupViews, dataView);
@@ -484,11 +492,11 @@ getViews = async function (groupViews) {
         ? 'child'
         : 'other';
 
-      if (!groupViews[dataView.cod_group].children[groupBy]) {
-        groupViews[dataView.cod_group].children[groupBy] = [];
+      if (!groupViews[dataView.groupCode].children[groupBy]) {
+        groupViews[dataView.groupCode].children[groupBy] = [];
       }
 
-      groupViews[dataView.cod_group].children[groupBy].push(view);
+      groupViews[dataView.groupCode].children[groupBy].push(view);
     });
 
     return groupViews;
@@ -563,8 +571,12 @@ module.exports = FileReport = {
     `;
 
     try {
+      const options = {
+        type: QueryTypes.SELECT,
+        fieldMap: {cod_group: 'groupCode'}
+      }
       return Result.ok(
-        await sequelize.query(sqlReportLayers, QUERY_TYPES_SELECT),
+        await sequelize.query(sqlReportLayers, options),
       );
     } catch (e) {
       return Result.err(e);
