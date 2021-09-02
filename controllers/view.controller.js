@@ -1,14 +1,14 @@
-const {RegisteredView} = require('../models');
+const { RegisteredView } = require('../models');
 const LayerType = require('../enum/layerType');
 const ViewService = require("../services/view.service");
 
 exports.get = (req, res, next) => {
     const viewId = req.params.id;
-    if (viewId) {
+    if(viewId){
         RegisteredView.findOne({include: ['view'], where: {'view_id': viewId}}).then(view => {
             res.json(view)
         })
-    } else {
+    }else{
         RegisteredView.findAll({include: ['view']}).then(registeredViews => {
             const layerType = {
                 1: 'static',
@@ -27,17 +27,17 @@ exports.get = (req, res, next) => {
                 const workspace = registeredView.dataValues.workspace
                 const layerId = `${ workspace }:view${ viewId }`
                 let cod = ''
-                let codgroup = ''
+                let groupCode = ''
 
                 if (sourceType === LayerType.ANALYSIS) {
                     cod = viewName.replace(/ /g, '_').toUpperCase()
-                    codgroup = cod.substr(cod.lastIndexOf("_") + 1)
+                    groupCode = cod.substr(cod.lastIndexOf("_")+1)
                 }
                 if (sourceType === LayerType.STATIC) {
-                    codgroup = 'STATIC';
+                    groupCode = 'STATIC';
                 }
                 if (sourceType === LayerType.DYNAMIC) {
-                    codgroup = 'DYNAMIC';
+                    groupCode = 'DYNAMIC';
                 }
 
                 const layerData = {
@@ -55,11 +55,11 @@ exports.get = (req, res, next) => {
                 }
 
                 return {
-                    cod: `${ cod }`,
-                    codgroup: `${ codgroup }`,
-                    label: `${ viewName }`,
-                    shortLabel: `${ viewName }`,
-                    value: `${ viewId }`,
+                    cod: `${cod}`,
+                    groupCode: `${groupCode}`,
+                    label: `${viewName}`,
+                    shortLabel: `${viewName}`,
+                    value: `${viewId}`,
                     carRegisterColumn: "de_car_validado_sema_numero_do1",
                     type: `${ layerType[sourceType] }`,
                     isPrivate: `${ isPrivate }`,

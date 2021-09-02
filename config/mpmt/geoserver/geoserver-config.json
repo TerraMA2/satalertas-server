@@ -127,6 +127,15 @@
           "filename": "view122_hatched_style.sld"
         }
       }
+    },
+    {
+      "workspaceName": "terrama2_35",
+      "data": {
+        "style": {
+          "name": "view35_Mod_style",
+          "filename": "view35_Mod_style.sld"
+        }
+      }
     }
   ],
   "layerGroups": [

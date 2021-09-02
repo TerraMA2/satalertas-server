@@ -1,6 +1,7 @@
 const FiringCharts = require('../charts/FiringCharts');
 const Result = require('../utils/result');
-const {Report, sequelize} = require('../models');
+const { Report, sequelize } = require('../models');
+const env = process.env.NODE_ENV || 'development';
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const config = require(__dirname + '/../config/config.json');
@@ -8,103 +9,103 @@ const ViewUtil = require('../utils/view.utils');
 const SatVegService = require('../services/sat-veg.service');
 const logger = require('../utils/logger');
 const moment = require('moment');
-const {msgError} = require('../utils/messageError');
+const { msgError } = require('../utils/messageError');
 
 const DocDefinitions = require(__dirname +
-    '/../utils/helpers/report/doc-definition.js');
-const QUERY_TYPES_SELECT = {type: 'SELECT'};
+  '/../utils/helpers/report/doc-definition.js');
+const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
 getFilterClassSearch = function (sql, filter, view, tableOwner) {
-    const classSearch = filter && filter.classSearch ? filter.classSearch : null;
-    if (
-        classSearch &&
-        classSearch.radioValue === 'SELECTION' &&
-        classSearch.analyzes.length > 0
-    ) {
-        classSearch.analyzes.forEach((analyze) => {
-            if (analyze.valueOption && analyze.type) {
-                if (view.cod_group === 'DETER') {
-                    const columnName = view.is_primary
-                        ? `dd_deter_inpe_classname`
-                        : `${ tableOwner }_dd_deter_inpe_classname`;
-                    sql += ` AND ${ columnName } like '%${ analyze.valueOption.name }%' `;
-                }
-            }
-        });
-    }
+  const classSearch = filter && filter.classSearch ? filter.classSearch : null;
+  if (
+    classSearch &&
+    classSearch.radioValue === 'SELECTION' &&
+    classSearch.analyzes.length > 0
+  ) {
+    classSearch.analyzes.forEach((analyze) => {
+      if (analyze.valueOption && analyze.type) {
+        if (view.groupCode === 'DETER') {
+          const columnName = view.is_primary
+            ? `dd_deter_inpe_classname`
+            : `${tableOwner}_dd_deter_inpe_classname`;
+          sql += ` AND ${columnName} like '%${analyze.valueOption.name}%' `;
+        }
+      }
+    });
+  }
 
-    return sql;
+  return sql;
 };
 
 setAnalysisYear = function (data, period, variable) {
-    const analysisYears = [];
-    for (let year = period['startYear']; year <= period['endYear']; year++) {
-        analysisYears.push({
-            date: year,
-            [`${ variable }`]: data.find((analise) => analise.date === year)
-                ? data.find((analise) => analise.date === year)[variable]
-                : '0.0000',
-        });
-    }
-    return analysisYears;
+  const analysisYears = [];
+  for (let year = period['startYear']; year <= period['endYear']; year++) {
+    analysisYears.push({
+      date: year,
+      [`${variable}`]: data.find((analise) => analise.date === year)
+          ? data.find((analise) => analise.date === year)[variable]
+          : '0.0000',
+    });
+  }
+  return analysisYears;
 };
 
 setBoundingBox = function (bBox) {
-    const bboxArray = bBox.split(',');
-    const bbox1 = bboxArray[0].split(' ');
-    const bbox2 = bboxArray[1].split(' ');
+  const bboxArray = bBox.split(',');
+  const bbox1 = bboxArray[0].split(' ');
+  const bbox2 = bboxArray[1].split(' ');
 
-    let Xmax = parseFloat(bbox2[0]);
-    let Xmin = parseFloat(bbox1[0]);
+  let Xmax = parseFloat(bbox2[0]);
+  let Xmin = parseFloat(bbox1[0]);
 
-    let Ymax = parseFloat(bbox2[1]);
-    let Ymin = parseFloat(bbox1[1]);
+  let Ymax = parseFloat(bbox2[1]);
+  let Ymin = parseFloat(bbox1[1]);
 
-    let difX = Math.abs(Math.abs(Xmax) - Math.abs(Xmin));
-    let difY = Math.abs(Math.abs(Ymax) - Math.abs(Ymin));
+  let difX = Math.abs(Math.abs(Xmax) - Math.abs(Xmin));
+  let difY = Math.abs(Math.abs(Ymax) - Math.abs(Ymin));
 
-    if (difX > difY) {
-        const fac = difX - difY;
-        Ymin -= fac / 2;
-        Ymax += fac / 2;
-    } else if (difX < difY) {
-        const fac = difY - difX;
-        Xmin -= fac / 2;
-        Xmax += fac / 2;
-    }
+  if (difX > difY) {
+    const fac = difX - difY;
+    Ymin -= fac / 2;
+    Ymax += fac / 2;
+  } else if (difX < difY) {
+    const fac = difY - difX;
+    Xmin -= fac / 2;
+    Xmax += fac / 2;
+  }
 
-    return `${ Xmin },${ Ymin },${ Xmax },${ Ymax }`;
+  return `${Xmin},${Ymin},${Xmax},${Ymax}`;
 };
 
 const analysisReportFormat = {
-    prodes(
-        reportData,
-        views,
-        resultReportData,
-        carColumn,
-        carColumnSema,
-        date,
-        filter = null,
-    ) {
-        const layers = [
-            `${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }`,
-            `${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }`,
-        ];
-        const filters = `cql_filter=${ carColumnSema }=${ resultReportData.property.gid };${ carColumn }=${ resultReportData.property.gid }`;
-        resultReportData.vectorViews = {layers, filters};
+  prodes(
+    reportData,
+    views,
+    resultReportData,
+    carColumn,
+    carColumnSema,
+    date,
+    filter = null,
+  ) {
+    const layers = [
+      `${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
+      `${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}`,
+    ];
+    const filters = `cql_filter=${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}`;
+    resultReportData.vectorViews = { layers, filters };
 
-        resultReportData[
-            'urlGsImage'
-            ] = `${ config.geoserver.geoserverBasePath }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }&styles=&bbox=${ reportData['statebbox'] }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=geocodigo<>'';municipio='${ resultReportData.property.city }';numero_do1='${ resultReportData.property.register }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
+    resultReportData[
+      'urlGsImage'
+    ] = `${config.geoserver.geoserverBasePath}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city.replace("'", "''")}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
 
-        resultReportData['prodesStartYear'] =
-            resultReportData.property['period'][0]['start_year'];
+    resultReportData['prodesStartYear'] =
+      resultReportData.property['period'][0]['start_year'];
 
-        resultReportData['prodesTableData'] = reportData.analyzesYear;
-        resultReportData['prodesTableData'].push({
-            date: 'Total',
-            area: resultReportData.property.prodesTotalArea,
-        });
+    resultReportData['prodesTableData'] = reportData.analyzesYear;
+    resultReportData['prodesTableData'].push({
+      date: 'Total',
+      area: resultReportData.property.prodesTotalArea,
+    });
 
         resultReportData[
             'urlGsImage1'
@@ -268,83 +269,83 @@ const analysisReportFormat = {
 };
 
 setReportFormat = async function (
+  reportData,
+  views,
+  type,
+  carColumn,
+  carColumnSema,
+  date,
+  filter,
+) {
+  const resultReportData = {};
+
+  resultReportData['bbox'] = setBoundingBox(reportData.bbox);
+
+  reportData.bbox = resultReportData.bbox;
+
+  resultReportData['property'] = reportData;
+
+  reportData['statebbox'] = setBoundingBox(reportData['statebbox']);
+  carColumnSema = 'rid';
+
+  reportData['bboxplanet'] = setBoundingBox(reportData['bboxplanet']);
+
+  analysisReportFormat[type](
     reportData,
     views,
-    type,
+    resultReportData,
     carColumn,
     carColumnSema,
     date,
     filter,
-) {
-    const resultReportData = {};
+  );
 
-    resultReportData['bbox'] = setBoundingBox(reportData.bbox);
-
-    reportData.bbox = resultReportData.bbox;
-
-    resultReportData['property'] = reportData;
-
-    reportData['statebbox'] = setBoundingBox(reportData['statebbox']);
-    carColumnSema = 'rid';
-
-    reportData['bboxplanet'] = setBoundingBox(reportData['bboxplanet']);
-
-    analysisReportFormat[type](
-        reportData,
-        views,
-        resultReportData,
-        carColumn,
-        carColumnSema,
-        date,
-        filter,
-    );
-
-    return resultReportData;
+  return resultReportData;
 };
 
 getImageObject = function (image, fit, margin, alignment) {
-    if (
-        image &&
-        image[0] &&
-        !image[0].includes('data:application/vnd.ogc.se_xml')
-    ) {
-        return {
-            image: image,
-            fit: fit,
-            margin: margin,
-            alignment: alignment,
-        };
-    } else {
-        return {
-            text: 'Imagem não encontrada.',
-            alignment: 'center',
-            color: '#ff0000',
-            fontSize: 9,
-            italics: true,
-            margin: [30, 60, 30, 60],
-        };
-    }
+  if (
+    image &&
+    image[0] &&
+    !image[0].includes('data:application/vnd.ogc.se_xml')
+  ) {
+    return {
+      image: image,
+      fit: fit,
+      margin: margin,
+      alignment: alignment,
+    };
+  } else {
+    return {
+      text: 'Imagem não encontrada.',
+      alignment: 'center',
+      color: '#ff0000',
+      fontSize: 9,
+      italics: true,
+      margin: [30, 60, 30, 60],
+    };
+  }
 };
 
 getViewsReport = async function () {
-    return await ViewUtil.getGrouped();
+  return await ViewUtil.getGrouped();
 };
 
 getCarData = async function (
-    carTableName,
-    municipiosTableName,
-    columnCarEstadualSemas,
-    columnCarFederalSemas,
-    columnAreaHaCar,
-    carRegister,
+  carTableName,
+  municipiosTableName,
+  columnCarEstadualSemas,
+  columnCarFederalSemas,
+  columnAreaHaCar,
+  carRegister,
 ) {
-    const sql = `
+  const sql = `
       SELECT
               car.gid AS gid,
-              car.${ columnCarEstadualSemas } AS register,
-              car.${ columnCarFederalSemas } AS federalregister,
-              ROUND(COALESCE(car.${ columnAreaHaCar }, 0), 4) AS area,
-              ROUND(COALESCE((car.${ columnAreaHaCar }/100), 0), 4) AS area_km,
+              car.${columnCarEstadualSemas} AS register,
+              car.${columnCarFederalSemas} AS federalregister,
+              ROUND(COALESCE(car.${columnAreaHaCar}, 0), 4) AS area,
+              ROUND(COALESCE((car.${columnAreaHaCar}/100), 0), 4) AS area_km,
               car.nome_da_p1 AS name,
               car.municipio1 AS city,
               car.cpfcnpj AS cpf,
@@ -353,55 +354,55 @@ getCarData = async function (
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${ config.geoserver.planetSRID }))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${ config.geoserver.planetSRID }))::TEXT) - 5) AS bboxplanet,
+              substring(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
-      FROM public.${ carTableName } AS car
-      INNER JOIN public.${ municipiosTableName } munic ON
-              car.gid = '${ carRegister }'
+      FROM public.${carTableName} AS car
+      INNER JOIN public.${municipiosTableName} munic ON
+              car.gid = '${carRegister}'
               AND munic.municipio = car.municipio1
       INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
-      GROUP BY car.${ columnCarEstadualSemas }, car.${ columnCarFederalSemas }, car.${ columnAreaHaCar }, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
+      GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
     `;
-    const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
+  const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
-    return result[0];
+  return result[0];
 };
 
 setDeterData = async function (
-    type,
-    views,
-    propertyData,
-    dateSql,
-    columnCarEstadual,
-    columnCalculatedAreaHa,
-    columnExecutionDate,
-    carRegister,
-    filter,
+  type,
+  views,
+  propertyData,
+  dateSql,
+  columnCarEstadual,
+  columnCalculatedAreaHa,
+  columnExecutionDate,
+  carRegister,
+  filter,
 ) {
-    if (propertyData && views.DETER && type === 'deter') {
-        // --- Total area of Deter period ----------------------------------------------------------------------------------
-        const sqlDeterAreaPastDeforestation = `   
-            SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area 
-            FROM public.${ views.DETER.children.CAR_X_DETER.table_name } 
-            WHERE ${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_X_DETER,
-            views.DETER.tableOwner,
-        ) } `;
-        const resultDeterAreaPastDeforestation = await sequelize.query(
-            sqlDeterAreaPastDeforestation,
-            QUERY_TYPES_SELECT,
-        );
-        propertyData['areaPastDeforestation'] =
-            resultDeterAreaPastDeforestation[0]['area'];
-        // -----------------------------------------------------------------------------------------------------------------
+  if (propertyData && views.DETER && type === 'deter') {
+    // --- Total area of Deter period ----------------------------------------------------------------------------------
+    const sqlDeterAreaPastDeforestation = `   
+            SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area 
+            FROM public.${views.DETER.children.CAR_X_DETER.table_name} 
+            WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_X_DETER,
+      views.DETER.tableOwner,
+    )} `;
+    const resultDeterAreaPastDeforestation = await sequelize.query(
+      sqlDeterAreaPastDeforestation,
+      QUERY_TYPES_SELECT,
+    );
+    propertyData['areaPastDeforestation'] =
+      resultDeterAreaPastDeforestation[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // --- Deforestation alerts and areas ------------------------------------------------------------------------------
-        const sqlDeflorestationAlerts = `
+    // --- Deforestation alerts and areas ------------------------------------------------------------------------------
+    const sqlDeflorestationAlerts = `
       SELECT 
-            carxdeter.${ views.DETER.children.CAR_X_DETER.table_name }_id AS id,
+            carxdeter.${views.DETER.children.CAR_X_DETER.table_name}_id AS id,
             SUBSTRING(ST_EXTENT(carxdeter.intersection_geom)::TEXT, 5, length(ST_EXTENT(carxdeter.intersection_geom)::TEXT) - 5) AS bbox,
             COALESCE(calculated_area_ha, 4) AS area,
             TO_CHAR(carxdeter.execution_date, 'dd/mm/yyyy') AS date,
@@ -412,1045 +413,1045 @@ setDeterData = async function (
             ( CASE WHEN carxdeter.dd_deter_inpe_satellite = 'Cbers4' THEN 'CBERS-4'
                    ELSE UPPER(TRIM(carxdeter.dd_deter_inpe_satellite)) END) AS sat
       FROM public.${
-            views.DETER.children.CAR_X_DETER.table_name
-        } AS carxdeter, public.${ views.STATIC.children.BIOMAS.table_name } bio
-      WHERE ${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_X_DETER,
-            views.DETER.tableOwner,
-        ) }
+        views.DETER.children.CAR_X_DETER.table_name
+      } AS carxdeter, public.${views.STATIC.children.BIOMAS.table_name} bio
+      WHERE ${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_X_DETER,
+      views.DETER.tableOwner,
+    )}
             AND st_intersects(bio.geom, carxdeter.intersection_geom)
       GROUP BY a_cardeter_31_id, bio.gid `;
 
-        propertyData['deflorestationAlerts'] = await sequelize.query(
-            sqlDeflorestationAlerts,
-            QUERY_TYPES_SELECT,
-        );
-        // -----------------------------------------------------------------------------------------------------------------
+    propertyData['deflorestationAlerts'] = await sequelize.query(
+      sqlDeflorestationAlerts,
+      QUERY_TYPES_SELECT,
+    );
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // ---- Values of table --------------------------------------------------------------------------------------------
-        const sqlCrossings = `
-      SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-      FROM public.${ views.DETER.children.CAR_DETER_X_APP.table_name } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_APP,
-            views.DETER.tableOwner,
-        ) }      
+    // ---- Values of table --------------------------------------------------------------------------------------------
+    const sqlCrossings = `
+      SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+      FROM public.${views.DETER.children.CAR_DETER_X_APP.table_name} WHERE ${
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_APP,
+      views.DETER.tableOwner,
+    )}      
       UNION ALL
-        SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
+        SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_RESERVA.table_name
+          views.DETER.children.CAR_DETER_X_RESERVA.table_name
         } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_RESERVA,
-            views.DETER.tableOwner,
-        ) }
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_RESERVA,
+      views.DETER.tableOwner,
+    )}
       UNION ALL
-        SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_TI.table_name } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_TI,
-            views.DETER.tableOwner,
-        ) }
+        SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+        FROM public.${views.DETER.children.CAR_DETER_X_TI.table_name} WHERE ${
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_TI,
+      views.DETER.tableOwner,
+    )}
       UNION ALL
-        SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
+        SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_EXPLORA.table_name
+          views.DETER.children.CAR_DETER_X_EXPLORA.table_name
         } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_EXPLORA,
-            views.DETER.tableOwner,
-        ) }
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_EXPLORA,
+      views.DETER.tableOwner,
+    )}
       UNION ALL
-        SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
+        SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_DESMATE.table_name
+          views.DETER.children.CAR_DETER_X_DESMATE.table_name
         } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_DESMATE,
-            views.DETER.tableOwner,
-        ) }
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_DESMATE,
+      views.DETER.tableOwner,
+    )}
       UNION ALL
-        SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_EMB.table_name } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_EMB,
-            views.DETER.tableOwner,
-        ) }
+        SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+        FROM public.${views.DETER.children.CAR_DETER_X_EMB.table_name} WHERE ${
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_EMB,
+      views.DETER.tableOwner,
+    )}
       UNION ALL
-        SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
+        SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_DESEMB.table_name
+          views.DETER.children.CAR_DETER_X_DESEMB.table_name
         } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_DESEMB,
-            views.DETER.tableOwner,
-        ) }
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_DESEMB,
+      views.DETER.tableOwner,
+    )}
       UNION ALL
-        SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_UC.table_name } 
+        SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+        FROM public.${views.DETER.children.CAR_DETER_X_UC.table_name} 
         WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_UC,
-            views.DETER.tableOwner,
-        ) }  AND de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
+          views.DETER.tableOwner
+        }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_UC,
+      views.DETER.tableOwner,
+    )}  AND de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
       UNION ALL
-        SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_UC.table_name } 
+        SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+        FROM public.${views.DETER.children.CAR_DETER_X_UC.table_name} 
         WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_UC,
-            views.DETER.tableOwner,
-        ) } AND de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
+          views.DETER.tableOwner
+        }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_UC,
+      views.DETER.tableOwner,
+    )} AND de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
       UNION ALL
-        SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
+        SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_QUEIMA.table_name
+          views.DETER.children.CAR_DETER_X_QUEIMA.table_name
         } WHERE ${
-            views.DETER.tableOwner
-        }_${ columnCarEstadual } = '${ carRegister }' ${ getFilterClassSearch(
-            dateSql,
-            filter,
-            views.DETER.children.CAR_DETER_X_QUEIMA,
-            views.DETER.tableOwner,
-        ) }
+      views.DETER.tableOwner
+    }_${columnCarEstadual} = '${carRegister}' ${getFilterClassSearch(
+      dateSql,
+      filter,
+      views.DETER.children.CAR_DETER_X_QUEIMA,
+      views.DETER.tableOwner,
+    )}
     `;
 
-        const resCrossings = await sequelize.query(
-            sqlCrossings,
-            QUERY_TYPES_SELECT,
-        );
-        let deterSumArea = 0;
-        resCrossings.forEach((crossing) => {
-            if (!propertyData['tableData']) {
-                propertyData['tableData'] = [];
-            }
-            propertyData['tableData'].push({
-                affectedArea: crossing['affected_area'],
-                pastDeforestation: crossing['area'],
-            });
+    const resCrossings = await sequelize.query(
+      sqlCrossings,
+      QUERY_TYPES_SELECT,
+    );
+    let deterSumArea = 0;
+    resCrossings.forEach((crossing) => {
+      if (!propertyData['tableData']) {
+        propertyData['tableData'] = [];
+      }
+      propertyData['tableData'].push({
+        affectedArea: crossing['affected_area'],
+        pastDeforestation: crossing['area'],
+      });
 
-            deterSumArea += parseFloat(crossing['area'])
-                ? parseFloat(crossing['area'])
-                : 0.0;
-        });
+      deterSumArea += parseFloat(crossing['area'])
+        ? parseFloat(crossing['area'])
+        : 0.0;
+    });
 
-        if (!propertyData['foundDeter']) {
-            propertyData['foundDeter'] = {};
-        }
-        propertyData['foundDeter'] = !!deterSumArea;
-        // -----------------------------------------------------------------------------------------------------------------
+    if (!propertyData['foundDeter']) {
+      propertyData['foundDeter'] = {};
     }
+    propertyData['foundDeter'] = !!deterSumArea;
+    // -----------------------------------------------------------------------------------------------------------------
+  }
 
-    return await propertyData;
+  return await propertyData;
 };
 
 setProdesData = async function (
-    type,
-    views,
-    propertyData,
-    dateSql,
-    columnCarEstadual,
-    columnCalculatedAreaHa,
-    columnExecutionDate,
-    carRegister,
+  type,
+  views,
+  propertyData,
+  dateSql,
+  columnCarEstadual,
+  columnCalculatedAreaHa,
+  columnExecutionDate,
+  carRegister,
 ) {
-    if (propertyData && views.PRODES && type === 'prodes') {
-        // --- Prodes area grouped by year ---------------------------------------------------------------------------------
-        const sqlProdesYear = `SELECT
-        extract(year from date_trunc('year', cp.${ columnExecutionDate })) AS date,
-        ROUND(COALESCE(SUM(CAST(cp.${ columnCalculatedAreaHa }  AS DECIMAL)), 0), 4) AS area
-      FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } AS cp
-      WHERE cp.${ columnCarEstadual } = '${ carRegister }'
-        ${ dateSql }
+  if (propertyData && views.PRODES && type === 'prodes') {
+    // --- Prodes area grouped by year ---------------------------------------------------------------------------------
+    const sqlProdesYear = `SELECT
+        extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
+        ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS area
+      FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS cp
+      WHERE cp.${columnCarEstadual} = '${carRegister}'
+        ${dateSql}
       GROUP BY date
       ORDER BY date `;
-        propertyData['analyzesYear'] = await sequelize.query(
-            sqlProdesYear,
-            QUERY_TYPES_SELECT,
-        );
-        // -----------------------------------------------------------------------------------------------------------------
+    propertyData['analyzesYear'] = await sequelize.query(
+      sqlProdesYear,
+      QUERY_TYPES_SELECT,
+    );
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // --- Radam View vegetation of area grouped by physiognomy --------------------------------------------------------
-        const sqlVegRadam = ` SELECT gid, numero_do1, numero_do2, fisionomia, ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_, ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam FROM car_x_vegradam WHERE gid = ${ carRegister } `;
-        propertyData['vegRadam'] = await sequelize.query(
-            sqlVegRadam,
-            QUERY_TYPES_SELECT,
-        );
-        // -----------------------------------------------------------------------------------------------------------------
+    // --- Radam View vegetation of area grouped by physiognomy --------------------------------------------------------
+    const sqlVegRadam = ` SELECT gid, numero_do1, numero_do2, fisionomia, ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_, ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam FROM car_x_vegradam WHERE gid = ${carRegister} `;
+    propertyData['vegRadam'] = await sequelize.query(
+      sqlVegRadam,
+      QUERY_TYPES_SELECT,
+    );
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // --- Fisionomia of prodes radam ----------------------------------------------------------------------------------
-        const sqlFisionomiaPRODESSum = `
+    // --- Fisionomia of prodes radam ----------------------------------------------------------------------------------
+    const sqlFisionomiaPRODESSum = `
       SELECT
              fisionomia AS class,
              SUM(ST_Area(ST_Intersection(car_prodes.intersection_geom, radam.geom)::geography) / 10000.0) AS area
-      FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } AS car_prodes, public.${ views.STATIC.children.VEGETACAO_RADAM_BR.table_name } AS radam
-      WHERE car_prodes.de_car_validado_sema_gid = '${ carRegister }' ${ dateSql }
+      FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} AS car_prodes, public.${views.STATIC.children.VEGETACAO_RADAM_BR.table_name} AS radam
+      WHERE car_prodes.de_car_validado_sema_gid = '${carRegister}' ${dateSql}
        AND ST_Intersects(car_prodes.intersection_geom, radam.geom)
       GROUP BY radam.fisionomia`;
 
-        propertyData['prodesRadam'] = await sequelize.query(
-            sqlFisionomiaPRODESSum,
-            QUERY_TYPES_SELECT,
-        );
-        // -----------------------------------------------------------------------------------------------------------------
+    propertyData['prodesRadam'] = await sequelize.query(
+      sqlFisionomiaPRODESSum,
+      QUERY_TYPES_SELECT,
+    );
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // --- Total area of prodes ----------------------------------------------------------------------------------------
-        const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-      FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name }
-      WHERE ${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const resultProdesTotalArea = await sequelize.query(
-            sqlProdesTotalArea,
-            QUERY_TYPES_SELECT,
-        );
-        propertyData['prodesTotalArea'] = resultProdesTotalArea[0]['area'];
-        // -----------------------------------------------------------------------------------------------------------------
+    // --- Total area of prodes ----------------------------------------------------------------------------------------
+    const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area
+      FROM public.${views.PRODES.children.CAR_X_PRODES.table_name}
+      WHERE ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    const resultProdesTotalArea = await sequelize.query(
+      sqlProdesTotalArea,
+      QUERY_TYPES_SELECT,
+    );
+    propertyData['prodesTotalArea'] = resultProdesTotalArea[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // --- Total area of prodes period ----------------------------------------------------------------------------------------
-        const sqlProdesAreaPastDeforestation = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql } `;
-        const resultProdesAreaPastDeforestation = await sequelize.query(
-            sqlProdesAreaPastDeforestation,
-            QUERY_TYPES_SELECT,
-        );
-        propertyData['areaPastDeforestation'] =
-            resultProdesAreaPastDeforestation[0]['area'];
-        // -----------------------------------------------------------------------------------------------------------------
+    // --- Total area of prodes period ----------------------------------------------------------------------------------------
+    const sqlProdesAreaPastDeforestation = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}' ${dateSql} `;
+    const resultProdesAreaPastDeforestation = await sequelize.query(
+      sqlProdesAreaPastDeforestation,
+      QUERY_TYPES_SELECT,
+    );
+    propertyData['areaPastDeforestation'] =
+      resultProdesAreaPastDeforestation[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // --- Total area of UsoCon ----------------------------------------------------------------------------------------
-        const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${ views.STATIC.children.CAR_X_USOCON.table_name } where gid_car = '${ carRegister }'`;
-        const resultUsoConArea = await sequelize.query(
-            sqlUsoConArea,
-            QUERY_TYPES_SELECT,
-        );
-        propertyData['areaUsoCon'] = resultUsoConArea[0]['area'];
-        // -----------------------------------------------------------------------------------------------------------------
+    // --- Total area of UsoCon ----------------------------------------------------------------------------------------
+    const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${views.STATIC.children.CAR_X_USOCON.table_name} where gid_car = '${carRegister}'`;
+    const resultUsoConArea = await sequelize.query(
+      sqlUsoConArea,
+      QUERY_TYPES_SELECT,
+    );
+    propertyData['areaUsoCon'] = resultUsoConArea[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // --- Prodes area by period ---------------------------------------------------------------------------------------
-        const sqlProdesArea = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const resultProdesArea = await sequelize.query(
-            sqlProdesArea,
-            QUERY_TYPES_SELECT,
-        );
-        propertyData['prodesArea'] = resultProdesArea[0]['area'];
-        // -----------------------------------------------------------------------------------------------------------------
+    // --- Prodes area by period ---------------------------------------------------------------------------------------
+    const sqlProdesArea = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} where ${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    const resultProdesArea = await sequelize.query(
+      sqlProdesArea,
+      QUERY_TYPES_SELECT,
+    );
+    propertyData['prodesArea'] = resultProdesArea[0]['area'];
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // ---- Values of table --------------------------------------------------------------------------------------------
-        const sqlCrossings = ` SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_TI.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+    // ---- Values of table --------------------------------------------------------------------------------------------
+    const sqlCrossings = ` SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_TI.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_RESERVA.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_RESERVA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_APP.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_APP.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_EXPLORA.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EXPLORA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_DESMATE.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESMATE.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL 
-        SELECT 'restrictedUse' AS relationship, 'AUR' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_USO_RESTRITO.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'restrictedUse' AS relationship, 'AUR' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_USO_RESTRITO.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_EMB.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_EMB.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_DESEMB.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_DESEMB.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_QUEIMA.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_QUEIMA.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}
         UNION ALL
-        SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql } and de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
+        SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_UC.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} and de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
         UNION ALL 
-        SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql } and de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
+        SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.PRODES.children.CAR_PRODES_X_UC.table_name} where ${views.PRODES.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} and de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
       `;
-        // -----------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // ----- Area of Deforestation History -----------------------------------------------------------------------------
-        const sqlDeforestationHistory = ` SELECT
-                            extract(year from date_trunc('year', cp.${ columnExecutionDate })) AS date,
-                            ROUND(COALESCE(SUM(CAST(cp.${ columnCalculatedAreaHa }  AS DECIMAL)), 0),4) AS area
-            FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } cp
-            WHERE cp.${ columnCarEstadual } = '${ carRegister }'
+    // ----- Area of Deforestation History -----------------------------------------------------------------------------
+    const sqlDeforestationHistory = ` SELECT
+                            extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
+                            ROUND(COALESCE(SUM(CAST(cp.${columnCalculatedAreaHa}  AS DECIMAL)), 0),4) AS area
+            FROM public.${views.PRODES.children.CAR_X_PRODES.table_name} cp
+            WHERE cp.${columnCarEstadual} = '${carRegister}'
             GROUP BY date
             ORDER BY date`;
-        const deflorestationHistory = await sequelize.query(
-            sqlDeforestationHistory,
-            QUERY_TYPES_SELECT,
-        );
+    const deflorestationHistory = await sequelize.query(
+      sqlDeforestationHistory,
+      QUERY_TYPES_SELECT,
+    );
 
-        // propertyData['period']  = await sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
-        propertyData['period'] = await sequelize.query(
-            ` SELECT  2006 AS start_year, MAX(prodes.ano) AS end_year  FROM ${ views.DYNAMIC.children.PRODES.table_name } AS prodes `,
-            QUERY_TYPES_SELECT,
-        );
+    // propertyData['period']  = await sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
+    propertyData['period'] = await sequelize.query(
+      ` SELECT  2006 AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes `,
+      QUERY_TYPES_SELECT,
+    );
 
-        propertyData['deflorestationHistory'] = setAnalysisYear(
-            deflorestationHistory,
-            {
-                startYear: propertyData['period'][0]['start_year'],
-                endYear: propertyData['period'][0]['end_year'],
-            },
-            'area',
-        );
-        // ---------------------------------------------------------------------------------------------------------------
+    propertyData['deflorestationHistory'] = setAnalysisYear(
+      deflorestationHistory,
+      {
+        startYear: propertyData['period'][0]['start_year'],
+        endYear: propertyData['period'][0]['end_year'],
+      },
+      'area',
+    );
+    // ---------------------------------------------------------------------------------------------------------------
 
-        const resCrossings = await sequelize.query(
-            sqlCrossings,
-            QUERY_TYPES_SELECT,
-        );
-        let prodesSumArea = 0;
-        resCrossings.forEach((crossing) => {
-            if (!propertyData['tableData']) {
-                propertyData['tableData'] = [];
-            }
-            propertyData['tableData'].push({
-                affectedArea: crossing['affected_area'],
-                pastDeforestation: crossing['area'],
-            });
+    const resCrossings = await sequelize.query(
+      sqlCrossings,
+      QUERY_TYPES_SELECT,
+    );
+    let prodesSumArea = 0;
+    resCrossings.forEach((crossing) => {
+      if (!propertyData['tableData']) {
+        propertyData['tableData'] = [];
+      }
+      propertyData['tableData'].push({
+        affectedArea: crossing['affected_area'],
+        pastDeforestation: crossing['area'],
+      });
 
-            prodesSumArea += parseFloat(crossing['area'])
-                ? parseFloat(crossing['area'])
-                : 0.0;
-        });
+      prodesSumArea += parseFloat(crossing['area'])
+        ? parseFloat(crossing['area'])
+        : 0.0;
+    });
 
-        if (!propertyData['foundProdes']) {
-            propertyData['foundProdes'] = {};
+    if (!propertyData['foundProdes']) {
+      propertyData['foundProdes'] = {};
+    }
+    propertyData['foundProdes'] = !!prodesSumArea;
+
+    let radamProdes = 0;
+    let radamText = '';
+    if (propertyData['prodesRadam'] && propertyData['prodesRadam'].length > 0) {
+      for (const radam of propertyData['prodesRadam']) {
+        const area = radam['area'];
+        const cls = radam['class'];
+        if (cls) {
+          radamText +=
+            radamText === '' ? `${cls}: ${area}` : `\n ${cls}: ${area}`;
+          radamProdes += area;
         }
-        propertyData['foundProdes'] = !!prodesSumArea;
-
-        let radamProdes = 0;
-        let radamText = '';
-        if (propertyData['prodesRadam'] && propertyData['prodesRadam'].length > 0) {
-            for (const radam of propertyData['prodesRadam']) {
-                const area = radam['area'];
-                const cls = radam['class'];
-                if (cls) {
-                    radamText +=
-                        radamText === '' ? `${ cls }: ${ area }` : `\n ${ cls }: ${ area }`;
-                    radamProdes += area;
-                }
-            }
-        }
-
-        propertyData['tableVegRadam'] = {
-            affectedArea: 'Vegetação RADAM BR',
-            pastDeforestation: radamText,
-        };
+      }
     }
 
-    return await propertyData;
+    propertyData['tableVegRadam'] = {
+      affectedArea: 'Vegetação RADAM BR',
+      pastDeforestation: radamText,
+    };
+  }
+
+  return await propertyData;
 };
 
 setBurnedData = async function (
-    type,
-    views,
-    propertyData,
-    dateSql,
-    columnCarEstadual,
-    columnCarEstadualSemas,
-    columnExecutionDate,
-    carRegister,
-    filter,
+  type,
+  views,
+  propertyData,
+  dateSql,
+  columnCarEstadual,
+  columnCarEstadualSemas,
+  columnExecutionDate,
+  carRegister,
+  filter,
 ) {
-    if (propertyData && views.BURNED && type === 'queimada') {
-        // ---  Firing Authorization ---------------------------------------------------------------------------------------
-        const sqlFiringAuth = `
+  if (propertyData && views.BURNED && type === 'queimada') {
+    // ---  Firing Authorization ---------------------------------------------------------------------------------------
+    const sqlFiringAuth = `
         SELECT 
                 aut.titulo_nu1,
                 TO_CHAR(aut.data_apro1, 'DD/MM/YYYY') AS data_apro, TO_CHAR(aut.data_venc1, 'DD/MM/YYYY') AS data_venc,
                 SUM(ROUND((COALESCE(aut.area__m2_,0) / 10000), 4)) AS area_ha
-        FROM public.${ views.STATIC.children.AUTORIZACAO_QUEIMA.table_name } AS aut
-        JOIN public.${ views.STATIC.children.CAR_VALIDADO.table_name } AS car ON st_contains(car.geom, aut.geom)
-        WHERE   car.${ columnCarEstadualSemas } = ${ carRegister }
-            AND '${ filter.date[0] }' <= aut.data_apro1
-            AND '${ filter.date[1] }' >= data_venc1
+        FROM public.${views.STATIC.children.AUTORIZACAO_QUEIMA.table_name} AS aut
+        JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car ON st_contains(car.geom, aut.geom)
+        WHERE   car.${columnCarEstadualSemas} = ${carRegister}
+            AND '${filter.date[0]}' <= aut.data_apro1
+            AND '${filter.date[1]}' >= data_venc1
             GROUP BY aut.titulo_nu1, aut.data_apro1, aut.data_venc1
     `;
-        propertyData['firingAuth'] = await sequelize.query(
-            sqlFiringAuth,
-            QUERY_TYPES_SELECT,
-        );
-        // -----------------------------------------------------------------------------------------------------------------
+    propertyData['firingAuth'] = await sequelize.query(
+      sqlFiringAuth,
+      QUERY_TYPES_SELECT,
+    );
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // ---  Firing Authorization ---------------------------------------------------------------------------------------
-        const sqlBurnCount = `
+    // ---  Firing Authorization ---------------------------------------------------------------------------------------
+    const sqlBurnCount = `
         SELECT  COUNT(1) AS total_focus
-        FROM public.${ views.BURNED.children.CAR_X_FOCOS.table_name } car_focos
-        WHERE   car_focos.${ columnCarEstadual } = ${ carRegister }
-            AND car_focos.${ columnExecutionDate } BETWEEN '${ filter.date[0] }' AND '${ filter.date[1] }'
+        FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
+        WHERE   car_focos.${columnCarEstadual} = ${carRegister}
+            AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
     `;
-        const resultBurnCount = await sequelize.query(
-            sqlBurnCount,
-            QUERY_TYPES_SELECT,
-        );
-        propertyData['burnCount'] = resultBurnCount[0];
-        // -----------------------------------------------------------------------------------------------------------------
+    const resultBurnCount = await sequelize.query(
+      sqlBurnCount,
+      QUERY_TYPES_SELECT,
+    );
+    propertyData['burnCount'] = resultBurnCount[0];
+    // -----------------------------------------------------------------------------------------------------------------
 
-        // ---  historyFireSpot ---------------------------------------------------------------------------------------
-        const sqlHistoryFireSpot = `
+    // ---  historyFireSpot ---------------------------------------------------------------------------------------
+    const sqlHistoryFireSpot = `
             SELECT  COUNT(1) AS total_focus,
                     0 AS authorized_focus,
                     0 AS  unauthorized_focus,
                     COUNT(1) filter(where to_char(car_focos.execution_date, 'MMDD') between '0715' and '0915') as prohibitive_period, -- Contando focos no periodo proibitivo
                     (EXTRACT(YEAR FROM car_focos.execution_date))::INT AS month_year_occurrence
-            FROM public.${ views.BURNED.children.CAR_X_FOCOS.table_name } car_focos
-            WHERE car_focos.${ columnCarEstadual } = ${ carRegister }
-                AND car_focos.${ columnExecutionDate } BETWEEN '2008-01-01T00:00:00.000Z' AND '${ filter.date[1] }'
+            FROM public.${views.BURNED.children.CAR_X_FOCOS.table_name} car_focos
+            WHERE car_focos.${columnCarEstadual} = ${carRegister}
+                AND car_focos.${columnExecutionDate} BETWEEN '2008-01-01T00:00:00.000Z' AND '${filter.date[1]}'
             GROUP BY month_year_occurrence
             ORDER BY month_year_occurrence
     `;
-        propertyData['historyFireSpot'] = await sequelize.query(
-            sqlHistoryFireSpot,
-            QUERY_TYPES_SELECT,
-        );
-        // -----------------------------------------------------------------------------------------------------------------
-    }
+    propertyData['historyFireSpot'] = await sequelize.query(
+        sqlHistoryFireSpot,
+        QUERY_TYPES_SELECT,
+    );
+    // -----------------------------------------------------------------------------------------------------------------
+  }
 
-    return await propertyData;
+  return await propertyData;
 };
 
 setBurnedAreaData = async function (
-    type,
-    views,
-    propertyData,
-    dateSql,
-    columnCarEstadual,
-    columnCalculatedAreaHa,
-    columnCarEstadualSemas,
-    columnExecutionDate,
-    carRegister,
+  type,
+  views,
+  propertyData,
+  dateSql,
+  columnCarEstadual,
+  columnCalculatedAreaHa,
+  columnCarEstadualSemas,
+  columnExecutionDate,
+  carRegister,
 ) {
-    if (propertyData && views.BURNED_AREA && type === 'queimada') {
-        const sqlBurnedAreas = `
+  if (propertyData && views.BURNED_AREA && type === 'queimada') {
+    const sqlBurnedAreas = `
       SELECT
-        ROUND(COALESCE(SUM(CAST(areaq.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS burnedAreas,
-        extract('YEAR' FROM areaq.${ columnExecutionDate }) AS date
-      FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.table_name } AS areaq
-      INNER JOIN public.${ views.STATIC.children.CAR_VALIDADO.table_name } AS car on
-      areaq.${ columnCarEstadual } = car.${ columnCarEstadualSemas } AND
-      car.${ columnCarEstadualSemas } = '${ carRegister }'
+        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS burnedAreas,
+        extract('YEAR' FROM areaq.${columnExecutionDate}) AS date
+      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
+      INNER JOIN public.${views.STATIC.children.CAR_VALIDADO.table_name} AS car on
+      areaq.${columnCarEstadual} = car.${columnCarEstadualSemas} AND
+      car.${columnCarEstadualSemas} = '${carRegister}'
       group by date
     `;
 
-        const burnedAreas = await sequelize.query(
-            sqlBurnedAreas,
-            QUERY_TYPES_SELECT,
-        );
+    const burnedAreas = await sequelize.query(
+      sqlBurnedAreas,
+      QUERY_TYPES_SELECT,
+    );
 
-        const sqlBurnedAreasYear = `
+    const sqlBurnedAreasYear = `
       SELECT
-        extract(year from date_trunc('year', areaq.${ columnExecutionDate })) AS date,
-        ROUND(COALESCE(SUM(CAST(areaq.${ columnCalculatedAreaHa }  AS DECIMAL)), 0), 4) AS burnedAreas
-      FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.table_name } AS areaq
-      WHERE areaq.${ columnCarEstadual } = '${ carRegister }'
+        extract(year from date_trunc('year', areaq.${columnExecutionDate})) AS date,
+        ROUND(COALESCE(SUM(CAST(areaq.${columnCalculatedAreaHa}  AS DECIMAL)), 0), 4) AS burnedAreas
+      FROM public.${views.BURNED_AREA.children.CAR_X_AREA_Q.table_name} AS areaq
+      WHERE areaq.${columnCarEstadual} = '${carRegister}'
       GROUP BY date
       ORDER BY date`;
 
-        const burnedAreasYear = await sequelize.query(
-            sqlBurnedAreasYear,
-            QUERY_TYPES_SELECT,
-        );
-        const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_APP.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlLegalReserveBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_RESERVA.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+    const burnedAreasYear = await sequelize.query(
+      sqlBurnedAreasYear,
+      QUERY_TYPES_SELECT,
+    );
+    const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_APP.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    const sqlLegalReserveBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_RESERVA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
 
-        const sqlIndigenousLandBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_TI.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+    const sqlIndigenousLandBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_TI.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
 
-        const sqlExploraBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_EXPLORA.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+    const sqlExploraBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_EXPLORA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
 
-        const sqlDesmateBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_DESMATE.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlEmbargoedAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_EMB.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlLandAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_DESEMB.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+    const sqlDesmateBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_DESMATE.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    const sqlEmbargoedAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_EMB.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    const sqlLandAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_DESEMB.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
 
-        const sqlRestrictUseBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_USO_RESTRITO.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlBurnAuthorizationBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_QUEIMA.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        // const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
+    const sqlRestrictUseBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_USO_RESTRITO.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    const sqlBurnAuthorizationBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${columnCalculatedAreaHa}  AS DECIMAL)), 0) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_QUEIMA.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql}`;
+    // const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
 
-        const restrictUseBURNEDAREASum = await sequelize.query(
-            sqlRestrictUseBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const restrictUseBURNEDAREASum = await sequelize.query(
+      sqlRestrictUseBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        const burnAuthorizationBURNEDAREASum = await sequelize.query(
-            sqlBurnAuthorizationBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const burnAuthorizationBURNEDAREASum = await sequelize.query(
+      sqlBurnAuthorizationBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        // const resultFisionomiaBURNEDAREASum = await sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
-        // const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
+    // const resultFisionomiaBURNEDAREASum = await sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
+    // const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
 
-        const aPPBURNEDAREASum = await sequelize.query(
-            sqlAPPBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const aPPBURNEDAREASum = await sequelize.query(
+      sqlAPPBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        const legalReserveBURNEDAREASum = await sequelize.query(
-            sqlLegalReserveBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const legalReserveBURNEDAREASum = await sequelize.query(
+      sqlLegalReserveBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        const indigenousLandBURNEDAREASum = await sequelize.query(
-            sqlIndigenousLandBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const indigenousLandBURNEDAREASum = await sequelize.query(
+      sqlIndigenousLandBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        const explorationBURNEDAREASum = await sequelize.query(
-            sqlExploraBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const explorationBURNEDAREASum = await sequelize.query(
+      sqlExploraBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        const deforestationBURNEDAREASum = await sequelize.query(
-            sqlDesmateBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const deforestationBURNEDAREASum = await sequelize.query(
+      sqlDesmateBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        const embargoedAreaBURNEDAREASum = await sequelize.query(
-            sqlEmbargoedAreaBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const embargoedAreaBURNEDAREASum = await sequelize.query(
+      sqlEmbargoedAreaBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        const landAreaBURNEDAREASum = await sequelize.query(
-            sqlLandAreaBURNEDAREASum,
-            QUERY_TYPES_SELECT,
-        );
+    const landAreaBURNEDAREASum = await sequelize.query(
+      sqlLandAreaBURNEDAREASum,
+      QUERY_TYPES_SELECT,
+    );
 
-        propertyData['burnedAreas'] = burnedAreas;
-        propertyData['burnedAreasYear'] = burnedAreasYear;
+    propertyData['burnedAreas'] = burnedAreas;
+    propertyData['burnedAreasYear'] = burnedAreasYear;
 
-        let burnedAreaSum = 0;
+    let burnedAreaSum = 0;
 
-        burnedAreaSum += aPPBURNEDAREASum[0]['area']
-            ? aPPBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += legalReserveBURNEDAREASum[0]['area']
-            ? legalReserveBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += indigenousLandBURNEDAREASum[0]['area']
-            ? indigenousLandBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += deforestationBURNEDAREASum[0]['area']
-            ? deforestationBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += embargoedAreaBURNEDAREASum[0]['area']
-            ? embargoedAreaBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += landAreaBURNEDAREASum[0]['area']
-            ? landAreaBURNEDAREASum[0]['area']
-            : 0;
+    burnedAreaSum += aPPBURNEDAREASum[0]['area']
+      ? aPPBURNEDAREASum[0]['area']
+      : 0;
+    burnedAreaSum += legalReserveBURNEDAREASum[0]['area']
+      ? legalReserveBURNEDAREASum[0]['area']
+      : 0;
+    burnedAreaSum += indigenousLandBURNEDAREASum[0]['area']
+      ? indigenousLandBURNEDAREASum[0]['area']
+      : 0;
+    burnedAreaSum += deforestationBURNEDAREASum[0]['area']
+      ? deforestationBURNEDAREASum[0]['area']
+      : 0;
+    burnedAreaSum += embargoedAreaBURNEDAREASum[0]['area']
+      ? embargoedAreaBURNEDAREASum[0]['area']
+      : 0;
+    burnedAreaSum += landAreaBURNEDAREASum[0]['area']
+      ? landAreaBURNEDAREASum[0]['area']
+      : 0;
 
-        if (!propertyData['tableData']) {
-            propertyData['tableData'] = {};
-        }
-        propertyData['tableData']['affectedArea'] = 'APP';
-        propertyData['tableData']['burnAreas'] = parseFloat(
-            aPPBURNEDAREASum[0]['area'] | 0,
-        );
-
-        if (!propertyData['prodesLegalReserve']) {
-            propertyData['prodesLegalReserve'] = {};
-        }
-        propertyData['prodesLegalReserve']['affectedArea'] = 'ARL';
-        propertyData['prodesLegalReserve']['burnAreas'] = parseFloat(
-            legalReserveBURNEDAREASum[0]['area'] | 0,
-        );
-
-        if (!propertyData['prodesRestrictedUse']) {
-            propertyData['prodesRestrictedUse'] = {};
-        }
-        propertyData['prodesRestrictedUse']['affectedArea'] = 'AUR';
-        propertyData['prodesRestrictedUse']['burnAreas'] = parseFloat(
-            restrictUseBURNEDAREASum[0]['area'] | 0,
-        );
-
-        if (!propertyData['prodesIndigenousLand']) {
-            propertyData['prodesIndigenousLand'] = {};
-        }
-        propertyData['prodesIndigenousLand']['affectedArea'] = 'TI';
-        propertyData['prodesIndigenousLand']['burnAreas'] = parseFloat(
-            indigenousLandBURNEDAREASum[0]['area'],
-        );
-
-        if (!propertyData['prodesExploration']) {
-            propertyData['prodesExploration'] = {};
-        }
-        propertyData['prodesExploration']['affectedArea'] = 'AUTEX';
-        propertyData['prodesExploration']['burnAreas'] = parseFloat(
-            explorationBURNEDAREASum[0]['area'],
-        );
-
-        if (!propertyData['prodesDeforestation']) {
-            propertyData['prodesDeforestation'] = {};
-        }
-        propertyData['prodesDeforestation']['affectedArea'] = 'AD';
-        propertyData['prodesDeforestation']['burnAreas'] = parseFloat(
-            deforestationBURNEDAREASum[0]['area'],
-        );
-
-        if (!propertyData['prodesEmbargoedArea']) {
-            propertyData['prodesEmbargoedArea'] = {};
-        }
-        propertyData['prodesEmbargoedArea']['affectedArea'] = 'Área embargada';
-        propertyData['prodesEmbargoedArea']['burnAreas'] = parseFloat(
-            embargoedAreaBURNEDAREASum[0]['area'],
-        );
-
-        if (!propertyData['prodesLandArea']) {
-            propertyData['prodesLandArea'] = {};
-        }
-        propertyData['prodesLandArea']['affectedArea'] = 'Área desembargada';
-        propertyData['prodesLandArea']['burnAreas'] = parseFloat(
-            landAreaBURNEDAREASum[0]['area'],
-        );
-
-        if (!propertyData['prodesBurnAuthorization']) {
-            propertyData['prodesBurnAuthorization'] = {};
-        }
-        propertyData['prodesBurnAuthorization']['affectedArea'] = 'AQ';
-        propertyData['prodesBurnAuthorization']['burnAreas'] = parseFloat(
-            burnAuthorizationBURNEDAREASum[0]['area'],
-        );
-
-        if (!propertyData['foundFireSpot']) {
-            propertyData['foundFireSpot'] = !!burnedAreaSum;
-        }
+    if (!propertyData['tableData']) {
+      propertyData['tableData'] = {};
     }
+    propertyData['tableData']['affectedArea'] = 'APP';
+    propertyData['tableData']['burnAreas'] = parseFloat(
+      aPPBURNEDAREASum[0]['area'] | 0,
+    );
 
-    return await propertyData;
+    if (!propertyData['prodesLegalReserve']) {
+      propertyData['prodesLegalReserve'] = {};
+    }
+    propertyData['prodesLegalReserve']['affectedArea'] = 'ARL';
+    propertyData['prodesLegalReserve']['burnAreas'] = parseFloat(
+      legalReserveBURNEDAREASum[0]['area'] | 0,
+    );
+
+    if (!propertyData['prodesRestrictedUse']) {
+      propertyData['prodesRestrictedUse'] = {};
+    }
+    propertyData['prodesRestrictedUse']['affectedArea'] = 'AUR';
+    propertyData['prodesRestrictedUse']['burnAreas'] = parseFloat(
+      restrictUseBURNEDAREASum[0]['area'] | 0,
+    );
+
+    if (!propertyData['prodesIndigenousLand']) {
+      propertyData['prodesIndigenousLand'] = {};
+    }
+    propertyData['prodesIndigenousLand']['affectedArea'] = 'TI';
+    propertyData['prodesIndigenousLand']['burnAreas'] = parseFloat(
+      indigenousLandBURNEDAREASum[0]['area'],
+    );
+
+    if (!propertyData['prodesExploration']) {
+      propertyData['prodesExploration'] = {};
+    }
+    propertyData['prodesExploration']['affectedArea'] = 'AUTEX';
+    propertyData['prodesExploration']['burnAreas'] = parseFloat(
+      explorationBURNEDAREASum[0]['area'],
+    );
+
+    if (!propertyData['prodesDeforestation']) {
+      propertyData['prodesDeforestation'] = {};
+    }
+    propertyData['prodesDeforestation']['affectedArea'] = 'AD';
+    propertyData['prodesDeforestation']['burnAreas'] = parseFloat(
+      deforestationBURNEDAREASum[0]['area'],
+    );
+
+    if (!propertyData['prodesEmbargoedArea']) {
+      propertyData['prodesEmbargoedArea'] = {};
+    }
+    propertyData['prodesEmbargoedArea']['affectedArea'] = 'Área embargada';
+    propertyData['prodesEmbargoedArea']['burnAreas'] = parseFloat(
+      embargoedAreaBURNEDAREASum[0]['area'],
+    );
+
+    if (!propertyData['prodesLandArea']) {
+      propertyData['prodesLandArea'] = {};
+    }
+    propertyData['prodesLandArea']['affectedArea'] = 'Área desembargada';
+    propertyData['prodesLandArea']['burnAreas'] = parseFloat(
+      landAreaBURNEDAREASum[0]['area'],
+    );
+
+    if (!propertyData['prodesBurnAuthorization']) {
+      propertyData['prodesBurnAuthorization'] = {};
+    }
+    propertyData['prodesBurnAuthorization']['affectedArea'] = 'AQ';
+    propertyData['prodesBurnAuthorization']['burnAreas'] = parseFloat(
+      burnAuthorizationBURNEDAREASum[0]['area'],
+    );
+
+    if (!propertyData['foundFireSpot']) {
+      propertyData['foundFireSpot'] = !!burnedAreaSum;
+    }
+  }
+
+  return await propertyData;
 };
 
 getContextChartNdvi = async function (chartImages, startDate, endDate) {
-    const ndviContext = [];
-    if (chartImages && chartImages.length > 0) {
-        for (let i = 0; i < chartImages.length; ++i) {
-            if (i === 0) {
-                ndviContext.push({text: '', pageBreak: 'after'});
-                ndviContext.push({
-                    columns: [
-                        {
-                            text: `Os gráficos a seguir representam os NDVIs dos 5 (cinco) maiores polígonos de desmatamento do PRODES no imóvel no período de ${ startDate } a ${ endDate }.`,
-                            margin: [30, 20, 30, 5],
-                            style: 'body',
-                        },
-                    ],
-                });
-            } else {
-                ndviContext.push({text: '', pageBreak: 'after'});
-            }
-            ndviContext.push({
-                margin: [30, 0, 30, 0],
-                alignment: 'center',
-                columns: [chartImages[i].geoserverImageNdvi],
-            });
-            ndviContext.push({
-                margin: [30, 0, 30, 0],
-                alignment: 'center',
-                columns: [chartImages[i].myChart],
-            });
-        }
+  const ndviContext = [];
+  if (chartImages && chartImages.length > 0) {
+    for (let i = 0; i < chartImages.length; ++i) {
+      if (i === 0) {
+        ndviContext.push({ text: '', pageBreak: 'after' });
         ndviContext.push({
-            text: '',
-            pageBreak: 'after',
+          columns: [
+            {
+              text: `Os gráficos a seguir representam os NDVIs dos 5 (cinco) maiores polígonos de desmatamento do PRODES no imóvel no período de ${startDate} a ${endDate}.`,
+              margin: [30, 20, 30, 5],
+              style: 'body',
+            },
+          ],
         });
+      } else {
+        ndviContext.push({ text: '', pageBreak: 'after' });
+      }
+      ndviContext.push({
+        margin: [30, 0, 30, 0],
+        alignment: 'center',
+        columns: [chartImages[i].geoserverImageNdvi],
+      });
+      ndviContext.push({
+        margin: [30, 0, 30, 0],
+        alignment: 'center',
+        columns: [chartImages[i].myChart],
+      });
     }
-    return ndviContext;
+    ndviContext.push({
+      text: '',
+      pageBreak: 'after',
+    });
+  }
+  return ndviContext;
 };
 
 getDesflorestationHistoryAndChartNdviContext = async function (
-    docDefinitionContent,
-    reportData,
+  docDefinitionContent,
+  reportData,
 ) {
-    moment.locale('pt-br');
-    const startDate = moment(reportData.date[0]).format('L');
-    const endDate = moment(reportData.date[1]).format('L');
+  moment.locale('pt-br');
+  const startDate = moment(reportData.date[0]).format('L');
+  const endDate = moment(reportData.date[1]).format('L');
 
-    const content = [];
-    for (let j = 0; j < docDefinitionContent.length; j++) {
-        if (j === 73) {
-            reportData.desflorestationHistoryContext.forEach(
-                (desflorestationHistory) => {
-                    content.push(desflorestationHistory);
-                },
-            );
+  const content = [];
+  for (let j = 0; j < docDefinitionContent.length; j++) {
+    if (j === 73) {
+      reportData.desflorestationHistoryContext.forEach(
+        (desflorestationHistory) => {
+          content.push(desflorestationHistory);
+        },
+      );
 
-            const ndviContext = await getContextChartNdvi(
-                reportData['chartImages'],
-                startDate,
-                endDate,
-            );
-            ndviContext.forEach((ndvi) => {
-                content.push(ndvi);
-            });
-        }
-
-        content.push(docDefinitionContent[j]);
+      const ndviContext = await getContextChartNdvi(
+        reportData['chartImages'],
+        startDate,
+        endDate,
+      );
+      ndviContext.forEach((ndvi) => {
+        content.push(ndvi);
+      });
     }
-    return content;
+
+    content.push(docDefinitionContent[j]);
+  }
+  return content;
 };
 
 getContentForDeflorestionAlertsContext = async function (
-    docDefinitionContent,
-    deflorestationAlertsContext,
+  docDefinitionContent,
+  deflorestationAlertsContext,
 ) {
-    const content = [];
+  const content = [];
 
-    for (let j = 0; j < docDefinitionContent.length; j++) {
-        if (j === 65) {
-            deflorestationAlertsContext.forEach((deflorestationAlerts) => {
-                content.push(deflorestationAlerts);
-            });
-        }
-
-        content.push(docDefinitionContent[j]);
+  for (let j = 0; j < docDefinitionContent.length; j++) {
+    if (j === 65) {
+      deflorestationAlertsContext.forEach((deflorestationAlerts) => {
+        content.push(deflorestationAlerts);
+      });
     }
 
-    return content;
+    content.push(docDefinitionContent[j]);
+  }
+
+  return content;
 };
 
 getConclusion = async function (conclusionText) {
-    const conclusionParagraphs = conclusionText
-        ? conclusionText.split('\n')
-        : ['XXXXXXXXXXXXX.'];
-    const conclusion = [];
+  const conclusionParagraphs = conclusionText
+    ? conclusionText.split('\n')
+    : ['XXXXXXXXXXXXX.'];
+  const conclusion = [];
 
-    for (paragraph in conclusionParagraphs) {
-        const paragraphObj = {
-            text: conclusionParagraphs[paragraph],
-            margin: [30, 0, 30, 5],
-            style: 'bodyIndentFirst',
-        };
-        conclusion.push(paragraphObj);
-    }
-    return conclusion;
+  for (const paragraph in conclusionParagraphs) {
+    const paragraphObj = {
+      text: conclusionParagraphs[paragraph],
+      margin: [30, 0, 30, 5],
+      style: 'bodyIndentFirst',
+    };
+    conclusion.push(paragraphObj);
+  }
+  return conclusion;
 };
 
 getContentConclusion = async function (docDefinitionContent, conclusionText) {
-    // const content = [];
-    const conclusion = await getConclusion(conclusionText);
-    const conclusionIdx =
-        docDefinitionContent.findIndex(
-            ({text}) => text && text.includes('CONCLUSÃO'),
-        ) + 1;
+  // const content = [];
+  const conclusion = await getConclusion(conclusionText);
+  const conclusionIdx =
+    docDefinitionContent.findIndex(
+      ({ text }) => text && text.includes('CONCLUSÃO'),
+    ) + 1;
 
-    docDefinitionContent.splice(conclusionIdx, 0, conclusion);
-    // for (let j = 0; j < docDefinitionContent.length; j++) {
-    //   if (docDefinitionContent[j].text) {
-    //     if (docDefinitionContent[j]["text"].includes("CONCLUSÃO")) {
+  docDefinitionContent.splice(conclusionIdx, 0, conclusion);
+  // for (let j = 0; j < docDefinitionContent.length; j++) {
+  //   if (docDefinitionContent[j].text) {
+  //     if (docDefinitionContent[j]["text"].includes("CONCLUSÃO")) {
 
-    //     }
+  //     }
 
-    //   }
-    //   if (j === line) {
-    //     conclusion.forEach(conclusionParagraph => {
-    //       content.push(conclusionParagraph);
-    //     });
-    //   }
+  //   }
+  //   if (j === line) {
+  //     conclusion.forEach(conclusionParagraph => {
+  //       content.push(conclusionParagraph);
+  //     });
+  //   }
 
-    //   content.push(docDefinitionContent[j]);
-    // }
+  //   content.push(docDefinitionContent[j]);
+  // }
 
-    return docDefinitionContent;
+  return docDefinitionContent;
 };
 
 setDocDefinitions = async function (reportData, docDefinition) {
-    // refatorar essa parte
-    // pois não é mais necessário indicar em qual parágrafo será inserido a
-    // conclusão
-    docDefinition.content = await getContentConclusion(
-        docDefinition.content,
-        reportData.property.comments,
+  // refatorar essa parte
+  // pois não é mais necessário indicar em qual parágrafo será inserido a
+  // conclusão
+  docDefinition.content = await getContentConclusion(
+    docDefinition.content,
+    reportData.property.comments,
+  );
+  if (reportData.type === 'prodes') {
+    docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(
+      docDefinition.content,
+      reportData,
     );
-    if (reportData.type === 'prodes') {
-        docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(
-            docDefinition.content,
-            reportData,
-        );
-    }
+  }
 
-    if (reportData.type === 'deter') {
-        // docDefinition.content = await getContentConclusion(
-        //   docDefinition.content,
-        //   reportData.property.comments,
-        // );
-        docDefinition.content = await getContentForDeflorestionAlertsContext(
-            docDefinition.content,
-            reportData.deflorestationAlertsContext,
-        );
-    }
+  if (reportData.type === 'deter') {
+    // docDefinition.content = await getContentConclusion(
+    //   docDefinition.content,
+    //   reportData.property.comments,
+    // );
+    docDefinition.content = await getContentForDeflorestionAlertsContext(
+      docDefinition.content,
+      reportData.deflorestationAlertsContext,
+    );
+  }
 
-    // if (reportData.type === 'queimada') {
-    //   docDefinition.content = await getContentConclusion(
-    //     docDefinition.content,
-    //     reportData.property.comments,
-    //   );
-    // }
+  // if (reportData.type === 'queimada') {
+  //   docDefinition.content = await getContentConclusion(
+  //     docDefinition.content,
+  //     reportData.property.comments,
+  //   );
+  // }
 
-    return await docDefinition;
+  return await docDefinition;
 };
 
 setImages = async function (reportData) {
-    if (!reportData['images']) {
-        reportData.images = {};
-    }
-    reportData['images']['headerImage0'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/mpmt-small.png',
-                'base64',
-            ) }`,
-        ],
-        [320, 50],
-        [60, 25, 0, 20],
-        'left',
-    );
-    reportData['images']['headerImage1'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/logo-satelites-alerta-horizontal.png',
-                'base64',
-            ) }`,
-        ],
-        [320, 50],
-        [0, 25, 0, 0],
-        'left',
-    );
-    reportData['images']['headerImage2'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/inpe.png',
-                'base64',
-            ) }`,
-        ],
-        [320, 50],
-        [0, 25, 70, 20],
-        'right',
-    );
-    reportData['images']['chartImage1'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/satveg_grafico_fig2.png',
-                'base64',
-            ) }`,
-        ],
-        [480, 400],
-        [0, 3],
-        'center',
-    );
-    reportData['images']['chartImage2'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/satveg_grafico_fig3.png',
-                'base64',
-            ) }`,
-        ],
-        [480, 400],
-        [3, 3],
-        'center',
-    );
-    reportData['images']['chartImage3'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/satveg_grafico_fig4.png',
-                'base64',
-            ) }`,
-        ],
-        [480, 400],
-        [3, 3],
-        'center',
-    );
-    reportData['images']['partnerImage1'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/mpmt-small.png',
-                'base64',
-            ) }`,
-        ],
-        [180, 50],
-        [30, 0, 0, 0],
-        'left',
-    );
-    reportData['images']['partnerImage2'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/pjedaou-large.png',
-                'base64',
-            ) }`,
-        ],
-        [100, 50],
-        [30, 0, 0, 0],
-        'center',
-    );
-    reportData['images']['partnerImage3'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/caex.png',
-                'base64',
-            ) }`,
-        ],
-        [80, 50],
-        [30, 0, 25, 0],
-        'right',
-    );
-    reportData['images']['partnerImage4'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/inpe.png',
-                'base64',
-            ) }`,
-        ],
-        [130, 60],
-        [80, 30, 0, 0],
-        'left',
-    );
-    reportData['images']['partnerImage5'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/dpi.png',
-                'base64',
-            ) }`,
-        ],
-        [100, 60],
-        [95, 30, 0, 0],
-        'center',
-    );
-    reportData['images']['partnerImage6'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/terrama2-large.png',
-                'base64',
-            ) }`,
-        ],
-        [100, 60],
-        [0, 30, 30, 0],
-        'right',
-    );
-    reportData['images']['partnerImage7'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/mt.png',
-                'base64',
-            ) }`,
-        ],
-        [100, 60],
-        [80, 30, 0, 0],
-        'left',
-    );
-    reportData['images']['partnerImage8'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/sema.png',
-                'base64',
-            ) }`,
-        ],
-        [100, 60],
-        [130, 25, 0, 0],
-        'center',
-    );
-    reportData['images']['partnerImage9'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/logo-patria-amada-brasil-horizontal.png',
-                'base64',
-            ) }`,
-        ],
-        [100, 60],
-        [0, 30, 25, 0],
-        'center',
-    );
-    reportData['images']['partnerImage10'] = getImageObject(
-        [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/Brasao_BPMA.png',
-                'base64',
-            ) }`,
-        ],
-        [80, 60],
-        [20, 20, 20, 0],
-        'right',
-    );
+  if (!reportData['images']) {
+    reportData.images = {};
+  }
+  reportData['images']['headerImage0'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/mpmt-small.png',
+        'base64',
+      )}`,
+    ],
+    [320, 50],
+    [60, 25, 0, 20],
+    'left',
+  );
+  reportData['images']['headerImage1'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/logo-satelites-alerta-horizontal.png',
+        'base64',
+      )}`,
+    ],
+    [320, 50],
+    [0, 25, 0, 0],
+    'left',
+  );
+  reportData['images']['headerImage2'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/inpe.png',
+        'base64',
+      )}`,
+    ],
+    [320, 50],
+    [0, 25, 70, 20],
+    'right',
+  );
+  reportData['images']['chartImage1'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/satveg_grafico_fig2.png',
+        'base64',
+      )}`,
+    ],
+    [480, 400],
+    [0, 3],
+    'center',
+  );
+  reportData['images']['chartImage2'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/satveg_grafico_fig3.png',
+        'base64',
+      )}`,
+    ],
+    [480, 400],
+    [3, 3],
+    'center',
+  );
+  reportData['images']['chartImage3'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/satveg_grafico_fig4.png',
+        'base64',
+      )}`,
+    ],
+    [480, 400],
+    [3, 3],
+    'center',
+  );
+  reportData['images']['partnerImage1'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/mpmt-small.png',
+        'base64',
+      )}`,
+    ],
+    [180, 50],
+    [30, 0, 0, 0],
+    'left',
+  );
+  reportData['images']['partnerImage2'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/pjedaou-large.png',
+        'base64',
+      )}`,
+    ],
+    [100, 50],
+    [30, 0, 0, 0],
+    'center',
+  );
+  reportData['images']['partnerImage3'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/caex.png',
+        'base64',
+      )}`,
+    ],
+    [80, 50],
+    [30, 0, 25, 0],
+    'right',
+  );
+  reportData['images']['partnerImage4'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/inpe.png',
+        'base64',
+      )}`,
+    ],
+    [130, 60],
+    [80, 30, 0, 0],
+    'left',
+  );
+  reportData['images']['partnerImage5'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/dpi.png',
+        'base64',
+      )}`,
+    ],
+    [100, 60],
+    [95, 30, 0, 0],
+    'center',
+  );
+  reportData['images']['partnerImage6'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/terrama2-large.png',
+        'base64',
+      )}`,
+    ],
+    [100, 60],
+    [0, 30, 30, 0],
+    'right',
+  );
+  reportData['images']['partnerImage7'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/mt.png',
+        'base64',
+      )}`,
+    ],
+    [100, 60],
+    [80, 30, 0, 0],
+    'left',
+  );
+  reportData['images']['partnerImage8'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/sema.png',
+        'base64',
+      )}`,
+    ],
+    [100, 60],
+    [130, 25, 0, 0],
+    'center',
+  );
+  reportData['images']['partnerImage9'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/logo-patria-amada-brasil-horizontal.png',
+        'base64',
+      )}`,
+    ],
+    [100, 60],
+    [0, 30, 25, 0],
+    'center',
+  );
+  reportData['images']['partnerImage10'] = getImageObject(
+    [
+      `data:image/png;base64,${fs.readFileSync(
+        'assets/img/logos/Brasao_BPMA.png',
+        'base64',
+      )}`,
+    ],
+    [80, 60],
+    [20, 20, 20, 0],
+    'right',
+  );
 };
 
 async function setCharts(reportData) {
-    try {
-        if (!reportData.chartsImages) {
-            reportData.chartsImages = {};
-        }
-        const charts = reportData.chartsImages;
-        if (charts && reportData.type === 'queimada') {
-            charts['firstFiringChart'] = {
-                image: await FiringCharts.historyFireSpot(
-                    reportData.property.historyFireSpot,
-                ).toDataUrl(),
-                fit: [450, 450],
-                alignment: 'center',
-            };
-            charts['secondFiringChart'] = {
-                image: await FiringCharts.chartBase64(reportData.property.gid),
-                fit: [450, 200],
-                alignment: 'center',
-            };
-        }
-    } catch (e) {
-        msgError(__filename, 'setCharts', e);
+  try {
+    if (!reportData.chartsImages) {
+      reportData.chartsImages = {};
     }
+    const charts = reportData.chartsImages;
+    if (charts && reportData.type === 'queimada') {
+      charts['firstFiringChart'] = {
+        image: await FiringCharts.historyFireSpot(
+          reportData.property.historyFireSpot,
+        ).toDataUrl(),
+        fit: [450, 450],
+        alignment: 'center',
+      };
+      charts['secondFiringChart'] = {
+        image: await FiringCharts.chartBase64(reportData.property.gid),
+        fit: [450, 200],
+        alignment: 'center',
+      };
+    }
+  } catch (e) {
+    msgError(__filename, 'setCharts', e);
+  }
 }
 
 module.exports = FileReport = {
-    async saveBase64(document, code, type, path, docName) {
-        const binaryData = new Buffer(document, 'base64').toString('binary');
-        await fs.writeFile(path, binaryData, 'binary', (err) => {
-            if (err) {
-                throw err;
-            }
-            logger.error(`Arquivo salvo em .. ${ path }`);
+  async saveBase64(document, code, type, path, docName) {
+    const binaryData = new Buffer(document, 'base64').toString('binary');
+    await fs.writeFile(path, binaryData, 'binary', (err) => {
+      if (err) {
+        throw err;
+      }
+      logger.error(`Arquivo salvo em .. ${path}`);
+    });
+  },
+  async get(id) {
+    const result = id ? await Report.findByPk(id) : await Report.findAll();
+
+    try {
+      if (result.length && result.length > 0) {
+        result.forEach((report) => {
+          report.dataValues.base64 = fs.readFileSync(
+              `${report.path}/${report.name}`,
+              'base64',
+          );
         });
-    },
-    async get(id) {
-        const result = id ? await Report.findByPk(id) : await Report.findAll();
+      } else {
+        result.dataValues.base64 = fs.readFileSync(
+            `${result.path}/${result.name}`,
+            'base64',
+        );
+      }
 
-        try {
-            if (result.length && result.length > 0) {
-                result.forEach((report) => {
-                    report.dataValues.base64 = fs.readFileSync(
-                        `${ report.path }/${ report.name }`,
-                        'base64',
-                    );
-                });
-            } else {
-                result.dataValues.base64 = fs.readFileSync(
-                    `${ result.path }/${ result.name }`,
-                    'base64',
-                );
-            }
-
-            return Result.ok(result);
-        } catch (e) {
-            msgError(__filename, 'get', e);
-            return Result.err(e);
-        }
-    },
-    async newNumber(type) {
-        const sql = ` SELECT '${ type.trim() }' AS type,
+      return Result.ok(result);
+    } catch (e) {
+      msgError(__filename, 'get', e);
+      return Result.err(e);
+    }
+  },
+  async newNumber(type) {
+    const sql = ` SELECT '${type.trim()}' AS type,
                EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
                LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS newNumber,
                CONCAT(
@@ -1459,287 +1460,287 @@ module.exports = FileReport = {
                     EXTRACT(YEAR FROM CURRENT_TIMESTAMP)
                ) AS code
         FROM alertas.reports AS rep
-        WHERE rep.type = '${ type.trim() }'
+        WHERE rep.type = '${type.trim()}'
           AND rep.created_at BETWEEN
             CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
 
-        try {
-            const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
+    try {
+      const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
-            return Result.ok(result);
-        } catch (e) {
-            msgError(__filename, 'newNumber', e);
-            return Result.err(e);
-        }
-    },
-    async getReportsByCARCod(carCode) {
-        try {
-            const confWhere = {where: {carGid: carCode.trim()}};
+      return Result.ok(result);
+    } catch (e) {
+      msgError(__filename, 'newNumber', e);
+      return Result.err(e);
+    }
+  },
+  async getReportsByCARCod(carCode) {
+    try {
+      const confWhere = { where: { carGid: carCode.trim() } };
 
-            return Result.ok(await Report.findAll(confWhere));
-        } catch (e) {
-            msgError(__filename, 'getReportsByCARCod', e);
-            return Result.err(e);
-        }
-    },
-    async generatePdf(reportData) {
-        try {
-            const fonts = {
-                Roboto: {
-                    normal: 'fonts/Roboto-Regular.ttf',
-                    bold: 'fonts/Roboto-Medium.ttf',
-                    italics: 'fonts/Roboto-Italic.ttf',
-                    bolditalics: 'fonts/Roboto-MediumItalic.ttf',
-                },
-            };
+      return Result.ok(await Report.findAll(confWhere));
+    } catch (e) {
+      msgError(__filename, 'getReportsByCARCod', e);
+      return Result.err(e);
+    }
+  },
+  async generatePdf(reportData) {
+    try {
+      const fonts = {
+        Roboto: {
+          normal: 'fonts/Roboto-Regular.ttf',
+          bold: 'fonts/Roboto-Medium.ttf',
+          italics: 'fonts/Roboto-Italic.ttf',
+          bolditalics: 'fonts/Roboto-MediumItalic.ttf',
+        },
+      };
 
-            const pathDoc = `documentos/`;
+      const pathDoc = `documentos/`;
 
-            reportData['code'] = await this.newNumber(reportData.type.trim());
-            const docName = `${ reportData['code'].data[0].newnumber }_${ reportData[
-                'code'
-                ].data[0].year.toString() }_${ reportData['code'].data[0].type.trim() }.pdf`;
+      reportData['code'] = await this.newNumber(reportData.type.trim());
+      const docName = `${reportData['code'].data[0].newnumber}_${reportData[
+        'code'
+      ].data[0].year.toString()}_${reportData['code'].data[0].type.trim()}.pdf`;
 
-            const printer = new PdfPrinter(fonts);
-            const document = await this.getDocDefinitions(reportData);
-            const pdfDoc = printer.createPdfKitDocument(document.docDefinitions);
-            pdfDoc.pipe(await fs.createWriteStream(`${ pathDoc }/${ docName }`));
-            pdfDoc.end();
+      const printer = new PdfPrinter(fonts);
+      const document = await this.getDocDefinitions(reportData);
+      const pdfDoc = printer.createPdfKitDocument(document.docDefinitions);
+      pdfDoc.pipe(await fs.createWriteStream(`${pathDoc}/${docName}`));
+      pdfDoc.end();
 
-            const report = await this.saveReport(
-                docName,
-                reportData['code'].data[0].newnumber,
-                reportData,
-                pathDoc,
-            );
-            report['document'] = document; // await this.getDocDefinitions(reportData);
+      const report = await this.saveReport(
+        docName,
+        reportData['code'].data[0].newnumber,
+        reportData,
+        pathDoc,
+      );
+      report['document'] = document; // await this.getDocDefinitions(reportData);
 
-            return Result.ok(report);
-        } catch (e) {
-            msgError(__filename, 'generatePdf', e);
-            return Result.err(e);
-        }
-    },
-    async saveReport(docName, newNumber, reportData, path) {
-        try {
-            const report = new Report({
-                name: docName.trim(),
-                code: parseInt(newNumber),
-                carCode: reportData['property'].register
-                    ? reportData['property'].register.trim()
-                    : reportData['property'].federalregister,
-                carGid: reportData['property'].gid,
-                path: path.trim(),
-                type: reportData['type'].trim(),
-            });
+      return Result.ok(report);
+    } catch (e) {
+      msgError(__filename, 'generatePdf', e);
+      return Result.err(e);
+    }
+  },
+  async saveReport(docName, newNumber, reportData, path) {
+    try {
+      const report = new Report({
+        name: docName.trim(),
+        code: parseInt(newNumber),
+        carCode: reportData['property'].register
+          ? reportData['property'].register.trim()
+          : reportData['property'].federalregister,
+        carGid: reportData['property'].gid,
+        path: path.trim(),
+        type: reportData['type'].trim(),
+      });
 
-            return await Report.create(report.dataValues).then(
-                (report) => report.dataValues,
-            );
-        } catch (e) {
-            msgError(__filename, 'saveReport', e);
-            throw e;
-        }
-    },
-    async delete(id) {
-        try {
-            const report = await Report.findByPk(id);
-            await fs.unlink(
-                `${ report.dataValues.path }/${ report.dataValues.name }`,
-                (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    logger.error(
-                        `Arquivo ${ report.dataValues.path }/${ report.dataValues.name } excluído com sucesso!`,
-                    );
-                },
-            );
-            const countRowDeleted = await Report.destroy({where: {id}})
-                .then((rowDeleted) => rowDeleted)
-                .catch((err) => err);
-            const result = countRowDeleted
-                ? `Arquivo ${ report.dataValues.name }, id = ${ id }, excluído com Sucesso!`
-                : `Arquivo ${ report.dataValues.name }, id = ${ id }, não encontrado!`;
-            return Result.ok(result);
-        } catch (err) {
-            msgError(__filename, 'delete', e);
-            return Result.err(err);
-        }
-    },
-    async save(document) {
-        try {
-            const binaryData = new Buffer(document.base64, 'base64').toString(
-                'binary',
-            );
-            const code = await this.newNumber(document.type.trim());
-            const docName = `${ code.data[0].newnumber }_${ code.data[0].year }_${ code.data[0].type }.pdf`;
+      return await Report.create(report.dataValues).then(
+        (report) => report.dataValues,
+      );
+    } catch (e) {
+      msgError(__filename, 'saveReport', e);
+      throw e;
+    }
+  },
+  async delete(id) {
+    try {
+      const report = await Report.findByPk(id);
+      await fs.unlink(
+        `${report.dataValues.path}/${report.dataValues.name}`,
+        (err) => {
+          if (err) {
+            throw err;
+          }
+          logger.error(
+            `Arquivo ${report.dataValues.path}/${report.dataValues.name} excluído com sucesso!`,
+          );
+        },
+      );
+      const countRowDeleted = await Report.destroy({ where: { id } })
+        .then((rowDeleted) => rowDeleted)
+        .catch((err) => err);
+      const result = countRowDeleted
+        ? `Arquivo ${report.dataValues.name}, id = ${id}, excluído com Sucesso!`
+        : `Arquivo ${report.dataValues.name}, id = ${id}, não encontrado!`;
+      return Result.ok(result);
+    } catch (err) {
+      msgError(__filename, 'delete', e);
+      return Result.err(err);
+    }
+  },
+  async save(document) {
+    try {
+      const binaryData = new Buffer(document.base64, 'base64').toString(
+        'binary',
+      );
+      const code = await this.newNumber(document.type.trim());
+      const docName = `${code.data[0].newnumber}_${code.data[0].year}_${code.data[0].type}.pdf`;
 
-            await fs.writeFile(
-                `${ document.path }/${ docName }`,
-                binaryData,
-                'binary',
-                (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    logger.error(
-                        `Arquivo salvo em ..${ document.path.trim() }/${ docName.trim() }`,
-                    );
-                },
-            );
+      await fs.writeFile(
+        `${document.path}/${docName}`,
+        binaryData,
+        'binary',
+        (err) => {
+          if (err) {
+            throw err;
+          }
+          logger.error(
+            `Arquivo salvo em ..${document.path.trim()}/${docName.trim()}`,
+          );
+        },
+      );
 
-            const report = new Report({
-                name: docName.trim(),
-                code: parseInt(code.data[0].newnumber),
-                carCode: document['carCode'].trim(),
-                path: document['path'].trim(),
-                type: document['type'].trim(),
-            });
+      const report = new Report({
+        name: docName.trim(),
+        code: parseInt(code.data[0].newnumber),
+        carCode: document['carCode'].trim(),
+        path: document['path'].trim(),
+        type: document['type'].trim(),
+      });
 
-            const result = await Report.create(report.dataValues).then(
-                (report) => report.dataValues,
-            );
+      const result = await Report.create(report.dataValues).then(
+        (report) => report.dataValues,
+      );
 
-            return Result.ok(result);
-        } catch (e) {
-            msgError(__filename, 'save', e);
-            return Result.err(e);
-        }
-    },
-    async getReportCarData(query) {
-        const {carRegister, date, type} = query;
+      return Result.ok(result);
+    } catch (e) {
+      msgError(__filename, 'save', e);
+      return Result.err(e);
+    }
+  },
+  async getReportCarData(query) {
+    const { carRegister, date, type } = query;
 
-        let filter = JSON.parse(query.filter);
+    let filter = JSON.parse(query.filter);
 
-        let dateFrom = null;
-        let dateTo = null;
+    let dateFrom = null;
+    let dateTo = null;
 
-        if (date) {
-            dateFrom = date[0];
-            dateTo = date[1];
-        }
+    if (date) {
+      dateFrom = date[0];
+      dateTo = date[1];
+    }
 
-        try {
-            const views = await getViewsReport();
+    try {
+      const views = await getViewsReport();
 
-            const columnCarEstadualSemas = 'numero_do1';
-            const columnCarFederalSemas = 'numero_do2';
-            const columnAreaHaCar = 'area_ha_';
-            const columnCalculatedAreaHa = 'calculated_area_ha';
-            const columnExecutionDate = 'execution_date';
+      const columnCarEstadualSemas = 'numero_do1';
+      const columnCarFederalSemas = 'numero_do2';
+      const columnAreaHaCar = 'area_ha_';
+      const columnCalculatedAreaHa = 'calculated_area_ha';
+      const columnExecutionDate = 'execution_date';
 
-            const columnCarSemas = 'gid';
-            const columnCar = `de_car_validado_sema_gid`;
+      const columnCarSemas = 'gid';
+      const columnCar = `de_car_validado_sema_gid`;
 
-            const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
+      const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
 
-            let propertyData = await getCarData(
-                tableName,
-                views.STATIC.children.MUNICIPIOS.table_name,
-                columnCarEstadualSemas,
-                columnCarFederalSemas,
-                columnAreaHaCar,
-                carRegister,
-            );
+      let propertyData = await getCarData(
+        tableName,
+        views.STATIC.children.MUNICIPIOS.table_name,
+        columnCarEstadualSemas,
+        columnCarFederalSemas,
+        columnAreaHaCar,
+        carRegister,
+      );
 
-            const dateSql = ` and ${ columnExecutionDate }::date >= '${ dateFrom }' AND ${ columnExecutionDate }::date <= '${ dateTo }'`;
+      const dateSql = ` and ${columnExecutionDate}::date >= '${dateFrom}' AND ${columnExecutionDate}::date <= '${dateTo}'`;
 
-            if (filter) {
-                filter['date'] = date;
-            } else {
-                filter = {date: date};
-            }
-            await setDeterData(
-                type,
-                views,
-                propertyData,
-                dateSql,
-                columnCar,
-                columnCalculatedAreaHa,
-                columnExecutionDate,
-                carRegister,
-                filter,
-            );
-            await setProdesData(
-                type,
-                views,
-                propertyData,
-                dateSql,
-                columnCar,
-                columnCalculatedAreaHa,
-                columnExecutionDate,
-                carRegister,
-            );
-            await setBurnedData(
-                type,
-                views,
-                propertyData,
-                dateSql,
-                columnCar,
-                columnCarSemas,
-                columnExecutionDate,
-                carRegister,
-                filter,
-            );
-            // await setBurnedAreaData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnCarSemas, columnExecutionDate, carRegister);
+      if (filter) {
+        filter['date'] = date;
+      } else {
+        filter = { date: date };
+      }
+      await setDeterData(
+        type,
+        views,
+        propertyData,
+        dateSql,
+        columnCar,
+        columnCalculatedAreaHa,
+        columnExecutionDate,
+        carRegister,
+        filter,
+      );
+      await setProdesData(
+        type,
+        views,
+        propertyData,
+        dateSql,
+        columnCar,
+        columnCalculatedAreaHa,
+        columnExecutionDate,
+        carRegister,
+      );
+      await setBurnedData(
+        type,
+        views,
+        propertyData,
+        dateSql,
+        columnCar,
+        columnCarSemas,
+        columnExecutionDate,
+        carRegister,
+        filter,
+      );
+      // await setBurnedAreaData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnCarSemas, columnExecutionDate, carRegister);
 
-            return Result.ok(
-                await setReportFormat(
-                    propertyData,
-                    views,
-                    type,
-                    columnCar,
-                    columnCarSemas,
-                    date,
-                    filter,
-                ),
-            );
-        } catch (e) {
-            msgError(__filename, 'getReportCARData', e);
-            return Result.err(e);
-        }
-    },
-    async getChartOptions(labels, data) {
-        return {
-            type: 'line',
-            data: {
-                labels: labels,
-                lineColor: 'rgb(10,5,109)',
-                datasets: [
-                    {
-                        label: 'NDVI',
-                        data: data,
-                        backgroundColor: 'rgba(17,17,177,0)',
-                        borderColor: 'rgba(5,177,0,1)',
-                        showLine: true,
-                        borderWidth: 2,
-                        pointRadius: 0,
-                    },
-                ],
-            },
-            options: {
-                responsive: false,
-                legend: {
-                    display: false,
-                },
-            },
-        };
-    },
-    async getPointsAlerts(query) {
-        const {carRegister, date, type} = query;
-        const views = await ViewUtil.getGrouped();
+      return Result.ok(
+        await setReportFormat(
+          propertyData,
+          views,
+          type,
+          columnCar,
+          columnCarSemas,
+          date,
+          filter,
+        ),
+      );
+    } catch (e) {
+      msgError(__filename, 'getReportCARData', e);
+      return Result.err(e);
+    }
+  },
+  async getChartOptions(labels, data) {
+    return {
+      type: 'line',
+      data: {
+        labels: labels,
+        lineColor: 'rgb(10,5,109)',
+        datasets: [
+          {
+            label: 'NDVI',
+            data: data,
+            backgroundColor: 'rgba(17,17,177,0)',
+            borderColor: 'rgba(5,177,0,1)',
+            showLine: true,
+            borderWidth: 2,
+            pointRadius: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: false,
+        legend: {
+          display: false,
+        },
+      },
+    };
+  },
+  async getPointsAlerts(query) {
+    const { carRegister, date, type } = query;
+    const views = await ViewUtil.getGrouped();
 
-        const carColumn = 'gid';
-        const carColumnSemas = 'de_car_validado_sema_gid';
+    const carColumn = 'gid';
+    const carColumnSemas = 'de_car_validado_sema_gid';
 
-        const groupType = {
-            prodes: 'CAR_X_PRODES',
-            deter: 'CAR_X_DETER',
-            queimada: '',
-        };
+    const groupType = {
+      prodes: 'CAR_X_PRODES',
+      deter: 'CAR_X_DETER',
+      queimada: '',
+    };
 
-        const sql = `
+    const sql = `
         SELECT CAST(main_table.monitored_id AS integer),
                main_table.a_carprodes_1_id,
                ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
@@ -1747,117 +1748,117 @@ module.exports = FileReport = {
                extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
                main_table.execution_date
         FROM public.${
-            views[type.toUpperCase()].children[groupType[type]].table_name
+          views[type.toUpperCase()].children[groupType[type]].table_name
         } AS main_table
-        WHERE main_table.${ carColumnSemas } = '${ carRegister }'
-          AND main_table.execution_date BETWEEN '${ date[0] }' AND '${ date[1] }'
+        WHERE main_table.${carColumnSemas} = '${carRegister}'
+          AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
         ORDER BY main_table.calculated_area_ha DESC
         LIMIT 5
     `;
 
-        const sqlBbox = `
+    const sqlBbox = `
       SELECT
             substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
       FROM de_car_validado_sema AS car 
-      WHERE car.${ carColumn } = '${ carRegister }'
+      WHERE car.${carColumn} = '${carRegister}'
       GROUP BY gid`;
 
-        try {
-            const carBbox = await sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
-            const points = await sequelize.query(sql, QUERY_TYPES_SELECT);
+    try {
+      const carBbox = await sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
+      const points = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
-            let bbox = setBoundingBox(carBbox[0].bbox);
+      let bbox = setBoundingBox(carBbox[0].bbox);
 
-            const currentYear = new Date().getFullYear();
-            for (let index = 0; index < points.length; index++) {
-                points[index]['url'] = `${
-                    config.geoserver.geoserverBasePath
-                }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
-                    views.STATIC.children.CAR_VALIDADO.workspace
-                }:${ views.STATIC.children.CAR_VALIDADO.view },${
-                    views.STATIC.children.CAR_X_USOCON.workspace
-                }:${ views.STATIC.children.CAR_X_USOCON.view },${
-                    views[type.toUpperCase()].children[groupType[type]].workspace
-                }:${ views[type.toUpperCase()].children[groupType[type]].view }&styles=,${
-                    views.STATIC.children.CAR_VALIDADO.workspace
-                }:${ views.STATIC.children.CAR_VALIDADO.view }_yellow_style,${
-                    views.STATIC.children.CAR_VALIDADO.workspace
-                }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${
-                    views[type.toUpperCase()].children[groupType[type]].workspace
-                }:${
-                    views[type.toUpperCase()].children[groupType[type]].view
-                }_red_style&bbox=${ bbox }&width=256&height=256&time=${
-                    points[index].startyear
-                }/${ currentYear }&cql_filter=RED_BAND>0;rid='${ carRegister }';gid_car='${ carRegister }';${
-                    views[type.toUpperCase()].children[groupType[type]].table_name
-                }_id=${ points[index].a_carprodes_1_id }&srs=EPSG:${
-                    config.geoserver.defaultSRID
-                }&format=image/png`;
+      const currentYear = new Date().getFullYear();
+      for (let index = 0; index < points.length; index++) {
+        points[index]['url'] = `${
+            confGeoServer.baseHost
+        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
+            views.STATIC.children.CAR_VALIDADO.workspace
+        }:${views.STATIC.children.CAR_VALIDADO.view},${
+          views.STATIC.children.CAR_X_USOCON.workspace
+        }:${views.STATIC.children.CAR_X_USOCON.view},${
+          views[type.toUpperCase()].children[groupType[type]].workspace
+        }:${views[type.toUpperCase()].children[groupType[type]].view}&styles=,${
+          views.STATIC.children.CAR_VALIDADO.workspace
+        }:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${
+          views.STATIC.children.CAR_VALIDADO.workspace
+        }:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${
+          views[type.toUpperCase()].children[groupType[type]].workspace
+        }:${
+          views[type.toUpperCase()].children[groupType[type]].view
+        }_red_style&bbox=${bbox}&width=256&height=256&time=${
+          points[index].startyear
+        }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
+          views[type.toUpperCase()].children[groupType[type]].table_name
+        }_id=${points[index].a_carprodes_1_id}&srs=EPSG:${
+          confGeoServer.sridTerraMa
+        }&format=image/png`;
 
-                points[index]['options'] = await SatVegService.get(
-                    {long: points[index].long, lat: points[index].lat},
-                    'ndvi',
-                    3,
-                    'wav',
-                    '',
-                    'aqua',
-                ).then(async (resp) => {
-                    const labels = resp['listaDatas'];
-                    const data = resp['listaSerie'];
-                    return this.getChartOptions(labels, data);
-                });
-            }
+        points[index]['options'] = await SatVegService.get(
+          { long: points[index].long, lat: points[index].lat },
+          'ndvi',
+          3,
+          'wav',
+          '',
+          'aqua',
+        ).then(async (resp) => {
+          const labels = resp['listaDatas'];
+          const data = resp['listaSerie'];
+          return this.getChartOptions(labels, data);
+        });
+      }
 
-            return Result.ok(points);
-        } catch (e) {
-            msgError(__filename, 'getPointAlerts', e);
-            throw new Error(e);
-        }
-    },
-    async getDocDefinitions(reportData) {
-        try {
-            const code = reportData['code']
-                ? reportData['code'].data[0].code
-                : `XXXXX/${ reportData['currentYear'] }`;
-            const title =
-                reportData['type'] === 'deter'
-                    ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${ code }`
-                    : reportData['type'] === 'prodes'
-                        ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${ code }`
-                        : reportData['type'] === 'queimada'
-                            ? `RELATÓRIO DE FOCOS DE CALOR Nº ${ code }`
-                            : `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${ reportData['currentYear'] }`;
+      return Result.ok(points);
+    } catch (e) {
+      msgError(__filename, 'getPointAlerts', e);
+      throw new Error(e);
+    }
+  },
+  async getDocDefinitions(reportData) {
+    try {
+      const code = reportData['code']
+        ? reportData['code'].data[0].code
+        : `XXXXX/${reportData['currentYear']}`;
+      const title =
+        reportData['type'] === 'deter'
+          ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code}`
+          : reportData['type'] === 'prodes'
+          ? `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${code}`
+          : reportData['type'] === 'queimada'
+          ? `RELATÓRIO DE FOCOS DE CALOR Nº ${code}`
+          : `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData['currentYear']}`;
 
-            await setImages(reportData);
-            await setCharts(reportData);
+      await setImages(reportData);
+      await setCharts(reportData);
 
-            const headerDocument = [
-                reportData.images.headerImage0,
-                reportData.images.headerImage1,
-                reportData.images.headerImage2,
-            ];
+      const headerDocument = [
+        reportData.images.headerImage0,
+        reportData.images.headerImage1,
+        reportData.images.headerImage2,
+      ];
 
-            const docDefinitions = DocDefinitions[reportData['type']](
-                headerDocument,
-                reportData,
-                title,
-            );
+      const docDefinitions = DocDefinitions[reportData['type']](
+        headerDocument,
+        reportData,
+        title,
+      );
 
-            return {
-                docDefinitions: await setDocDefinitions(reportData, docDefinitions),
-                headerDocument: headerDocument,
-            };
-        } catch (e) {
-            msgError(__filename, 'getDocDefinitions', e);
-            logger.error(e);
-        }
-    },
-    async createPdf(reportData) {
-        try {
-            return Result.ok(await this.getDocDefinitions(reportData));
-        } catch (e) {
-            msgError(__filename, 'createPdf', e);
-            logger.error(e);
-        }
-    },
+      return {
+        docDefinitions: await setDocDefinitions(reportData, docDefinitions),
+        headerDocument: headerDocument,
+      };
+    } catch (e) {
+      msgError(__filename, 'getDocDefinitions', e);
+      logger.error(e);
+    }
+  },
+  async createPdf(reportData) {
+    try {
+      return Result.ok(await this.getDocDefinitions(reportData));
+    } catch (e) {
+      msgError(__filename, 'createPdf', e);
+      logger.error(e);
+    }
+  },
 };

@@ -10,7 +10,6 @@ const logDir = 'logs';
 // Create the log directory if it does not exist
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, {recursive: true});
-  fs.mkdirSync
 }
 
 const dailyRotateFileTransport = new transports.DailyRotateFile({

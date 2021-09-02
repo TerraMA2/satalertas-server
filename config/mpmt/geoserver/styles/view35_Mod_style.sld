@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<StyledLayerDescriptor xmlns:ogc="http://www.opengis.net/ogc"
+<StyledLayerDescriptor version="1.1.0" xmlns="http://www.opengis.net/sld"
+                       xmlns:ogc="http://www.opengis.net/ogc"
                        xmlns:se="http://www.opengis.net/se"
                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       version="1.1.0"
-                       xmlns="http://www.opengis.net/sld"
                        xsi:schemaLocation="http://www.opengis.net/sld">
     <NamedLayer>
         <se:Name>Layer</se:Name>
@@ -11,11 +10,11 @@
             <se:Name>Style</se:Name>
             <se:FeatureTypeStyle version="1.1.0">
                 <se:Rule>
-                    <se:Name>CAR</se:Name>
+                    <se:Name>CAR x PRODES</se:Name>
                     <se:PolygonSymbolizer version="1.1.0">
                         <se:Fill>
                             <se:SvgParameter name="fill">
-                                <ogc:Literal>#249132</ogc:Literal>
+                                <ogc:Literal>#30A844</ogc:Literal>
                             </se:SvgParameter>
                             <se:SvgParameter name="fill-opacity">
                                 <ogc:Literal>0.0</ogc:Literal>
@@ -23,10 +22,10 @@
                         </se:Fill>
                         <se:Stroke>
                             <se:SvgParameter name="stroke">
-                                <ogc:Literal>#E5E500</ogc:Literal>
+                                <ogc:Literal>#fc0303</ogc:Literal>
                             </se:SvgParameter>
                             <se:SvgParameter name="stroke-opacity">
-                                <ogc:Literal>1</ogc:Literal>
+                                <ogc:Literal>0.741176</ogc:Literal>
                             </se:SvgParameter>
                             <se:SvgParameter name="stroke-width">
                                 <ogc:Literal>3</ogc:Literal>

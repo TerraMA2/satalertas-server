@@ -8,7 +8,9 @@
     "port": 5432,
     "define": {
       "schema": "alertas"
-    }
+    },
+    "seederStorage": "sequelize",
+    "seederStorageTableName": "SequelizeSeed"
   },
   "project": "mpmt",
   "basePath": "",

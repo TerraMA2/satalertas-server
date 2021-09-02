@@ -1,5 +1,6 @@
 const config = require(__dirname + '/../../../config/config.json');
 const VIEWS = require('../views/view');
+const { msgError } = require('../../../utils/messageError');
 
 function layerData(layersList, options = undefined) {
   const {
@@ -38,18 +39,23 @@ function setLegend(title, workspace, layer) {
 
 // function setFilter(groupViews, data_view) {
 function setFilter(group, layer) {
-  let filter = {};
-  const view_default = `${group.workspace}:${layer.viewName}`;
-  if (VIEWS[layer.codGroup] && VIEWS[layer.codGroup].filter) {
-    filter = VIEWS[layer.codGroup].filter(
-      view_default,
-      `${config.project}_${config.geoserver.workspace}`,
-      layer.cod,
-      group[layer.codGroup].tableOwner,
-      layer.is_primary,
-    );
+  try {
+    let filter = {};
+    const view_default = `${group.workspace}:${layer.viewName}`;
+    if (VIEWS[layer.groupCode] && VIEWS[layer.groupCode].filter) {
+      filter = VIEWS[layer.groupCode].filter(
+        view_default,
+        `${config.project}_${config.geoserver.workspace}`,
+        layer.cod,
+        group[layer.groupCode].tableOwner,
+        layer.is_primary
+      );
+    }
+    return filter;
+  } catch (e) {
+    throw new Error(msgError(__filename, 'setFilter', e))
+
   }
-  return filter;
 }
 
 module.exports = {

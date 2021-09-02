@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<StyledLayerDescriptor xmlns:ogc="http://www.opengis.net/ogc" xmlns:se="http://www.opengis.net/se"
-                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       version="1.1.0"
+<StyledLayerDescriptor version="1.1.0"
                        xmlns="http://www.opengis.net/sld"
-                       xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd">
+                       xmlns:ogc="http://www.opengis.net/ogc"
+                       xmlns:se="http://www.opengis.net/se"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:schemaLocation="http://www.opengis.net/sld">
     <NamedLayer>
         <se:Name>Layer</se:Name>
         <UserStyle>
