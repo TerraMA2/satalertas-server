@@ -3,25 +3,64 @@ const {
   View,
   RelGroupView,
   RegisteredView,
+  DataSetFormat,
   Group,
-  sequelize,
+  DataSet,
 } = require('../models');
+const Tools = require('../utils/tool');
 const { msgError } = require('../utils/messageError');
-const { Op, QueryTypes } = Sequelize;
+const { Op } = Sequelize;
 const {
   layerData,
   setLegend,
   setFilter,
 } = require('../utils/helpers/geoserver/assemblyLayer');
 
+const viewTableName = {
+  model: DataSet,
+  as: 'dataSet',
+  attributes: ['id'],
+  include: {
+    model: DataSetFormat,
+    as: 'dataSetFormat',
+    where: { key: { [Op.eq]: 'table_name' } },
+    attributes: [['value', 'tableName']],
+  },
+};
+
+function setTableName(data) {
+  try {
+    const {
+      dataSet: {
+        dataSetFormat: [
+          {
+            dataValues: { tableName },
+          },
+        ],
+      },
+    } = data;
+    if (tableName) {
+      data.dataValues['tableName'] = tableName;
+      delete data.dataValues['dataSet'];
+    }
+  } catch (e) {
+    throw new Error(msgError(__filename, 'setTableName', e));
+  }
+}
+
 async function getModelFields(model) {
   return await model.describe();
 }
 
 function removeNullProperties(data) {
-  const filteredData = Object.entries(data).filter(([_, val]) => val);
-  return Object.fromEntries(filteredData);
+  try {
+    const filteredData = Object.entries(data).filter(([_, val]) => val);
+    return Object.fromEntries(filteredData);
+  } catch (e) {
+    throw new Error(msgError(__filename, 'removeNullProperties', e));
+  }
 }
+
 // use at routes?
 async function getAll() {
   try {
@@ -43,7 +82,7 @@ async function getByGroupId(groupId) {
   try {
     const viewsGroup = [];
     if (groupId) {
-      const { code: groupCode } = await Group.findByPk(groupId, { raw: true })
+      const { code: groupCode } = await Group.findByPk(groupId, { raw: true });
       const where = {
         where: {
           groupId,
@@ -58,34 +97,29 @@ async function getByGroupId(groupId) {
       });
       for (const groupView of groupViews) {
         const { viewId } = groupView;
-        let layer = {groupCode};
-        await View.findByPk(viewId, {
+        let layer = {
+          groupCode,
+          tools: Tools
+        };
+        const options = {
           attributes: { exclude: ['id', 'project_id', 'data_series_id'] },
-          raw: true,
-        }).then((response) => {
-          layer.code = response.name.split(' ').join('_').toUpperCase()
-          const filteredResponse = removeNullProperties(response);
+          include: [viewTableName],
+        };
+
+        await View.findByPk(viewId, options).then((response) => {
+          setTableName(response);
+          const filteredResponse = removeNullProperties(response.toJSON());
           Object.assign(layer, filteredResponse);
         });
+
         const filteredGroupView = removeNullProperties(groupView);
         Object.assign(layer, filteredGroupView);
         if (viewId) {
-          const sqlTableName = `SELECT dsf.value
-          FROM terrama2.views AS vw
-          INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
-          INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
-          WHERE vw.id = $viewId AND dsf.key = 'table_name'`;
-          await sequelize
-            .query(sqlTableName, {
-              bind: { viewId },
-              type: QueryTypes.SELECT,
-            })
-            .then((response) => (layer.tableName = response[0].value));
           const viewName = `view${viewId}`;
           layer.viewName = viewName;
           const registeredData = await RegisteredView.findOne({
             where: {
-              id: viewId,
+              view_id: viewId,
             },
             raw: true,
           });
@@ -96,11 +130,18 @@ async function getByGroupId(groupId) {
             layerDataOptions,
           );
           layer.legend = setLegend(layer.name, workspace, viewName);
-          const groupData = await Group.findByPk(groupId, { raw: true });
-          const layerFilterOptions = { codGroup: groupData.code, viewName };
-          layer.filter = setFilter({ workspace }, layerFilterOptions);
-          if(!layer['shortName']) {
+          if (!layer['shortName']) {
             layer.shortName = layer.name;
+          }
+          if (layer.isPrimary) {
+            const layerFilterOptions = { groupCode, viewName };
+            const tableOwner = layer.tableName;
+            layer.tableOwner = tableOwner;
+            const gp = {
+              workspace,
+              tableOwner,
+            };
+            layer.filter = setFilter(gp, layerFilterOptions);
           }
         }
         viewsGroup.push(layer);
@@ -120,7 +161,7 @@ async function getByGroupId(groupId) {
         }
       });
     }
-    return viewsGroup.filter(child => !child.isSublayer);
+    return viewsGroup.filter((child) => !child.isSublayer);
   } catch (e) {
     throw new Error(msgError('group-view.service', 'getByGroupId', e));
   }
@@ -139,9 +180,15 @@ async function getAvailableLayers(groupId) {
       where: {
         id: { [Op.notIn]: viewIds },
       },
+      include: [viewTableName],
     };
-
-    return await View.findAll(option);
+    const allViews = await View.findAll(option).then((views) => {
+      views.forEach((vw) => {
+        setTableName(vw);
+      });
+      return views.map((view) => view.toJSON());
+    });
+    return await allViews;
   } catch (e) {
     throw new Error(msgError('group-view.service', 'getAvailableLayers', e));
   }
@@ -163,7 +210,7 @@ async function add(newGroupView) {
 
 async function update(groupViewModify) {
   try {
-    const { layers, groupId } = groupViewModify;
+    const { layers, groupId, groupOwner } = groupViewModify;
     if (groupId) {
       await RelGroupView.destroy({ where: { groupId } }).then(async () => {
         const newLayers = layers.map((layer) => ({
@@ -195,7 +242,7 @@ async function updateAdvanced(groupViewModify) {
     });
     return await getByGroupId(groupId);
   } catch (e) {
-    throw new Error(msgError('group-view.service', 'updateAdvanced', e));
+    throw new Error(msgError(__filename, 'updateAdvanced', e));
   }
 }
 

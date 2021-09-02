@@ -27,17 +27,17 @@ exports.get = (req, res, next) => {
                 const workspace = registeredView.dataValues.workspace
                 const layerId = `${workspace}:view${viewId}`
                 let cod = ''
-                let codgroup = ''
+                let groupCode = ''
 
                 if (sourceType === LayerType.ANALYSIS) {
                     cod = viewName.replace(/ /g, '_').toUpperCase()
-                    codgroup = cod.substr(cod.lastIndexOf("_")+1)
+                    groupCode = cod.substr(cod.lastIndexOf("_")+1)
                 }
                 if (sourceType === LayerType.STATIC) {
-                    codgroup = 'STATIC';
+                    groupCode = 'STATIC';
                 }
                 if (sourceType === LayerType.DYNAMIC) {
-                    codgroup = 'DYNAMIC';
+                    groupCode = 'DYNAMIC';
                 }
 
                 const layerData = {
@@ -56,7 +56,7 @@ exports.get = (req, res, next) => {
 
                 return {
                     cod: `${cod}`,
-                    codgroup: `${codgroup}`,
+                    groupCode: `${groupCode}`,
                     label: `${viewName}`,
                     shortLabel: `${viewName}`,
                     value: `${viewId}`,

@@ -281,7 +281,6 @@ function historyFireSpot(chartData) {
   newChart.setWidth(450);
   newChart.setHeight(150);
   newChart.setConfig(config).setDevicePixelRatio(8.0);
-  // console.log('>>>>: ', newChart.getUrl());
   return newChart;
 }
 

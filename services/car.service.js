@@ -24,13 +24,13 @@ module.exports = carService = {
             sqlWhere: '',
             secondaryTables: '',
             sqlHaving: '',
-            order: layer.codgroup !== 'BURNED' && (specificParameters.sortField && specificParameters.sortOrder) ? ` ORDER BY ${specificParameters.sortField} ${specificParameters.sortOrder == '1'?'ASC':'DESC'} ` : ``,
+            order: layer.groupCode !== 'BURNED' && (specificParameters.sortField && specificParameters.sortOrder) ? ` ORDER BY ${specificParameters.sortField} ${specificParameters.sortOrder == '1'?'ASC':'DESC'} ` : ``,
             limit: specificParameters.limit ? ` LIMIT ${specificParameters.limit}` : '',
             offset: specificParameters.offset ? ` OFFSET ${specificParameters.offset}` : ''
           };
 
       const sqlSelectCount = specificParameters.count ? `,COUNT(1) AS ${specificParameters.countAlias}` : '';
-      const sqlSelectSum = specificParameters.sum && layer.codgroup !== 'BURNED' ? `,SUM(${specificParameters.tableAlias}.${specificParameters.sumField}) AS ${specificParameters.sumAlias}` : '';
+      const sqlSelectSum = specificParameters.sum && layer.groupCode !== 'BURNED' ? `,SUM(${specificParameters.tableAlias}.${specificParameters.sumField}) AS ${specificParameters.sumAlias}` : '';
       const sqlSelect =
         ` SELECT 
                 property.gid AS gid,
@@ -48,7 +48,7 @@ module.exports = carService = {
 
       const sqlFrom = ` FROM public.${table.name} AS ${specificParameters.tableAlias}`;
 
-      const sqlGroupBy = layer && layer.codgroup && layer.codgroup === 'CAR' ? '' : ` GROUP BY property.gid `;
+      const sqlGroupBy = layer && layer.groupCode && layer.groupCode === 'CAR' ? '' : ` GROUP BY property.gid `;
 
       const column = layer.isPrimary ? 'de_car_validado_sema_gid' : 'a_carfocos_20_de_car_validado_sema_gid';
 

@@ -7,16 +7,16 @@ function addAND(sqlWhere) {
         return sqlWhere.trim() ? `AND ` : '';
 };
 function isDeter(analyze, view) {
-        return ((analyze.type === 'deter') && (view.codgroup === 'DETER'));
+        return ((analyze.type === 'deter') && (view.groupCode === 'DETER'));
 };
 function isDeforestation(analyze, view) {
-        return ((analyze.type && analyze.type === 'deforestation') && (view.codgroup === 'PRODES'));
+        return ((analyze.type && analyze.type === 'deforestation') && (view.groupCode === 'PRODES'));
 };
 function isBurned(analyze, view) {
-        return ((analyze.type && analyze.type === 'burned') && (view.codgroup === 'BURNED'));
+        return ((analyze.type && analyze.type === 'burned') && (view.groupCode === 'BURNED'));
 };
 function isBurnedArea(analyze, view) {
-        return ((analyze.type && analyze.type === 'burned_area') && (view.codgroup === 'BURNED_AREA'));
+        return ((analyze.type && analyze.type === 'burned_area') && (view.groupCode === 'BURNED_AREA'));
 };
 function isCarArea(type){
         return (type === 'car_area');
@@ -232,7 +232,7 @@ function setClassSearch(classSearch, sql, aliasTablePrimary, view){
       if (analyze.valueOption && analyze.type) {
         const setClass = {
           deter() {
-            if (view.codgroup === 'DETER') {
+            if (view.groupCode === 'DETER') {
               const columnName = view.isPrimary ? `dd_deter_inpe_classname` : `${view.tableOwner}_dd_deter_inpe_classname`;
               sql.sqlWhere += ` ${addAND(sql.sqlWhere)} ${aliasTablePrimary}.${columnName} like '%${analyze.valueOption.name}%' `
             }
@@ -352,7 +352,7 @@ const filterUtils = {
       if (filter) {
         const filtered = filter.specificSearch && filter.specificSearch.isChecked ? 'specificSearch' : 'others';
 
-        const cod = (view.codgroup === 'BURNED') ? 'focos' : 'others';
+        const cod = (view.groupCode === 'BURNED') ? 'focos' : 'others';
         await setFilter[filtered](conn, sql, filter, columns, cod, table, view);
       }
     }
@@ -391,7 +391,7 @@ const filterUtils = {
       }
     };
 
-    if (view.codgroup && view.codgroup === 'BURNED') {
+    if (view.groupCode && view.groupCode === 'BURNED') {
       if (view.isAnalysis && view.isPrimary) {
         column1 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do1 `;
         column5 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do2 `;
@@ -405,7 +405,7 @@ const filterUtils = {
         column3 = '1';
         column4 = ` ${aliasTablePrimary}.${tableOwner}_dd_focos_inpe_bioma `;
       }
-    } else if (view.codgroup && view.codgroup === 'DETER') {
+    } else if (view.groupCode && view.groupCode === 'DETER') {
       if (view.isAnalysis && view.isPrimary) {
         column1 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do1 `;
         column5 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do2 `;
@@ -417,7 +417,7 @@ const filterUtils = {
       }
 
       column3 = view.activearea ? ` ${aliasTablePrimary}.calculated_area_ha ` : '1';
-    } else if (view.codgroup && view.codgroup === 'PRODES') {
+    } else if (view.groupCode && view.groupCode === 'PRODES') {
       if (view.isAnalysis && view.isPrimary) {
         column1 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do1 `;
         column5 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do2 `;
@@ -430,7 +430,7 @@ const filterUtils = {
 
       column3 = view.activearea ? ` ${aliasTablePrimary}.calculated_area_ha ` : '1';
 
-    } else if (view.codgroup && view.codgroup === 'BURNED_AREA') {
+    } else if (view.groupCode && view.groupCode === 'BURNED_AREA') {
       if (view.isAnalysis && view.isPrimary) {
         column1 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do1 `;
         column2 = ` ${aliasTablePrimary}.de_car_validado_sema_numero_do1 `;

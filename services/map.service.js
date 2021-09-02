@@ -112,8 +112,8 @@ getFilter = async function (params) {
   return filter;
 }
 
-setInfoColumns = async function (data, codGroup) {
-  const infoColumns = await InfoColumnsService.getInfoColumns(codGroup);
+setInfoColumns = async function (data, groupCode) {
+  const infoColumns = await InfoColumnsService.getInfoColumns(groupCode);
   const dataValue = data[0];
   const changedRow = [];
   for ( const e of Object.entries(dataValue)) {
@@ -230,12 +230,12 @@ module.exports = mapService = {
       filter.sqlWhere = filter.sqlWhere ? `${filter.sqlWhere} AND ${table.alias}.${table.columnGid} = ${params.carGid} ` : `WHERE ${table.alias}.${table.columnGid} = ${params.carGid} `;
       filter.whereCar = `WHERE c.gid = ${params.carGid}`
 
-      const type = params.codGroup === 'STATIC' ? 'popupInfoCar' : 'popupInfo';
+      const type = params.groupCode === 'STATIC' ? 'popupInfoCar' : 'popupInfo';
 
       const sql = await getSql[type](filter)
 
       const data = await sequelize.query(sql, QUERY_TYPES_SELECT)
-      return setInfoColumns(data, params.codGroup);
+      return setInfoColumns(data, params.groupCode);
     } catch (e) {
       const msgErr = `In unit map.service, method getAnalysisData.BURNED:${e}`;
       logger.error(msgErr);

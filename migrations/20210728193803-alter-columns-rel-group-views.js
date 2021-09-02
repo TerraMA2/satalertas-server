@@ -10,15 +10,23 @@ module.exports = {
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
     return Promise.all([
-      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'view_id', {
-        type: Sequelize.INTEGER,
-        onDelete: 'SET NULL'
-      }),
-      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'group_id', {
-        type: Sequelize.INTEGER,
-        onDelete: 'CASCADE'
-      })
-    ])
+      queryInterface.changeColumn(
+        { schema: 'terrama2', tableName: 'rel_group_views' },
+        'view_id',
+        {
+          type: Sequelize.INTEGER,
+          onDelete: 'SET NULL',
+        },
+      ),
+      queryInterface.changeColumn(
+        { schema: 'terrama2', tableName: 'rel_group_views' },
+        'group_id',
+        {
+          type: Sequelize.INTEGER,
+          onDelete: 'CASCADE',
+        },
+      ),
+    ]);
   },
 
   down: (queryInterface, Sequelize) => {
@@ -30,14 +38,22 @@ module.exports = {
       return queryInterface.dropTable('users');
     */
     return Promise.all([
-      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'view_id', {
-        type: Sequelize.INTEGER,
-        onDelete: 'NO ACTION'
-      }),
-      queryInterface.changeColumn({schema: 'terrama2', tableName: 'rel_group_views'}, 'group_id', {
-        type: Sequelize.INTEGER,
-        onDelete: 'NO ACTION'
-      })
-    ])
+      queryInterface.changeColumn(
+        { schema: 'terrama2', tableName: 'rel_group_views' },
+        'view_id',
+        {
+          type: Sequelize.INTEGER,
+          onDelete: 'NO ACTION',
+        },
+      ),
+      queryInterface.changeColumn(
+        { schema: 'terrama2', tableName: 'rel_group_views' },
+        'group_id',
+        {
+          type: Sequelize.INTEGER,
+          onDelete: 'NO ACTION',
+        },
+      ),
+    ]);
   },
 };
