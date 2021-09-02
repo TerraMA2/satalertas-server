@@ -88,6 +88,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         comment: 'Charts',
       },
+      code: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `${this.name.split(' ').join('_').toUpperCase()}`
+        },
+        set() {
+          throw new Error("[View Model] Do not try to set the 'code' value!")
+        }
+      }
     },
     {
       sequelize,
@@ -95,7 +104,6 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'views',
       modelName: 'View',
       underscored: true,
-      // underscoredAll: true,
       timestamps: false,
     },
   );
