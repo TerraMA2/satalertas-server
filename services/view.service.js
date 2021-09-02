@@ -164,11 +164,11 @@ setViews = function (groupViews, data_view) {
 orderView = async function (groupViews) {
   const layers = [
     'DETER',
-    // 'PRODES',
-    // 'BURNED',
-    // 'BURNED_AREA',
-    // 'STATIC',
-    // 'DYNAMIC',
+    'PRODES',
+    'BURNED',
+    'BURNED_AREA',
+    'STATIC',
+    'DYNAMIC',
   ];
   
   let child = [];
