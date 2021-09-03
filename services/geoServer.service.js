@@ -6,7 +6,7 @@ const fs = require("fs");
 
 module.exports = geoServerService = {
     async configGeoserver() {
-        const geoserverApi = config.geoserver.geoserverApi;
+        const api = config.geoserver.api;
         const workspacesConfig = geoserverConfig.workspaces;
         const dataStoresConfig = geoserverConfig.dataStores;
         const stylesConfig = geoserverConfig.styles;
@@ -21,15 +21,21 @@ module.exports = geoServerService = {
         const workspacesResponse = await axios({
             url: "/workspace/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: workspacesConfig
+            baseURL: api,
+            data: workspacesConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
         const dataStoresResponse = await axios({
             url: "/dataStore/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: dataStoresConfig
+            baseURL: api,
+            data: dataStoresConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
         const stylesFolder = path.resolve(__dirname, `../config/${ config.project }/geoserver`, 'styles');
@@ -37,7 +43,7 @@ module.exports = geoServerService = {
         const stylesResponse = await axios({
             url: "/style/uploadAll",
             method: 'post',
-            baseURL: geoserverApi,
+            baseURL: api,
             data: stylesConfig.map(style => {
                 const filename = style.data.style.filename;
                 const sldPath = `${ stylesFolder }/${ filename }`;
@@ -46,49 +52,70 @@ module.exports = geoServerService = {
                 style.sldFile = Buffer.from(fs.readFileSync(sldPath, {encoding: 'utf8'})).toString('base64');
                 style.sldFileSize = fileSizeInBytes;
                 return style;
-            })
+            }),
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
-        const layerGroupsResponse = await axios({
+        const layerGroupsResponse = axios({
             url: "/layerGroup/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: layerGroupsConfig
+            baseURL: api,
+            data: layerGroupsConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
-        const landsatsResponse = await axios({
+        const landsatsResponse = axios({
             url: "/layer/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: landsatConfig
+            baseURL: api,
+            data: landsatConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
-        const sentinelsResponse = await axios({
+        const sentinelsResponse = axios({
             url: "/layer/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: sentinelConfig
+            baseURL: api,
+            data: sentinelConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
-        const spotsResponse = await axios({
+        const spotsResponse = axios({
             url: "/layer/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: spotConfig
+            baseURL: api,
+            data: spotConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
-        const planetsResponse = await axios({
+        const planetsResponse = axios({
             url: "/layer/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: planetConfig
+            baseURL: api,
+            data: planetConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
-        const featureTypesResponse = await axios({
+        const featureTypesResponse = axios({
             url: "/featuretype/createAll",
             method: 'post',
-            baseURL: geoserverApi,
-            data: featureTypesConfig
+            baseURL: api,
+            data: featureTypesConfig,
+            params: {
+                geoserverBasePath: config.geoserver.basePath
+            }
         }).then(res => res.data);
 
         return Promise.all([
@@ -105,7 +132,7 @@ module.exports = geoServerService = {
     },
 
     async get({type, workspaceName = null, dataStoreName = '', name = ''}) {
-        const url = `${ config.geoserver.geoserverApi }${ type }`;
+        const url = `${ config.geoserver.api }${ type }`;
         const options = {};
         let params = {};
         switch (type) {
@@ -153,7 +180,7 @@ module.exports = geoServerService = {
     },
 
     getGeoserverURL(layers, bbox, time, cqlFilter, styles) {
-        let url = `${ config.geoserver.geoserverBasePath }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ layers }&bbox=${ bbox }&width=400&height=400&time=${ time }&cql_filter=${ cqlFilter }&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
+        let url = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ layers }&bbox=${ bbox }&width=400&height=400&time=${ time }&cql_filter=${ cqlFilter }&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
         if (styles) {
             url += `&styles=${ styles }`
         }

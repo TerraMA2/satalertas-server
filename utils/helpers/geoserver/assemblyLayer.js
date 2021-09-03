@@ -4,7 +4,7 @@ const { msgError } = require('../../../utils/messageError');
 
 function layerData(layersList, options = undefined) {
   const {
-    geoserverUrl = config.geoserver.geoserverBasePath,
+    geoserverUrl = config.geoserver.baseUrl,
     transparent = true,
     geoservice = undefined,
   } = options;
