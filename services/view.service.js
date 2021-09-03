@@ -66,7 +66,7 @@ setLegend = function (data_view) {
 
 setlayerData = function (data_view) {
   return {
-    url: `${config.geoserver.geoserverBasePath}/wms`,
+    url: `${config.geoserver.baseUrl}/wms`,
     layers: `${data_view.workspace}:${data_view.view}`,
     transparent: true,
     format: 'image/png',
