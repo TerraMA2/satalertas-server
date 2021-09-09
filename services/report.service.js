@@ -2042,7 +2042,7 @@ module.exports = FileReport = {
       for (let index = 0; index < points.length; index++) {
         const imgSatelite = `${
           confGeoServer.baseHost
-        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_montly,${
+        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
           views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view},${
           views.STATIC.children.CAR_X_USOCON.workspace
