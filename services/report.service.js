@@ -1,7 +1,6 @@
 const FiringCharts = require('../charts/FiringCharts');
 const Result = require('../utils/result');
 const { Report, sequelize } = require('../models');
-const env = process.env.NODE_ENV || 'development';
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const config = require(__dirname + '/../config/config.json');
@@ -96,7 +95,7 @@ const analysisReportFormat = {
 
     resultReportData[
       'urlGsImage'
-    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city.replace("'", "''")}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city.replace("'", "''")}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
 
     resultReportData['prodesStartYear'] =
       resultReportData.property['period'][0]['start_year'];
@@ -354,7 +353,7 @@ getCarData = async function (
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT) - 5) AS bboxplanet,
+              substring(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car
@@ -1772,7 +1771,7 @@ module.exports = FileReport = {
       const currentYear = new Date().getFullYear();
       for (let index = 0; index < points.length; index++) {
         points[index]['url'] = `${
-            confGeoServer.baseHost
+            config.geoserver.baseUrl
         }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
             views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view},${
@@ -1792,7 +1791,7 @@ module.exports = FileReport = {
         }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
           views[type.toUpperCase()].children[groupType[type]].table_name
         }_id=${points[index].a_carprodes_1_id}&srs=EPSG:${
-          confGeoServer.sridTerraMa
+          config.geoserver.defaultSRID
         }&format=image/png`;
 
         points[index]['options'] = await SatVegService.get(
