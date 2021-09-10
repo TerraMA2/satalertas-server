@@ -1997,6 +1997,7 @@ module.exports = FileReport = {
   },
   async getPointsAlerts(query) {
     const { carRegister, date, type } = query;
+    const { sridPlanet: srid } = confGeoServer;
     const views = await ViewUtil.getGrouped();
 
     const carColumn = 'gid';
@@ -2027,22 +2028,27 @@ module.exports = FileReport = {
 
     const sqlBbox = `
       SELECT
-            substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
+            --substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
+            substring(ST_EXTENT(ST_Transform(car.geom, ${srid}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${srid}))::TEXT) - 5) AS bbox
       FROM de_car_validado_sema AS car 
       WHERE car.${carColumn} = '${carRegister}'
       GROUP BY gid`;
+      const bboxOptions = {
+        type: Report.sequelize.QueryTypes.SELECT,
+        plain: true,
+      }
 
     try {
-      const carBbox = await Report.sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
+      const carBbox = await Report.sequelize.query(sqlBbox, bboxOptions);
       const points = await Report.sequelize.query(sql, QUERY_TYPES_SELECT);
 
-      let bbox = setBoundingBox(carBbox[0].bbox);
+      let bbox = setBoundingBox(carBbox.bbox);
 
       const currentYear = new Date().getFullYear();
       for (let index = 0; index < points.length; index++) {
         const imgSatelite = `${
           confGeoServer.baseHost
-        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${
+        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_119:planet_latest_global_monthly,${
           views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view},${
           views.STATIC.children.CAR_X_USOCON.workspace
@@ -2061,7 +2067,7 @@ module.exports = FileReport = {
         }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
           views[type.toUpperCase()].children[groupType[type]].table_name
         }_id=${points[index].a_carprodes_1_id}&srs=EPSG:${
-          confGeoServer.sridTerraMa
+          srid
         }&format=image/png`;
         points[index]['url'] = imgSatelite;
 
