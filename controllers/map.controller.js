@@ -1,20 +1,21 @@
 const mapService = require(__dirname + '/../services/map.service');
 
-exports.getAnalysisCentroid = async (req, res) => {
+exports.getAnalysisCentroid = async (req, res, next) => {
     try {
         const params = JSON.parse(req.query.specificParameters);
         params.date = req.query.date;
         params.filter = req.query.filter;
         const layer = JSON.parse(params.view);
-        const type = layer.groupCode === 'BURNED' ? 'burned' : 'others'
+        let type = layer.groupCode === 'BURNED' ? 'burned' : 'others'
 
-        res.json(await mapService.getAnalysisCentroid[type](params));
+        type = type.charAt(0).toUpperCase() + type.slice(1);
+        res.json(await mapService[`get${ type }Centroid`](params));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };
 
-exports.getPopupInfo = async (req, res) => {
+exports.getPopupInfo = async (req, res, next) => {
     try {
         const params = {
             view: JSON.parse(JSON.parse(req.query.filter).specificParameters),
@@ -26,11 +27,11 @@ exports.getPopupInfo = async (req, res) => {
 
         res.json(await mapService.getPopupInfo(params));
     } catch (e) {
-        throw new Error(e);
+        next(e)
     }
 };
 
-exports.getAnalysisData = async (req, res) => {
+exports.getAnalysisData = async (req, res, next) => {
     try {
         const params = JSON.parse(req.query.specificParameters);
         params.date = req.query.date;
@@ -38,11 +39,11 @@ exports.getAnalysisData = async (req, res) => {
 
         res.json(await mapService.getAnalysisData(params));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };
 
-exports.getStaticData = async (req, res) => {
+exports.getStaticData = async (req, res, next) => {
     try {
         const params = {
             specificParameters,
@@ -52,11 +53,11 @@ exports.getStaticData = async (req, res) => {
 
         res.json(await mapService.getStaticData(params));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };
 
-exports.getDynamicData = async (req, res) => {
+exports.getDynamicData = async (req, res, next) => {
     try {
         const params = {
             specificParameters,
@@ -66,6 +67,6 @@ exports.getDynamicData = async (req, res) => {
 
         res.json(await mapService.getDynamicData(params));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };

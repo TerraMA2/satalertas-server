@@ -1,11 +1,8 @@
-const logger = require("../utils/logger");
 const projusService = require(__dirname + '/../services/projus.service');
-exports.getAll = async (req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        res.json(await projusService.getAll());
+        res.json(await projusService.get());
     } catch (e) {
-        res.json(e);
-        const msgErr = `In projus.controller, method getAll:${ e }`;
-        logger.error(msgErr);
+        next(e)
     }
 };

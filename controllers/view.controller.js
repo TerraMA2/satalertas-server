@@ -1,14 +1,14 @@
-const { RegisteredView } = require('../models');
-const LayerType = require('../enum/layerType');
+const {RegisteredView} = require('../models');
+const LayerType = require('../enum/layer-type');
 const ViewService = require("../services/view.service");
 
 exports.get = (req, res, next) => {
     const viewId = req.params.id;
-    if(viewId){
+    if (viewId) {
         RegisteredView.findOne({include: ['view'], where: {'view_id': viewId}}).then(view => {
             res.json(view)
         })
-    }else{
+    } else {
         RegisteredView.findAll({include: ['view']}).then(registeredViews => {
             const layerType = {
                 1: 'static',
@@ -31,7 +31,7 @@ exports.get = (req, res, next) => {
 
                 if (sourceType === LayerType.ANALYSIS) {
                     cod = viewName.replace(/ /g, '_').toUpperCase()
-                    groupCode = cod.substr(cod.lastIndexOf("_")+1)
+                    groupCode = cod.substr(cod.lastIndexOf("_") + 1)
                 }
                 if (sourceType === LayerType.STATIC) {
                     groupCode = 'STATIC';
@@ -55,11 +55,11 @@ exports.get = (req, res, next) => {
                 }
 
                 return {
-                    cod: `${cod}`,
-                    groupCode: `${groupCode}`,
-                    label: `${viewName}`,
-                    shortLabel: `${viewName}`,
-                    value: `${viewId}`,
+                    cod: `${ cod }`,
+                    groupCode: `${ groupCode }`,
+                    label: `${ viewName }`,
+                    shortLabel: `${ viewName }`,
+                    value: `${ viewId }`,
                     carRegisterColumn: "de_car_validado_sema_numero_do1",
                     type: `${ layerType[sourceType] }`,
                     isPrivate: `${ isPrivate }`,
@@ -157,18 +157,4 @@ exports.getSidebarLayers = async (req, res, next) => {
 
 exports.getReportLayers = async (req, res, next) => {
     res.json(await ViewService.getReportLayers())
-}
-
-exports.getSqlExport = async (req, res, next) => {
-    try {
-        const params = {
-            specificParameters,
-            date,
-            filter
-        } = req.query;
-
-        res.json(await ViewService.getSqlExport(params));
-    } catch (e) {
-        res.json(e);
-    }
 }

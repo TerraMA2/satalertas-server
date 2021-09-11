@@ -1,55 +1,54 @@
 const GroupService = require(__dirname + '/../services/group.service');
-const {msgError} = require('../utils/messageError');
 
-exports.getAll = async (_req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        res.json(await GroupService.getAll());
+        res.json(await GroupService.get());
     } catch (e) {
-        res.json(msgError('group.controller', 'group.controller', 'getAll', e));
+        next(e);
     }
 };
 
-exports.getCodGroups = async (_req, res, _next) => {
+exports.getCodGroups = async (req, res, next) => {
     try {
         res.json(await GroupService.getCodGroups());
     } catch (e) {
-        res.json(msgError('group.controller', 'getCodGroups', e));
+        next(e);
     }
 };
 
-exports.getById = async (req, res) => {
+exports.getById = async (req, res, next) => {
     try {
         const {query} = req;
         const result = await GroupService.getById(query.id);
         res.json(result);
     } catch (e) {
-        res.json(msgError('group.controller', 'getById', e));
+        next(e);
     }
 };
 
-exports.add = async (req, res) => {
+exports.add = async (req, res, next) => {
     try {
         const newGroup = req.body;
         res.json(await GroupService.add(newGroup));
     } catch (e) {
-        res.json(msgError('group.controller', 'add', e));
+        next(e);
     }
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
     try {
         const groupModify = req.body;
         res.json(await GroupService.update(groupModify));
     } catch (e) {
-        res.json(msgError('group.controller', 'update', e));
+        next(e);
     }
 };
 
-exports.deleteGroup = async (req, res) => {
+exports.deleteGroup = async (req, res, next) => {
     try {
         const groupDelete = req.params.id;
         res.json(await GroupService.deleteGroup(groupDelete));
     } catch (e) {
-        res.json(msgError('group.controller', 'deleteGroup', e));
+        next(e);
     }
 };

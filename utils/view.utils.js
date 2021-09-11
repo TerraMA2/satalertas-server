@@ -1,12 +1,9 @@
 const models = require('../models');
-const { View, sequelize } = models;
+const {sequelize} = models;
+const {QueryTypes} = require('sequelize');
 
-const { QueryTypes } = require('sequelize');
-const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
-
-const ViewUtils = {
-    async getGrouped() {
-        const sqlGroupViews = `
+module.exports.getGrouped = async () => {
+    const sqlGroupViews = `
             SELECT (CASE
                         WHEN view.source_type = 1 THEN 'STATIC'
                         WHEN view.source_type = 2 THEN 'DYNAMIC'
@@ -121,36 +118,27 @@ const ViewUtils = {
                      LEFT JOIN terrama2.registered_views AS r_view ON view.id = r_view.view_id
                      LEFT JOIN terrama2.analysis AS ana ON dsf.data_set_id = ana.dataset_output
             WHERE dsf.key = 'table_name'`;
-    try {
-      const options = {
+    const options = {
         type: QueryTypes.SELECT,
-        fieldMap: { cod_group: 'groupCode' },
-      };
+        fieldMap: {cod_group: 'groupCode'},
+    };
 
-      const dataset_views = await sequelize.query(sql, options);
-      const dataset_group_views = await sequelize.query(sqlGroupViews, {
-        type: QueryTypes.SELECT,
-      });
+    const dataset_views = await sequelize.query(sql, options);
+    const dataset_group_views = await sequelize.query(sqlGroupViews, {type: QueryTypes.SELECT});
 
-      let groupViews = {};
-      dataset_group_views.forEach((group) => {
+    let groupViews = {};
+    dataset_group_views.forEach((group) => {
         groupViews[group.cod] = group;
         groupViews[group.cod].children = {};
-      });
+    });
 
-      dataset_views.forEach((dataView) => {
+    dataset_views.forEach((dataView) => {
         if (dataView.is_primary) {
-          groupViews[dataView.groupCode].tableOwner = `${dataView.table_name}`;
+            groupViews[dataView.groupCode].tableOwner = `${ dataView.table_name }`;
         }
 
         groupViews[dataView.groupCode].children[dataView.cod] = dataView;
-      });
+    });
 
-      return groupViews;
-    } catch (e) {
-      return {};
-    }
-  },
-};
-
-module.exports = ViewUtils;
+    return groupViews;
+}

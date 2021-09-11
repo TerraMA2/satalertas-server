@@ -20,7 +20,7 @@ const projusRouter = require('./routes/projus.router')
 const indigenousLandRouter = require('./routes/indigenous-land.router')
 const conservationUnitRouter = require('./routes/conservation-unit.router')
 const cityRouter = require('./routes/city.router')
-const analyzeRouter = require('./routes/analyze.router')
+const classRouter = require('./routes/class.router')
 const exportRouter = require('./routes/export.router')
 const infoColumnsRouter = require('./routes/info-columns.router')
 
@@ -28,7 +28,8 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json');
 const basePath = config.basePath;
 
-const errorController = require('./controllers/error.controller')
+const {errorHandling} = require("./middlewares/error.middleware");
+
 const app = express()
 
 app.use(cors())
@@ -53,13 +54,10 @@ app.use(basePath+'/projus', projusRouter)
 app.use(basePath+'/indigenousLand', indigenousLandRouter)
 app.use(basePath+'/conservationUnit', conservationUnitRouter)
 app.use(basePath+'/city', cityRouter)
-app.use(basePath+'/analyze', analyzeRouter)
+app.use(basePath+'/class', classRouter)
 app.use(basePath+'/export', exportRouter)
 app.use(basePath+'/infoColumns', infoColumnsRouter)
 
-// Error handler
-app.use(errorController.show404)
-app.use(errorController.show500)
-app.use(errorController.showError)
+app.use(errorHandling)
 
 module.exports = app

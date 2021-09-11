@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 const SynthesisController = require('../controllers/synthesis.controller');
 
-router.get('/getSynthesis?:carRegister?:date?:formattedFilterDate?:synthesisConfig', SynthesisController.getSynthesis);
+router.get('/', SynthesisController.get);
 
 module.exports = router;

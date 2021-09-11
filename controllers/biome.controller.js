@@ -1,12 +1,9 @@
 const biomeService = require(__dirname + '/../services/biome.service');
-const logger = require("../utils/logger");
 
-exports.getAll = async (req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        res.json(await biomeService.getAll());
+        res.json(await biomeService.get());
     } catch (e) {
-        res.json(res.err(e));
-        const msgErr = `In biome.controller, method getAll:${ e }`;
-        logger.error(msgErr);
+        next(e);
     }
 };

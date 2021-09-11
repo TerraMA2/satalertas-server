@@ -1,22 +1,16 @@
 const {ConservationUnit} = require('../models');
-const logger = require('../utils/logger');
+const {response} = require("../utils/response");
 
-module.exports = conservationUnitService = {
-    async getAll() {
-        const options = {
-            attributes: [
-                'gid',
-                ['nome', 'name']
-            ],
-            order: [
-                ['name']
-            ]
-        };
-        try {
-            return await ConservationUnit.findAll(options);
-        } catch (e) {
-            const msgErr = `In conservation-unit.controller, method getAll:${ e }`;
-            logger.error(msgErr);
-        }
-    }
-};
+module.exports.get = async () => {
+    const options = {
+        attributes: [
+            'gid',
+            ['nome', 'name']
+        ],
+        order: [
+            ['name']
+        ]
+    };
+    const conservationUnits = await ConservationUnit.findAll(options);
+    return response(200, conservationUnits);
+}

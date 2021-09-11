@@ -1,11 +1,8 @@
-const logger = require('../utils/logger')
 const indigenousLandService = require(__dirname + '/../services/indigenous-land.service');
-exports.getAll = async (req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        res.json(await indigenousLandService.getAll());
+        res.json(await indigenousLandService.get());
     } catch (e) {
-        const msgErr = `In indigenous-land.controller, method getAll:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };

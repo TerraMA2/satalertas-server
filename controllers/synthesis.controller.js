@@ -1,5 +1,9 @@
 const SynthesisService = require("../services/synthesis.service");
 
-exports.getSynthesis = async (req, res) => {
-    res.json(await SynthesisService.getSynthesis(req.query));
+exports.get = async (req, res, next) => {
+    try {
+        res.json(await SynthesisService.get(req.query));
+    } catch (e) {
+        next(e);
+    }
 };

@@ -1,24 +1,15 @@
 const carService = require(__dirname + '/../services/car.service');
 
-exports.getAll = async (req, res) => {
-    const params = {
-        specificParameters,
-        date,
-        filter
-    } = req.query;
-
+exports.get = async (req, res, next) => {
     try {
-        res.json(await carService.getAll(params));
-    } catch (e) {
-        res.json(e);
-    }
-};
+        const params = {
+            specificParameters,
+            date,
+            filter
+        } = req.query;
 
-exports.getByCpf = async (req, res) => {
-
-    try {
-        res.json(await carService.getByCpf(req.query.cpfCnpj));
+        res.json(await carService.get(params));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };

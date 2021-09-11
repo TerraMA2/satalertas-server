@@ -1,29 +1,17 @@
 const DashboardService = require(__dirname + '/../services/dashboard.service');
 
-exports.getAnalysis = async (req, res) => {
+exports.getAnalysis = async (req, res, next) => {
     try {
-        const params = {
-            specificParameters,
-            date,
-            filter
-        } = req.query;
-
-        res.json(await DashboardService.getAnalysis(params));
+        res.json(await DashboardService.getAnalysis(req.query));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };
 
-exports.getAnalysisCharts = async (req, res) => {
+exports.getAnalysisCharts = async (req, res, next) => {
     try {
-        const params = {
-            specificParameters,
-            date,
-            filter
-        } = req.query;
-
-        res.json(await DashboardService.getAnalysisCharts(params));
+        res.json(await DashboardService.getAnalysisCharts(req.query));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };
