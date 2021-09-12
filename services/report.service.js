@@ -10,7 +10,6 @@ const moment = require('moment');
 const DocDefinitions = require(__dirname +
     '/../utils/helpers/report/doc-definition.js');
 const {QueryTypes} = require("sequelize");
-const {response} = require("../utils/response");
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 
 module.exports.getFilterClassSearch = (sql, filter, view, tableOwner) => {
@@ -1415,7 +1414,7 @@ module.exports.get = async (id) => {
         );
     }
 
-    return response(200, reports);
+    return reports;
 }
 module.exports.newNumber = async (type) => {
     const sql = ` SELECT '${ type.trim() }' AS type,
@@ -1431,14 +1430,12 @@ module.exports.newNumber = async (type) => {
           AND rep.created_at BETWEEN
             CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
 
-    const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
-    return response(200, result);
+    return await sequelize.query(sql, QUERY_TYPES_SELECT);
 }
 module.exports.getReportsByCARCod = async (carCode) => {
     const confWhere = {where: {carGid: carCode.trim()}};
 
-    const reports = await Report.findAll(confWhere)
-    return response(200, reports);
+    return await Report.findAll(confWhere)
 }
 module.exports.generatePdf = async (reportData) => {
     if (!reportData) {
@@ -1474,7 +1471,7 @@ module.exports.generatePdf = async (reportData) => {
     );
     report['document'] = document;
 
-    return response(200, report);
+    return report;
 }
 module.exports.saveReport = async (docName, newNumber, reportData, path) => {
     const report = new Report({
@@ -1503,10 +1500,9 @@ module.exports.delete = async (id) => {
         },
     );
     const countRowDeleted = await Report.destroy({where: {id}}).then((rowDeleted) => rowDeleted);
-    const result = countRowDeleted
+    return countRowDeleted
         ? `Arquivo ${ report.dataValues.name }, id = ${ id }, excluído com Sucesso!`
         : `Arquivo ${ report.dataValues.name }, id = ${ id }, não encontrado!`;
-    return response(200, result);
 }
 module.exports.save = async (document) => {
     const binaryData = new Buffer(document.base64, 'base64').toString(
@@ -1537,11 +1533,9 @@ module.exports.save = async (document) => {
         type: document['type'].trim(),
     });
 
-    const result = await Report.create(report.dataValues).then(
+    return await Report.create(report.dataValues).then(
         (report) => report.dataValues,
     );
-
-    return response(200, result);
 }
 module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     filter = JSON.parse(filter);
@@ -1618,7 +1612,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     // await setBurnedAreaData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnCarSemas, columnExecutionDate, carRegister);
 
 
-    const report = await this.setReportFormat(
+    return await this.setReportFormat(
         propertyData,
         views,
         type,
@@ -1627,7 +1621,6 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
         date,
         filter
     )
-    return response(200, report);
 }
 module.exports.getChartOptions = async (labels, data) => {
     return {
@@ -1735,7 +1728,7 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
             return this.getChartOptions(labels, data);
         });
     }
-    return response(200, points);
+    return points;
 }
 module.exports.getDocDefinitions = async (reportData) => {
     const code = reportData['code']
@@ -1771,6 +1764,5 @@ module.exports.getDocDefinitions = async (reportData) => {
     }
 }
 module.exports.createPdf = async (reportData) => {
-    const docDefinitions = await this.getDocDefinitions(reportData);
-    return response(200, docDefinitions);
+    return await this.getDocDefinitions(reportData);
 }

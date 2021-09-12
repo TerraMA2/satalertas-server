@@ -2,13 +2,15 @@ const {QueryTypes} = require('sequelize');
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const {CarValidado, sequelize} = require('../models');
 const Filter = require("../utils/filter/filter.utils");
-const {response} = require("../utils/response");
-const httpStatus = require('../enum/http-status');
+const BadRequestError = require('../errors/bad-request.error');
 
 module.exports.get = async (params) => {
     const specificParameters = JSON.parse(params.specificParameters);
     const filterReceived = JSON.parse(params.filter);
     const layer = JSON.parse(specificParameters.view);
+    if (!specificParameters || !filterReceived || !layer) {
+        throw new BadRequestError('Missing parameters');
+    }
 
     const table = {
         name: layer.tableName,
@@ -97,5 +99,5 @@ module.exports.get = async (params) => {
         QUERY_TYPES_SELECT);
 
     carResult.push(resultCount && resultCount.length ? resultCount.length : 0);
-    return response(httpStatus.SUCCESS, carResult);
+    return carResult;
 }

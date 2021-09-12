@@ -1,10 +1,12 @@
 const InfoColumnsService = require('../services/info-columns.service');
 const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
 
 exports.getInfoColumns = async (req, res, next) => {
     try {
         const {viewId} = req.query;
-        res.json(await InfoColumnsService.getInfoColumns(viewId));
+        const infoColumns = await InfoColumnsService.getInfoColumns(viewId);
+        res.json(response(httpStatus.SUCCESS, infoColumns));
     } catch (e) {
         next(e)
     }
@@ -12,7 +14,8 @@ exports.getInfoColumns = async (req, res, next) => {
 
 exports.getAllTables = async (req, res, next) => {
     try {
-        res.json(response(200, await InfoColumnsService.getAllTables()));
+        const tables = await InfoColumnsService.getAllTables();
+        res.json(response(httpStatus.SUCCESS, tables));
     } catch (e) {
         next(e)
     }
@@ -20,7 +23,8 @@ exports.getAllTables = async (req, res, next) => {
 
 exports.getSecondaryTypes = async (req, res, next) => {
     try {
-        res.json(response(200, await InfoColumnsService.getSecondaryTypes()));
+        const secondaryTypes = await InfoColumnsService.getSecondaryTypes();
+        res.json(response(httpStatus.SUCCESS, secondaryTypes));
     } catch (e) {
         next(e)
     }
@@ -30,7 +34,7 @@ exports.getTableColumns = async (req, res, next) => {
     try {
         const {tableId} = req.query;
         const {data} = await InfoColumnsService.getTableColumns(tableId);
-        res.json(response(200, data));
+        res.json(response(httpStatus.SUCCESS, data));
     } catch (e) {
         next(e)
     }
@@ -39,17 +43,18 @@ exports.getTableColumns = async (req, res, next) => {
 exports.updateTableInfoColums = async (req, res, next) => {
     try {
         const {editions} = req.body;
-        res.json(response(200, await InfoColumnsService.updateTableInfoColums(editions)))
+        const result = await InfoColumnsService.updateTableInfoColums(editions);
+        res.json(response(200, result))
     } catch (e) {
         next(e)
-
     }
 }
 
 exports.getInfocolumnsByTableName = async (req, res, next) => {
     try {
         const {tableName} = req.query;
-        res.json(response(200, await InfoColumnsService.getInfocolumnsByTableName(tableName)))
+        const infoColumns = await InfoColumnsService.getInfocolumnsByTableName(tableName);
+        res.json(response(httpStatus.SUCCESS, infoColumns));
     } catch (e) {
         next(e)
     }
@@ -58,7 +63,8 @@ exports.getInfocolumnsByTableName = async (req, res, next) => {
 exports.getInfocolumnsByViewId = async (req, res, next) => {
     try {
         const {viewId} = req.body;
-        res.json(response(200, await InfoColumnsService.getInfocolumnsByViewId(viewId)))
+        const infoColumns = await InfoColumnsService.getInfocolumnsByViewId(viewId);
+        res.json(response(httpStatus.SUCCESS, infoColumns))
     } catch (e) {
         next(e)
     }

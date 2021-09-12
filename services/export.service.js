@@ -48,8 +48,7 @@ module.exports.get = async (params) => {
         const zipGenerationCommand = "zip -j " + file + " " + tmpFolder + '/' + tableName + '.*';
         execSync(zipGenerationCommand);
     }
-    const fileBase64 = fs.readFileSync(file, 'base64')
-    return response(200, fileBase64);
+    return fs.readFileSync(file, 'base64')
 }
 module.exports.getFormats = async (formats) => {
     let fileExtension = '';

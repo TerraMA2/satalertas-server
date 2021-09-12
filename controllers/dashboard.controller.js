@@ -1,8 +1,11 @@
 const DashboardService = require(__dirname + '/../services/dashboard.service');
+const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
 
 exports.getAnalysis = async (req, res, next) => {
     try {
-        res.json(await DashboardService.getAnalysis(req.query));
+        const analysis = await DashboardService.getAnalysis(req.query)
+        res.json(response(httpStatus.SUCCESS, analysis));
     } catch (e) {
         next(e)
     }
@@ -10,7 +13,8 @@ exports.getAnalysis = async (req, res, next) => {
 
 exports.getAnalysisCharts = async (req, res, next) => {
     try {
-        res.json(await DashboardService.getAnalysisCharts(req.query));
+        const analysisCharts = await DashboardService.getAnalysisCharts(req.query);
+        res.json(response(httpStatus.SUCCESS, analysisCharts));
     } catch (e) {
         next(e)
     }

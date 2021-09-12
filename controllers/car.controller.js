@@ -1,4 +1,6 @@
 const carService = require(__dirname + '/../services/car.service');
+const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
 
 exports.get = async (req, res, next) => {
     try {
@@ -8,7 +10,8 @@ exports.get = async (req, res, next) => {
             filter
         } = req.query;
 
-        res.json(await carService.get(params));
+        const carResult = await carService.get(params)
+        res.json(response(httpStatus.SUCCESS, carResult));
     } catch (e) {
         next(e)
     }

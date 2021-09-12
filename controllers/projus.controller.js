@@ -1,7 +1,11 @@
 const projusService = require(__dirname + '/../services/projus.service');
+const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
+
 exports.get = async (req, res, next) => {
     try {
-        res.json(await projusService.get());
+        const projus = await projusService.get();
+        res.json(response(httpStatus.SUCCESS, projus));
     } catch (e) {
         next(e)
     }

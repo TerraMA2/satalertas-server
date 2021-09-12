@@ -1,6 +1,8 @@
 const {RegisteredView} = require('../models');
 const LayerType = require('../enum/layer-type');
 const ViewService = require("../services/view.service");
+const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
 
 exports.get = (req, res, next) => {
     const viewId = req.params.id;
@@ -146,15 +148,17 @@ exports.get = (req, res, next) => {
                     children: dynamicLayers
                 }
             ]
-            res.json(viewsJSON)
+            res.json(response(httpStatus.SUCCESS, viewsJSON));
         })
     }
 }
 
 exports.getSidebarLayers = async (req, res, next) => {
-    res.json(await ViewService.getSidebarLayers())
+    const sidebarLayers = await ViewService.getSidebarLayers();
+    res.json(response(httpStatus.SUCCESS, sidebarLayers));
 }
 
 exports.getReportLayers = async (req, res, next) => {
-    res.json(await ViewService.getReportLayers())
+    const reportLayers = await ViewService.getReportLayers();
+    res.json(response(httpStatus.SUCCESS, reportLayers));
 }

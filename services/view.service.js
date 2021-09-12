@@ -4,7 +4,6 @@ const {QueryTypes} = sequelize;
 const config = require(__dirname + '/../config/config.json')
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
 const Filter = require("../utils/filter/filter.utils");
-const {response} = require("../utils/response");
 
 module.exports.getSql = async (params) => {
     const view =
@@ -562,14 +561,12 @@ module.exports.getReportLayers = async () => {
         fieldMap: {cod_group: 'groupCode'}
     }
 
-    const reportLayers = await sequelize.query(sqlReportLayers, options);
-    return response(200, reportLayers);
+    return await sequelize.query(sqlReportLayers, options);
 }
 
 module.exports.getSidebarLayers = async () => {
     const groupViews = await this.orderView(await this.getGroupViews());
-    const sideBarConfig = await this.setResultSidebarConfig(groupViews);
-    return response(200, sideBarConfig);
+    return await this.setResultSidebarConfig(groupViews);
 }
 
 module.exports.getSqlExport = async (params) => {

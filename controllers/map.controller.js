@@ -1,4 +1,6 @@
 const mapService = require(__dirname + '/../services/map.service');
+const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
 
 exports.getAnalysisCentroid = async (req, res, next) => {
     try {
@@ -9,7 +11,8 @@ exports.getAnalysisCentroid = async (req, res, next) => {
         let type = layer.groupCode === 'BURNED' ? 'burned' : 'others'
 
         type = type.charAt(0).toUpperCase() + type.slice(1);
-        res.json(await mapService[`get${ type }Centroid`](params));
+        const centroid = await mapService[`get${ type }Centroid`](params)
+        res.json(response(httpStatus.SUCCESS, centroid));
     } catch (e) {
         next(e)
     }
@@ -25,7 +28,8 @@ exports.getPopupInfo = async (req, res, next) => {
             carGid: parseInt(req.query.gid)
         };
 
-        res.json(await mapService.getPopupInfo(params));
+        const popupInfo = await mapService.getPopupInfo(params);
+        res.json(response(httpStatus.SUCCESS, popupInfo));
     } catch (e) {
         next(e)
     }
@@ -37,7 +41,8 @@ exports.getAnalysisData = async (req, res, next) => {
         params.date = req.query.date;
         params.filter = req.query.filter;
 
-        res.json(await mapService.getAnalysisData(params));
+        const analysisData = await mapService.getAnalysisData(params);
+        res.json(response(httpStatus.SUCCESS, analysisData));
     } catch (e) {
         next(e)
     }
@@ -51,7 +56,8 @@ exports.getStaticData = async (req, res, next) => {
             filter
         } = req.query;
 
-        res.json(await mapService.getStaticData(params));
+        const staticData = await mapService.getStaticData(params)
+        res.json(response(httpStatus.SUCCESS, staticData));
     } catch (e) {
         next(e)
     }
@@ -65,7 +71,8 @@ exports.getDynamicData = async (req, res, next) => {
             filter
         } = req.query;
 
-        res.json(await mapService.getDynamicData(params));
+        const dynamicData = await mapService.getDynamicData(params)
+        res.json(response(httpStatus.SUCCESS, dynamicData));
     } catch (e) {
         next(e)
     }

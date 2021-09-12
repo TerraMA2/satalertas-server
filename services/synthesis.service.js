@@ -4,7 +4,6 @@ const config = require(__dirname + '/../config/config.json');
 const synthesisConfig = require(__dirname + `/../config/${ config.project }/synthesis.json`);
 const {QueryTypes} = require("sequelize");
 const ViewUtil = require("../utils/view.utils");
-const {response} = require("../utils/response");
 
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 
@@ -665,7 +664,7 @@ module.exports.get = async (query) => {
             }
         );
 
-        return response(200, propertyData);
+        return propertyData;
     }
 }
 module.exports.getChartOptions = async (labels, data) => {

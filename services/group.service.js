@@ -1,10 +1,8 @@
 const models = require('../models');
-const {response} = require("../utils/response");
 const {View, Project, Group, RelGroupView} = models;
 
 module.exports.get = async () => {
-    const groups = await Group.findAll({raw: true});
-    return response(200, groups);
+    return await Group.findAll({raw: true});
 }
 
 module.exports.getCodGroups = async () => {
@@ -38,7 +36,7 @@ module.exports.getById = async (id) => {
         const id = relViews.idView;
         relViews.dataValues.view = await View.findByPk(id);
     }
-    return response(200, group);
+    return group;
 }
 
 module.exports.add = async (newGroup) => {
@@ -49,20 +47,17 @@ module.exports.add = async (newGroup) => {
         dashboard: newGroup.dashboard,
         active_area: newGroup.activeArea,
     });
-    const data = await Group.create(group.dataValues).then((group) => group.dataValues);
-    return response(200, data);
+    return await Group.create(group.dataValues).then((group) => group.dataValues);
 }
 
 module.exports.update = async (groupModify) => {
     const {id, ...el} = groupModify;
     const where = {id}
     await Group.update(el, {where});
-    const group = await Group.findByPk(id, {raw: true});
-    return response(200, group);
+    return await Group.findByPk(id, {raw: true});
 }
 
 module.exports.deleteGroup = async (groupId) => {
     const group = await Group.findByPk(groupId);
-    const result = await group.destroy().then((result) => result);
-    return response(200, result);
+    return await group.destroy().then((result) => result);
 }

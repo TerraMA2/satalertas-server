@@ -1,8 +1,6 @@
 const {User} = require("../models");
 const bcrypt = require("bcrypt");
 const BadRequestError = require('../errors/bad-request.error');
-const {response} = require("../utils/response");
-const httpStatus = require('../enum/http-status');
 
 module.exports.login = async (userName, password) => {
     if (!userName) {
@@ -21,7 +19,7 @@ module.exports.login = async (userName, password) => {
     if (user.password !== hashedPassword) {
         throw new BadRequestError('Senha incorreta');
     }
-    const data = {
+    return {
         id: user.id,
         name: user.name,
         email: user.email,
@@ -29,5 +27,4 @@ module.exports.login = async (userName, password) => {
         administrator: user.administrator,
         token: user.token
     };
-    return response(httpStatus.SUCCESS, data, 'Login realizado com sucesso!');
 }

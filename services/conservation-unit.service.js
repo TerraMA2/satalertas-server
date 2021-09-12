@@ -1,5 +1,4 @@
 const {ConservationUnit} = require('../models');
-const {response} = require("../utils/response");
 
 module.exports.get = async () => {
     const options = {
@@ -11,6 +10,5 @@ module.exports.get = async () => {
             ['name']
         ]
     };
-    const conservationUnits = await ConservationUnit.findAll(options);
-    return response(200, conservationUnits);
+    return await ConservationUnit.findAll(options);
 }

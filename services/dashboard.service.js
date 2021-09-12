@@ -7,7 +7,6 @@ const ViewService = require("../services/view.service");
 const LayerTypeName = require('../enum/layer-type-name');
 const InternalServerError = require('../errors/internal-server.error');
 const BadRequestError = require('../errors/bad-request.error');
-const {response} = require("../utils/response");
 
 module.exports.getSqlAnalysisTotals = async (params) => {
     const analysisList = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
@@ -208,7 +207,6 @@ module.exports.getAnalysisChartSql = async (analysis, params) => {
 
 module.exports.getAnalysis = async (params) => {
     let sidebarLayers = await ViewService.getSidebarLayers();
-    sidebarLayers = sidebarLayers.data;
     if (!sidebarLayers) {
         throw new InternalServerError('Layers not found');
     }
@@ -254,21 +252,20 @@ module.exports.getAnalysis = async (params) => {
     }
     const analysisTotals = await sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
     analysisTotals[0].activearea = true;
-    analysisList = analysisList.map((analysis, index) => {
+    return analysisList.map((analysis, index) => {
         const {alert, area} = analysisTotals[index];
         analysis.alert = alert;
         analysis.area = area;
         return analysis;
     });
-    return response(200, analysisList);
 }
 
 module.exports.getAnalysisCharts = async (params) => {
-    const analysisList = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
-    const data = [];
-    if (analysisList.length === 0) {
+    const analysisList = JSON.parse(params.specificParameters);
+    if (!analysisList) {
         throw new BadRequestError('Missing specificParameters');
     }
+    const analysisCharts = [];
     for (const analysis of analysisList) {
         const labelChart1 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por CAR' : 'Área (ha) de alertas por CAR';
         const labelChart2 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por Bioma' : 'Área (ha) de alertas por classe';
@@ -277,7 +274,7 @@ module.exports.getAnalysisCharts = async (params) => {
         const chart1 = await this.getChart(resultAux, sql.value, sql.subtitle, labelChart1);
         resultAux = await sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
         const chart2 = await this.getChart(resultAux, sql.value, sql.subtitle, labelChart2);
-        data.push(this.getAnalysisChart(analysis, chart1, chart2));
+        analysisCharts.push(this.getAnalysisChart(analysis, chart1, chart2));
     }
-    return response(200, data)
+    return analysisCharts;
 }

@@ -14,7 +14,6 @@ const {
     setLegend,
     setFilter,
 } = require('../utils/helpers/geoserver/assemblyLayer');
-const {response} = require("../utils/response");
 const BadRequestError = require('../errors/bad-request.error');
 
 const viewTableName = {
@@ -64,7 +63,7 @@ module.exports.get = async () => {
         const id = groupView.viewId;
         groupView.dataValues.view = await View.findByPk(id);
     }
-    return response(200, groupViews);
+    return groupViews;
 }
 
 module.exports.getByGroupId = async (groupId) => {
@@ -149,7 +148,7 @@ module.exports.getByGroupId = async (groupId) => {
             }
         });
     }
-    return response(200, viewsGroup.filter((child) => !child.isSublayer));
+    return viewsGroup.filter((child) => !child.isSublayer);
 }
 
 module.exports.getAvailableLayers = async (groupId) => {
@@ -169,13 +168,12 @@ module.exports.getAvailableLayers = async (groupId) => {
         },
         include: [viewTableName]
     };
-    const allViews = await View.findAll(option).then((views) => {
+    return await View.findAll(option).then((views) => {
         views.forEach((vw) => {
             this.setTableName(vw);
         });
         return views.map((view) => view.toJSON());
     });
-    return response(200, allViews);
 }
 
 module.exports.add = async (newGroupView) => {
@@ -183,8 +181,7 @@ module.exports.add = async (newGroupView) => {
         groupId: newGroupView.groupId,
         viewId: newGroupView.viewId,
     });
-    const result = await RelGroupView.create(groupView.dataValues).then((groupView) => groupView.dataValues);
-    return response(200, result);
+    return await RelGroupView.create(groupView.dataValues).then((groupView) => groupView.dataValues);
 }
 
 module.exports.update = async (groupViewModify) => {
@@ -192,7 +189,7 @@ module.exports.update = async (groupViewModify) => {
     if (!groupId) {
         throw new BadRequestError('Group not found');
     }
-    const result = await RelGroupView.destroy({where: {groupId}}).then(async () => {
+    return await RelGroupView.destroy({where: {groupId}}).then(async () => {
         const newLayers = layers.map((layer) => ({
             group_id: layer.groupId,
             view_id: layer.viewId,
@@ -200,7 +197,6 @@ module.exports.update = async (groupViewModify) => {
         }));
         await RelGroupView.bulkCreate(newLayers);
     });
-    return response(200, result);
 }
 
 module.exports.updateAdvanced = async (groupViewModify) => {
@@ -214,11 +210,9 @@ module.exports.updateAdvanced = async (groupViewModify) => {
         }
         await RelGroupView.update(newLayerData, {where});
     }
-    const group = await this.getByGroupId(groupId);
-    return response(200, group);
+    return await this.getByGroupId(groupId);
 }
 
 module.exports.deleteGroupView = async (id) => {
-    const data = await RelGroupView.delete(id)
-    return response(200, data);
+    return await RelGroupView.delete(id)
 }

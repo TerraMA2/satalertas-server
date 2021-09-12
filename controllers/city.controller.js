@@ -1,8 +1,11 @@
 const cityService = require(__dirname + '/../services/city.service');
+const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
 
 exports.get = async (req, res, next) => {
     try {
-        res.json(await cityService.get());
+        const cities = await cityService.get();
+        res.json(response(httpStatus.SUCCESS, cities));
     } catch (e) {
         next(e);
     }
@@ -10,7 +13,8 @@ exports.get = async (req, res, next) => {
 
 exports.getRegions = async (req, res, next) => {
     try {
-        res.json(await cityService.getRegions());
+        const regions = await cityService.getRegions();
+        res.json(response(httpStatus.SUCCESS, regions));
     } catch (e) {
         next(e);
     }
@@ -18,7 +22,8 @@ exports.getRegions = async (req, res, next) => {
 
 exports.getMesoregions = async (req, res, next) => {
     try {
-        res.json(await cityService.getMesoregions());
+        const mesoregions = await cityService.getMesoregions();
+        res.json(response(httpStatus.SUCCESS, mesoregions));
     } catch (e) {
         next(e);
     }
@@ -26,7 +31,8 @@ exports.getMesoregions = async (req, res, next) => {
 
 exports.getImmediateRegion = async (req, res, next) => {
     try {
-        res.json(await cityService.getImmediateRegion());
+        const immediateRegions = await cityService.getImmediateRegion();
+        res.json(response(httpStatus.SUCCESS, immediateRegions));
     } catch (e) {
         next(e);
     }
@@ -34,7 +40,8 @@ exports.getImmediateRegion = async (req, res, next) => {
 
 exports.getIntermediateRegion = async (req, res, next) => {
     try {
-        res.json(await cityService.getIntermediateRegion());
+        const intermediateRegions = await cityService.getIntermediateRegion();
+        res.json(response(httpStatus.SUCCESS, intermediateRegions));
     } catch (e) {
         next(e);
     }
@@ -42,7 +49,8 @@ exports.getIntermediateRegion = async (req, res, next) => {
 
 exports.getPjbh = async (req, res, next) => {
     try {
-        res.json(await cityService.getPjbh());
+        const pjbhs = await cityService.getPjbh();
+        res.json(response(httpStatus.SUCCESS, pjbhs));
     } catch (e) {
         next(e);
     }
@@ -50,7 +58,8 @@ exports.getPjbh = async (req, res, next) => {
 
 exports.getMicroregions = async (req, res, next) => {
     try {
-        res.json(await cityService.getMicroregions());
+        const microregions = await cityService.getMicroregions()
+        res.json(response(httpStatus.SUCCESS, microregions));
     } catch (e) {
         next(e);
     }

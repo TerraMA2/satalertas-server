@@ -1,5 +1,4 @@
 const {City} = require('../models');
-const {response} = require("../utils/response");
 
 module.exports.get = async () => {
     const options = {
@@ -12,8 +11,7 @@ module.exports.get = async () => {
             ['municipio']
         ]
     };
-    const cities = await City.findAll(options);
-    return response(200, cities);
+    return await City.findAll(options);
 }
 module.exports.getRegions = async () => {
     const options = {
@@ -25,8 +23,7 @@ module.exports.getRegions = async () => {
             ['comarca']
         ]
     };
-    const regions = await City.findAll(options);
-    return response(200, regions);
+    return await City.findAll(options);
 }
 module.exports.getMesoregions = async () => {
     const options = {
@@ -38,8 +35,7 @@ module.exports.getMesoregions = async () => {
             ['nm_meso']
         ]
     };
-    const mesoregions = await City.findAll(options);
-    return response(200, mesoregions);
+    return await City.findAll(options);
 }
 module.exports.getImmediateRegion = async () => {
     const options = {
@@ -51,8 +47,7 @@ module.exports.getImmediateRegion = async () => {
             ['nm_rgi']
         ]
     };
-    const immediateRegions = await City.findAll(options);
-    return response(200, immediateRegions);
+    return await City.findAll(options);
 }
 module.exports.getIntermediateRegion = async () => {
     const options = {
@@ -64,8 +59,7 @@ module.exports.getIntermediateRegion = async () => {
             ['nm_rgint']
         ]
     };
-    const intermediateRegions = await City.findAll(options);
-    return response(200, intermediateRegions);
+    return await City.findAll(options);
 }
 module.exports.getPjbh = async () => {
     const options = {
@@ -77,8 +71,7 @@ module.exports.getPjbh = async () => {
             ['pjbh']
         ]
     };
-    const pjbhs = await City.findAll(options);
-    return response(200, pjbhs);
+    return await City.findAll(options);
 }
 module.exports.getMicroregions = async () => {
     const options = {
@@ -90,6 +83,5 @@ module.exports.getMicroregions = async () => {
             ['nm_micro']
         ]
     };
-    const microregions = await City.findAll(options);
-    return response(200, microregions);
+    return await City.findAll(options);
 }
