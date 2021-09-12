@@ -15,14 +15,9 @@ module.exports.getColumnsTable = async (tableName, schema, alias = '') => {
         AND column_name not like '%geom%' `;
     const columns = await sequelize.query(sql, QUERY_TYPES_SELECT)
 
-    let columnsNameStr = '';
     alias = alias ? `${ alias }.` : '';
-    columns.forEach(column => {
-        columnsNameStr += columnsNameStr === '' ? `${ alias }${ column.column_name }` : `, ${ alias }${ column.column_name }`;
-    })
-    return columnsNameStr;
+    return columns.map((column, index) => index === 0 ? `${ alias }${ column.column_name }` : `, ${ alias }${ column.column_name }`).join('');
 }
-
 module.exports.getColumnByType = async (tableName, schema, type) => {
     const sql =
         ` SELECT column_name
@@ -35,26 +30,6 @@ module.exports.getColumnByType = async (tableName, schema, type) => {
 
     return columns.length > 0 ? columns[0].column_name : '';
 }
-
-module.exports.burnedCentroid = async (filter) => {
-    const table = filter.table
-    return `
-      WITH group_result AS (
-        SELECT ${table.alias}.de_car_validado_sema_gid
-        FROM ${table.name} AS ${table.alias} ${filter.secondaryTables}
-        ${filter.sqlWhere}
-        GROUP BY ${table.alias}.de_car_validado_sema_gid
-        ${filter.sqlHaving}
-      )
-      SELECT  group_result.*
-            , ST_Y(ST_Centroid(c.geom)) AS "lat"
-            , ST_X(ST_Centroid(c.geom)) AS "long"
-      FROM de_car_validado_sema AS c,
-           group_result
-      WHERE group_result.de_car_validado_sema_gid= c.gid
-    `;
-}
-
 module.exports.popupInfo = async (filter) => {
     return `
       WITH group_result AS (
@@ -70,7 +45,6 @@ module.exports.popupInfo = async (filter) => {
       ${filter.whereCar}
     `;
 }
-
 module.exports.popupInfoCar = async (filter) => {
     return `
       SELECT ${filter.table.columnsTable}
@@ -78,24 +52,6 @@ module.exports.popupInfoCar = async (filter) => {
       ${filter.whereCar}
     `;
 }
-module.exports.othersData = async (filter) => {
-    const table = filter.table
-    return `
-      WITH group_result AS (
-        SELECT ${table.alias}.de_car_validado_sema_gid
-        FROM ${table.name} AS ${table.alias}
-        ${filter.secondaryTables}
-        ${filter.sqlWhere}
-        GROUP BY ${table.alias}.de_car_validado_sema_gid
-        ${filter.sqlHaving}
-      )
-      SELECT group_result.*, ${columnsTable}
-      FROM de_car_validado_sema AS c,
-           group_result
-      WHERE group_result.de_car_validado_sema_gid= c.gid
-    `;
-}
-
 module.exports.getFilter = async (params) => {
     const layer = JSON.parse(params.view);
 
@@ -110,32 +66,24 @@ module.exports.getFilter = async (params) => {
 
     return filter;
 }
-
-module.exports.setInfoColumns = async (data, groupCode) => {
-    const infoColumns = await InfoColumnsService.getInfoColumns(groupCode);
-    const dataValue = data[0];
-    const changedRow = [];
-    for (const e of Object.entries(dataValue)) {
-        const key = e[0];
-        if (key !== 'lat' && key !== 'long') {
-            const value = e[1];
-            if (infoColumns[key] && infoColumns[key].alias && infoColumns[key].alias !== undefined) {
-                if (infoColumns[key].show) {
-                    changedRow.push({key: infoColumns[key].alias, value: value, type: infoColumns[key].type});
-                }
-            } else {
-                changedRow.push({key, value});
-            }
-        }
-    }
-
-    return changedRow;
-}
-
 module.exports.getBurnedCentroid = async (params) => {
     const filter = await this.getFilter(params);
-    const sql = await this['burnedCentroid'](filter)
-
+    const table = filter.table
+    const sql = `
+      WITH group_result AS (
+        SELECT ${table.alias}.de_car_validado_sema_gid
+        FROM ${table.name} AS ${table.alias} ${filter.secondaryTables}
+        ${filter.sqlWhere}
+        GROUP BY ${table.alias}.de_car_validado_sema_gid
+        ${filter.sqlHaving}
+      )
+      SELECT  group_result.*
+            , ST_Y(ST_Centroid(c.geom)) AS "lat"
+            , ST_X(ST_Centroid(c.geom)) AS "long"
+      FROM de_car_validado_sema AS c,
+           group_result
+      WHERE group_result.de_car_validado_sema_gid= c.gid
+    `;
     return await sequelize.query(sql, QUERY_TYPES_SELECT);
 }
 module.exports.getOthersCentroid = async (params) => {
@@ -179,11 +127,7 @@ module.exports.getOthersCentroid = async (params) => {
                     ${ filter.limit }
                     ${ filter.offset } `;
 
-    let result;
-    let resultCount;
-
-    result = await sequelize.query(sql, QUERY_TYPES_SELECT);
-    let dataJson = result;
+    const dataJson = await sequelize.query(sql, QUERY_TYPES_SELECT);
 
     if (params.countTotal) {
         const sqlCount =
@@ -191,7 +135,7 @@ module.exports.getOthersCentroid = async (params) => {
               ${filter.secondaryTables}
               ${sqlWhere} `;
 
-        resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+        const resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
         dataJson.push(resultCount[0]['count']);
     }
 
@@ -219,7 +163,20 @@ module.exports.getPopupInfo = async (params) => {
     const sql = await this[type](filter)
 
     const data = await sequelize.query(sql, QUERY_TYPES_SELECT)
-    return this.setInfoColumns(data, params.groupCode);
+    const groupCode = params.groupCode;
+    const infoColumns = await InfoColumnsService.getInfoColumns(groupCode);
+    return Object.entries(data[0])
+        .filter(column => !column[0].includes('lat') && !column[0].includes('long'))
+        .map(column => {
+            const key = column[0];
+            const value = column[1];
+            if (infoColumns[key] && infoColumns[key].alias && infoColumns[key].alias !== undefined) {
+                if (infoColumns[key].show) {
+                    return {key: infoColumns[key].alias, value: value, type: infoColumns[key].type};
+                }
+            }
+            return {key, value};
+        });
 }
 module.exports.getAnalysisData = async (params) => {
     const layer = JSON.parse(params.view);
@@ -329,7 +286,6 @@ module.exports.getStaticData = async (params) => {
 module.exports.getDynamicData = async (params) => {
     const specificParameters = JSON.parse(params.specificParameters);
     const date = params.date;
-    const filter = JSON.parse(params.filter);
 
     const layer = JSON.parse(specificParameters.view);
 

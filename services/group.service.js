@@ -1,5 +1,6 @@
 const models = require('../models');
 const {View, Project, Group, RelGroupView} = models;
+const BadRequestError = require('../errors/bad-request.error');
 
 module.exports.get = async () => {
     return await Group.findAll({raw: true});
@@ -20,15 +21,13 @@ module.exports.getCodGroups = async () => {
 
 module.exports.getById = async (id) => {
     // Melhorar usando o include das relações
-    let where;
-
     const group = await Group.findByPk(id).then((result) => result);
 
     group.dataValues.project = await Project.findByPk(group.idProject);
-    where = {
+    const where = {
         where: {
-            groupId: group.id,
-        },
+            groupId: group.id
+        }
     };
     group.dataValues.relViews = await RelGroupView.findAll(where);
 
@@ -58,6 +57,9 @@ module.exports.update = async (groupModify) => {
 }
 
 module.exports.deleteGroup = async (groupId) => {
+    if (!groupId) {
+        throw new BadRequestError('Missing groupId');
+    }
     const group = await Group.findByPk(groupId);
     return await group.destroy().then((result) => result);
 }

@@ -1,11 +1,12 @@
 const {execSync, spawnSync} = require('child_process')
 const fs = require("fs");
-const {response} = require("../utils/response");
 const path = require('path')
 const config = require(__dirname + '/../config/config.json')
-const ViewService = require("../services/view.service")
 const BadRequestError = require('../errors/bad-request.error');
 const InternalServerError = require('../errors/internal-server.error');
+const Filter = require("../utils/filter/filter.utils");
+const models = require("../models");
+const {View} = models;
 
 module.exports.get = async (params) => {
     const fileFormats = params['fileFormats'].split(',');
@@ -17,7 +18,7 @@ module.exports.get = async (params) => {
     const layer = JSON.parse(params.specificParameters)
     const tableName = layer.tableName;
     const connectionString = "PG:host=" + config.db.host + " port=" + config.db.port + " user=" + config.db.username + " password=" + config.db.password + " dbname=" + config.db.database;
-    const sql = await ViewService.getSqlExport(params);
+    const sql = await this.getSql(params);
     const tmpFolder = path.resolve(__dirname, '..', 'tmp');
     fs.rmdirSync(tmpFolder, {recursive: true});
     let file = '';
@@ -84,3 +85,36 @@ module.exports.getFormats = async (formats) => {
         };
     })
 }
+
+module.exports.getSql = async (params) => {
+    const view = JSON.parse(params.specificParameters);
+    if (!view) {
+        throw new BadRequestError('Missing specificParameters');
+    }
+    const table = {
+        name: view.tableName,
+        alias: 'main_table',
+    };
+    const columns = await Filter.getColumns(view, '', table.alias);
+    const filter = await Filter.getFilter(View, table, params, view, columns);
+
+    const columnGid =
+        view.groupCode === 'CAR' ? 'gid' : 'de_car_validado_sema_gid';
+
+    filter.sqlWhere = params.selectedGids
+        ? filter.sqlWhere
+            ? ` ${ filter.sqlWhere } AND ${ columnGid } in (${ params.selectedGids }) `
+            : ` WHERE ${ columnGid } in (${ params.selectedGids }) `
+        : filter.sqlWhere;
+
+    const sqlWhere = filter.sqlHaving
+        ? `${ filter.sqlWhere } 
+            AND ${ table.alias }.${ columns.column1 } IN
+            ( SELECT tableWhere.${ columns.column1 } AS subtitle
+            FROM public.${ table.name } AS tableWhere
+            GROUP BY tableWhere.${ columns.column1 }
+            ${ filter.sqlHaving }) `
+        : filter.sqlWhere;
+
+    return `SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
+};

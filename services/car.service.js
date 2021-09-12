@@ -3,6 +3,8 @@ const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const {CarValidado, sequelize} = require('../models');
 const Filter = require("../utils/filter/filter.utils");
 const BadRequestError = require('../errors/bad-request.error');
+const {response} = require("../utils/response");
+const httpStatus = require('../enum/http-status');
 
 module.exports.get = async (params) => {
     const specificParameters = JSON.parse(params.specificParameters);

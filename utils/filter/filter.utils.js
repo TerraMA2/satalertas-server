@@ -1,6 +1,7 @@
 const {QueryTypes} = require('sequelize');
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const config = require(__dirname + '/../../config/config.json');
+const BadRequestError = require('../../errors/bad-request.error');
 
 function addAND(sqlWhere) {
     return sqlWhere.trim() ? `AND ` : '';
@@ -337,7 +338,10 @@ function getValues(analyze) {
 
 const filterUtils = {
     async getFilter(conn, table, params, view, columns) {
-        const filter = params.filter && params.filter !== 'null' ? JSON.parse(params.filter) : {};
+        const filter = JSON.parse(params.filter);
+        if (!filter) {
+            throw new BadRequestError('Missing filter parameter');
+        }
         params.sortColumn = params.sortField ? params.sortField : params.sortColumn;
 
         const sql = {

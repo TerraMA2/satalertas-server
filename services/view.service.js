@@ -1,49 +1,8 @@
 const models = require('../models');
-const {View, sequelize} = models;
+const {sequelize} = models;
 const {QueryTypes} = sequelize;
 const config = require(__dirname + '/../config/config.json')
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
-const Filter = require("../utils/filter/filter.utils");
-
-module.exports.getSql = async (params) => {
-    const view =
-        params.specificParameters && params.specificParameters !== 'null'
-            ? JSON.parse(params.specificParameters)
-            : [];
-
-    let sql = '';
-    if (view) {
-        const table = {
-            name: view.tableName,
-            alias: 'main_table',
-        };
-        const columns = await Filter.getColumns(view, '', table.alias);
-        const filter = await Filter.getFilter(View, table, params, view, columns);
-
-        const columnGid =
-            view.groupCode === 'CAR' ? 'gid' : 'de_car_validado_sema_gid';
-
-        filter.sqlWhere = params.selectedGids
-            ? filter.sqlWhere
-                ? ` ${ filter.sqlWhere } AND ${ columnGid } in (${ params.selectedGids }) `
-                : ` WHERE ${ columnGid } in (${ params.selectedGids }) `
-            : filter.sqlWhere;
-
-        const sqlWhere = filter.sqlHaving
-            ? `${ filter.sqlWhere } 
-            AND ${ table.alias }.${ columns.column1 } IN
-            ( SELECT tableWhere.${ columns.column1 } AS subtitle
-            FROM public.${ table.name } AS tableWhere
-            GROUP BY tableWhere.${ columns.column1 }
-            ${ filter.sqlHaving }) `
-            : filter.sqlWhere;
-
-        sql = ` SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
-    }
-
-    return sql;
-};
-
 module.exports.setFilter = (groupViews, viewData) => {
     const view_default = `${ viewData.workspace }:${ viewData.view }`;
     return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter
@@ -57,14 +16,14 @@ module.exports.setFilter = (groupViews, viewData) => {
         : {};
 };
 
-module.exports.setLegend = (data_view) => {
+module.exports.getLegend = (data_view) => {
     return {
         title: data_view.cod,
         url: `${ config.geoserver.legendUrl }${ data_view.workspace }:${ data_view.view }`,
     };
 };
 
-module.exports.setlayerData = (data_view) => {
+module.exports.getlayerData = (data_view) => {
     return {
         url: `${ config.geoserver.baseUrl }/wms`,
         layers: `${ data_view.workspace }:${ data_view.view }`,
@@ -121,8 +80,8 @@ module.exports.setViews = (groupViews, data_view) => {
         isDisabled: data_view.is_disable,
         filter:
             data_view.type === 'analysis' ? this.setFilter(groupViews, data_view) : null,
-        layerData: this.setlayerData(data_view),
-        legend: this.setLegend(data_view),
+        layerData: this.getlayerData(data_view),
+        legend: this.getLegend(data_view),
         tools: [
             {
                 icon: 'fas fa-info',
@@ -567,8 +526,4 @@ module.exports.getReportLayers = async () => {
 module.exports.getSidebarLayers = async () => {
     const groupViews = await this.orderView(await this.getGroupViews());
     return await this.setResultSidebarConfig(groupViews);
-}
-
-module.exports.getSqlExport = async (params) => {
-    return await this.getSql(params);
 }

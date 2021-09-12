@@ -1,5 +1,4 @@
 const axios = require('axios')
-const {response} = require("../utils/response");
 
 exports.get = async (coordinates, type, preFilter, filter, filterParam, sat) => {
     const key = 'ZW46IXzr4pRzJlX/';

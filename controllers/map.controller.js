@@ -4,12 +4,12 @@ const httpStatus = require('../enum/http-status');
 
 exports.getAnalysisCentroid = async (req, res, next) => {
     try {
-        const params = JSON.parse(req.query.specificParameters);
-        params.date = req.query.date;
-        params.filter = req.query.filter;
+        const { specificParameters, date, filter } = req.query;
+        const params = JSON.parse(specificParameters);
+        params.date = date;
+        params.filter = filter;
         const layer = JSON.parse(params.view);
-        let type = layer.groupCode === 'BURNED' ? 'burned' : 'others'
-
+        let type = layer.groupCode === 'BURNED' ? 'burned' : 'others';
         type = type.charAt(0).toUpperCase() + type.slice(1);
         const centroid = await mapService[`get${ type }Centroid`](params)
         res.json(response(httpStatus.SUCCESS, centroid));

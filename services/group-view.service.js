@@ -140,7 +140,7 @@ module.exports.getByGroupId = async (groupId) => {
             if (isPrimary && subLayers) {
                 const sbLayers = [];
                 subLayers.forEach((layerId) => {
-                    sbLayers.push(viewsGroup.find((lyr) => lyr.id == layerId));
+                    sbLayers.push(viewsGroup.find((lyr) => lyr.id === layerId));
                 });
                 if (sbLayers.length > 0) {
                     view.subLayers = sbLayers;

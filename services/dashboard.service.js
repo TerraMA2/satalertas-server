@@ -9,10 +9,9 @@ const InternalServerError = require('../errors/internal-server.error');
 const BadRequestError = require('../errors/bad-request.error');
 
 module.exports.getSqlAnalysisTotals = async (params) => {
-    const analysisList = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
-
-    if (analysisList.length === 0) {
-        return null;
+    const analysisList = JSON.parse(params.specificParameters);
+    if (!analysisList) {
+        throw new BadRequestError('Missing specificParameters');
     }
 
     let sql = '';
