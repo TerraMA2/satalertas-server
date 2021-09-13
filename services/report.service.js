@@ -3,13 +3,13 @@ const {Report, sequelize} = require('../models');
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const config = require(__dirname + '/../config/config.json');
-const ViewUtil = require('../utils/view.utils');
 const SatVegService = require('../services/sat-veg.service');
 const moment = require('moment');
 const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js');
 const {QueryTypes} = require("sequelize");
 const BadRequestError = require("../errors/bad-request.error");
 const InternalServerError = require("../errors/internal-server.error");
+const ViewService = require("../services/view.service");
 
 module.exports.getFilterClassSearch = (sql, filter, view, tableOwner) => {
     const classSearch = filter && filter.classSearch ? filter.classSearch : null;
@@ -1471,7 +1471,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
 
     const [dateFrom, dateTo] = date;
 
-    const views = await ViewUtil.getGrouped();
+    const groupViews = await ViewService.getSidebarLayers(true);
 
     const columnCarEstadualSemas = 'numero_do1';
     const columnCarFederalSemas = 'numero_do2';
@@ -1482,11 +1482,11 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     const columnCarSemas = 'gid';
     const columnCar = `de_car_validado_sema_gid`;
 
-    const tableName = views.STATIC.children.CAR_VALIDADO.tableName;
+    const tableName = groupViews.STATIC.children.CAR_VALIDADO.tableName;
 
     let propertyData = await this.getCarData(
         tableName,
-        views.STATIC.children.MUNICIPIOS.tableName,
+        groupViews.STATIC.children.MUNICIPIOS.tableName,
         columnCarEstadualSemas,
         columnCarFederalSemas,
         columnAreaHaCar,
@@ -1502,7 +1502,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     }
     await this.setDeterData(
         type,
-        views,
+        groupViews,
         propertyData,
         dateSql,
         columnCar,
@@ -1513,7 +1513,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     );
     await this.setProdesData(
         type,
-        views,
+        groupViews,
         propertyData,
         dateSql,
         columnCar,
@@ -1523,7 +1523,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     );
     await this.setBurnedData(
         type,
-        views,
+        groupViews,
         propertyData,
         dateSql,
         columnCar,
@@ -1535,7 +1535,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
 
     return await this.setReportFormat(
         propertyData,
-        views,
+        groupViews,
         type,
         columnCar,
         columnCarSemas,
@@ -1571,7 +1571,7 @@ module.exports.getChartOptions = async (labels, data) => {
 }
 module.exports.getPointsAlerts = async (carRegister, date, type) => {
     const {planetSRID} = config.geoserver;
-    const views = await ViewUtil.getGrouped();
+    const groupViews = await ViewService.getSidebarLayers(true);
 
     const carColumn = 'gid';
     const carColumnSemas = 'de_car_validado_sema_gid';
@@ -1590,7 +1590,7 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
                extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
                main_table.execution_date
         FROM public.${
-        views[type.toUpperCase()].children[groupType[type]].tableName
+        groupViews[type.toUpperCase()].children[groupType[type]].tableName
     } AS main_table
         WHERE main_table.${ carColumnSemas } = '${ carRegister }'
           AND main_table.execution_date BETWEEN '${ date[0] }' AND '${ date[1] }'
@@ -1618,23 +1618,23 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
         point['url'] = `${
             config.geoserver.baseUrl
         }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_119:planet_latest_global_monthly,${
-            views.STATIC.children.CAR_VALIDADO.workspace
-        }:${ views.STATIC.children.CAR_VALIDADO.view },${
-            views.STATIC.children.CAR_X_USOCON.workspace
-        }:${ views.STATIC.children.CAR_X_USOCON.view },${
-            views[type.toUpperCase()].children[groupType[type]].workspace
-        }:${ views[type.toUpperCase()].children[groupType[type]].view }&styles=,${
-            views.STATIC.children.CAR_VALIDADO.workspace
-        }:${ views.STATIC.children.CAR_VALIDADO.view }_yellow_style,${
-            views.STATIC.children.CAR_VALIDADO.workspace
-        }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${
-            views[type.toUpperCase()].children[groupType[type]].workspace
+            groupViews.STATIC.children.CAR_VALIDADO.workspace
+        }:${ groupViews.STATIC.children.CAR_VALIDADO.view },${
+            groupViews.STATIC.children.CAR_X_USOCON.workspace
+        }:${ groupViews.STATIC.children.CAR_X_USOCON.view },${
+            groupViews[type.toUpperCase()].children[groupType[type]].workspace
+        }:${ groupViews[type.toUpperCase()].children[groupType[type]].view }&styles=,${
+            groupViews.STATIC.children.CAR_VALIDADO.workspace
+        }:${ groupViews.STATIC.children.CAR_VALIDADO.view }_yellow_style,${
+            groupViews.STATIC.children.CAR_VALIDADO.workspace
+        }:${ groupViews.STATIC.children.CAR_X_USOCON.view }_hatched_style,${
+            groupViews[type.toUpperCase()].children[groupType[type]].workspace
         }:${
-            views[type.toUpperCase()].children[groupType[type]].view
+            groupViews[type.toUpperCase()].children[groupType[type]].view
         }_red_style&bbox=${ bbox }&width=256&height=256&time=${
             point.startyear
         }/${ currentYear }&cql_filter=RED_BAND>0;rid='${ carRegister }';gid_car='${ carRegister }';${
-            views[type.toUpperCase()].children[groupType[type]].tableName
+            groupViews[type.toUpperCase()].children[groupType[type]].tableName
         }_id=${ point.a_carprodes_1_id }&srs=EPSG:${
             planetSRID
         }&format=image/png`;

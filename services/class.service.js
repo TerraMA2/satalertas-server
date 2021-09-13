@@ -1,16 +1,16 @@
 const models = require('../models');
 const {View} = models;
-const ViewUtil = require("../utils/view.utils");
 const {QueryTypes} = require('sequelize');
 const BadRequestError = require("../errors/bad-request.error");
+const ViewService = require("../services/view.service");
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 
 module.exports.get = async (type) => {
     if (!type) {
         throw new BadRequestError('Type not found');
     }
-    const groupView = await ViewUtil.getGrouped();
-    const tableName = groupView['DYNAMIC'].children[type.toUpperCase()].tableName;
+    const groupViews = await ViewService.getSidebarLayers(true);
+    const tableName = groupViews['DYNAMIC'].children[type.toUpperCase()].tableName;
     if (!tableName) {
         throw new BadRequestError('Table not found');
     }
