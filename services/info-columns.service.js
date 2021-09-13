@@ -73,7 +73,7 @@ async function getInfocolumnsByTableName(tableName) {
     );
     tableData.forEach((table) => {
       table.tableInfocolumns.map((columns) => {
-        columns.columnName = camelCase(columns.columnName);
+        columns.nameCamel = camelCase(columns.columnName);
         return columns;
       })
       table.tableInfocolumns.sort((a, b) => {
@@ -108,15 +108,15 @@ async function updateTableInfoColums(editions) {
 async function getInfocolumnsByViewId(viewId) {
   try {
     let sql = `SELECT
-      (CASE
+    (CASE
       WHEN vw.source_type = 3 THEN concat(TRIM(dsf.value), '_', analysis.id)
       ELSE dsf.value
       END), vw.id AS view_id
-    FROM terrama2.views AS vw
-    INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
-    INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
-    LEFT JOIN terrama2.analysis AS analysis ON dsf.data_set_id = analysis.dataset_output
-    WHERE vw.id IN (:viewId) AND dsf.key = 'table_name';`;
+      FROM terrama2.views AS vw
+      INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
+      INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
+      LEFT JOIN terrama2.analysis AS analysis ON dsf.data_set_id = analysis.dataset_output
+      WHERE vw.id IN (:viewId) AND dsf.key = 'table_name';`;
     const options = {
       type: QueryTypes.SELECT,
       fieldMap: { value: 'tableName', view_id: 'viewId' },
@@ -126,10 +126,10 @@ async function getInfocolumnsByViewId(viewId) {
     const infocolumn = await getInfocolumnsByTableName(tableNames.map(({tableName}) => tableName));
     infocolumn.forEach(element => element['viewId'] = tableNames.find((table) => table.tableName === element.tableName )['viewId']);
     if(Array.isArray(viewId)) {
-      return Promise.all(infocolumn);
-    } else {
-      return Promise.all(infocolumn[0]);
+      return infocolumn;
     }
+    return infocolumn[0];
+
   } catch (e) {
     throw new Error(msgError(__filename, 'getInfocolumnsByViewId', e));
   }
