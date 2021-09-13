@@ -37,24 +37,18 @@ function setLegend(title, workspace, layer) {
   };
 }
 
-// function setFilter(groupViews, data_view) {
 function setFilter(group, layer) {
   try {
-    let filter = {};
     const view_default = `${group.workspace}:${layer.viewName}`;
-    if (VIEWS[layer.groupCode] && VIEWS[layer.groupCode].filter) {
-      filter = VIEWS[layer.groupCode].filter(
-        view_default,
-        `${config.project}_${config.geoserver.workspace}`,
-        layer.cod,
-        group[layer.groupCode].tableOwner,
-        layer.is_primary
-      );
-    }
+    const filter = VIEWS.newFilter(
+      view_default,
+      `${ config.project }_${ config.geoserver.workspace }`,
+      layer.code,
+      field=layer.tableInfocolumns,
+    );
     return filter;
   } catch (e) {
     throw new Error(msgError(__filename, 'setFilter', e))
-
   }
 }
 
