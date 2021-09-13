@@ -1,7 +1,7 @@
 const express = require('express');
 router = express.Router();
-SatVeg = require('../controllers/sat-veg.controller');
+satVeg = require('../controllers/sat-veg.controller');
 
-router.get('/:type?/:coordinates?/:sat?/:preFilter?/:filter?/:filterParam?', SatVeg.get);
+router.get('/:type?/:coordinates?/:sat?/:preFilter?/:filter?/:filterParam?', satVeg.get);
 
 module.exports = router;

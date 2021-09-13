@@ -2,12 +2,12 @@ const express = require('express');
 router = express.Router();
 cityController = require('../controllers/city.controller');
 
-router.get('/', cityController.getAll);
-router.get('/getAllRegions', cityController.getAllRegions);
-router.get('/getAllMesoregions', cityController.getAllMesoregions);
-router.get('/getAllImmediateRegion', cityController.getAllImmediateRegion);
-router.get('/getAllIntermediateRegion', cityController.getAllIntermediateRegion);
-router.get('/getAllPjbh', cityController.getAllPjbh);
-router.get('/getAllMicroregions', cityController.getAllMicroregions);
+router.get('/', cityController.get);
+router.get('/getRegions', cityController.getRegions);
+router.get('/getMesoregions', cityController.getMesoregions);
+router.get('/getImmediateRegion', cityController.getImmediateRegion);
+router.get('/getIntermediateRegion', cityController.getIntermediateRegion);
+router.get('/getPjbh', cityController.getPjbh);
+router.get('/getMicroregions', cityController.getMicroregions);
 
 module.exports = router;

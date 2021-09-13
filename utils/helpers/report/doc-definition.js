@@ -3,7 +3,7 @@ const DocDefinitionsDeter = require('./doc-definition-deter.js')
 const DocDefinitionsQueimada = require('./doc-definition-queimada.js')
 
 module.exports = DocDefinitions = {
-  prodes: DocDefinitionsProdes,
-  deter: DocDefinitionsDeter,
-  queimada: DocDefinitionsQueimada
+    prodes: DocDefinitionsProdes,
+    deter: DocDefinitionsDeter,
+    queimada: DocDefinitionsQueimada
 };

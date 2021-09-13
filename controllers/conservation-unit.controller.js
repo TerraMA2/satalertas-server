@@ -1,12 +1,12 @@
 const conservationUnitService = require(__dirname + '/../services/conservation-unit.service');
-const logger = require('../utils/logger');
+const {response} = require("../utils/response.utils");
+const httpStatus = require('../enum/http-status');
 
-exports.getAll = async (req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        res.json(await conservationUnitService.getAll());
+        const conservationUnits = await conservationUnitService.get()
+        res.json(response(httpStatus.SUCCESS, conservationUnits));
     } catch (e) {
-        const msgErr = `In conservation-unit.controller, method getAll:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e)
     }
 };

@@ -1,81 +1,65 @@
 const models = require('../models');
-const { View, Project, Group, RelGroupView } = models;
-const logger = require('../utils/logger');
-const { msgError } = require('../utils/messageError');
+const {View, Project, Group, RelGroupView} = models;
+const BadRequestError = require('../errors/bad-request.error');
 
-module.exports = GroupService = {
-  async getAll() {
-    try {
-      return await Group.findAll({ raw: true });
-    } catch (e) {
-      const msgErr = `In unit group.service, method getAll:${e}`;
-      throw new Error(msgError(__dirname, 'getAll', e));
-    }
-  },
-  async getCodGroups() {
+module.exports.get = async () => {
+    return await Group.findAll({raw: true});
+}
+
+module.exports.getCodGroups = async () => {
     return [
-      { id: 1, groupCode: 'STATIC', label: 'Dado Estático' },
-      { id: 2, groupCode: 'DYNAMIC', label: 'Dado Dinâmico' },
-      { id: 3, groupCode: 'ANALYSIS', label: 'Análise' },
-      { id: 4, groupCode: 'ALERT', label: 'Alerta' },
-      { id: 5, groupCode: 'BURNED', label: 'Análise FOCOS' },
-      { id: 6, groupCode: 'BURNED_AREA', label: 'Análise Área Queimada' },
-      { id: 7, groupCode: 'DETER', label: 'Análise Deter' },
-      { id: 8, groupCode: 'PRODES', label: 'Análise Prodes' },
+        {id: 1, groupCode: 'STATIC', label: 'Dado Estático'},
+        {id: 2, groupCode: 'DYNAMIC', label: 'Dado Dinâmico'},
+        {id: 3, groupCode: 'ANALYSIS', label: 'Análise'},
+        {id: 4, groupCode: 'ALERT', label: 'Alerta'},
+        {id: 5, groupCode: 'BURNED', label: 'Análise FOCOS'},
+        {id: 6, groupCode: 'BURNED_AREA', label: 'Análise Área Queimada'},
+        {id: 7, groupCode: 'DETER', label: 'Análise Deter'},
+        {id: 8, groupCode: 'PRODES', label: 'Análise Prodes'},
     ];
-  },
-  async getById(id) {
+}
+
+module.exports.getById = async (id) => {
     // Melhorar usando o include das relações
-    try {
-      let where = {};
+    const group = await Group.findByPk(id).then((result) => result);
 
-      const group = await Group.findByPk(id).then((result) => result);
-
-      group.dataValues.project = await Project.findByPk(group.idProject);
-      where = {
+    group.dataValues.project = await Project.findByPk(group.idProject);
+    const where = {
         where: {
-          groupId: group.id,
-        },
-      };
-      const relViews = await RelGroupView.findAll(where);
-      group.dataValues.relViews = await relViews;
+            groupId: group.id
+        }
+    };
+    group.dataValues.relViews = await RelGroupView.findAll(where);
 
-      for (const relViews of group.dataValues.relViews) {
+    for (const relViews of group.dataValues.relViews) {
         const id = relViews.idView;
         relViews.dataValues.view = await View.findByPk(id);
-      }
-      return group;
-    } catch (e) {
-      const msgErr = `In unit group.service, method getById:${e}`;
-      logger.error(msgErr);
-      throw new Error(msgErr);
     }
-  },
-  async add(newGroup) {
-    const group = new Group({
-      name: newGroup.name,
-      idProject: newGroup.idProject,
-      code: newGroup.code,
-      dashboard: newGroup.dashboard,
-      active_area: newGroup.activeArea,
-    });
-    return await Group.create(group.dataValues).then(
-      (group) => group.dataValues,
-    );
-  },
-  async update(groupModify) {
-    try {
-      const { id, ...el } = groupModify;
-      const where = { id }
-      await Group.update(el, { where });
-      return await await Group.findByPk(id, {raw: true});
-    } catch (e) {
-      throw new Error(msgError(__dirname, 'update', e));
-    }
-  },
+    return group;
+}
 
-  async deleteGroup(groupId) {
+module.exports.add = async (newGroup) => {
+    const group = new Group({
+        name: newGroup.name,
+        idProject: newGroup.idProject,
+        code: newGroup.code,
+        dashboard: newGroup.dashboard,
+        active_area: newGroup.activeArea,
+    });
+    return await Group.create(group.dataValues).then((group) => group.dataValues);
+}
+
+module.exports.update = async (groupModify) => {
+    const {id, ...el} = groupModify;
+    const where = {id}
+    await Group.update(el, {where});
+    return await Group.findByPk(id, {raw: true});
+}
+
+module.exports.deleteGroup = async (groupId) => {
+    if (!groupId) {
+        throw new BadRequestError('Missing groupId');
+    }
     const group = await Group.findByPk(groupId);
     return await group.destroy().then((result) => result);
-  },
-};
+}

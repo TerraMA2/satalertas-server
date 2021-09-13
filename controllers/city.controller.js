@@ -1,72 +1,66 @@
 const cityService = require(__dirname + '/../services/city.service');
-const logger = require('../utils/logger');
+const {response} = require("../utils/response.utils");
+const httpStatus = require('../enum/http-status');
 
-exports.getAll = async (req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        res.json(await cityService.getAll());
+        const cities = await cityService.get();
+        res.json(response(httpStatus.SUCCESS, cities));
     } catch (e) {
-        const msgErr = `In city.controller, method getAll:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };
 
-exports.getAllRegions = async (req, res) => {
+exports.getRegions = async (req, res, next) => {
     try {
-        res.json(await cityService.getAllRegions());
+        const regions = await cityService.getRegions();
+        res.json(response(httpStatus.SUCCESS, regions));
     } catch (e) {
-        const msgErr = `In city.controller, method getAllRegions:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };
 
-exports.getAllMesoregions = async (req, res) => {
+exports.getMesoregions = async (req, res, next) => {
     try {
-        res.json(await cityService.getAllMesoregions());
+        const mesoregions = await cityService.getMesoregions();
+        res.json(response(httpStatus.SUCCESS, mesoregions));
     } catch (e) {
-        const msgErr = `In city.controller, method getAllMesoregions:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };
 
-exports.getAllImmediateRegion = async (req, res) => {
+exports.getImmediateRegion = async (req, res, next) => {
     try {
-        res.json(await cityService.getAllImmediateRegion());
+        const immediateRegions = await cityService.getImmediateRegion();
+        res.json(response(httpStatus.SUCCESS, immediateRegions));
     } catch (e) {
-        const msgErr = `In city.controller, method getAllImmediateRegion:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };
 
-exports.getAllIntermediateRegion = async (req, res) => {
+exports.getIntermediateRegion = async (req, res, next) => {
     try {
-        res.json(await cityService.getAllIntermediateRegion());
+        const intermediateRegions = await cityService.getIntermediateRegion();
+        res.json(response(httpStatus.SUCCESS, intermediateRegions));
     } catch (e) {
-        const msgErr = `In city.controller, method getAllIntermediateRegion:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };
 
-exports.getAllPjbh = async (req, res) => {
+exports.getPjbh = async (req, res, next) => {
     try {
-        res.json(await cityService.getAllPjbh());
+        const pjbhs = await cityService.getPjbh();
+        res.json(response(httpStatus.SUCCESS, pjbhs));
     } catch (e) {
-        const msgErr = `In city.controller, method getAllPjbh:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };
 
-exports.getAllMicroregions = async (req, res) => {
+exports.getMicroregions = async (req, res, next) => {
     try {
-        res.json(await cityService.getAllMicroregions());
+        const microregions = await cityService.getMicroregions()
+        res.json(response(httpStatus.SUCCESS, microregions));
     } catch (e) {
-        const msgErr = `In city.controller, method getAllMicroregions:${ e }`;
-        logger.error(msgErr);
-        res.json(msgErr);
+        next(e);
     }
 };

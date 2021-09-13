@@ -1,285 +1,279 @@
-const { QueryTypes } = require('sequelize');
+const {QueryTypes} = require('sequelize');
 const models = require('../models');
-const { View, sequelize } = models;
-const Filter = require("../utils/filter/filter.utils");
-const QUERY_TYPES_SELECT = { type: QueryTypes.SELECT };
+const {View, sequelize} = models;
+const Filter = require("../utils/filter.utils");
+const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const ViewService = require("../services/view.service");
-const LayerTypeName = require('../enum/layerTypeName');
+const LayerTypeName = require('../enum/layer-type-name');
+const InternalServerError = require('../errors/internal-server.error');
+const BadRequestError = require('../errors/bad-request.error');
 
-getSqlAnalysisTotals = async function(params) {
-  const analysisList = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
+module.exports.getSqlAnalysisTotals = async (params) => {
+    const analysisList = JSON.parse(params.specificParameters);
+    if (!analysisList) {
+        throw new BadRequestError('Missing specificParameters');
+    }
 
-  let sql = '';
-  if (analysisList.length > 0) {
+    let sql = '';
     for (let analysis of analysisList) {
-      sql += sql.trim() === '' ? '' : ' UNION ALL ';
+        sql += sql.trim() === '' ? '' : ' UNION ALL ';
 
-      if (analysis.idview && analysis.idview > 0 && analysis.idview !== 'null') {
-        const table = {
-          name: analysis.tableName,
-          alias: 'main_table'
-        };
-        const columns = await Filter.getColumns(analysis, '', table.alias);
-        const filter = await Filter.getFilter(View, table, params, analysis, columns);
-        const alert = analysis.groupCode === 'BURNED' ?
-          ` COALESCE( ( SELECT ROW_NUMBER() OVER(ORDER BY ${columns.column1} ASC) AS Row
-               FROM public.${table.name} AS ${table.alias}
-               ${filter.secondaryTables}
-               ${filter.sqlWhere}
-               GROUP BY ${columns.column1}
-               ${filter.sqlHaving}
+        if (analysis.idview && analysis.idview > 0 && analysis.idview !== 'null') {
+            const table = {
+                name: analysis.tableName,
+                alias: 'main_table'
+            };
+            const columns = await Filter.getColumns(analysis, '', table.alias);
+            const filter = await Filter.getFilter(View, table, params, analysis, columns);
+            const alert = analysis.groupCode === 'BURNED' ?
+                ` COALESCE( ( SELECT ROW_NUMBER() OVER(ORDER BY ${ columns.column1 } ASC) AS Row
+               FROM public.${ table.name } AS ${ table.alias }
+               ${ filter.secondaryTables }
+               ${ filter.sqlWhere }
+               GROUP BY ${ columns.column1 }
+               ${ filter.sqlHaving }
                ORDER BY Row DESC
                LIMIT 1
             ), 00.00) AS alert ` :
-          `  COALESCE(COUNT(1), 00.00) AS alert `;
-        const sqlWhere =
-          filter.sqlHaving ?
-            ` ${filter.sqlWhere} 
-                AND ${table.alias}.${columns.column1} IN
-                ( SELECT tableWhere.${columns.column1} AS subtitle
-                  FROM public.${table.name} AS tableWhere
-                  GROUP BY tableWhere.${columns.column1}
-              ${filter.sqlHaving}) ` :
-              filter.sqlWhere;
+                `  COALESCE(COUNT(1), 00.00) AS alert `;
+            const sqlWhere =
+                filter.sqlHaving ?
+                    ` ${ filter.sqlWhere } 
+                AND ${ table.alias }.${ columns.column1 } IN
+                ( SELECT tableWhere.${ columns.column1 } AS subtitle
+                  FROM public.${ table.name } AS tableWhere
+                  GROUP BY tableWhere.${ columns.column1 }
+              ${ filter.sqlHaving }) ` :
+                    filter.sqlWhere;
 
-        const area = analysis.groupCode === 'BURNED' ?
-          ` ( SELECT coalesce(sum(1), 0.00) as num_focos FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} ) AS area ` :
-          ` COALESCE(SUM(${columns.columnArea}), 0.00) AS area `;
+            const area = analysis.groupCode === 'BURNED' ?
+                ` ( SELECT coalesce(sum(1), 0.00) as num_focos FROM public.${ table.name } AS ${ table.alias } ${ filter.secondaryTables } ${ sqlWhere } ) AS area ` :
+                ` COALESCE(SUM(${ columns.columnArea }), 0.00) AS area `;
 
-        const sqlFrom = analysis.groupCode === 'BURNED' ?
-          ` ` :
-          ` FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${filter.sqlWhere} `;
+            const sqlFrom = analysis.groupCode === 'BURNED' ?
+                ` ` :
+                ` FROM public.${ table.name } AS ${ table.alias } ${ filter.secondaryTables } ${ filter.sqlWhere } `;
 
-        sql +=
-          ` SELECT ${alert},
-                   ${area}
-                   ${sqlFrom}`;
-      } else {
-        sql +=
-          ` SELECT 0.00 AS alert,
+            sql +=
+                ` SELECT ${ alert },
+                   ${ area }
+                   ${ sqlFrom }`;
+        } else {
+            sql +=
+                ` SELECT 0.00 AS alert,
                    00.00 AS area `;
-      }
+        }
     }
-  }
-  return sql;
+    return sql;
 }
 
-function setAnalysisChart(analysis, chart1, chart2) {
-  return {
-    cod: analysis.cod,
-    groupCode: analysis.groupCode,
-    label: analysis.label,
-    active: analysis.isPrimary,
-    isEmpty: chart1.labels.length === 0 || chart2.labels.length === 0,
-    charts: [{
-      data: chart1,
-      options: {
-        title: {
-          display: true,
-          text: analysis.groupCode,
-          fontSize: 16
-        },
-        legend: {
-          position: 'bottom'
-        }
-      }
-    },
-      {
-        data: chart2,
-        options: {
-          title: {
-            display: true,
-            text: analysis.groupCode,
-            fontSize: 16
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }]
-  }
+module.exports.getAnalysisChart = (analysis, chart1, chart2) => {
+    return {
+        cod: analysis.cod,
+        groupCode: analysis.groupCode,
+        label: analysis.label,
+        active: analysis.isPrimary,
+        isEmpty: chart1.labels.length === 0 || chart2.labels.length === 0,
+        charts: [
+            {
+                data: chart1,
+                options: {
+                    title: {
+                        display: true,
+                        text: analysis.groupCode,
+                        fontSize: 16
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            },
+            {
+                data: chart2,
+                options: {
+                    title: {
+                        display: true,
+                        text: analysis.groupCode,
+                        fontSize: 16
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        ]
+    }
 }
-async function setChart(chartData, value, subtitle, label) {
-  let labels = [];
-  let data = [];
-  let backgroundColor = [];
-  let hoverBackgroundColor = [];
 
-  chartData.forEach(chart => {
-    labels.push(chart[`${subtitle}`]);
-    const chartValue = chart[`${value}`];
-    data.push(chartValue);
-    backgroundColor.push('#591111');
-    hoverBackgroundColor.push('#874847');
-  });
+module.exports.getChart = async (chartData, value, subtitle, label) => {
+    let labels = [];
+    let data = [];
+    let backgroundColor = [];
+    let hoverBackgroundColor = [];
 
-  return {
-    labels: labels,
-    datasets: [{
-      label,
-      data: data,
-      backgroundColor: backgroundColor,
-      hoverBackgroundColor: hoverBackgroundColor
-    }]
-  };
-}
-async function getAnalysisChartSql(analysis, params) {
-  let sql1 = '';
-  let sql2 = '';
+    if (!chartData) {
+        return null;
+    }
 
-  const value = 'value';
-  const subtitle = 'subtitle';
+    chartData.forEach(chart => {
+        labels.push(chart[`${ subtitle }`]);
+        const chartValue = chart[`${ value }`];
+        data.push(chartValue);
+        backgroundColor.push('#5D131C');
+        hoverBackgroundColor.push('#874847');
+    });
 
-  if (analysis.idview && analysis.idview > 0 && analysis.idview !== 'null') {
-
-    const table = {
-      name: analysis.tableName,
-      alias: 'main_table',
-      owner: analysis.tableOwner
+    return {
+        labels: labels,
+        datasets: [{
+            label,
+            data: data,
+            backgroundColor: backgroundColor,
+            hoverBackgroundColor: hoverBackgroundColor
+        }]
     };
-    const columns = await Filter.getColumns(analysis, table.owner, table.alias);
-
-    const limit = params.limit && params.limit !== 'null' && params.limit > 0 ?
-      params.limit :
-      10;
-
-
-    const columnsFor1 =
-      `   (CASE
-              WHEN ${columns.column1} IS NULL THEN ${columns.column5}
-              ELSE ${columns.column1}
-           END)   AS ${subtitle},
-          COALESCE(SUM(${columns.column3})) AS ${value} `;
-
-    const columnsFor2 = analysis.groupCode && (analysis.groupCode === 'BURNED_AREA') ?
-      `   (CASE
-                WHEN ${columns.column2} IS NULL THEN ${columns.column5}
-                ELSE ${columns.column2}
-            END)   AS ${subtitle},
-          COALESCE(SUM(${columns.column3})) AS ${value} ` :
-        `   ${columns.column2} AS ${subtitle},
-          COALESCE(SUM(${columns.column3})) AS ${value} `
-    ;
-
-    const sqlFrom = ` FROM public.${table.name} AS ${table.alias}`;
-
-    const filter = await Filter.getFilter(View, table, params, analysis, columns);
-
-    const sqlGroupBy1 = ` GROUP BY ${subtitle} `;
-    const sqlGroupBy2 = ` GROUP BY ${analysis.groupCode && (analysis.groupCode === 'BURNED_AREA') ? subtitle : columns.column2}  `;
-    const sqlOrderBy = ` ORDER BY ${value} DESC `;
-    const sqlLimit = ` LIMIT ${limit} `;
-
-    sql1 +=
-      ` SELECT ${columnsFor1} ${sqlFrom} ${filter.secondaryTables}
-          ${filter.sqlWhere}
-          ${sqlGroupBy1}
-          ${filter.sqlHaving}
-          ${sqlOrderBy}
-          ${sqlLimit}
-        `;
-    sql2 +=
-      ` SELECT ${columnsFor2} ${sqlFrom} ${filter.secondaryTables} 
-          ${filter.sqlWhere} 
-          ${sqlGroupBy2} 
-          ${filter.sqlHaving} 
-          ${sqlOrderBy} 
-          ${sqlLimit} 
-        `;
-  } else {
-    sql1 +=
-      ` SELECT 
-          ' --- ' AS ${subtitle},
-          0.00 AS ${value} 
-        `;
-    sql2 +=
-      ` SELECT 
-          ' --- ' AS ${subtitle},
-          0.00 AS ${value}
-        `;
-  }
-  return {sql1, sql2, value, subtitle};
 }
-// function generate_color() {
-//   const hexadecimal = '0123456789ABCDEF';
-//   let color = '#';
-//
-//   for (let i = 0; i < 6; i++) {
-//     color += hexadecimal[Math.floor(Math.random() * 16)];
-//   }
-//   return color;
-// }
-// --------------------------------------------------------------
-module.exports = dashboardService = {
-  async getAnalysis(params) {
+
+module.exports.getAnalysisChartSql = async (analysis, params) => {
+    let sql1 = '';
+    let sql2 = '';
+
+    const value = 'value';
+    const subtitle = 'subtitle';
+
+    if (analysis.idview && analysis.idview > 0 && analysis.idview !== 'null') {
+
+        const table = {
+            name: analysis.tableName,
+            alias: 'main_table',
+            owner: analysis.tableOwner
+        };
+        const columns = await Filter.getColumns(analysis, table.owner, table.alias);
+
+        const limit = params.limit && params.limit !== 'null' && params.limit > 0 ? params.limit : 10;
+
+        const columnsFor1 =
+            `   (CASE
+              WHEN ${ columns.column1 } IS NULL THEN ${ columns.column5 }
+              ELSE ${ columns.column1 }
+           END)   AS ${ subtitle },
+          COALESCE(SUM(${ columns.column3 })) AS ${ value } `;
+
+        const columnsFor2 = analysis.groupCode && (analysis.groupCode === 'BURNED_AREA') ?
+            `   (CASE
+                WHEN ${ columns.column2 } IS NULL THEN ${ columns.column5 }
+                ELSE ${ columns.column2 }
+            END)   AS ${ subtitle },
+          COALESCE(SUM(${ columns.column3 })) AS ${ value } ` :
+            `   ${ columns.column2 } AS ${ subtitle },
+          COALESCE(SUM(${ columns.column3 })) AS ${ value } `;
+
+        const sqlFrom = ` FROM public.${ table.name } AS ${ table.alias }`;
+
+        const filter = await Filter.getFilter(View, table, params, analysis, columns);
+
+        const sqlGroupBy1 = ` GROUP BY ${ subtitle } `;
+        const sqlGroupBy2 = ` GROUP BY ${ analysis.groupCode && (analysis.groupCode === 'BURNED_AREA') ? subtitle : columns.column2 }  `;
+        const sqlOrderBy = ` ORDER BY ${ value } DESC `;
+        const sqlLimit = ` LIMIT ${ limit } `;
+
+        sql1 +=
+            ` SELECT ${ columnsFor1 } ${ sqlFrom } ${ filter.secondaryTables }
+          ${ filter.sqlWhere }
+          ${ sqlGroupBy1 }
+          ${ filter.sqlHaving }
+          ${ sqlOrderBy }
+          ${ sqlLimit }`;
+        sql2 +=
+            ` SELECT ${ columnsFor2 } ${ sqlFrom } ${ filter.secondaryTables } 
+          ${ filter.sqlWhere } 
+          ${ sqlGroupBy2 } 
+          ${ filter.sqlHaving } 
+          ${ sqlOrderBy } 
+          ${ sqlLimit }`;
+    } else {
+        sql1 +=
+            ` SELECT 
+          ' --- ' AS ${ subtitle },
+          0.00 AS ${ value }`;
+        sql2 +=
+            ` SELECT 
+          ' --- ' AS ${ subtitle },
+          0.00 AS ${ value }`;
+    }
+    return {sql1, sql2, value, subtitle};
+}
+
+module.exports.getAnalysis = async (params) => {
     let sidebarLayers = await ViewService.getSidebarLayers();
-    sidebarLayers = sidebarLayers.data;
     if (!sidebarLayers) {
-      return null;
+        throw new InternalServerError('Layers not found');
     }
     let analysisList = sidebarLayers
-        .filter(layerGroup => layerGroup.view_graph)
-        .map((layerGroup) => {
-          const children = layerGroup.children;
-          const primaryLayer = children.find((layer) => layer.isPrimary && layer.type === LayerTypeName["3"]);
-          const analysisCharts = children.map(layer => {
+        .filter(layerGroup => layerGroup['viewGraph'])
+        .map(layerGroup => {
+            const children = layerGroup.children;
+            const primaryLayer = children.find((layer) => layer.isPrimary && layer.type === LayerTypeName["3"]);
+            const analysisCharts = children.map(layer => {
+                return {
+                    idview: layer.value,
+                    cod: layer.cod,
+                    groupCode: layer.groupCode,
+                    label: layer.label,
+                    activearea: true,
+                    isPrimary: layer.isPrimary,
+                    isAnalysis: layer.type === LayerTypeName['3'],
+                    tableOwner: layer.tableOwner,
+                    tableName: layer.tableName
+                }
+            });
             return {
-              idview: layer.value,
-              cod: layer.cod,
-              groupCode: layer.groupCode,
-              label: layer.label,
-              activearea: true,
-              isPrimary: layer.isPrimary,
-              isAnalysis: layer.type === LayerTypeName['3'],
-              tableOwner: layer.tableOwner,
-              tableName: layer.tableName
-            }
-          });
-          return {
-            idview: primaryLayer.value,
-            cod: primaryLayer.cod,
-            groupCode: layerGroup.cod,
-            label: layerGroup.label,
-            alert: 0,
-            area: 0,
-            selected: layerGroup.cod === 'DETER',
-            activearea: layerGroup.cod === 'DETER',
-            activealert: false,
-            analysischarts: analysisCharts,
-            isAnalysis: true,
-            isPrimary: true,
-            tableOwner: primaryLayer.tableOwner,
-            tableName: primaryLayer.tableName
-          };
-    });
+                idview: primaryLayer.value,
+                cod: primaryLayer.cod,
+                groupCode: layerGroup.cod,
+                label: layerGroup.label,
+                alert: 0,
+                area: 0,
+                selected: layerGroup.cod === 'DETER',
+                activearea: layerGroup.cod === 'DETER',
+                activealert: false,
+                analysischarts: analysisCharts,
+                isAnalysis: true,
+                isPrimary: true,
+                tableOwner: primaryLayer.tableOwner,
+                tableName: primaryLayer.tableName
+            };
+        });
     params.specificParameters = JSON.stringify(analysisList);
-    const sqlTotals = await getSqlAnalysisTotals(params);
-    const result = await sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
-    result[0].activearea = true;
-    analysisList = analysisList.map((analysis, index) => {
-      analysis.alert = result[index].alert;
-      analysis.area = result[index].area;
-      return analysis;
+    const sqlTotals = await this.getSqlAnalysisTotals(params);
+    if (!sqlTotals) {
+        throw new InternalServerError("Couldn't calculate totals");
+    }
+    const analysisTotals = await sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
+    analysisTotals[0].activearea = true;
+    return analysisList.map((analysis, index) => {
+        const {alert, area} = analysisTotals[index];
+        analysis.alert = alert;
+        analysis.area = area;
+        return analysis;
     });
-    return analysisList;
-  },
-  async getAnalysisCharts(params) {
-    const analysisList = params.specificParameters && params.specificParameters !== 'null' ? JSON.parse(params.specificParameters) : [];
-    const result = [];
-    if (analysisList.length > 0) {
-      let count = 0;
-      for (let analysis of analysisList) {
+}
+
+module.exports.getAnalysisCharts = async (params) => {
+    const analysisList = JSON.parse(params.specificParameters);
+    if (!analysisList) {
+        throw new BadRequestError('Missing specificParameters');
+    }
+    const analysisCharts = [];
+    for (const analysis of analysisList) {
         const labelChart1 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por CAR' : 'Área (ha) de alertas por CAR';
         const labelChart2 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por Bioma' : 'Área (ha) de alertas por classe';
-        const sql = await getAnalysisChartSql(analysis, params);
+        const sql = await this.getAnalysisChartSql(analysis, params);
         let resultAux = await sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
-        const chart1 = await setChart(resultAux, sql.value, sql.subtitle, labelChart1);
+        const chart1 = await this.getChart(resultAux, sql.value, sql.subtitle, labelChart1);
         resultAux = await sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
-        const chart2 = await setChart(resultAux, sql.value, sql.subtitle, labelChart2);
-        result.push(setAnalysisChart(analysis, chart1, chart2));
-        count++;
-      }
+        const chart2 = await this.getChart(resultAux, sql.value, sql.subtitle, labelChart2);
+        analysisCharts.push(this.getAnalysisChart(analysis, chart1, chart2));
     }
-    return result;
-  },
-};
+    return analysisCharts;
+}

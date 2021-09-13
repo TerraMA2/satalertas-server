@@ -1,13 +1,12 @@
-const Result = require(__dirname + `/../utils/result`);
-const ExportService = require("../services/export.service.js");
-const fs = require("fs");
+const exportService = require("../services/export.service.js");
+const {response} = require("../utils/response.utils");
+const httpStatus = require('../enum/http-status');
 
-exports.get = async (req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        const {filePath} = await ExportService.get(req.body.params.params);
-        const fileBase64 = fs.readFileSync(filePath, 'base64')
-        res.json(Result.ok(fileBase64));
+        const file = await exportService.get(req.body.params);
+        res.json(response(httpStatus.SUCCESS, file));
     } catch (e) {
-        res.json(e);
+        next(e);
     }
 };

@@ -5,7 +5,7 @@ const GroupController = require('../controllers/group.controller');
 router.delete('/:id', GroupController.deleteGroup);
 router.put('/', GroupController.update);
 router.post('/', GroupController.add);
-router.get('/', GroupController.getAll);
+router.get('/', GroupController.get);
 router.get('/getCodGroups', GroupController.getCodGroups);
 router.get('/getById?:id*', GroupController.getById);
 

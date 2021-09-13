@@ -1,24 +1,18 @@
 const carService = require(__dirname + '/../services/car.service');
+const {response} = require("../utils/response.utils");
+const httpStatus = require('../enum/http-status');
 
-exports.getAll = async (req, res) => {
-    const params = {
-        specificParameters,
-        date,
-        filter
-    } = req.query;
-
+exports.get = async (req, res, next) => {
     try {
-        res.json(await carService.getAll(params));
-    } catch (e) {
-        res.json(e);
-    }
-};
+        const params = {
+            specificParameters,
+            date,
+            filter
+        } = req.query;
 
-exports.getByCpf = async (req, res) => {
-
-    try {
-        res.json(await carService.getByCpf(req.query.cpfCnpj));
+        const carResult = await carService.get(params)
+        res.json(response(httpStatus.SUCCESS, carResult));
     } catch (e) {
-        res.json(e);
+        next(e)
     }
 };

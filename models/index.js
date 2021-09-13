@@ -39,15 +39,15 @@ const umzug = new Umzug({
 });
 
 const umzugSeed = new Umzug({
-  storage: 'sequelize',
-  storageOptions: { sequelize, modelName: 'SequelizeSeed' },
-  migrations: {
-    params: [
-      sequelize.getQueryInterface(),
-      Sequelize
-    ],
-    path: path.resolve(__dirname, '../seeders')
-  }
+    storage: 'sequelize',
+    storageOptions: {sequelize, modelName: 'SequelizeSeed'},
+    migrations: {
+        params: [
+            sequelize.getQueryInterface(),
+            Sequelize
+        ],
+        path: path.resolve(__dirname, '../seeders')
+    }
 });
 
 umzug.up({}).then(() => umzugSeed.up({}))

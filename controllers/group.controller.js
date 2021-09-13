@@ -1,55 +1,61 @@
 const GroupService = require(__dirname + '/../services/group.service');
-const {msgError} = require('../utils/messageError');
+const {response} = require("../utils/response.utils");
+const httpStatus = require('../enum/http-status');
 
-exports.getAll = async (_req, res) => {
+exports.get = async (req, res, next) => {
     try {
-        res.json(await GroupService.getAll());
+        const groups = await GroupService.get();
+        res.json(response(httpStatus.SUCCESS, groups));
     } catch (e) {
-        res.json(msgError('group.controller', 'group.controller', 'getAll', e));
+        next(e);
     }
 };
 
-exports.getCodGroups = async (_req, res, _next) => {
+exports.getCodGroups = async (req, res, next) => {
     try {
-        res.json(await GroupService.getCodGroups());
+        const codGroups = await GroupService.getCodGroups();
+        res.json(response(httpStatus.SUCCESS, codGroups));
     } catch (e) {
-        res.json(msgError('group.controller', 'getCodGroups', e));
+        next(e);
     }
 };
 
-exports.getById = async (req, res) => {
+exports.getById = async (req, res, next) => {
     try {
         const {query} = req;
-        const result = await GroupService.getById(query.id);
-        res.json(result);
+        const group = await GroupService.getById(query.id);
+        res.json(response(httpStatus.SUCCESS, group));
     } catch (e) {
-        res.json(msgError('group.controller', 'getById', e));
+        next(e);
     }
 };
 
-exports.add = async (req, res) => {
+exports.add = async (req, res, next) => {
     try {
         const newGroup = req.body;
-        res.json(await GroupService.add(newGroup));
+        const group = await GroupService.add(newGroup);
+        res.json(response(httpStatus.SUCCESS, group));
     } catch (e) {
-        res.json(msgError('group.controller', 'add', e));
+        next(e);
     }
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
     try {
         const groupModify = req.body;
-        res.json(await GroupService.update(groupModify));
+        const group = await GroupService.update(groupModify);
+        res.json(response(httpStatus.SUCCESS, group));
     } catch (e) {
-        res.json(msgError('group.controller', 'update', e));
+        next(e);
     }
 };
 
-exports.deleteGroup = async (req, res) => {
+exports.deleteGroup = async (req, res, next) => {
     try {
         const groupDelete = req.params.id;
-        res.json(await GroupService.deleteGroup(groupDelete));
+        const result = await GroupService.deleteGroup(groupDelete);
+        res.json(response(httpStatus.SUCCESS, result));
     } catch (e) {
-        res.json(msgError('group.controller', 'deleteGroup', e));
+        next(e);
     }
 };
