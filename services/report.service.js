@@ -10,10 +10,10 @@ const SatVegService = require('../services/sat-veg.service');
 const logger = require('../utils/logger');
 const moment = require('moment');
 const { msgError } = require('../utils/messageError');
-
 const DocDefinitions = require(__dirname +
   '/../utils/helpers/report/doc-definition.js');
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
+const { QueryTypes } = sequelize;
 
 getFilterClassSearch = function (sql, filter, view, tableOwner) {
   const classSearch = filter && filter.classSearch ? filter.classSearch : null;
@@ -43,8 +43,8 @@ setAnalysisYear = function (data, period, variable) {
     analysisYears.push({
       date: year,
       [`${variable}`]: data.find((analise) => analise.date === year)
-          ? data.find((analise) => analise.date === year)[variable]
-          : '0.0000',
+        ? data.find((analise) => analise.date === year)[variable]
+        : '0.0000',
     });
   }
   return analysisYears;
@@ -94,9 +94,24 @@ const analysisReportFormat = {
     const filters = `cql_filter=${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}`;
     resultReportData.vectorViews = { layers, filters };
 
-    resultReportData[
-      'urlGsImage'
-    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city.replace("'", "''")}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+    resultReportData['urlGsImage'] = `${
+      config.geoserver.baseUrl
+    }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${
+      views.STATIC.children.MUNICIPIOS.workspace
+    }:${views.STATIC.children.MUNICIPIOS.view},${
+      views.STATIC.children.MUNICIPIOS.workspace
+    }:${views.STATIC.children.MUNICIPIOS.view},${
+      views.STATIC.children.CAR_VALIDADO.workspace
+    }:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${
+      reportData['statebbox']
+    }&width=${config.geoserver.imgWidth}&height=${
+      config.geoserver.imgHeigh
+    }&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city.replace(
+      "'",
+      "''",
+    )}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${
+      config.geoserver.sridTerraMa
+    }&format=image/png`;
 
     resultReportData['prodesStartYear'] =
       resultReportData.property['period'][0]['start_year'];
@@ -107,165 +122,186 @@ const analysisReportFormat = {
       area: resultReportData.property.prodesTotalArea,
     });
 
-        resultReportData[
-            'urlGsImage1'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
+    resultReportData[
+      'urlGsImage1'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${
+      views.STATIC.children.CAR_VALIDADO.workspace
+    }:planet_latest_global_monthly,${
+      views.STATIC.children.CAR_VALIDADO.workspace
+    }:${
+      views.STATIC.children.CAR_VALIDADO.view
+    }&styles=,${
+      views.STATIC.children.CAR_VALIDADO.workspace
+    }:${views.STATIC.children.CAR_VALIDADO.view
+    }_Mod_style&bbox=${
+      resultReportData.property.bboxplanet
+    }&width=${
+      config.geoserver.imgWidth
+    }&height=${
+      config.geoserver.imgHeight
+    }&cql_filter=RED_BAND>0;${
+      carColumnSema
+    }='${
+      resultReportData.property.gid
+    }'&srs=EPSG:${
+      config.geoserver.planetSRID
+    }&format=image/png`;
 
-        resultReportData[
-            'urlGsImage2'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_yellow_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,terrama2_119:${ views.DYNAMIC.children.PRODES.view }_color_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=${ resultReportData.property['period'][0]['start_year'] }/${ resultReportData.property['period'][0]['end_year'] }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
+    resultReportData[
+      'urlGsImage2'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,terrama2_119:${views.DYNAMIC.children.PRODES.view}_color_style&bbox=${resultReportData.property.bboxplanet}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=${resultReportData.property['period'][0]['start_year']}/${resultReportData.property['period'][0]['end_year']}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.planetSRID}&format=image/png`;
 
-        resultReportData[
-            'urlGsLegend'
-            ] = `${ config.geoserver.baseUrl }/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on;forceTitles:off;layout:vertical;columns:2;fontSize:16&LAYER=${ views.STATIC.children.CAR_VALIDADO.workspace }:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`;
+    resultReportData[
+      'urlGsLegend'
+    ] = `${config.geoserver.baseUrl}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on;forceTitles:off;layout:vertical;columns:2;fontSize:16&LAYER=${views.STATIC.children.CAR_VALIDADO.workspace}:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`;
 
-        resultReportData['urlGsImage3'] = `${
-            config.geoserver.baseUrl
-        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${
-            views.STATIC.children.CAR_VALIDADO.workspace
-        }:MosaicSpot2008,${ views.STATIC.children.CAR_VALIDADO.workspace }:${
-            views.STATIC.children.CAR_VALIDADO.view
-        },${ views.STATIC.children.CAR_X_USOCON.workspace }:${
-            views.STATIC.children.CAR_X_USOCON.view
-        },${ views.PRODES.children.CAR_X_PRODES.workspace }:${
-            views.PRODES.children.CAR_X_PRODES.view
-        }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${
-            views.STATIC.children.CAR_VALIDADO.view
-        }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${
-            views.STATIC.children.CAR_X_USOCON.view
-        }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${
-            views.PRODES.children.CAR_X_PRODES.view
-        }_Mod_style&bbox=${ resultReportData.property.bbox.replace(
-            /\s+/g,
-            '',
-        ) }&width=${ config.geoserver.imgWidth }&height=${
-            config.geoserver.imgHeight
-        }&time=P1Y/2019&cql_filter=RED_BAND>0;${ carColumnSema }='${
-            resultReportData.property.gid
-        }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${
-            resultReportData.property.gid
-        }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
+    resultReportData['urlGsImage3'] = `${
+      config.geoserver.baseUrl
+    }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${
+      views.STATIC.children.CAR_VALIDADO.workspace
+    }:MosaicSpot2008,${views.STATIC.children.CAR_VALIDADO.workspace}:${
+      views.STATIC.children.CAR_VALIDADO.view
+    },${views.STATIC.children.CAR_X_USOCON.workspace}:${
+      views.STATIC.children.CAR_X_USOCON.view
+    },${views.PRODES.children.CAR_X_PRODES.workspace}:${
+      views.PRODES.children.CAR_X_PRODES.view
+    }&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${
+      views.STATIC.children.CAR_VALIDADO.view
+    }_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${
+      views.STATIC.children.CAR_X_USOCON.view
+    }_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${
+      views.PRODES.children.CAR_X_PRODES.view
+    }_Mod_style&bbox=${resultReportData.property.bbox.replace(
+      /\s+/g,
+      '',
+    )}&width=${config.geoserver.imgWidth}&height=${
+      config.geoserver.imgHeight
+    }&time=P1Y/2019&cql_filter=RED_BAND>0;${carColumnSema}='${
+      resultReportData.property.gid
+    }';gid_car='${resultReportData.property.gid}';${carColumn}='${
+      resultReportData.property.gid
+    }'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
 
-        resultReportData[
-            'urlGsImage4'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/2018&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
+    resultReportData[
+      'urlGsImage4'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=P1Y/2018&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
 
-        resultReportData[
-            'urlGsImage5'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/2019&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
+    resultReportData[
+      'urlGsImage5'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=P1Y/2019&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
 
-        resultReportData[
-            'urlGsImage6'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
+    resultReportData[
+      'urlGsImage6'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.planetSRID}&format=image/png`;
 
-        resultReportData[
-            'urlGsDeforestationHistory'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:#{image}#,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/#{year}#&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
+    resultReportData[
+      'urlGsDeforestationHistory'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:#{image}#,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=P1Y/#{year}#&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
 
-        resultReportData[
-            'urlGsDeforestationHistory1'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }&styles=${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/#{year}#&cql_filter=${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
-    },
-    deter(
-        reportData,
-        views,
-        resultReportData,
-        carColumn,
-        carColumnSema,
-        date,
-        filter = null,
+    resultReportData[
+      'urlGsDeforestationHistory1'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=P1Y/#{year}#&cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
+  },
+  deter(
+    reportData,
+    views,
+    resultReportData,
+    carColumn,
+    carColumnSema,
+    date,
+    filter = null,
+  ) {
+    const cql_filter_deter = `${carColumn}='${
+      resultReportData.property.gid
+    }' ${getFilterClassSearch(
+      '',
+      filter,
+      views.DETER.children.CAR_X_DETER,
+      views.DETER.tableOwner,
+    )}`;
+    const layers = [
+      `${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
+      `${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}`,
+    ];
+    const filters = `cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${cql_filter_deter}`;
+    resultReportData.vectorViews = { layers, filters };
+
+    resultReportData[
+      'urlGsImage'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
+    resultReportData[
+      'urlGsImage1'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.planetSRID}&format=image/png`;
+
+    resultReportData[
+      'urlGsImage3'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:MosaicSpot2008,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=${date[0]}/${date[1]}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${cql_filter_deter}&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
+    resultReportData[
+      'urlGsImage4'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=${date[0]}/${date[1]}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${cql_filter_deter}&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
+    resultReportData[
+      'urlGsImage5'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=${date[0]}/${date[1]}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${cql_filter_deter}&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
+    resultReportData[
+      'urlGsImage6'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=${date[0]}/${date[1]}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${cql_filter_deter}&srs=EPSG:${config.geoserver.planetSRID}&format=image/png`;
+
+    if (
+      resultReportData.property['deflorestationAlerts'] &&
+      resultReportData.property['deflorestationAlerts'].length > 0
     ) {
-        const cql_filter_deter = `${ carColumn }='${
-            resultReportData.property.gid
-        }' ${ getFilterClassSearch(
-            '',
-            filter,
-            views.DETER.children.CAR_X_DETER,
-            views.DETER.tableOwner,
-        ) }`;
-        const layers = [
-            `${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }`,
-            `${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }`,
-        ];
-        const filters = `cql_filter=${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ cql_filter_deter }`;
-        resultReportData.vectorViews = {layers, filters};
+      resultReportData.property['deflorestationAlerts'].forEach((alert) => {
+        alert.bbox = setBoundingBox(alert.bbox);
+        const bboxDeter = alert.bbox.split(',');
+        const yearBefore = alert.year - 1;
 
-        resultReportData[
-            'urlGsImage'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }&styles=&bbox=${ reportData['statebbox'] }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=geocodigo<>'';municipio='${ resultReportData.property.city }';numero_do1='${ resultReportData.property.register }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
-        resultReportData[
-            'urlGsImage1'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
+        const view =
+          yearBefore < 2013
+            ? 'LANDSAT_5_'
+            : yearBefore < 2017
+            ? 'LANDSAT_8_'
+            : 'SENTINEL_2_';
 
-        resultReportData[
-            'urlGsImage3'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:MosaicSpot2008,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=${ date[0] }/${ date[1] }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ cql_filter_deter }&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
-        resultReportData[
-            'urlGsImage4'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=${ date[0] }/${ date[1] }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ cql_filter_deter }&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
-        resultReportData[
-            'urlGsImage5'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=${ date[0] }/${ date[1] }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ cql_filter_deter }&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
-        resultReportData[
-            'urlGsImage6'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=${ date[0] }/${ date[1] }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ cql_filter_deter }&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
-
-        if (
-            resultReportData.property['deflorestationAlerts'] &&
-            resultReportData.property['deflorestationAlerts'].length > 0
-        ) {
-            resultReportData.property['deflorestationAlerts'].forEach((alert) => {
-                alert.bbox = setBoundingBox(alert.bbox);
-                const bboxDeter = alert.bbox.split(',');
-                const yearBefore = alert.year - 1;
-
-                const view =
-                    yearBefore < 2013
-                        ? 'LANDSAT_5_'
-                        : yearBefore < 2017
-                            ? 'LANDSAT_8_'
-                            : 'SENTINEL_2_';
-
-                alert[
-                    'urlGsImageBefore'
-                    ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:${ view }${ yearBefore },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ alert.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/${ alert.year }&cql_filter=RED_BAND>0;${ views.DETER.children.CAR_X_DETER.table_name }_id='${ alert.id }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
-                alert['urlGsImageCurrent'] = `${
-                    config.geoserver.baseHostDeter
-                }/?request=GetMap&service=WMS&version=1.3.0&transparent=true&CRS=EPSG:${
-                    config.geoserver.defaultSRID
-                }&WIDTH=336&HEIGHT=336&FORMAT=image/png&LAYERS=${ alert.sat }_${
-                    alert.sensor
-                }_${ alert.path_row }_${
-                    alert.date_code
-                }&bbox=${ bboxDeter[1].trim() },${ bboxDeter[0].trim() },${ bboxDeter[3].trim() },${ bboxDeter[2].trim() }`;
-                alert[
-                    'urlGsImagePlanetCurrentAndCar'
-                    ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/${ alert.year }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ views.DETER.children.CAR_X_DETER.table_name }_id='${ alert.id }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
-            });
-        }
-    },
-    queimada(
-        reportData,
-        views,
-        resultReportData,
-        carColumn,
-        carColumnSema,
-        date,
-        filter = null,
-    ) {
-        const layers = [
-            `${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }`,
-            `${ views.BURNED.children.CAR_X_FOCOS.workspace }:${ views.BURNED.children.CAR_X_FOCOS.view }`,
-        ];
-        const filters = `cql_filter=${ carColumnSema }=${ resultReportData.property.gid };${ carColumn }=${ resultReportData.property.gid }`;
-        resultReportData.vectorViews = {layers, filters};
-        resultReportData[
-            'urlGsImage'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
-        resultReportData[
-            'urlGsImage1'
-            ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.BURNED.children.CAR_X_FOCOS.workspace }:${ views.BURNED.children.CAR_X_FOCOS.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.BURNED.children.CAR_X_FOCOS.workspace }:${ views.BURNED.children.CAR_X_FOCOS.view }_style&bbox=${ resultReportData.property.bboxplanet }&time=${ date[0] }/${ date[1] }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=RED_BAND>0;${ carColumnSema }=${ resultReportData.property.gid };${ carColumn }=${ resultReportData.property.gid }&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
-    },
+        alert[
+          'urlGsImageBefore'
+        ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:${view}${yearBefore},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${alert.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=P1Y/${alert.year}&cql_filter=RED_BAND>0;${views.DETER.children.CAR_X_DETER.table_name}_id='${alert.id}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
+        alert['urlGsImageCurrent'] = `${
+          config.geoserver.baseHostDeter
+        }/?request=GetMap&service=WMS&version=1.3.0&transparent=true&CRS=EPSG:${
+          config.geoserver.defaultSRID
+        }&WIDTH=336&HEIGHT=336&FORMAT=image/png&LAYERS=${alert.sat}_${
+          alert.sensor
+        }_${alert.path_row}_${
+          alert.date_code
+        }&bbox=${bboxDeter[1].trim()},${bboxDeter[0].trim()},${bboxDeter[3].trim()},${bboxDeter[2].trim()}`;
+        alert[
+          'urlGsImagePlanetCurrentAndCar'
+        ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.DETER.children.CAR_X_DETER.workspace}:${views.DETER.children.CAR_X_DETER.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=P1Y/${alert.year}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${views.DETER.children.CAR_X_DETER.table_name}_id='${alert.id}'&srs=EPSG:${config.geoserver.planetSRID}&format=image/png`;
+      });
+    }
+  },
+  queimada(
+    reportData,
+    views,
+    resultReportData,
+    carColumn,
+    carColumnSema,
+    date,
+    filter = null,
+  ) {
+    const layers = [
+      `${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
+      `${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}`,
+    ];
+    const filters = `cql_filter=${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}`;
+    resultReportData.vectorViews = { layers, filters };
+    resultReportData[
+      'urlGsImage'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.planetSRID}&format=image/png`;
+    resultReportData[
+      'urlGsImage1'
+    ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bboxplanet}&time=${date[0]}/${date[1]}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&cql_filter=RED_BAND>0;${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}&srs=EPSG:${config.geoserver.planetSRID}&format=image/png`;
+  },
 };
 
 setReportFormat = async function (
@@ -354,7 +390,7 @@ getCarData = async function (
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${confGeoServer.sridPlanet}))::TEXT) - 5) AS bboxplanet,
+              substring(ST_EXTENT(ST_Transform(car.geom, ${config.geoserverplanetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.geoserverplanetSRID}))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car
@@ -823,8 +859,8 @@ setBurnedData = async function (
             ORDER BY month_year_occurrence
     `;
     propertyData['historyFireSpot'] = await sequelize.query(
-        sqlHistoryFireSpot,
-        QUERY_TYPES_SELECT,
+      sqlHistoryFireSpot,
+      QUERY_TYPES_SELECT,
     );
     // -----------------------------------------------------------------------------------------------------------------
   }
@@ -1433,14 +1469,14 @@ module.exports = FileReport = {
       if (result.length && result.length > 0) {
         result.forEach((report) => {
           report.dataValues.base64 = fs.readFileSync(
-              `${report.path}/${report.name}`,
-              'base64',
+            `${report.path}/${report.name}`,
+            'base64',
           );
         });
       } else {
         result.dataValues.base64 = fs.readFileSync(
-            `${result.path}/${result.name}`,
-            'base64',
+          `${result.path}/${result.name}`,
+          'base64',
         );
       }
 
@@ -1729,6 +1765,7 @@ module.exports = FileReport = {
   },
   async getPointsAlerts(query) {
     const { carRegister, date, type } = query;
+    const { planetSRID } =  config.geoserver;
     const views = await ViewUtil.getGrouped();
 
     const carColumn = 'gid';
@@ -1756,25 +1793,26 @@ module.exports = FileReport = {
         LIMIT 5
     `;
 
-    const sqlBbox = `
-      SELECT
-            substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
-      FROM de_car_validado_sema AS car 
-      WHERE car.${carColumn} = '${carRegister}'
+    const sqlBbox = `SELECT
+        substring(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT) - 5) AS bbox
+      FROM de_car_validado_sema
+      WHERE ${carColumn} = ${carRegister}
       GROUP BY gid`;
+    const bboxOptions = {
+      type: QueryTypes.SELECT,
+      plain: true,
+    }
 
     try {
-      const carBbox = await sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
+      const carBbox = await sequelize.query(sqlBbox, bboxOptions);
       const points = await sequelize.query(sql, QUERY_TYPES_SELECT);
-
-      let bbox = setBoundingBox(carBbox[0].bbox);
-
+      const bbox = setBoundingBox(carBbox.bbox);
       const currentYear = new Date().getFullYear();
       for (let index = 0; index < points.length; index++) {
         points[index]['url'] = `${
-            confGeoServer.baseHost
-        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
-            views.STATIC.children.CAR_VALIDADO.workspace
+          config.geoserver.baseUrl
+        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_119:planet_latest_global_monthly,${
+          views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view},${
           views.STATIC.children.CAR_X_USOCON.workspace
         }:${views.STATIC.children.CAR_X_USOCON.view},${
@@ -1792,7 +1830,7 @@ module.exports = FileReport = {
         }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
           views[type.toUpperCase()].children[groupType[type]].table_name
         }_id=${points[index].a_carprodes_1_id}&srs=EPSG:${
-          confGeoServer.sridTerraMa
+          planetSRID
         }&format=image/png`;
 
         points[index]['options'] = await SatVegService.get(
