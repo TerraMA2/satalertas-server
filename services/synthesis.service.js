@@ -4,6 +4,7 @@ const config = require(__dirname + '/../config/config.json');
 const synthesisConfig = require(__dirname + `/../config/${ config.project }/synthesis.json`);
 const {QueryTypes} = require("sequelize");
 const ViewUtil = require("../utils/view.utils");
+const BadRequestError = require('../errors/bad-request.error');
 
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 
@@ -164,23 +165,23 @@ module.exports.getCarData = async (
       INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
       GROUP BY car.${ columnCarEstadualSemas }, car.${ columnCarFederalSemas }, car.${ columnAreaHaCar }, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
     `;
-    const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
-
-    return result[0];
+    return await sequelize.query(sql, {
+        type: QueryTypes.SELECT,
+        plain: true
+    });
 };
 
-module.exports.get = async (query) => {
-    const {carRegister, date, formattedFilterDate} = query;
-
-    let dateFrom = null;
-    let dateTo = null;
-    let geoserverTime = "";
-
-    if (date) {
-        dateFrom = date[0];
-        dateTo = date[1];
-        geoserverTime = `${ dateFrom }/${ dateTo }`;
+module.exports.get = async (carRegister, date) => {
+    if (!carRegister) {
+        throw new BadRequestError('Missing car register');
     }
+    if (!date) {
+        throw new BadRequestError('Missing filter date');
+    }
+
+    const [startDate, endDate] = date;
+    const geoserverTime = `${ startDate }/${ endDate }`;
+    const formattedFilterDate = `${ new Date(startDate).toLocaleDateString('pt-BR') } - ${ new Date(endDate).toLocaleDateString('pt-BR') }`;
 
     const views = await ViewUtil.getGrouped();
 
@@ -216,7 +217,7 @@ module.exports.get = async (query) => {
             ORDER BY date`;
     const burnedAreaHistory = await sequelize.query(
         burnedAreasHistorySql,
-        QUERY_TYPES_SELECT,
+        QUERY_TYPES_SELECT
     );
 
     const prodesHistorySql = ` SELECT
@@ -228,7 +229,7 @@ module.exports.get = async (query) => {
             ORDER BY date`;
     const prodesHistory = await sequelize.query(
         prodesHistorySql,
-        QUERY_TYPES_SELECT,
+        QUERY_TYPES_SELECT
     );
 
     const deterHistorySql = ` SELECT
@@ -255,7 +256,7 @@ module.exports.get = async (query) => {
         QUERY_TYPES_SELECT,
     );
 
-    const dateSql = ` AND ${ columnExecutionDate }::date >= '${ dateFrom }' AND ${ columnExecutionDate }::date <= '${ dateTo }'`;
+    const dateSql = ` AND ${ columnExecutionDate }::date >= '${ startDate }' AND ${ columnExecutionDate }::date <= '${ endDate }'`;
 
     const indigenousLandSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_TI.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
     const conservationUnitSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;

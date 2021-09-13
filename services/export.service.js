@@ -116,5 +116,5 @@ module.exports.getSql = async (params) => {
             ${ filter.sqlHaving }) `
         : filter.sqlWhere;
 
-    return `SELECT * FROM public.${table.name} AS ${table.alias} ${filter.secondaryTables} ${sqlWhere} `;
+    return `SELECT * FROM public.${ table.name } AS ${ table.alias } ${ filter.secondaryTables } ${ sqlWhere } `;
 };

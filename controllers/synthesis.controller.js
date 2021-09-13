@@ -4,7 +4,8 @@ const httpStatus = require('../enum/http-status');
 
 exports.get = async (req, res, next) => {
     try {
-        const synthesis = await SynthesisService.get(req.query);
+        const {carRegister, date} = req.query;
+        const synthesis = await SynthesisService.get(carRegister, date);
         res.json(response(httpStatus.SUCCESS, synthesis));
     } catch (e) {
         next(e);

@@ -1,17 +1,17 @@
 const FiringCharts = require('../charts/FiringCharts');
-const {Report, sequelize, CarValidado} = require('../models');
+const {Report, sequelize} = require('../models');
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const config = require(__dirname + '/../config/config.json');
 const ViewUtil = require('../utils/view.utils');
 const SatVegService = require('../services/sat-veg.service');
-const logger = require('../utils/logger');
 const moment = require('moment');
 const DocDefinitions = require(__dirname +
     '/../utils/helpers/report/doc-definition.js');
 const {QueryTypes} = require("sequelize");
 const BadRequestError = require("../errors/bad-request.error");
-const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
+const InternalServerError = require("../errors/internal-server.error");
+
 module.exports.getFilterClassSearch = (sql, filter, view, tableOwner) => {
     const classSearch = filter && filter.classSearch ? filter.classSearch : null;
     if (classSearch && classSearch.radioValue === 'SELECTION' && classSearch.analyzes.length > 0) {
@@ -340,8 +340,11 @@ module.exports.getCarData = async (
       INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
       GROUP BY car.${ columnCarEstadualSemas }, car.${ columnCarFederalSemas }, car.${ columnAreaHaCar }, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
     `;
-    const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
-    return result[0];
+    return await sequelize.query(sql, {
+            type: QueryTypes.SELECT,
+            plain: true
+        }
+    );
 };
 module.exports.setDeterData = async (
     type,
@@ -363,14 +366,16 @@ module.exports.setDeterData = async (
             dateSql,
             filter,
             views.DETER.children.CAR_X_DETER,
-            views.DETER.tableOwner,
+            views.DETER.tableOwner
         ) } `;
         const resultDeterAreaPastDeforestation = await sequelize.query(
             sqlDeterAreaPastDeforestation,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
-        propertyData['areaPastDeforestation'] =
-            resultDeterAreaPastDeforestation[0]['area'];
+        propertyData['areaPastDeforestation'] = resultDeterAreaPastDeforestation['area'];
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Deforestation alerts and areas ------------------------------------------------------------------------------
@@ -400,7 +405,7 @@ module.exports.setDeterData = async (
 
         propertyData['deflorestationAlerts'] = await sequelize.query(
             sqlDeflorestationAlerts,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
         // -----------------------------------------------------------------------------------------------------------------
 
@@ -521,7 +526,7 @@ module.exports.setDeterData = async (
 
         const resCrossings = await sequelize.query(
             sqlCrossings,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
         let deterSumArea = 0;
         resCrossings.forEach((crossing) => {
@@ -533,9 +538,7 @@ module.exports.setDeterData = async (
                 pastDeforestation: crossing['area'],
             });
 
-            deterSumArea += parseFloat(crossing['area'])
-                ? parseFloat(crossing['area'])
-                : 0.0;
+            deterSumArea += parseFloat(crossing['area']) ? parseFloat(crossing['area']) : 0.0;
         });
 
         if (!propertyData['foundDeter']) {
@@ -569,7 +572,7 @@ module.exports.setProdesData = async (
       ORDER BY date `;
         propertyData['analyzesYear'] = await sequelize.query(
             sqlProdesYear,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT}
         );
         // -----------------------------------------------------------------------------------------------------------------
 
@@ -577,7 +580,7 @@ module.exports.setProdesData = async (
         const sqlVegRadam = ` SELECT gid, numero_do1, numero_do2, fisionomia, ROUND(CAST(area_ha_ AS DECIMAL), 4) AS area_ha_, ROUND(CAST(area_ha_car_vegradam AS DECIMAL), 4) AS area_ha_car_vegradam FROM car_x_vegradam WHERE gid = ${ carRegister } `;
         propertyData['vegRadam'] = await sequelize.query(
             sqlVegRadam,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT}
         );
         // -----------------------------------------------------------------------------------------------------------------
 
@@ -593,7 +596,7 @@ module.exports.setProdesData = async (
 
         propertyData['prodesRadam'] = await sequelize.query(
             sqlFisionomiaPRODESSum,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT}
         );
         // -----------------------------------------------------------------------------------------------------------------
 
@@ -603,37 +606,48 @@ module.exports.setProdesData = async (
       WHERE ${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
         const resultProdesTotalArea = await sequelize.query(
             sqlProdesTotalArea,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
-        propertyData['prodesTotalArea'] = resultProdesTotalArea[0]['area'];
+        propertyData['prodesTotalArea'] = resultProdesTotalArea['area'];
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Total area of prodes period ----------------------------------------------------------------------------------------
         const sqlProdesAreaPastDeforestation = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql } `;
         const resultProdesAreaPastDeforestation = await sequelize.query(
             sqlProdesAreaPastDeforestation,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
-        propertyData['areaPastDeforestation'] =
-            resultProdesAreaPastDeforestation[0]['area'];
+        propertyData['areaPastDeforestation'] = resultProdesAreaPastDeforestation['area'];
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Total area of UsoCon ----------------------------------------------------------------------------------------
         const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${ views.STATIC.children.CAR_X_USOCON.table_name } where gid_car = '${ carRegister }'`;
         const resultUsoConArea = await sequelize.query(
             sqlUsoConArea,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
-        propertyData['areaUsoCon'] = resultUsoConArea[0]['area'];
+        propertyData['areaUsoCon'] = resultUsoConArea['area'];
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Prodes area by period ---------------------------------------------------------------------------------------
         const sqlProdesArea = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
         const resultProdesArea = await sequelize.query(
             sqlProdesArea,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
-        propertyData['prodesArea'] = resultProdesArea[0]['area'];
+        propertyData['prodesArea'] = resultProdesArea['area'];
         // -----------------------------------------------------------------------------------------------------------------
 
         // ---- Values of table --------------------------------------------------------------------------------------------
@@ -671,13 +685,13 @@ module.exports.setProdesData = async (
             ORDER BY date`;
         const deflorestationHistory = await sequelize.query(
             sqlDeforestationHistory,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
 
-        // propertyData['period']  = await sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , QUERY_TYPES_SELECT);
+        // propertyData['period']  = await sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , {type: QueryTypes.SELECT});
         propertyData['period'] = await sequelize.query(
             ` SELECT  2006 AS start_year, MAX(prodes.ano) AS end_year  FROM ${ views.DYNAMIC.children.PRODES.table_name } AS prodes `,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
 
         propertyData['deflorestationHistory'] = this.getAnalysisYear(
@@ -692,7 +706,7 @@ module.exports.setProdesData = async (
 
         const resCrossings = await sequelize.query(
             sqlCrossings,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
         let prodesSumArea = 0;
         resCrossings.forEach((crossing) => {
@@ -704,9 +718,7 @@ module.exports.setProdesData = async (
                 pastDeforestation: crossing['area'],
             });
 
-            prodesSumArea += parseFloat(crossing['area'])
-                ? parseFloat(crossing['area'])
-                : 0.0;
+            prodesSumArea += parseFloat(crossing['area']) ? parseFloat(crossing['area']) : 0.0;
         });
 
         if (!propertyData['foundProdes']) {
@@ -721,8 +733,7 @@ module.exports.setProdesData = async (
                 const area = radam['area'];
                 const cls = radam['class'];
                 if (cls) {
-                    radamText +=
-                        radamText === '' ? `${ cls }: ${ area }` : `\n ${ cls }: ${ area }`;
+                    radamText += radamText === '' ? `${ cls }: ${ area }` : `\n ${ cls }: ${ area }`;
                     radamProdes += area;
                 }
             }
@@ -763,7 +774,7 @@ module.exports.setBurnedData = async (
     `;
         propertyData['firingAuth'] = await sequelize.query(
             sqlFiringAuth,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
         // -----------------------------------------------------------------------------------------------------------------
 
@@ -774,11 +785,13 @@ module.exports.setBurnedData = async (
         WHERE   car_focos.${ columnCarEstadual } = ${ carRegister }
             AND car_focos.${ columnExecutionDate } BETWEEN '${ filter.date[0] }' AND '${ filter.date[1] }'
     `;
-        const resultBurnCount = await sequelize.query(
+        propertyData['burnCount'] = await sequelize.query(
             sqlBurnCount,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            },
         );
-        propertyData['burnCount'] = resultBurnCount[0];
         // -----------------------------------------------------------------------------------------------------------------
 
         // ---  historyFireSpot ---------------------------------------------------------------------------------------
@@ -793,15 +806,15 @@ module.exports.setBurnedData = async (
                 AND car_focos.${ columnExecutionDate } BETWEEN '2008-01-01T00:00:00.000Z' AND '${ filter.date[1] }'
             GROUP BY month_year_occurrence
             ORDER BY month_year_occurrence
-    `;
+        `;
         propertyData['historyFireSpot'] = await sequelize.query(
             sqlHistoryFireSpot,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
         // -----------------------------------------------------------------------------------------------------------------
     }
 
-    return await propertyData;
+    return propertyData;
 };
 module.exports.setBurnedAreaData = async (
     type,
@@ -828,7 +841,7 @@ module.exports.setBurnedAreaData = async (
 
         const burnedAreas = await sequelize.query(
             sqlBurnedAreas,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
 
         const sqlBurnedAreasYear = `
@@ -842,7 +855,7 @@ module.exports.setBurnedAreaData = async (
 
         const burnedAreasYear = await sequelize.query(
             sqlBurnedAreasYear,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
         const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_APP.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
         const sqlLegalReserveBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_RESERVA.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
@@ -861,50 +874,77 @@ module.exports.setBurnedAreaData = async (
 
         const restrictUseBURNEDAREASum = await sequelize.query(
             sqlRestrictUseBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         const burnAuthorizationBURNEDAREASum = await sequelize.query(
             sqlBurnAuthorizationBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
-        // const resultFisionomiaBURNEDAREASum = await sequelize.query(sqlFisionomiaBURNEDAREASum, QUERY_TYPES_SELECT);
+        // const resultFisionomiaBURNEDAREASum = await sequelize.query(sqlFisionomiaBURNEDAREASum, {type: QueryTypes.SELECT});
         // const fisionomiaBURNEDAREASum = resultFisionomiaBURNEDAREASum;
 
         const aPPBURNEDAREASum = await sequelize.query(
             sqlAPPBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         const legalReserveBURNEDAREASum = await sequelize.query(
             sqlLegalReserveBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         const indigenousLandBURNEDAREASum = await sequelize.query(
             sqlIndigenousLandBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         const explorationBURNEDAREASum = await sequelize.query(
             sqlExploraBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         const deforestationBURNEDAREASum = await sequelize.query(
             sqlDesmateBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         const embargoedAreaBURNEDAREASum = await sequelize.query(
             sqlEmbargoedAreaBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         const landAreaBURNEDAREASum = await sequelize.query(
             sqlLandAreaBURNEDAREASum,
-            QUERY_TYPES_SELECT,
+            {
+                type: QueryTypes.SELECT,
+                plain: true
+            }
         );
 
         propertyData['burnedAreas'] = burnedAreas;
@@ -912,96 +952,66 @@ module.exports.setBurnedAreaData = async (
 
         let burnedAreaSum = 0;
 
-        burnedAreaSum += aPPBURNEDAREASum[0]['area']
-            ? aPPBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += legalReserveBURNEDAREASum[0]['area']
-            ? legalReserveBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += indigenousLandBURNEDAREASum[0]['area']
-            ? indigenousLandBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += deforestationBURNEDAREASum[0]['area']
-            ? deforestationBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += embargoedAreaBURNEDAREASum[0]['area']
-            ? embargoedAreaBURNEDAREASum[0]['area']
-            : 0;
-        burnedAreaSum += landAreaBURNEDAREASum[0]['area']
-            ? landAreaBURNEDAREASum[0]['area']
-            : 0;
+        burnedAreaSum += aPPBURNEDAREASum['area'] ? aPPBURNEDAREASum['area'] : 0;
+        burnedAreaSum += legalReserveBURNEDAREASum['area'] ? legalReserveBURNEDAREASum['area'] : 0;
+        burnedAreaSum += indigenousLandBURNEDAREASum['area'] ? indigenousLandBURNEDAREASum['area'] : 0;
+        burnedAreaSum += deforestationBURNEDAREASum['area'] ? deforestationBURNEDAREASum['area'] : 0;
+        burnedAreaSum += embargoedAreaBURNEDAREASum['area'] ? embargoedAreaBURNEDAREASum['area'] : 0;
+        burnedAreaSum += landAreaBURNEDAREASum['area'] ? landAreaBURNEDAREASum['area'] : 0;
 
         if (!propertyData['tableData']) {
             propertyData['tableData'] = {};
         }
         propertyData['tableData']['affectedArea'] = 'APP';
-        propertyData['tableData']['burnAreas'] = parseFloat(
-            aPPBURNEDAREASum[0]['area'] | 0,
-        );
+        propertyData['tableData']['burnAreas'] = parseFloat(aPPBURNEDAREASum['area'] || 0);
 
         if (!propertyData['prodesLegalReserve']) {
             propertyData['prodesLegalReserve'] = {};
         }
         propertyData['prodesLegalReserve']['affectedArea'] = 'ARL';
-        propertyData['prodesLegalReserve']['burnAreas'] = parseFloat(
-            legalReserveBURNEDAREASum[0]['area'] | 0,
-        );
+        propertyData['prodesLegalReserve']['burnAreas'] = parseFloat(legalReserveBURNEDAREASum['area'] || 0);
 
         if (!propertyData['prodesRestrictedUse']) {
             propertyData['prodesRestrictedUse'] = {};
         }
         propertyData['prodesRestrictedUse']['affectedArea'] = 'AUR';
-        propertyData['prodesRestrictedUse']['burnAreas'] = parseFloat(
-            restrictUseBURNEDAREASum[0]['area'] | 0,
-        );
+        propertyData['prodesRestrictedUse']['burnAreas'] = parseFloat(restrictUseBURNEDAREASum['area'] || 0);
 
         if (!propertyData['prodesIndigenousLand']) {
             propertyData['prodesIndigenousLand'] = {};
         }
         propertyData['prodesIndigenousLand']['affectedArea'] = 'TI';
-        propertyData['prodesIndigenousLand']['burnAreas'] = parseFloat(
-            indigenousLandBURNEDAREASum[0]['area'],
-        );
+        propertyData['prodesIndigenousLand']['burnAreas'] = parseFloat(indigenousLandBURNEDAREASum['area']);
 
         if (!propertyData['prodesExploration']) {
             propertyData['prodesExploration'] = {};
         }
         propertyData['prodesExploration']['affectedArea'] = 'AUTEX';
-        propertyData['prodesExploration']['burnAreas'] = parseFloat(
-            explorationBURNEDAREASum[0]['area'],
-        );
+        propertyData['prodesExploration']['burnAreas'] = parseFloat(explorationBURNEDAREASum['area']);
 
         if (!propertyData['prodesDeforestation']) {
             propertyData['prodesDeforestation'] = {};
         }
         propertyData['prodesDeforestation']['affectedArea'] = 'AD';
-        propertyData['prodesDeforestation']['burnAreas'] = parseFloat(
-            deforestationBURNEDAREASum[0]['area'],
-        );
+        propertyData['prodesDeforestation']['burnAreas'] = parseFloat(deforestationBURNEDAREASum['area']);
 
         if (!propertyData['prodesEmbargoedArea']) {
             propertyData['prodesEmbargoedArea'] = {};
         }
         propertyData['prodesEmbargoedArea']['affectedArea'] = 'Área embargada';
-        propertyData['prodesEmbargoedArea']['burnAreas'] = parseFloat(
-            embargoedAreaBURNEDAREASum[0]['area'],
-        );
+        propertyData['prodesEmbargoedArea']['burnAreas'] = parseFloat(embargoedAreaBURNEDAREASum['area']);
 
         if (!propertyData['prodesLandArea']) {
             propertyData['prodesLandArea'] = {};
         }
         propertyData['prodesLandArea']['affectedArea'] = 'Área desembargada';
-        propertyData['prodesLandArea']['burnAreas'] = parseFloat(
-            landAreaBURNEDAREASum[0]['area'],
-        );
+        propertyData['prodesLandArea']['burnAreas'] = parseFloat(landAreaBURNEDAREASum['area']);
 
         if (!propertyData['prodesBurnAuthorization']) {
             propertyData['prodesBurnAuthorization'] = {};
         }
         propertyData['prodesBurnAuthorization']['affectedArea'] = 'AQ';
-        propertyData['prodesBurnAuthorization']['burnAreas'] = parseFloat(
-            burnAuthorizationBURNEDAREASum[0]['area'],
-        );
+        propertyData['prodesBurnAuthorization']['burnAreas'] = parseFloat(burnAuthorizationBURNEDAREASum['area']);
 
         if (!propertyData['foundFireSpot']) {
             propertyData['foundFireSpot'] = !!burnedAreaSum;
@@ -1064,7 +1074,7 @@ module.exports.getDesflorestationHistoryAndChartNdviContext = async (
                 startDate,
                 endDate
             );
-            ndviContext.forEach((ndvi) => content.push(ndvi));
+            ndviContext.forEach(ndvi => content.push(ndvi));
         }
         content.push(docDefinitionContent[j]);
     }
@@ -1137,12 +1147,12 @@ module.exports.setDocDefinitions = async (reportData, docDefinition) => {
     // conclusão
     docDefinition.content = await this.getContentConclusion(
         docDefinition.content,
-        reportData.property.comments,
+        reportData.property.comments
     );
     if (reportData.type === 'prodes') {
         docDefinition.content = await this.getDesflorestationHistoryAndChartNdviContext(
             docDefinition.content,
-            reportData,
+            reportData
         );
     }
 
@@ -1153,7 +1163,7 @@ module.exports.setDocDefinitions = async (reportData, docDefinition) => {
         // );
         docDefinition.content = await this.getContentForDeflorestionAlertsContext(
             docDefinition.content,
-            reportData.deflorestationAlertsContext,
+            reportData.deflorestationAlertsContext
         );
     }
 
@@ -1164,7 +1174,7 @@ module.exports.setDocDefinitions = async (reportData, docDefinition) => {
     //   );
     // }
 
-    return await docDefinition;
+    return docDefinition;
 };
 module.exports.setImages = async (reportData) => {
     if (!reportData['images']) {
@@ -1172,10 +1182,7 @@ module.exports.setImages = async (reportData) => {
     }
     reportData['images']['headerImage0'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/mpmt-small.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/mpmt-small.png', 'base64') }`
         ],
         [320, 50],
         [60, 25, 0, 20],
@@ -1183,10 +1190,7 @@ module.exports.setImages = async (reportData) => {
     );
     reportData['images']['headerImage1'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/logo-satelites-alerta-horizontal.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/logo-satelites-alerta-horizontal.png', 'base64') }`
         ],
         [320, 50],
         [0, 25, 0, 0],
@@ -1194,157 +1198,115 @@ module.exports.setImages = async (reportData) => {
     );
     reportData['images']['headerImage2'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/inpe.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/inpe.png', 'base64') }`
         ],
         [320, 50],
         [0, 25, 70, 20],
-        'right',
+        'right'
     );
     reportData['images']['chartImage1'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/satveg_grafico_fig2.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/satveg_grafico_fig2.png', 'base64') }`
         ],
         [480, 400],
         [0, 3],
-        'center',
+        'center'
     );
     reportData['images']['chartImage2'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/satveg_grafico_fig3.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/satveg_grafico_fig3.png', 'base64') }`,
         ],
         [480, 400],
         [3, 3],
-        'center',
+        'center'
     );
     reportData['images']['chartImage3'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/satveg_grafico_fig4.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/satveg_grafico_fig4.png', 'base64') }`
         ],
         [480, 400],
         [3, 3],
-        'center',
+        'center'
     );
     reportData['images']['partnerImage1'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/mpmt-small.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/mpmt-small.png', 'base64') }`
         ],
         [180, 50],
         [30, 0, 0, 0],
-        'left',
+        'left'
     );
     reportData['images']['partnerImage2'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/pjedaou-large.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/pjedaou-large.png', 'base64') }`
         ],
         [100, 50],
         [30, 0, 0, 0],
-        'center',
+        'center'
     );
     reportData['images']['partnerImage3'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/caex.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/caex.png', 'base64') }`
         ],
         [80, 50],
         [30, 0, 25, 0],
-        'right',
+        'right'
     );
     reportData['images']['partnerImage4'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/inpe.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/inpe.png', 'base64') }`
         ],
         [130, 60],
         [80, 30, 0, 0],
-        'left',
+        'left'
     );
     reportData['images']['partnerImage5'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/dpi.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/dpi.png', 'base64') }`
         ],
         [100, 60],
         [95, 30, 0, 0],
-        'center',
+        'center'
     );
     reportData['images']['partnerImage6'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/terrama2-large.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/terrama2-large.png', 'base64') }`
         ],
         [100, 60],
         [0, 30, 30, 0],
-        'right',
+        'right'
     );
     reportData['images']['partnerImage7'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/mt.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/mt.png', 'base64') }`
         ],
         [100, 60],
         [80, 30, 0, 0],
-        'left',
+        'left'
     );
     reportData['images']['partnerImage8'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/sema.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/sema.png', 'base64') }`
         ],
         [100, 60],
         [130, 25, 0, 0],
-        'center',
+        'center'
     );
     reportData['images']['partnerImage9'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/logo-patria-amada-brasil-horizontal.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/logo-patria-amada-brasil-horizontal.png', 'base64') }`
         ],
         [100, 60],
         [0, 30, 25, 0],
-        'center',
+        'center'
     );
     reportData['images']['partnerImage10'] = this.getImageObject(
         [
-            `data:image/png;base64,${ fs.readFileSync(
-                'assets/img/logos/Brasao_BPMA.png',
-                'base64',
-            ) }`,
+            `data:image/png;base64,${ fs.readFileSync('assets/img/logos/Brasao_BPMA.png', 'base64') }`
         ],
         [80, 60],
         [20, 20, 20, 0],
-        'right',
+        'right'
     );
 };
 module.exports.setCharts = async (reportData) => {
@@ -1367,34 +1329,21 @@ module.exports.setCharts = async (reportData) => {
         };
     }
 }
-module.exports.saveBase64 = async (document, code, type, path, docName) => {
-    const binaryData = new Buffer(document, 'base64').toString('binary');
-    await fs.writeFile(path, binaryData, 'binary', (err) => {
-        if (err) {
-            throw err;
-        }
-        logger.error(`Arquivo salvo em .. ${ path }`);
-    });
-}
 module.exports.get = async (id) => {
-    const reports = id ? await Report.findByPk(id) : await Report.findAll();
-
-    const reportsLength = reports.length;
-    if (reportsLength > 0) {
-        reports.forEach((report) => {
-            report.dataValues.base64 = fs.readFileSync(
-                `${ report.path }/${ report.name }`,
-                'base64'
-            );
-        });
-    } else {
-        reports.dataValues.base64 = fs.readFileSync(
-            `${ reports.path }/${ reports.name }`,
+    if (id) {
+        const report = await Report.findByPk(id);
+        report.dataValues.base64 = fs.readFileSync(
+            `${ report.path }/${ report.name }`,
             'base64'
         );
+        return report;
+    } else {
+        const reports = await Report.findAll();
+        return reports.map(report => {
+            report.dataValues.base64 = fs.readFileSync(`${ report.path }/${ report.name }`, 'base64');
+            return report;
+        });
     }
-
-    return reports;
 }
 module.exports.newNumber = async (type) => {
     const sql = ` SELECT '${ type.trim() }' AS type,
@@ -1410,11 +1359,10 @@ module.exports.newNumber = async (type) => {
           AND rep.created_at BETWEEN
             CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
 
-    return await sequelize.query(sql, QUERY_TYPES_SELECT);
+    return await sequelize.query(sql, {type: QueryTypes.SELECT});
 }
 module.exports.getReportsByCARCod = async (carCode) => {
     const confWhere = {where: {carGid: carCode.trim()}};
-
     return await Report.findAll(confWhere)
 }
 module.exports.generatePdf = async (reportData) => {
@@ -1472,11 +1420,8 @@ module.exports.delete = async (id) => {
         `${ report.dataValues.path }/${ report.dataValues.name }`,
         (err) => {
             if (err) {
-                throw err;
+                throw new InternalServerError("Couldn't delete the report");
             }
-            logger.error(
-                `Arquivo ${ report.dataValues.path }/${ report.dataValues.name } excluído com sucesso!`,
-            );
         },
     );
     const countRowDeleted = await Report.destroy({where: {id}}).then((rowDeleted) => rowDeleted);
@@ -1485,9 +1430,7 @@ module.exports.delete = async (id) => {
         : `Arquivo ${ report.dataValues.name }, id = ${ id }, não encontrado!`;
 }
 module.exports.save = async (document) => {
-    const binaryData = new Buffer(document.base64, 'base64').toString(
-        'binary',
-    );
+    const binaryData = new Buffer(document.base64, 'base64').toString('binary');
     const code = await this.newNumber(document.type.trim());
     const docName = `${ code.data[0].newnumber }_${ code.data[0].year }_${ code.data[0].type }.pdf`;
 
@@ -1497,11 +1440,8 @@ module.exports.save = async (document) => {
         'binary',
         (err) => {
             if (err) {
-                throw err;
+                throw new InternalServerError("Couldn't save the report");
             }
-            logger.error(
-                `Arquivo salvo em ..${ document.path.trim() }/${ docName.trim() }`,
-            );
         },
     );
 
@@ -1513,20 +1453,24 @@ module.exports.save = async (document) => {
         type: document['type'].trim(),
     });
 
-    return await Report.create(report.dataValues).then(
-        (report) => report.dataValues,
-    );
+    return await Report.create(report.dataValues).then((report) => report.dataValues);
 }
 module.exports.getReportCarData = async (carRegister, date, type, filter) => {
+    if (!carRegister) {
+        throw new BadRequestError('Missing car register');
+    }
+    if (!date) {
+        throw new BadRequestError('Missing filter date');
+    }
+    if (!filter) {
+        throw new BadRequestError('Missing filter');
+    }
+    if (!type) {
+        throw new BadRequestError('Missing type');
+    }
     filter = JSON.parse(filter);
 
-    let dateFrom = null;
-    let dateTo = null;
-
-    if (date) {
-        dateFrom = date[0];
-        dateTo = date[1];
-    }
+    const [dateFrom, dateTo] = date;
 
     const views = await ViewUtil.getGrouped();
 
@@ -1589,8 +1533,6 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
         carRegister,
         filter
     );
-    // await setBurnedAreaData(type, views, propertyData, dateSql, columnCar, columnCalculatedAreaHa, columnCarSemas, columnExecutionDate, carRegister);
-
 
     return await this.setReportFormat(
         propertyData,
@@ -1657,14 +1599,13 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
     `;
 
     const sqlBbox = `
-              SELECT
-                    substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
+              SELECT substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
               FROM de_car_validado_sema AS car 
               WHERE car.${ carColumn } = '${ carRegister }'
               GROUP BY gid`;
 
-    const carBbox = await sequelize.query(sqlBbox, QUERY_TYPES_SELECT);
-    const points = await sequelize.query(sql, QUERY_TYPES_SELECT);
+    const carBbox = await sequelize.query(sqlBbox, {type: QueryTypes.SELECT});
+    const points = await sequelize.query(sql, {type: QueryTypes.SELECT});
 
     let bbox = this.setBoundingBox(carBbox[0].bbox);
 

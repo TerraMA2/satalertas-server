@@ -43,9 +43,9 @@ module.exports.getGroupViews = async () => {
     const sql = `
         SELECT  
                (CASE
-                   WHEN view.source_type = ${layerType.STATIC} THEN 'STATIC'
-                   WHEN view.source_type = ${layerType.DYNAMIC} THEN 'DYNAMIC'
-                   WHEN view.source_type = ${layerType.ALERT} THEN 'ALERT'
+                   WHEN view.source_type = ${ layerType.STATIC } THEN 'STATIC'
+                   WHEN view.source_type = ${ layerType.DYNAMIC } THEN 'DYNAMIC'
+                   WHEN view.source_type = ${ layerType.ALERT } THEN 'ALERT'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN 'DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN 'PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN 'BURNED'
@@ -55,9 +55,9 @@ module.exports.getGroupViews = async () => {
                END) AS cod,
         
                (CASE
-                   WHEN view.source_type = ${layerType.STATIC} THEN 'Dados estáticos'
-                   WHEN view.source_type = ${layerType.DYNAMIC} THEN 'Dados dinâmicos'
-                   WHEN view.source_type = ${layerType.ALERT} THEN 'Alertas'
+                   WHEN view.source_type = ${ layerType.STATIC } THEN 'Dados estáticos'
+                   WHEN view.source_type = ${ layerType.DYNAMIC } THEN 'Dados dinâmicos'
+                   WHEN view.source_type = ${ layerType.ALERT } THEN 'Alertas'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN 'Análise DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN 'Análise PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN 'Análise FOCOS'
@@ -67,9 +67,9 @@ module.exports.getGroupViews = async () => {
                END) AS label,
         
                (CASE
-                   WHEN view.source_type = ${layerType.STATIC} THEN true
-                   WHEN view.source_type = ${layerType.DYNAMIC} THEN true
-                   WHEN view.source_type = ${layerType.ALERT} THEN true
+                   WHEN view.source_type = ${ layerType.STATIC } THEN true
+                   WHEN view.source_type = ${ layerType.DYNAMIC } THEN true
+                   WHEN view.source_type = ${ layerType.ALERT } THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
@@ -79,9 +79,9 @@ module.exports.getGroupViews = async () => {
                END) AS parent,
         
                (CASE
-                   WHEN view.source_type = ${layerType.STATIC} THEN false
-                   WHEN view.source_type = ${layerType.DYNAMIC} THEN false
-                   WHEN view.source_type = ${layerType.ALERT} THEN false
+                   WHEN view.source_type = ${ layerType.STATIC } THEN false
+                   WHEN view.source_type = ${ layerType.DYNAMIC } THEN false
+                   WHEN view.source_type = ${ layerType.ALERT } THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
@@ -91,9 +91,9 @@ module.exports.getGroupViews = async () => {
                END) AS view_graph,
         
                (CASE
-                   WHEN view.source_type = ${layerType.STATIC} THEN false
-                   WHEN view.source_type = ${layerType.DYNAMIC} THEN false
-                   WHEN view.source_type = ${layerType.ALERT} THEN false
+                   WHEN view.source_type = ${ layerType.STATIC } THEN false
+                   WHEN view.source_type = ${ layerType.DYNAMIC } THEN false
+                   WHEN view.source_type = ${ layerType.ALERT } THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN false
@@ -103,9 +103,9 @@ module.exports.getGroupViews = async () => {
                END) AS active_area,
         
                (CASE
-                   WHEN view.source_type = ${layerType.STATIC} THEN false
-                   WHEN view.source_type = ${layerType.DYNAMIC} THEN false
-                   WHEN view.source_type = ${layerType.ALERT} THEN false
+                   WHEN view.source_type = ${ layerType.STATIC } THEN false
+                   WHEN view.source_type = ${ layerType.DYNAMIC } THEN false
+                   WHEN view.source_type = ${ layerType.ALERT } THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
@@ -138,9 +138,9 @@ module.exports.getViews = async (groupViews) => {
                TRIM(view.name) AS name_view,
                view.description AS description,
                (CASE
-                   WHEN view.source_type = ${layerType.STATIC} THEN 'STATIC'
-                   WHEN view.source_type = ${layerType.DYNAMIC} THEN 'DYNAMIC'
-                   WHEN view.source_type = ${layerType.ALERT} THEN 'ALERT'
+                   WHEN view.source_type = ${ layerType.STATIC } THEN 'STATIC'
+                   WHEN view.source_type = ${ layerType.DYNAMIC } THEN 'DYNAMIC'
+                   WHEN view.source_type = ${ layerType.ALERT } THEN 'ALERT'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER') IS NOT NULL) THEN 'DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES') IS NOT NULL) THEN 'PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
@@ -171,10 +171,10 @@ module.exports.getViews = async (groupViews) => {
                 END )
                    AS table_name,
                (CASE
-                    WHEN view.source_type = ${layerType.STATIC} THEN 'static'
-                    WHEN view.source_type = ${layerType.DYNAMIC} THEN 'dynamic'
-                    WHEN view.source_type = ${layerType.ANALYSIS} THEN 'analysis'
-                    WHEN view.source_type = ${layerType.ALERT} THEN 'alert'
+                    WHEN view.source_type = ${ layerType.STATIC } THEN 'static'
+                    WHEN view.source_type = ${ layerType.DYNAMIC } THEN 'dynamic'
+                    WHEN view.source_type = ${ layerType.ANALYSIS } THEN 'analysis'
+                    WHEN view.source_type = ${ layerType.ALERT } THEN 'alert'
                END )
                    AS type,
                (CASE
@@ -182,9 +182,9 @@ module.exports.getViews = async (groupViews) => {
                    ELSE r_view.workspace
                END ) AS workspace,
                concat('view', view.id) AS view,
-               (view.source_type = ${layerType.STATIC}) AS is_static,
-               (view.source_type = ${layerType.DYNAMIC}) AS is_dynamic,
-               (view.source_type = ${layerType.ANALYSIS}) AS is_analysis,
+               (view.source_type = ${ layerType.STATIC }) AS is_static,
+               (view.source_type = ${ layerType.DYNAMIC }) AS is_dynamic,
+               (view.source_type = ${ layerType.ANALYSIS }) AS is_analysis,
                (r_view.workspace is null) AS is_disable
         FROM terrama2.data_series AS ds
         INNER JOIN terrama2.data_set_formats AS dsf    ON ds.id           = dsf.data_set_id

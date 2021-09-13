@@ -4,6 +4,5 @@ const viewController = require('../controllers/view.controller');
 
 router.get('/getReportLayers', viewController.getReportLayers)
 router.get('/getSidebarLayers', viewController.getSidebarLayers)
-router.get('/:id?', viewController.get)
 
 module.exports = router
