@@ -4,7 +4,7 @@ const httpStatus = require('../enum/http-status');
 
 exports.getAnalysisCentroid = async (req, res, next) => {
     try {
-        const { specificParameters, date, filter } = req.query;
+        const {specificParameters, date, filter} = req.query;
         const params = JSON.parse(specificParameters);
         params.date = date;
         params.filter = filter;

@@ -10,8 +10,8 @@ module.exports.getColumnsTable = async (tableName, schema, alias = '') => {
     const sql =
         ` SELECT column_name
       FROM information_schema.columns
-      WHERE table_name = '${tableName}'
-        AND table_schema = '${schema}'
+      WHERE table_name = '${ tableName }'
+        AND table_schema = '${ schema }'
         AND column_name not like '%geom%' `;
     const columns = await sequelize.query(sql, QUERY_TYPES_SELECT)
 
@@ -22,9 +22,9 @@ module.exports.getColumnByType = async (tableName, schema, type) => {
     const sql =
         ` SELECT column_name
       FROM information_schema.columns
-      WHERE table_name = '${tableName}'
-        AND table_schema = '${schema}'
-        AND udt_name = '${type}'
+      WHERE table_name = '${ tableName }'
+        AND table_schema = '${ schema }'
+        AND udt_name = '${ type }'
       ORDER BY ordinal_position`;
     const columns = await sequelize.query(sql, QUERY_TYPES_SELECT)
 
@@ -33,23 +33,23 @@ module.exports.getColumnByType = async (tableName, schema, type) => {
 module.exports.popupInfo = async (filter) => {
     return `
       WITH group_result AS (
-        SELECT COUNT(1) AS ${filter.table.aliasAlert}, ${filter.table.alias}.${filter.table.columnGid}
-        FROM ${filter.table.name} AS ${filter.table.alias} ${filter.secondaryTables}
-        ${filter.sqlWhere}
-        GROUP BY ${filter.table.alias}.${filter.table.columnGid}
-        ${filter.sqlHaving}
+        SELECT COUNT(1) AS ${ filter.table.aliasAlert }, ${ filter.table.alias }.${ filter.table.columnGid }
+        FROM ${ filter.table.name } AS ${ filter.table.alias } ${ filter.secondaryTables }
+        ${ filter.sqlWhere }
+        GROUP BY ${ filter.table.alias }.${ filter.table.columnGid }
+        ${ filter.sqlHaving }
       )
-      SELECT group_result.*, ${filter.table.columnsTable}
+      SELECT group_result.*, ${ filter.table.columnsTable }
       FROM de_car_validado_sema AS c,
            group_result
-      ${filter.whereCar}
+      ${ filter.whereCar }
     `;
 }
 module.exports.popupInfoCar = async (filter) => {
     return `
-      SELECT ${filter.table.columnsTable}
+      SELECT ${ filter.table.columnsTable }
       FROM de_car_validado_sema AS c
-      ${filter.whereCar}
+      ${ filter.whereCar }
     `;
 }
 module.exports.getFilter = async (params) => {
@@ -71,11 +71,11 @@ module.exports.getBurnedCentroid = async (params) => {
     const table = filter.table
     const sql = `
       WITH group_result AS (
-        SELECT ${table.alias}.de_car_validado_sema_gid
-        FROM ${table.name} AS ${table.alias} ${filter.secondaryTables}
-        ${filter.sqlWhere}
-        GROUP BY ${table.alias}.de_car_validado_sema_gid
-        ${filter.sqlHaving}
+        SELECT ${ table.alias }.de_car_validado_sema_gid
+        FROM ${ table.name } AS ${ table.alias } ${ filter.secondaryTables }
+        ${ filter.sqlWhere }
+        GROUP BY ${ table.alias }.de_car_validado_sema_gid
+        ${ filter.sqlHaving }
       )
       SELECT  group_result.*
             , ST_Y(ST_Centroid(c.geom)) AS "lat"
@@ -131,9 +131,9 @@ module.exports.getOthersCentroid = async (params) => {
 
     if (params.countTotal) {
         const sqlCount =
-            ` SELECT COUNT(1) AS count FROM public.${table.name} AS ${table.alias}
-              ${filter.secondaryTables}
-              ${sqlWhere} `;
+            ` SELECT COUNT(1) AS count FROM public.${ table.name } AS ${ table.alias }
+              ${ filter.secondaryTables }
+              ${ sqlWhere } `;
 
         const resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
         dataJson.push(resultCount[0]['count']);
@@ -166,11 +166,11 @@ module.exports.getPopupInfo = async (params) => {
     const groupCode = params.groupCode;
     const infoColumns = await InfoColumnsService.getInfoColumns(groupCode);
     return Object.entries(data[0])
-        .filter(column => !column[0].includes('lat') && !column[0].includes('long'))
+        .filter(column => !column[0].includes('alerts') &&!column[0].includes('lat') && !column[0].includes('long'))
         .map(column => {
             const key = column[0];
             const value = column[1];
-            if (infoColumns[key] && infoColumns[key].alias && infoColumns[key].alias !== undefined) {
+            if (infoColumns && infoColumns[key] && infoColumns[key].alias && infoColumns[key].alias !== undefined) {
                 if (infoColumns[key].show) {
                     return {key: infoColumns[key].alias, value: value, type: infoColumns[key].type};
                 }
@@ -227,9 +227,9 @@ module.exports.getAnalysisData = async (params) => {
 
     if (params.countTotal) {
         const sqlCount =
-            ` SELECT COUNT(1) AS count FROM public.${table.name} AS ${table.alias}
-            ${filter.secondaryTables}
-            ${sqlWhere} `;
+            ` SELECT COUNT(1) AS count FROM public.${ table.name } AS ${ table.alias }
+            ${ filter.secondaryTables }
+            ${ sqlWhere } `;
 
         resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
         dataJson.push(resultCount[0]['count']);
@@ -275,7 +275,7 @@ module.exports.getStaticData = async (params) => {
 
     let sqlCount;
     if (specificParameters.countTotal) {
-        sqlCount = `SELECT COUNT(1) AS count FROM public.${layer.tableName}`;
+        sqlCount = `SELECT COUNT(1) AS count FROM public.${ layer.tableName }`;
         resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
 
         dataJson.push(resultCount[0]['count']);
@@ -328,7 +328,7 @@ module.exports.getDynamicData = async (params) => {
     let dataJson = await sequelize.query(sql);
 
     if (specificParameters.countTotal) {
-        const resultCount = await sequelize.query(`SELECT COUNT(1) AS count FROM public.${tableName}`);
+        const resultCount = await sequelize.query(`SELECT COUNT(1) AS count FROM public.${ tableName }`);
         dataJson.push(resultCount[0]['count'])
     }
 

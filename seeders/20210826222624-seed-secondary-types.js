@@ -6,6 +6,7 @@ VALUES
   ('name', 'Nome', 'Nome da pessoa'),
   ('federal_car', 'CAR Federal', 'Número do CAR Federal'),
   ('state_car', 'CAR Estadual', 'Número do CAR Estadual'),
+  ('car_area', 'Área', 'Área do poligonos'),
   ('date_value', 'Campo de data', 'Data'),
   ('identifier', 'Identificador', 'Identificador único do dado'),
   ('state_name', 'Nome (Estado)', 'Nome do Estado'),

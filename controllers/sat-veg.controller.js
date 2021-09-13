@@ -13,7 +13,7 @@ exports.get = async (req, res, next) => {
             sat
         } = req.query;
 
-        const satVegs =  await SatVegService.get(
+        const satVegs = await SatVegService.get(
             coordinates,
             type,
             preFilter,

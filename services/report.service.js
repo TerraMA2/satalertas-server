@@ -6,8 +6,7 @@ const config = require(__dirname + '/../config/config.json');
 const ViewUtil = require('../utils/view.utils');
 const SatVegService = require('../services/sat-veg.service');
 const moment = require('moment');
-const DocDefinitions = require(__dirname +
-    '/../utils/helpers/report/doc-definition.js');
+const DocDefinitions = require(__dirname + '/../utils/helpers/report/doc-definition.js');
 const {QueryTypes} = require("sequelize");
 const BadRequestError = require("../errors/bad-request.error");
 const InternalServerError = require("../errors/internal-server.error");
@@ -1571,6 +1570,7 @@ module.exports.getChartOptions = async (labels, data) => {
     };
 }
 module.exports.getPointsAlerts = async (carRegister, date, type) => {
+    const {planetSRID} = config.geoserver;
     const views = await ViewUtil.getGrouped();
 
     const carColumn = 'gid';
@@ -1598,22 +1598,26 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
         LIMIT 5
     `;
 
-    const sqlBbox = `
-              SELECT substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
-              FROM de_car_validado_sema AS car 
-              WHERE car.${ carColumn } = '${ carRegister }'
-              GROUP BY gid`;
+    const sqlBbox = `SELECT
+        substring(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT) - 5) AS bbox
+      FROM de_car_validado_sema
+      WHERE ${carColumn} = ${carRegister}
+      GROUP BY gid`;
+    const bboxOptions = {
+        type: QueryTypes.SELECT,
+        plain: true
+    }
 
-    const carBbox = await sequelize.query(sqlBbox, {type: QueryTypes.SELECT});
+    const carBbox = await sequelize.query(sqlBbox, bboxOptions);
     const points = await sequelize.query(sql, {type: QueryTypes.SELECT});
 
-    let bbox = this.setBoundingBox(carBbox[0].bbox);
+    let bbox = this.setBoundingBox(carBbox.bbox);
 
     const currentYear = new Date().getFullYear();
     for (const point of points) {
         point['url'] = `${
             config.geoserver.baseUrl
-        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2020,${
+        }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_119:planet_latest_global_monthly,${
             views.STATIC.children.CAR_VALIDADO.workspace
         }:${ views.STATIC.children.CAR_VALIDADO.view },${
             views.STATIC.children.CAR_X_USOCON.workspace
@@ -1632,7 +1636,7 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
         }/${ currentYear }&cql_filter=RED_BAND>0;rid='${ carRegister }';gid_car='${ carRegister }';${
             views[type.toUpperCase()].children[groupType[type]].tableName
         }_id=${ point.a_carprodes_1_id }&srs=EPSG:${
-            config.geoserver.defaultSRID
+            planetSRID
         }&format=image/png`;
 
         point['options'] = await SatVegService.get(

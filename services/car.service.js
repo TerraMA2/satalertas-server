@@ -46,8 +46,8 @@ module.exports.get = async (params) => {
                 ST_Y(ST_Centroid(property.geom)) AS "lat",
                 ST_X(ST_Centroid(property.geom)) AS "long",
                 (SELECT count(1) > 0 FROM alertas.reports rep WHERE property.gid = rep.car_gid) AS has_pdf
-                ${sqlSelectSum}
-                ${sqlSelectCount} `;
+                ${ sqlSelectSum }
+                ${ sqlSelectCount } `;
 
     const sqlFrom = ` FROM public.${ table.name } AS ${ specificParameters.tableAlias }`;
 

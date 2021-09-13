@@ -440,7 +440,6 @@ module.exports.getReportLayers = async () => {
     const options = {
         type: QueryTypes.SELECT,
         fieldMap: {cod_group: 'groupCode'}
-    }
-
+    };
     return await sequelize.query(sql, options);
 }

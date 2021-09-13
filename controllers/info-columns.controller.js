@@ -33,7 +33,7 @@ exports.getSecondaryTypes = async (req, res, next) => {
 exports.getTableColumns = async (req, res, next) => {
     try {
         const {tableId} = req.query;
-        const {data} = await InfoColumnsService.getTableColumns(tableId);
+        const data = await InfoColumnsService.getTableColumns(tableId);
         res.json(response(httpStatus.SUCCESS, data));
     } catch (e) {
         next(e)

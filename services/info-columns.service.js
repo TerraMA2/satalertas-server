@@ -24,7 +24,7 @@ module.exports.getTableColumns = async (tableId) => {
         },
         attributes: {exclude: ['table_id']},
         order: [['column_position', 'ASC']],
-        raw: true,
+        raw: true
     };
     await InfocolumnColumnsList.findAll(options).then((response) => {
         result.data = response;
@@ -59,7 +59,7 @@ module.exports.getInfocolumnsByTableName = async (tableName) => {
     );
     tableData.forEach((table) => {
         table.tableInfocolumns.map((columns) => {
-            columns.columnName = camelCase(columns.columnName);
+            columns.nameCamel = camelCase(columns.columnName);
             return columns;
         })
         table.tableInfocolumns.sort((a, b) => {
@@ -86,15 +86,15 @@ module.exports.updateTableInfoColums = async (editions) => {
 
 module.exports.getInfocolumnsByViewId = async (viewId) => {
     let sql = `SELECT
-      (CASE
+    (CASE
       WHEN vw.source_type = 3 THEN concat(TRIM(dsf.value), '_', analysis.id)
       ELSE dsf.value
       END), vw.id AS view_id
-    FROM terrama2.views AS vw
-    INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
-    INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
-    LEFT JOIN terrama2.analysis AS analysis ON dsf.data_set_id = analysis.dataset_output
-    WHERE vw.id IN (:viewId) AND dsf.key = 'table_name';`;
+      FROM terrama2.views AS vw
+      INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
+      INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
+      LEFT JOIN terrama2.analysis AS analysis ON dsf.data_set_id = analysis.dataset_output
+      WHERE vw.id IN (:viewId) AND dsf.key = 'table_name';`;
     const options = {
         type: QueryTypes.SELECT,
         fieldMap: {value: 'tableName', view_id: 'viewId'},
@@ -106,7 +106,7 @@ module.exports.getInfocolumnsByViewId = async (viewId) => {
     if (Array.isArray(viewId)) {
         return Promise.all(infocolumn);
     } else {
-        return Promise.all(infocolumn[0]);
+        return infocolumn[0];
     }
 }
 

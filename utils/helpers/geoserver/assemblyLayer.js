@@ -9,7 +9,7 @@ function layerData(layersList, options = undefined) {
     } = options;
     let layers;
     let url = `${ geoserverUrl }`;
-    if (Array.isArray(layers)) {
+    if (Array.isArray(layersList)) {
         layers = layersList.join(',');
     } else {
         layers = layersList;
@@ -36,24 +36,18 @@ function setLegend(title, workspace, layer) {
     };
 }
 
-// function setFilter(groupViews, data_view) {
 function setFilter(group, layer) {
-    let filter = {};
     const view_default = `${ group.workspace }:${ layer.viewName }`;
-    if (VIEWS[layer.groupCode] && VIEWS[layer.groupCode].filter) {
-        filter = VIEWS[layer.groupCode].filter(
-            view_default,
-            `${ config.project }_${ config.geoserver.workspace }`,
-            layer.cod,
-            group[layer.groupCode].tableOwner,
-            layer.is_primary
-        );
-    }
-    return filter;
+    return VIEWS.newFilter(
+        view_default,
+        `${ config.project }_${ config.geoserver.workspace }`,
+        layer.code,
+        field = layer.tableInfocolumns,
+    );
 }
 
 module.exports = {
     layerData,
     setLegend,
-    setFilter,
+    setFilter
 };
