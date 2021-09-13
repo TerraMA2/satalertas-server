@@ -1,5 +1,5 @@
 const FiringCharts = require('../charts/FiringCharts');
-const {Report, sequelize} = require('../models');
+const {Report, sequelize, CarValidado} = require('../models');
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const config = require(__dirname + '/../config/config.json');
@@ -10,8 +10,8 @@ const moment = require('moment');
 const DocDefinitions = require(__dirname +
     '/../utils/helpers/report/doc-definition.js');
 const {QueryTypes} = require("sequelize");
+const BadRequestError = require("../errors/bad-request.error");
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
-
 module.exports.getFilterClassSearch = (sql, filter, view, tableOwner) => {
     const classSearch = filter && filter.classSearch ? filter.classSearch : null;
     if (classSearch && classSearch.radioValue === 'SELECTION' && classSearch.analyzes.length > 0) {
@@ -26,7 +26,6 @@ module.exports.getFilterClassSearch = (sql, filter, view, tableOwner) => {
     }
     return sql;
 }
-
 module.exports.getAnalysisYear = (data, period, variable) => {
     const analysisYears = [];
     for (let year = period['startYear']; year <= period['endYear']; year++) {
@@ -39,7 +38,6 @@ module.exports.getAnalysisYear = (data, period, variable) => {
     }
     return analysisYears;
 };
-
 module.exports.setBoundingBox = (bBox) => {
     const bboxArray = bBox.split(',');
     const bbox1 = bboxArray[0].split(' ');
@@ -66,7 +64,6 @@ module.exports.setBoundingBox = (bBox) => {
 
     return `${ Xmin },${ Ymin },${ Xmax },${ Ymax }`;
 };
-
 module.exports.reportFormatProdes = (
     reportData,
     views,
@@ -253,7 +250,6 @@ module.exports.reportFormatQueimada = (
         'urlGsImage1'
         ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.BURNED.children.CAR_X_FOCOS.workspace }:${ views.BURNED.children.CAR_X_FOCOS.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.BURNED.children.CAR_X_FOCOS.workspace }:${ views.BURNED.children.CAR_X_FOCOS.view }_style&bbox=${ resultReportData.property.bboxplanet }&time=${ date[0] }/${ date[1] }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&cql_filter=RED_BAND>0;${ carColumnSema }=${ resultReportData.property.gid };${ carColumn }=${ resultReportData.property.gid }&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
 }
-
 module.exports.setReportFormat = async (
     reportData,
     views,
@@ -288,7 +284,6 @@ module.exports.setReportFormat = async (
 
     return resultReportData;
 }
-
 module.exports.getImageObject = (image, fit, margin, alignment) => {
     if (
         image &&
@@ -312,7 +307,6 @@ module.exports.getImageObject = (image, fit, margin, alignment) => {
         };
     }
 }
-
 module.exports.getCarData = async (
     carTableName,
     municipiosTableName,
@@ -349,7 +343,6 @@ module.exports.getCarData = async (
     const result = await sequelize.query(sql, QUERY_TYPES_SELECT);
     return result[0];
 };
-
 module.exports.setDeterData = async (
     type,
     views,
@@ -554,7 +547,6 @@ module.exports.setDeterData = async (
 
     return propertyData;
 };
-
 module.exports.setProdesData = async (
     type,
     views,
@@ -744,7 +736,6 @@ module.exports.setProdesData = async (
 
     return propertyData;
 };
-
 module.exports.setBurnedData = async (
     type,
     views,
@@ -812,7 +803,6 @@ module.exports.setBurnedData = async (
 
     return await propertyData;
 };
-
 module.exports.setBurnedAreaData = async (
     type,
     views,
@@ -1020,7 +1010,6 @@ module.exports.setBurnedAreaData = async (
 
     return propertyData;
 }
-
 module.exports.getContextChartNdvi = async (chartImages, startDate, endDate) => {
     const ndviContext = [];
     if (chartImages && chartImages.length > 0) {
@@ -1057,7 +1046,6 @@ module.exports.getContextChartNdvi = async (chartImages, startDate, endDate) => 
     }
     return ndviContext;
 };
-
 module.exports.getDesflorestationHistoryAndChartNdviContext = async (
     docDefinitionContent,
     reportData,
@@ -1082,7 +1070,6 @@ module.exports.getDesflorestationHistoryAndChartNdviContext = async (
     }
     return content;
 };
-
 module.exports.getContentForDeflorestionAlertsContext = async (
     docDefinitionContent,
     deflorestationAlertsContext,
@@ -1101,7 +1088,6 @@ module.exports.getContentForDeflorestionAlertsContext = async (
 
     return content;
 };
-
 module.exports.getConclusion = async (conclusionText) => {
     const conclusionParagraphs = conclusionText
         ? conclusionText.split('\n')
@@ -1118,7 +1104,6 @@ module.exports.getConclusion = async (conclusionText) => {
     }
     return conclusion;
 };
-
 module.exports.getContentConclusion = async (docDefinitionContent, conclusionText) => {
     // const content = [];
     const conclusion = await this.getConclusion(conclusionText);
@@ -1146,7 +1131,6 @@ module.exports.getContentConclusion = async (docDefinitionContent, conclusionTex
 
     return docDefinitionContent;
 };
-
 module.exports.setDocDefinitions = async (reportData, docDefinition) => {
     // refatorar essa parte
     // pois não é mais necessário indicar em qual parágrafo será inserido a
@@ -1182,7 +1166,6 @@ module.exports.setDocDefinitions = async (reportData, docDefinition) => {
 
     return await docDefinition;
 };
-
 module.exports.setImages = async (reportData) => {
     if (!reportData['images']) {
         reportData.images = {};
@@ -1364,7 +1347,6 @@ module.exports.setImages = async (reportData) => {
         'right',
     );
 };
-
 module.exports.setCharts = async (reportData) => {
     if (!reportData.chartsImages) {
         reportData.chartsImages = {};
@@ -1385,7 +1367,6 @@ module.exports.setCharts = async (reportData) => {
         };
     }
 }
-
 module.exports.saveBase64 = async (document, code, type, path, docName) => {
     const binaryData = new Buffer(document, 'base64').toString('binary');
     await fs.writeFile(path, binaryData, 'binary', (err) => {
@@ -1395,7 +1376,6 @@ module.exports.saveBase64 = async (document, code, type, path, docName) => {
         logger.error(`Arquivo salvo em .. ${ path }`);
     });
 }
-
 module.exports.get = async (id) => {
     const reports = id ? await Report.findByPk(id) : await Report.findAll();
 

@@ -3,12 +3,13 @@ const {sequelize} = models;
 const {QueryTypes} = sequelize;
 const config = require(__dirname + '/../config/config.json')
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
+const layerType = require('../enum/layer-type');
 module.exports.setFilter = (groupViews, viewData) => {
     const view_default = `${ viewData.workspace }:${ viewData.view }`;
     return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter
         ? VIEWS[viewData.groupCode].filter(
             view_default,
-            config.geoserver.workspace,
+            `${ config.project }_${ config.geoserver.workspace }`,
             viewData.cod,
             groupViews[viewData.groupCode].tableOwner,
             viewData.is_primary,
@@ -23,7 +24,7 @@ module.exports.getLegend = (data_view) => {
     };
 };
 
-module.exports.getlayerData = (data_view) => {
+module.exports.getLayerData = (data_view) => {
     return {
         url: `${ config.geoserver.baseUrl }/wms`,
         layers: `${ data_view.workspace }:${ data_view.view }`,
@@ -34,304 +35,84 @@ module.exports.getlayerData = (data_view) => {
     };
 };
 
-module.exports.setViews = (groupViews, data_view) => {
-    return {
-        groupCode: data_view.groupCode,
-        cod: data_view.cod,
-        label: data_view.name_view,
-        description: data_view.description,
-        shortLabel:
-            VIEWS[data_view.groupCode] &&
-            VIEWS[data_view.groupCode][data_view.cod] &&
-            VIEWS[data_view.groupCode][data_view.cod].shortLabel
-                ? VIEWS[data_view.groupCode][data_view.cod].shortLabel
-                : data_view.name_view,
-        value: data_view.view_id,
-        tableOwner: groupViews[data_view.groupCode].tableOwner,
-        tableName: data_view.table_name,
-        carRegisterColumn:
-            VIEWS[data_view.groupCode] &&
-            VIEWS[data_view.groupCode][data_view.cod] &&
-            VIEWS[data_view.groupCode][data_view.cod].carRegisterColumn
-                ? !data_view.is_primary
-                    ? `${ groupViews[data_view.groupCode].tableOwner }_${
-                        VIEWS[data_view.groupCode][data_view.cod].carRegisterColumn
-                    }`
-                    : VIEWS[data_view.groupCode][data_view.cod].carRegisterColumn
-                : null,
-        type: data_view.type,
-        workspace: data_view.workspace,
-        view: data_view.view,
-        dataStore: data_view.datastore ? data_view.datastore : '',
-        isPrivate: data_view.type === 'analysis',
-        isChild:
-            VIEWS[data_view.groupCode] &&
-            VIEWS[data_view.groupCode][data_view.cod] &&
-            VIEWS[data_view.groupCode][data_view.cod].isChild
-                ? VIEWS[data_view.groupCode][data_view.cod].isChild
-                : false,
-        isHidden:
-            VIEWS[data_view.groupCode] &&
-            VIEWS[data_view.groupCode][data_view.cod] &&
-            VIEWS[data_view.groupCode][data_view.cod].isHidden
-                ? VIEWS[data_view.groupCode][data_view.cod].isHidden
-                : false,
-        isPrimary: data_view.is_primary,
-        isDisabled: data_view.is_disable,
-        filter:
-            data_view.type === 'analysis' ? this.setFilter(groupViews, data_view) : null,
-        layerData: this.getlayerData(data_view),
-        legend: this.getLegend(data_view),
-        tools: [
-            {
-                icon: 'fas fa-info',
-                name: 'description',
-                title: 'description',
-            },
-            {
-                icon: 'fas fa-save',
-                name: 'export',
-                title: 'export',
-            },
-            {
-                icon: 'fas fa-adjust',
-                name: 'opacity',
-                title: 'opacity',
-            },
-            // {
-            //     icon: "fas fa-expand-alt",
-            //     name: "extent",
-            //     title: "Extent"
-            // },
-            // { //Do not replace or delete, it will be implemented later.
-            //   icon: "fas fa-calendar-alt",
-            //   name: "calendar",
-            //   title: "Filtrar por intervalo de data"
-            // },
-            // {
-            //   icon: "fas fa-sliders-h",
-            //   name: "slider",
-            //   title: "Filtrar por data"
-            // }
-        ],
-    };
-};
-
-module.exports.orderView = async (groupViews) => {
-    const layers = [
-        'DETER',
-        'PRODES',
-        'BURNED',
-        'BURNED_AREA',
-        'STATIC',
-        'DYNAMIC',
-    ];
-
-    let child = [];
-    let owner = [];
-    let other = [];
-
-    layers.forEach((layer) => {
-        child =
-            groupViews[layer] &&
-            groupViews[layer].children &&
-            groupViews[layer].children.child
-                ? groupViews[layer].children.child.sort(function (a, b) {
-                    return (
-                        +(
-                            a.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase() >
-                            b.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase()
-                        ) ||
-                        +(
-                            a.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase() ===
-                            b.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase()
-                        ) - 1
-                    );
-                })
-                : [];
-        owner =
-            groupViews[layer] &&
-            groupViews[layer].children &&
-            groupViews[layer].children.owner
-                ? groupViews[layer].children.owner.sort(function (a, b) {
-                    return (
-                        +(
-                            a.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase() >
-                            b.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase()
-                        ) ||
-                        +(
-                            a.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase() ===
-                            b.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase()
-                        ) - 1
-                    );
-                })
-                : [];
-
-        other =
-            groupViews[layer] &&
-            groupViews[layer].children &&
-            groupViews[layer].children.other
-                ? groupViews[layer].children.other.sort(function (a, b) {
-                    return (
-                        +(
-                            a.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase() >
-                            b.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase()
-                        ) ||
-                        +(
-                            a.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase() ===
-                            b.shortLabel
-                                .normalize('NFD')
-                                .replace(/[\u0300-\u036f]/g, '')
-                                .toLowerCase()
-                        ) - 1
-                    );
-                })
-                : [];
-        owner.forEach((p) => {
-            if (groupViews[layer] && groupViews[layer].children) {
-                groupViews[layer].children.push(p);
-            }
-        });
-        child.forEach((p) => {
-            if (groupViews[layer] && groupViews[layer].children) {
-                groupViews[layer].children.push(p);
-            }
-        });
-        other.forEach((p) => {
-            if (groupViews[layer] && groupViews[layer].children) {
-                groupViews[layer].children.push(p);
-            }
-        });
-    });
-
-    return groupViews;
-}
-
-module.exports.setResultSidebarConfig = async (groupViews) => {
-    const viewsJSON = [];
-
-    if (groupViews.DETER) {
-        viewsJSON.push(groupViews.DETER);
-    }
-    if (groupViews.PRODES) {
-        viewsJSON.push(groupViews.PRODES);
-    }
-    if (groupViews.BURNED) {
-        viewsJSON.push(groupViews.BURNED);
-    }
-    if (groupViews.BURNED_AREA) {
-        viewsJSON.push(groupViews.BURNED_AREA);
-    }
-    if (groupViews.STATIC) {
-        viewsJSON.push(groupViews.STATIC);
-    }
-    if (groupViews.DYNAMIC) {
-        viewsJSON.push(groupViews.DYNAMIC);
-    }
-    return viewsJSON;
+module.exports.getSidebarLayers = async () => {
+    return await this.getGroupViews();
 }
 
 module.exports.getGroupViews = async () => {
-    const sqlGroupViews = `
+    const sql = `
         SELECT  
                (CASE
-                   WHEN view.source_type = 1 THEN 'STATIC'
-                   WHEN view.source_type = 2 THEN 'DYNAMIC'
+                   WHEN view.source_type = ${layerType.STATIC} THEN 'STATIC'
+                   WHEN view.source_type = ${layerType.DYNAMIC} THEN 'DYNAMIC'
+                   WHEN view.source_type = ${layerType.ALERT} THEN 'ALERT'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN 'DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN 'PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN 'BURNED'
-                   WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL))    THEN 'BURNED_AREA'
-               END)   AS cod,
+                   WHEN ((SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN 'BURNED_AREA'
+               END) AS cod,
         
                (CASE
-                   WHEN view.source_type = 1 THEN 'Dados estáticos'
-                   WHEN view.source_type = 2 THEN 'Dados dinâmicos'
+                   WHEN view.source_type = ${layerType.STATIC} THEN 'Dados estáticos'
+                   WHEN view.source_type = ${layerType.DYNAMIC} THEN 'Dados dinâmicos'
+                   WHEN view.source_type = ${layerType.ALERT} THEN 'Alertas'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN 'Análise DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN 'Análise PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN 'Análise FOCOS'
-                   WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL))    THEN 'Análise área queimada'
-               END)   AS label,
+                   WHEN ((SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN 'Análise área queimada'
+               END) AS label,
         
                (CASE
-                   WHEN view.source_type = 1 THEN true
-                   WHEN view.source_type = 2 THEN true
+                   WHEN view.source_type = ${layerType.STATIC} THEN true
+                   WHEN view.source_type = ${layerType.DYNAMIC} THEN true
+                   WHEN view.source_type = ${layerType.ALERT} THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
-                   WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
-               END)   AS parent,
+                   WHEN ((SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
+               END) AS parent,
         
                (CASE
-                   WHEN view.source_type = 1 THEN false
-                   WHEN view.source_type = 2 THEN false
+                   WHEN view.source_type = ${layerType.STATIC} THEN false
+                   WHEN view.source_type = ${layerType.DYNAMIC} THEN false
+                   WHEN view.source_type = ${layerType.ALERT} THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
-                   WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
-                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
-               END)   AS view_graph,
+                   WHEN ((SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
+                         (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
+               END) AS view_graph,
         
                (CASE
-                   WHEN view.source_type = 1 THEN false
-                   WHEN view.source_type = 2 THEN false
+                   WHEN view.source_type = ${layerType.STATIC} THEN false
+                   WHEN view.source_type = ${layerType.DYNAMIC} THEN false
+                   WHEN view.source_type = ${layerType.ALERT} THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN false
                    WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN false
-               END)   AS active_area,
+               END) AS active_area,
         
                (CASE
-                   WHEN view.source_type = 1 THEN false
-                   WHEN view.source_type = 2 THEN false
+                   WHEN view.source_type = ${layerType.STATIC} THEN false
+                   WHEN view.source_type = ${layerType.DYNAMIC} THEN false
+                   WHEN view.source_type = ${layerType.ALERT} THEN false
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER')    IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES')   IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS')    IS NOT NULL) THEN true
                    WHEN ( (SUBSTRING(UPPER(TRIM(view.name)), 'AQ')     IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
-               END)   AS is_private,
+               END) AS is_private,
                null AS children
         
         FROM terrama2.views AS view
@@ -339,29 +120,27 @@ module.exports.getGroupViews = async () => {
         GROUP BY cod, label, parent, view_graph, active_area, is_private `;
     const options = {
         type: QueryTypes.SELECT,
-    }
-    const dataset_group_views = await sequelize.query(
-        sqlGroupViews,
-        options,
-    );
-    let groupViews = {};
-    dataset_group_views.forEach((group) => {
-        if (group.cod) {
-            groupViews[group.cod] = group;
-            groupViews[group.cod].isPrivate = group.is_private;
+        fieldMap: {
+            view_graph: 'viewGraph',
+            active_area: 'activeArea',
+            is_private: 'isPrivate'
         }
-    });
+    }
+    const groupViewsData = await sequelize.query(sql, options);
+    const groupViews = {};
+    groupViewsData.forEach(groupView => groupViews[groupView.cod] = groupView);
     return await this.getViews(groupViews);
 }
 
 module.exports.getViews = async (groupViews) => {
-    const sqlViews = ` SELECT
+    const sql = `SELECT
                view.id AS view_id,
                TRIM(view.name) AS name_view,
                view.description AS description,
                (CASE
-                   WHEN view.source_type = 1 THEN 'STATIC'
-                   WHEN view.source_type = 2 THEN 'DYNAMIC'
+                   WHEN view.source_type = ${layerType.STATIC} THEN 'STATIC'
+                   WHEN view.source_type = ${layerType.DYNAMIC} THEN 'DYNAMIC'
+                   WHEN view.source_type = ${layerType.ALERT} THEN 'ALERT'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'DETER') IS NOT NULL) THEN 'DETER'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'PRODES') IS NOT NULL) THEN 'PRODES'
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'FOCOS') IS NOT NULL) THEN 'BURNED'
@@ -385,16 +164,17 @@ module.exports.getViews = async (groupViews) => {
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X AREA Q') IS NOT NULL) THEN true
                    WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR VALIDADO') IS NOT NULL) THEN true
                    ELSE false
-               END)   AS is_primary,
+               END) AS is_primary,
                (CASE
                     WHEN view.source_type = 3 THEN concat(TRIM(dsf.value), '_', ana.id)
                     ELSE dsf.value
                 END )
                    AS table_name,
                (CASE
-                    WHEN view.source_type = 1 THEN 'static'
-                    WHEN view.source_type = 2 THEN 'dynamic'
-                    WHEN view.source_type = 3 THEN 'analysis'
+                    WHEN view.source_type = ${layerType.STATIC} THEN 'static'
+                    WHEN view.source_type = ${layerType.DYNAMIC} THEN 'dynamic'
+                    WHEN view.source_type = ${layerType.ANALYSIS} THEN 'analysis'
+                    WHEN view.source_type = ${layerType.ALERT} THEN 'alert'
                END )
                    AS type,
                (CASE
@@ -402,9 +182,9 @@ module.exports.getViews = async (groupViews) => {
                    ELSE r_view.workspace
                END ) AS workspace,
                concat('view', view.id) AS view,
-               (view.source_type = 1) AS is_static,
-               (view.source_type = 2) AS is_dynamic,
-               (view.source_type = 3) AS is_analysis,
+               (view.source_type = ${layerType.STATIC}) AS is_static,
+               (view.source_type = ${layerType.DYNAMIC}) AS is_dynamic,
+               (view.source_type = ${layerType.ANALYSIS}) AS is_analysis,
                (r_view.workspace is null) AS is_disable
         FROM terrama2.data_series AS ds
         INNER JOIN terrama2.data_set_formats AS dsf    ON ds.id           = dsf.data_set_id
@@ -418,41 +198,180 @@ module.exports.getViews = async (groupViews) => {
 
     const options = {
         type: QueryTypes.SELECT,
-        fieldMap: {cod_group: 'groupCode'}
+        fieldMap: {
+            cod_group: 'groupCode',
+            is_primary: 'isPrimary',
+            table_name: 'tableName'
+        }
     }
-    const dataset_views = await sequelize.query(sqlViews, options);
-    dataset_views.forEach((dataView) => {
-        if (dataView.is_primary) {
-            //TABLEOWNER
-            groupViews[dataView.groupCode].tableOwner = `${ dataView.table_name }`;
+    const viewsData = await sequelize.query(sql, options);
+
+    viewsData.forEach(viewData => {
+        if (!groupViews[viewData.groupCode].children) {
+            groupViews[viewData.groupCode].children = [];
+        }
+        if (viewData.isPrimary) {
+            groupViews[viewData.groupCode].tableOwner = viewData.tableName;
         }
     });
-
-    dataset_views.forEach((dataView) => {
-        if (!groupViews[dataView.groupCode].children) {
-            groupViews[dataView.groupCode].children = [];
-        }
-
-        const view = this.setViews(groupViews, dataView);
-
-        const groupBy = view.isPrimary
-            ? 'owner'
-            : view.isChild
-                ? 'child'
-                : 'other';
-
-        if (!groupViews[dataView.groupCode].children[groupBy]) {
-            groupViews[dataView.groupCode].children[groupBy] = [];
-        }
-
-        groupViews[dataView.groupCode].children[groupBy].push(view);
+    viewsData.forEach(viewData => {
+        const view = this.getViewObject(groupViews, viewData);
+        groupViews[viewData.groupCode].children.push(view);
     });
-
-    return groupViews;
+    return this.sortViews(groupViews);
 }
 
+module.exports.sortViews = async (groupViews) => {
+    const groupCodes = [
+        'DETER',
+        'PRODES',
+        'BURNED',
+        'BURNED_AREA',
+        'STATIC',
+        'DYNAMIC',
+    ];
+    return groupCodes.map(groupCode => {
+        const children = groupViews[groupCode].children;
+        const primary = children.filter(child => child.isPrimary);
+        const child = children.filter(child => child.isChild).sort((firstView, secondView) => {
+            return (
+                +(
+                    firstView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase() >
+                    secondView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase()
+                ) ||
+                +(
+                    firstView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase() ===
+                    secondView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase()
+                ) - 1
+            );
+        });
+        const other = children.filter(child => !child.isChild && !child.isPrimary).sort((firstView, secondView) => {
+            return (
+                +(
+                    firstView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase() >
+                    secondView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase()
+                ) ||
+                +(
+                    firstView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase() ===
+                    secondView.shortLabel
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase()
+                ) - 1
+            );
+        });
+        groupViews[groupCode].children = [...primary, ...child, ...other];
+        return groupViews[groupCode];
+    })
+}
+
+module.exports.getViewObject = (groupViews, viewData) => {
+    return {
+        groupCode: viewData.groupCode,
+        cod: viewData.cod,
+        label: viewData.name_view,
+        description: viewData.description,
+        shortLabel:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].shortLabel
+                ? VIEWS[viewData.groupCode][viewData.cod].shortLabel
+                : viewData.name_view,
+        value: viewData.view_id,
+        tableOwner: groupViews[viewData.groupCode].tableOwner,
+        tableName: viewData.tableName,
+        carRegisterColumn:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+                ? !viewData.isPrimary
+                    ? `${ groupViews[viewData.groupCode].tableOwner }_${
+                        VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+                    }`
+                    : VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+                : null,
+        type: viewData.type,
+        workspace: viewData.workspace,
+        view: viewData.view,
+        dataStore: viewData.datastore ? viewData.datastore : '',
+        isPrivate: viewData.type === 'analysis',
+        isChild:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].isChild
+                ? VIEWS[viewData.groupCode][viewData.cod].isChild
+                : false,
+        isHidden:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].isHidden
+                ? VIEWS[viewData.groupCode][viewData.cod].isHidden
+                : false,
+        isPrimary: viewData.isPrimary,
+        isDisabled: viewData.is_disable,
+        filter:
+            viewData.type === 'analysis' ? this.setFilter(groupViews, viewData) : null,
+        layerData: this.getLayerData(viewData),
+        legend: this.getLegend(viewData),
+        tools: [
+            {
+                icon: 'fas fa-info',
+                name: 'description',
+                title: 'description',
+            },
+            {
+                icon: 'fas fa-save',
+                name: 'export',
+                title: 'export',
+            },
+            {
+                icon: 'fas fa-adjust',
+                name: 'opacity',
+                title: 'opacity',
+            },
+            // Do not replace or delete, it will be implemented later.
+            // {
+            //     icon: "fas fa-expand-alt",
+            //     name: "extent",
+            //     title: "Extent"
+            // },
+            // {
+            //   icon: "fas fa-calendar-alt",
+            //   name: "calendar",
+            //   title: "Filtrar por intervalo de data"
+            // },
+            // {
+            //   icon: "fas fa-sliders-h",
+            //   name: "slider",
+            //   title: "Filtrar por data"
+            // }
+        ]
+    };
+};
+
 module.exports.getReportLayers = async () => {
-    const sqlReportLayers = `
+    const sql = `
       SELECT 
               (CASE
                     WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X DETER') IS NOT NULL) THEN 2
@@ -520,10 +439,5 @@ module.exports.getReportLayers = async () => {
         fieldMap: {cod_group: 'groupCode'}
     }
 
-    return await sequelize.query(sqlReportLayers, options);
-}
-
-module.exports.getSidebarLayers = async () => {
-    const groupViews = await this.orderView(await this.getGroupViews());
-    return await this.setResultSidebarConfig(groupViews);
+    return await sequelize.query(sql, options);
 }

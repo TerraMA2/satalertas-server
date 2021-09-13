@@ -210,7 +210,7 @@ module.exports.getAnalysis = async (params) => {
         throw new InternalServerError('Layers not found');
     }
     let analysisList = sidebarLayers
-        .filter(layerGroup => layerGroup['view_graph'])
+        .filter(layerGroup => layerGroup['viewGraph'])
         .map(layerGroup => {
             const children = layerGroup.children;
             const primaryLayer = children.find((layer) => layer.isPrimary && layer.type === LayerTypeName["3"]);
