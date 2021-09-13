@@ -1,7 +1,6 @@
 const FiringCharts = require('../charts/FiringCharts');
 const Result = require('../utils/result');
 const { Report, sequelize } = require('../models');
-const env = process.env.NODE_ENV || 'development';
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const config = require(__dirname + '/../config/config.json');
@@ -390,7 +389,7 @@ getCarData = async function (
               substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
               substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
               substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${config.geoserverplanetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.geoserverplanetSRID}))::TEXT) - 5) AS bboxplanet,
+              substring(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT) - 5) AS bboxplanet,
               ST_Y(ST_Centroid(car.geom)) AS "lat",
               ST_X(ST_Centroid(car.geom)) AS "long"
       FROM public.${carTableName} AS car
