@@ -6,7 +6,9 @@ const {
   DataSetFormat,
   Group,
   DataSet,
+  sequelize,
 } = require('../models');
+const { QueryTypes } = sequelize;
 const Tools = require('../utils/tool');
 const { msgError } = require('../utils/messageError');
 const { Op } = Sequelize;
@@ -15,6 +17,8 @@ const {
   setLegend,
   setFilter,
 } = require('../utils/helpers/geoserver/assemblyLayer');
+const InfoColumns = require('./info-columns.service');
+const layerTypeName = require('../enum/layerTypeName');
 
 const viewTableName = {
   model: DataSet,
@@ -78,6 +82,31 @@ async function getAll() {
   }
 }
 
+async function getTableName(viewId) {
+  try {
+    let sql = `SELECT
+    (CASE
+      WHEN vw.source_type = 3 THEN concat(TRIM(dsf.value), '_', analysis.id)
+      ELSE dsf.value
+      END), vw.id AS view_id
+      FROM terrama2.views AS vw
+      INNER JOIN terrama2.data_sets AS dst ON (vw.data_series_id = dst.data_series_id)
+      INNER JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
+      LEFT JOIN terrama2.analysis AS analysis ON dsf.data_set_id = analysis.dataset_output
+      WHERE vw.id = $viewId AND dsf.key = 'table_name';`;
+    const options = {
+      type: QueryTypes.SELECT,
+      fieldMap: { value: 'tableName', view_id: 'viewId' },
+      bind: { viewId },
+      plain: true
+    };
+    const result = await sequelize.query(sql, options);
+    return result.tableName;
+
+  } catch (e) {
+    throw new Error(msgError(__filename, 'getTableName', e));
+  }
+}
 async function getByGroupId(groupId) {
   try {
     const viewsGroup = [];
@@ -99,7 +128,7 @@ async function getByGroupId(groupId) {
         const { viewId } = groupView;
         let layer = {
           groupCode,
-          tools: Tools
+          tools: Tools,
         };
         const options = {
           attributes: { exclude: ['id', 'project_id', 'data_series_id'] },
@@ -107,14 +136,17 @@ async function getByGroupId(groupId) {
         };
 
         await View.findByPk(viewId, options).then((response) => {
-          setTableName(response);
           const filteredResponse = removeNullProperties(response.toJSON());
+          layer['type'] = layerTypeName[filteredResponse['sourceType']]
           Object.assign(layer, filteredResponse);
         });
-
+        layer.tableName = await getTableName(viewId)
         const filteredGroupView = removeNullProperties(groupView);
         Object.assign(layer, filteredGroupView);
         if (viewId) {
+          layer['tableInfocolumns'] = await InfoColumns.getInfocolumnsByViewId(
+            viewId,
+          ).then((response) => response.tableInfocolumns);
           const viewName = `view${viewId}`;
           layer.viewName = viewName;
           const registeredData = await RegisteredView.findOne({
@@ -134,15 +166,15 @@ async function getByGroupId(groupId) {
             layer.shortName = layer.name;
           }
           if (layer.isPrimary) {
-            const layerFilterOptions = { groupCode, viewName };
             const tableOwner = layer.tableName;
+
             layer.tableOwner = tableOwner;
-            const gp = {
-              workspace,
-              tableOwner,
-            };
-            layer.filter = setFilter(gp, layerFilterOptions);
           }
+          const gp = {
+            workspace,
+            groupView,
+          };
+          layer.filter = setFilter(gp, layer);
         }
         viewsGroup.push(layer);
       }
