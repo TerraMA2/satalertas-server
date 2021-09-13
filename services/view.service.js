@@ -2,7 +2,7 @@ const models = require('../models');
 const { View, sequelize } = models;
 const { QueryTypes } = sequelize;
 const Result = require(__dirname + '/../utils/result');
-const config = require(__dirname + '/../config/config.json')
+const config = require(__dirname + '/../config/config.json');
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
 
 getSql = async function (params) {
@@ -46,15 +46,17 @@ getSql = async function (params) {
 
 setFilter = function (groupViews, viewData) {
   const view_default = `${viewData.workspace}:${viewData.view}`;
-  return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter
-    ? VIEWS[viewData.groupCode].filter(
-        view_default,
-        config.geoserver.workspace,
-        viewData.cod,
-        groupViews[viewData.groupCode].tableOwner,
-        viewData.is_primary,
-      )
-    : {};
+  let filter = {};
+  if (VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter) {
+    filter = VIEWS[viewData.groupCode].filter(
+      view_default,
+      `${ config.project }_${ config.geoserver.workspace }`,
+      viewData.cod,
+      groupViews[viewData.groupCode].tableOwner,
+      viewData.is_primary,
+      );
+    }
+  return filter;
 };
 
 setLegend = function (data_view) {
@@ -167,14 +169,14 @@ orderView = async function (groupViews) {
     'STATIC',
     'DYNAMIC',
   ];
-  
+
   let child = [];
   let owner = [];
   let other = [];
-  
+
   layers.forEach((layer) => {
     child =
-    groupViews[layer] &&
+      groupViews[layer] &&
       groupViews[layer].children &&
       groupViews[layer].children.child
         ? groupViews[layer].children.child.sort(function (a, b) {
@@ -231,7 +233,7 @@ orderView = async function (groupViews) {
             );
           })
         : [];
-    
+
     other =
       groupViews[layer] &&
       groupViews[layer].children &&
@@ -381,11 +383,8 @@ getGroupViews = async function () {
   try {
     const options = {
       type: QueryTypes.SELECT,
-    }
-    const dataset_group_views = await sequelize.query(
-      sqlGroupViews,
-      options,
-    );
+    };
+    const dataset_group_views = await sequelize.query(sqlGroupViews, options);
     let groupViews = {};
     dataset_group_views.forEach((group) => {
       if (group.cod) {
@@ -464,8 +463,8 @@ getViews = async function (groupViews) {
   try {
     const options = {
       type: QueryTypes.SELECT,
-      fieldMap: {cod_group: 'groupCode'}
-    }
+      fieldMap: { cod_group: 'groupCode' },
+    };
     const dataset_views = await sequelize.query(sqlViews, options);
     dataset_views.forEach((dataView) => {
       if (dataView.is_primary) {
@@ -568,11 +567,9 @@ module.exports = FileReport = {
     try {
       const options = {
         type: QueryTypes.SELECT,
-        fieldMap: {cod_group: 'groupCode'}
-      }
-      return Result.ok(
-        await sequelize.query(sqlReportLayers, options),
-      );
+        fieldMap: { cod_group: 'groupCode' },
+      };
+      return Result.ok(await sequelize.query(sqlReportLayers, options));
     } catch (e) {
       return Result.err(e);
     }
