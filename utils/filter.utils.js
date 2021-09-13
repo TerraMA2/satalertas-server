@@ -1,7 +1,7 @@
 const {QueryTypes} = require('sequelize');
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
-const config = require(__dirname + '/../../config/config.json');
-const BadRequestError = require('../../errors/bad-request.error');
+const config = require(__dirname + '/../config/config.json');
+const BadRequestError = require('../errors/bad-request.error');
 
 function addAND(sqlWhere) {
     return sqlWhere.trim() ? `AND ` : '';
@@ -336,151 +336,147 @@ function getValues(analyze) {
     return values;
 }
 
-const filterUtils = {
-    async getFilter(conn, table, params, view, columns) {
-        const filter = JSON.parse(params.filter);
-        if (!filter) {
-            throw new BadRequestError('Missing filter parameter');
-        }
-        params.sortColumn = params.sortField ? params.sortField : params.sortColumn;
-
-        const sql = {
-            sqlWhere: '',
-            secondaryTables: '',
-            sqlHaving: '',
-            order: '',
-            limit: '',
-            offset: ''
-        };
-
-        if (view.isAnalysis) {
-            if (params.date && params.date !== "null") {
-                const dateFrom = params.date[0];
-                const dateTo = params.date[1];
-                sql.sqlWhere += ` WHERE ${ table.alias }.execution_date BETWEEN '${ dateFrom }' AND '${ dateTo }' `
-            }
-
-            if (filter) {
-                const filtered = filter.specificSearch && filter.specificSearch.isChecked ? 'specificSearch' : 'others';
-
-                const cod = (view.groupCode === 'BURNED') ? 'focos' : 'others';
-                await setFilter[filtered](conn, sql, filter, columns, cod, table, view);
-            }
-        }
-        sql.order = (params.sortColumn && params.sortOrder) ? ` ORDER BY ${ params.sortColumn } ${ params.sortOrder === '1' ? 'ASC' : 'DESC' } ` : ``;
-        sql.limit = (params.limit) ? ` LIMIT ${ params.limit } ` : ``;
-        sql.offset = (params.offset) ? ` OFFSET ${ params.offset } ` : ``;
-
-        return sql;
-    },
-    async getColumns(view, tableOwner, aliasTablePrimary) {
-        let column1 = '';
-        let column2 = '';
-        let column3 = '';
-        let column4 = '';
-        let column5 = '';
-
-        const columnCpfCnpj =
-            (view.isAnalysis && view.isPrimary) ?
-                ` ${ aliasTablePrimary }.de_car_validado_sema_cpfcnpj ` :
-                ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_cpfcnpj `;
-        const columnCarFederal =
-            (view.isAnalysis && view.isPrimary) ?
-                ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 ` :
-                ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
-
-        const columnArea = `${ aliasTablePrimary }.calculated_area_ha`;
-
-        const filterColumns = {
-            columnDate: `${ aliasTablePrimary }.execution_date`,
-            columnsTheme: {
-                biomes: (view.isAnalysis && view.isPrimary) ? ` ${ aliasTablePrimary }.dd_focos_inpe_bioma ` : ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_bioma `,
-                geocod: (view.isAnalysis && view.isPrimary) ? ` ${ aliasTablePrimary }.dd_focos_inpe_id_2 ` : ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_id_2 `,
-                mesoregion: 'de_mesoregiao_ibge_gid',
-                microregion: 'de_microregiao_ibge_gid',
-                region: 'de_comarca_ibge_gid'
-            }
-        };
-
-        if (view.groupCode && view.groupCode === 'BURNED') {
-            if (view.isAnalysis && view.isPrimary) {
-                column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
-                column2 = ` ${ aliasTablePrimary }.dd_focos_inpe_bioma `;
-                column3 = '1';
-                column4 = ` ${ aliasTablePrimary }.dd_focos_inpe_bioma `;
-            } else {
-                column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
-                column2 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_bioma `;
-                column3 = '1';
-                column4 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_bioma `;
-            }
-        } else if (view.groupCode && view.groupCode === 'DETER') {
-            if (view.isAnalysis && view.isPrimary) {
-                column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
-                column2 = ` ${ aliasTablePrimary }.dd_deter_inpe_classname `;
-            } else {
-                column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
-                column2 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_deter_inpe_classname `;
-            }
-
-            column3 = view.activearea ? ` ${ aliasTablePrimary }.calculated_area_ha ` : '1';
-        } else if (view.groupCode && view.groupCode === 'PRODES') {
-            if (view.isAnalysis && view.isPrimary) {
-                column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
-                column2 = ` ${ aliasTablePrimary }.dd_prodes_inpe_mainclass `;
-            } else {
-                column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
-                column2 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_prodes_inpe_mainclass `;
-            }
-
-            column3 = view.activearea ? ` ${ aliasTablePrimary }.calculated_area_ha ` : '1';
-
-        } else if (view.groupCode && view.groupCode === 'BURNED_AREA') {
-            if (view.isAnalysis && view.isPrimary) {
-                column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
-                column2 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
-            } else {
-                column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
-                column2 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
-                column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
-            }
-
-            column3 = view.activearea ? ` ${ aliasTablePrimary }.calculated_area_ha ` : '1';
-        }
-
-        return {
-            column1,
-            column2,
-            column3,
-            column4,
-            column5,
-            filterColumns,
-            columnArea,
-            columnCpfCnpj,
-            columnCarFederal
-        };
-    },
-    async setFilter(conn, params, table, view) {
-        const columns = await this.getColumns(view, table.owner, table.alias);
-
-        let paramsFilter = {};
-        if (params.specificParameters) {
-            paramsFilter = JSON.parse(params.specificParameters);
-            paramsFilter['date'] = params.date;
-            paramsFilter['filter'] = params.filter;
-        } else {
-            paramsFilter = params;
-        }
-
-        return await this.getFilter(conn, table, paramsFilter, view, columns);
+module.exports.getFilter = async (conn, table, params, view, columns) => {
+    const filter = JSON.parse(params.filter);
+    if (!filter) {
+        throw new BadRequestError('Missing filter parameter');
     }
-};
+    params.sortColumn = params.sortField ? params.sortField : params.sortColumn;
 
-module.exports = filterUtils;
+    const sql = {
+        sqlWhere: '',
+        secondaryTables: '',
+        sqlHaving: '',
+        order: '',
+        limit: '',
+        offset: ''
+    };
+
+    if (view.isAnalysis) {
+        if (params.date && params.date !== "null") {
+            const dateFrom = params.date[0];
+            const dateTo = params.date[1];
+            sql.sqlWhere += ` WHERE ${ table.alias }.execution_date BETWEEN '${ dateFrom }' AND '${ dateTo }' `
+        }
+
+        if (filter) {
+            const filtered = filter.specificSearch && filter.specificSearch.isChecked ? 'specificSearch' : 'others';
+
+            const cod = (view.groupCode === 'BURNED') ? 'focos' : 'others';
+            await setFilter[filtered](conn, sql, filter, columns, cod, table, view);
+        }
+    }
+    sql.order = (params.sortColumn && params.sortOrder) ? ` ORDER BY ${ params.sortColumn } ${ params.sortOrder === '1' ? 'ASC' : 'DESC' } ` : ``;
+    sql.limit = (params.limit) ? ` LIMIT ${ params.limit } ` : ``;
+    sql.offset = (params.offset) ? ` OFFSET ${ params.offset } ` : ``;
+
+    return sql;
+}
+module.exports.getColumns = async (view, tableOwner, aliasTablePrimary) => {
+    let column1 = '';
+    let column2 = '';
+    let column3 = '';
+    let column4 = '';
+    let column5 = '';
+
+    const columnCpfCnpj =
+        (view.isAnalysis && view.isPrimary) ?
+            ` ${ aliasTablePrimary }.de_car_validado_sema_cpfcnpj ` :
+            ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_cpfcnpj `;
+    const columnCarFederal =
+        (view.isAnalysis && view.isPrimary) ?
+            ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 ` :
+            ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
+
+    const columnArea = `${ aliasTablePrimary }.calculated_area_ha`;
+
+    const filterColumns = {
+        columnDate: `${ aliasTablePrimary }.execution_date`,
+        columnsTheme: {
+            biomes: (view.isAnalysis && view.isPrimary) ? ` ${ aliasTablePrimary }.dd_focos_inpe_bioma ` : ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_bioma `,
+            geocod: (view.isAnalysis && view.isPrimary) ? ` ${ aliasTablePrimary }.dd_focos_inpe_id_2 ` : ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_id_2 `,
+            mesoregion: 'de_mesoregiao_ibge_gid',
+            microregion: 'de_microregiao_ibge_gid',
+            region: 'de_comarca_ibge_gid'
+        }
+    };
+
+    if (view.groupCode && view.groupCode === 'BURNED') {
+        if (view.isAnalysis && view.isPrimary) {
+            column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
+            column2 = ` ${ aliasTablePrimary }.dd_focos_inpe_bioma `;
+            column3 = '1';
+            column4 = ` ${ aliasTablePrimary }.dd_focos_inpe_bioma `;
+        } else {
+            column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
+            column2 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_bioma `;
+            column3 = '1';
+            column4 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_focos_inpe_bioma `;
+        }
+    } else if (view.groupCode && view.groupCode === 'DETER') {
+        if (view.isAnalysis && view.isPrimary) {
+            column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
+            column2 = ` ${ aliasTablePrimary }.dd_deter_inpe_classname `;
+        } else {
+            column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
+            column2 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_deter_inpe_classname `;
+        }
+
+        column3 = view.activearea ? ` ${ aliasTablePrimary }.calculated_area_ha ` : '1';
+    } else if (view.groupCode && view.groupCode === 'PRODES') {
+        if (view.isAnalysis && view.isPrimary) {
+            column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
+            column2 = ` ${ aliasTablePrimary }.dd_prodes_inpe_mainclass `;
+        } else {
+            column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
+            column2 = ` ${ aliasTablePrimary }.${ tableOwner }_dd_prodes_inpe_mainclass `;
+        }
+
+        column3 = view.activearea ? ` ${ aliasTablePrimary }.calculated_area_ha ` : '1';
+
+    } else if (view.groupCode && view.groupCode === 'BURNED_AREA') {
+        if (view.isAnalysis && view.isPrimary) {
+            column1 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
+            column2 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.de_car_validado_sema_numero_do2 `;
+        } else {
+            column1 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
+            column2 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do1 `;
+            column5 = ` ${ aliasTablePrimary }.${ tableOwner }_de_car_validado_sema_numero_do2 `;
+        }
+
+        column3 = view.activearea ? ` ${ aliasTablePrimary }.calculated_area_ha ` : '1';
+    }
+
+    return {
+        column1,
+        column2,
+        column3,
+        column4,
+        column5,
+        filterColumns,
+        columnArea,
+        columnCpfCnpj,
+        columnCarFederal
+    };
+}
+module.exports.setFilter = async (conn, params, table, view) => {
+    const columns = await this.getColumns(view, table.owner, table.alias);
+
+    let paramsFilter = {};
+    if (params.specificParameters) {
+        paramsFilter = JSON.parse(params.specificParameters);
+        paramsFilter['date'] = params.date;
+        paramsFilter['filter'] = params.filter;
+    } else {
+        paramsFilter = params;
+    }
+
+    return await this.getFilter(conn, table, paramsFilter, view, columns);
+}

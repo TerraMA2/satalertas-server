@@ -1,9 +1,9 @@
 const {QueryTypes} = require('sequelize');
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const {CarValidado, sequelize} = require('../models');
-const Filter = require("../utils/filter/filter.utils");
+const Filter = require("../utils/filter.utils");
 const BadRequestError = require('../errors/bad-request.error');
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 module.exports.get = async (params) => {

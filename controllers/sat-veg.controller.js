@@ -1,5 +1,5 @@
 const SatVegService = require(__dirname + '/../services/sat-veg.service');
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.get = async (req, res, next) => {

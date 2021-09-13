@@ -193,11 +193,11 @@ module.exports.get = async (carRegister, date) => {
 
     const columnCar = `de_car_validado_sema_gid`;
 
-    const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
+    const tableName = views.STATIC.children.CAR_VALIDADO.tableName;
 
     const propertyData = await this.getCarData(
         tableName,
-        views.STATIC.children.MUNICIPIOS.table_name,
+        views.STATIC.children.MUNICIPIOS.tableName,
         columnCarEstadualSemas,
         columnCarFederalSemas,
         columnAreaHaCar,
@@ -211,7 +211,7 @@ module.exports.get = async (carRegister, date) => {
     const burnedAreasHistorySql = ` SELECT
                   extract(year from date_trunc('year', areaq.${ columnExecutionDate })) AS date,
                   COALESCE(SUM(CAST(areaq.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS value
-            FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.table_name } areaq
+            FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.tableName } areaq
             WHERE areaq.${ columnCar } = '${ carRegister }'
             GROUP BY date
             ORDER BY date`;
@@ -223,7 +223,7 @@ module.exports.get = async (carRegister, date) => {
     const prodesHistorySql = ` SELECT
                   extract(year from date_trunc('year', cp.${ columnExecutionDate })) AS date,
                   COALESCE(SUM(CAST(cp.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS value
-            FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } cp
+            FROM public.${ views.PRODES.children.CAR_X_PRODES.tableName } cp
             WHERE cp.${ columnCar } = '${ carRegister }'
             GROUP BY date
             ORDER BY date`;
@@ -235,7 +235,7 @@ module.exports.get = async (carRegister, date) => {
     const deterHistorySql = ` SELECT
                   extract(year from date_trunc('year', cd.${ columnExecutionDate })) AS date,
                   COALESCE(SUM(CAST(cd.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS value
-            FROM public.${ views.DETER.children.CAR_X_DETER.table_name } cd
+            FROM public.${ views.DETER.children.CAR_X_DETER.tableName } cd
             WHERE cd.${ columnCar } = '${ carRegister }'
             GROUP BY date
             ORDER BY date`;
@@ -247,7 +247,7 @@ module.exports.get = async (carRegister, date) => {
     const fireSpotHistorySql = ` SELECT
                   extract(year from date_trunc('year', cf.${ columnExecutionDate })) AS date,
                   COUNT(cf.*) AS value
-            FROM public.${ views.BURNED.children.CAR_X_FOCOS.table_name } cf
+            FROM public.${ views.BURNED.children.CAR_X_FOCOS.tableName } cf
             WHERE cf.${ columnCar } = '${ carRegister }'
             GROUP BY date
             ORDER BY date`;
@@ -258,12 +258,12 @@ module.exports.get = async (carRegister, date) => {
 
     const dateSql = ` AND ${ columnExecutionDate }::date >= '${ startDate }' AND ${ columnExecutionDate }::date <= '${ endDate }'`;
 
-    const indigenousLandSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_TI.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const conservationUnitSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const legalReserveSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_RESERVA.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const aPPSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_APP.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const anthropizedUseSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_USOANT.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const nativeVegetationSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_VEGNAT.table_name } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
+    const indigenousLandSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_TI.tableName } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
+    const conservationUnitSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.tableName } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
+    const legalReserveSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_RESERVA.tableName } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
+    const aPPSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_APP.tableName } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
+    const anthropizedUseSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_USOANT.tableName } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
+    const nativeVegetationSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_VEGNAT.tableName } where ${ views.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
 
     let indigenousLand = await sequelize.query(
         indigenousLandSql,
@@ -300,22 +300,22 @@ module.exports.get = async (carRegister, date) => {
         //---- Year of beginning and end of each analysis --------------------------------------------------------------
         const sqlDatesSynthesis = `
           SELECT 'prodesYear' AS key, MIN(prodes.ano) AS start_year, MAX(prodes.ano) AS end_year
-          FROM ${ views.DYNAMIC.children.PRODES.table_name } AS prodes
+          FROM ${ views.DYNAMIC.children.PRODES.tableName } AS prodes
           UNION ALL
           SELECT 'deterYear' AS key,
                  MIN(extract(year from date_trunc('year', deter.date))) AS start_year,
                  MAX(extract(year from date_trunc('year', deter.date))) AS end_year
-          FROM ${ views.DYNAMIC.children.DETER.table_name } AS deter
+          FROM ${ views.DYNAMIC.children.DETER.tableName } AS deter
           UNION ALL
           SELECT 'fireSpotYear' AS key,
                  MIN(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS start_year,
                  MAX(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS end_year
-          FROM ${ views.DYNAMIC.children.FOCOS_QUEIMADAS.table_name }  AS spotlights
+          FROM ${ views.DYNAMIC.children.FOCOS_QUEIMADAS.tableName }  AS spotlights
           UNION ALL
           SELECT 'burnedAreaYear' AS key,
                  MIN(extract(year from date_trunc('year', burnedarea.timestamp))) AS start_year,
                  MAX(extract(year from date_trunc('year', burnedarea.timestamp))) AS end_year
-          FROM ${ views.DYNAMIC.children.AREAS_QUEIMADAS.table_name }  AS burnedarea;
+          FROM ${ views.DYNAMIC.children.AREAS_QUEIMADAS.tableName }  AS burnedarea;
         `;
 
         const datesSynthesis = await sequelize.query(

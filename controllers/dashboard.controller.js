@@ -1,5 +1,5 @@
 const DashboardService = require(__dirname + '/../services/dashboard.service');
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.getAnalysis = async (req, res, next) => {

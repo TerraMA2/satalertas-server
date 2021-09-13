@@ -1,5 +1,5 @@
 const InfoColumnsService = require('../services/info-columns.service');
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.getInfoColumns = async (req, res, next) => {

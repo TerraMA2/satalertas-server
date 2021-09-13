@@ -1,5 +1,5 @@
 const GeoServerService = require("../services/geoServer.service");
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.configGeoserver = async (req, res, next) => {

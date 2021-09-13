@@ -1,5 +1,5 @@
 const AuthService = require("../services/auth.service");
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require("../enum/http-status");
 
 exports.login = async (req, res, next) => {

@@ -10,7 +10,7 @@ module.exports.get = async (type) => {
         throw new BadRequestError('Type not found');
     }
     const groupView = await ViewUtil.getGrouped();
-    const tableName = groupView['DYNAMIC'].children[type.toUpperCase()].table_name;
+    const tableName = groupView['DYNAMIC'].children[type.toUpperCase()].tableName;
     if (!tableName) {
         throw new BadRequestError('Table not found');
     }

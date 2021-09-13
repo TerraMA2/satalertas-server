@@ -4,7 +4,7 @@ const path = require('path')
 const config = require(__dirname + '/../config/config.json')
 const BadRequestError = require('../errors/bad-request.error');
 const InternalServerError = require('../errors/internal-server.error');
-const Filter = require("../utils/filter/filter.utils");
+const Filter = require("../utils/filter.utils");
 const models = require("../models");
 const {View} = models;
 

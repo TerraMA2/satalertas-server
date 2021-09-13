@@ -1,4 +1,3 @@
-const FiringCharts = require('../../../charts/FiringCharts');
 function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
   const paragraph = [];
   const authNumbers = firingAuthData.firingAuth.map(

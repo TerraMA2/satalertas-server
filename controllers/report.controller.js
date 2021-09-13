@@ -1,5 +1,5 @@
 const ReportService = require("../services/report.service");
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.get = async (req, res, next) => {

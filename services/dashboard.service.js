@@ -1,7 +1,7 @@
 const {QueryTypes} = require('sequelize');
 const models = require('../models');
 const {View, sequelize} = models;
-const Filter = require("../utils/filter/filter.utils");
+const Filter = require("../utils/filter.utils");
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const ViewService = require("../services/view.service");
 const LayerTypeName = require('../enum/layer-type-name');

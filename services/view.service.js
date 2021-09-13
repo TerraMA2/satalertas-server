@@ -6,8 +6,7 @@ const VIEWS = require(__dirname + '/../utils/helpers/views/view');
 const layerType = require('../enum/layer-type');
 module.exports.setFilter = (groupViews, viewData) => {
     const view_default = `${ viewData.workspace }:${ viewData.view }`;
-    return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter
-        ? VIEWS[viewData.groupCode].filter(
+    return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter ? VIEWS[viewData.groupCode].filter(
             view_default,
             `${ config.project }_${ config.geoserver.workspace }`,
             viewData.cod,
@@ -36,7 +35,10 @@ module.exports.getLayerData = (data_view) => {
 };
 
 module.exports.getSidebarLayers = async () => {
-    return await this.getGroupViews();
+    let groupViews = await this.getGroupViews();
+    const views = await this.getViews();
+    groupViews = await this.setViews(views, groupViews);
+    return await this.sortViews(groupViews);
 }
 
 module.exports.getGroupViews = async () => {
@@ -129,10 +131,10 @@ module.exports.getGroupViews = async () => {
     const groupViewsData = await sequelize.query(sql, options);
     const groupViews = {};
     groupViewsData.forEach(groupView => groupViews[groupView.cod] = groupView);
-    return await this.getViews(groupViews);
+    return groupViews;
 }
 
-module.exports.getViews = async (groupViews) => {
+module.exports.getViews = async () => {
     const sql = `SELECT
                view.id AS view_id,
                TRIM(view.name) AS name_view,
@@ -204,21 +206,23 @@ module.exports.getViews = async (groupViews) => {
             table_name: 'tableName'
         }
     }
-    const viewsData = await sequelize.query(sql, options);
+    return await sequelize.query(sql, options);
+}
 
-    viewsData.forEach(viewData => {
-        if (!groupViews[viewData.groupCode].children) {
-            groupViews[viewData.groupCode].children = [];
+module.exports.setViews = async (views, groupViews) => {
+    views.forEach(view => {
+        if (!groupViews[view.groupCode].children) {
+            groupViews[view.groupCode].children = [];
         }
-        if (viewData.isPrimary) {
-            groupViews[viewData.groupCode].tableOwner = viewData.tableName;
+        if (view.isPrimary) {
+            groupViews[view.groupCode].tableOwner = view.tableName;
         }
     });
-    viewsData.forEach(viewData => {
-        const view = this.getViewObject(groupViews, viewData);
-        groupViews[viewData.groupCode].children.push(view);
+    views.forEach(view => {
+        const viewObject = this.getViewObject(groupViews, view);
+        groupViews[view.groupCode].children.push(viewObject);
     });
-    return this.sortViews(groupViews);
+    return groupViews;
 }
 
 module.exports.sortViews = async (groupViews) => {
@@ -330,8 +334,7 @@ module.exports.getViewObject = (groupViews, viewData) => {
                 : false,
         isPrimary: viewData.isPrimary,
         isDisabled: viewData.is_disable,
-        filter:
-            viewData.type === 'analysis' ? this.setFilter(groupViews, viewData) : null,
+        filter: viewData.type === 'analysis' ? this.setFilter(groupViews, viewData) : null,
         layerData: this.getLayerData(viewData),
         legend: this.getLegend(viewData),
         tools: [

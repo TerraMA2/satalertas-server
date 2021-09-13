@@ -1,6 +1,6 @@
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const debug = require('debug')('satalertas-server:development')
-const logger = require('../utils/logger');
+const logger = require('../utils/logger.utils');
 
 exports.errorHandling = (error, req, res, next) => {
     const message = error.message;

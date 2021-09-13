@@ -1,7 +1,7 @@
 const QuickChart = require('quickchart-js');
 const { chartPath } = require('../config/config.json');
 
-class SatAlertasChart extends QuickChart {
+class Chart extends QuickChart {
   constructor() {
     super();
     this.host = chartPath.host;
@@ -13,4 +13,4 @@ class SatAlertasChart extends QuickChart {
   }
 }
 
-module.exports = SatAlertasChart
+module.exports = Chart

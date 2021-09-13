@@ -2,7 +2,7 @@ const {QueryTypes} = require('sequelize');
 const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const models = require('../models');
 const {View, sequelize} = models;
-const Filter = require("../utils/filter/filter.utils");
+const Filter = require("../utils/filter.utils");
 const InfoColumnsService = require("../services/info-columns.service");
 const config = require(__dirname + '/../config/config.json');
 

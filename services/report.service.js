@@ -1,4 +1,4 @@
-const FiringCharts = require('../charts/FiringCharts');
+const FiringCharts = require('../charts/chart');
 const {Report, sequelize} = require('../models');
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
@@ -212,7 +212,7 @@ module.exports.reportFormatDeter = (
 
             alert[
                 'urlGsImageBefore'
-                ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:${ view }${ yearBefore },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ alert.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/${ alert.year }&cql_filter=RED_BAND>0;${ views.DETER.children.CAR_X_DETER.table_name }_id='${ alert.id }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
+                ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:${ view }${ yearBefore },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ alert.bbox }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/${ alert.year }&cql_filter=RED_BAND>0;${ views.DETER.children.CAR_X_DETER.tableName }_id='${ alert.id }'&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
             alert['urlGsImageCurrent'] = `${
                 config.geoserver.baseHostDeter
             }/?request=GetMap&service=WMS&version=1.3.0&transparent=true&CRS=EPSG:${
@@ -224,7 +224,7 @@ module.exports.reportFormatDeter = (
             }&bbox=${ bboxDeter[1].trim() },${ bboxDeter[0].trim() },${ bboxDeter[3].trim() },${ bboxDeter[2].trim() }`;
             alert[
                 'urlGsImagePlanetCurrentAndCar'
-                ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/${ alert.year }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ views.DETER.children.CAR_X_DETER.table_name }_id='${ alert.id }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
+                ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=P1Y/${ alert.year }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ views.DETER.children.CAR_X_DETER.tableName }_id='${ alert.id }'&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
         });
     }
 }
@@ -361,7 +361,7 @@ module.exports.setDeterData = async (
         // --- Total area of Deter period ----------------------------------------------------------------------------------
         const sqlDeterAreaPastDeforestation = `   
             SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area 
-            FROM public.${ views.DETER.children.CAR_X_DETER.table_name } 
+            FROM public.${ views.DETER.children.CAR_X_DETER.tableName } 
             WHERE ${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
             dateSql,
             filter,
@@ -381,7 +381,7 @@ module.exports.setDeterData = async (
         // --- Deforestation alerts and areas ------------------------------------------------------------------------------
         const sqlDeflorestationAlerts = `
       SELECT 
-            carxdeter.${ views.DETER.children.CAR_X_DETER.table_name }_id AS id,
+            carxdeter.${ views.DETER.children.CAR_X_DETER.tableName }_id AS id,
             SUBSTRING(ST_EXTENT(carxdeter.intersection_geom)::TEXT, 5, length(ST_EXTENT(carxdeter.intersection_geom)::TEXT) - 5) AS bbox,
             COALESCE(calculated_area_ha, 4) AS area,
             TO_CHAR(carxdeter.execution_date, 'dd/mm/yyyy') AS date,
@@ -392,8 +392,8 @@ module.exports.setDeterData = async (
             ( CASE WHEN carxdeter.dd_deter_inpe_satellite = 'Cbers4' THEN 'CBERS-4'
                    ELSE UPPER(TRIM(carxdeter.dd_deter_inpe_satellite)) END) AS sat
       FROM public.${
-            views.DETER.children.CAR_X_DETER.table_name
-        } AS carxdeter, public.${ views.STATIC.children.BIOMAS.table_name } bio
+            views.DETER.children.CAR_X_DETER.tableName
+        } AS carxdeter, public.${ views.STATIC.children.BIOMAS.tableName } bio
       WHERE ${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
             dateSql,
             filter,
@@ -412,7 +412,7 @@ module.exports.setDeterData = async (
         // ---- Values of table --------------------------------------------------------------------------------------------
         const sqlCrossings = `
       SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-      FROM public.${ views.DETER.children.CAR_DETER_X_APP.table_name } WHERE ${
+      FROM public.${ views.DETER.children.CAR_DETER_X_APP.tableName } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
             dateSql,
@@ -423,7 +423,7 @@ module.exports.setDeterData = async (
       UNION ALL
         SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_RESERVA.table_name
+            views.DETER.children.CAR_DETER_X_RESERVA.tableName
         } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
@@ -434,7 +434,7 @@ module.exports.setDeterData = async (
         ) }
       UNION ALL
         SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_TI.table_name } WHERE ${
+        FROM public.${ views.DETER.children.CAR_DETER_X_TI.tableName } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
             dateSql,
@@ -445,7 +445,7 @@ module.exports.setDeterData = async (
       UNION ALL
         SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_EXPLORA.table_name
+            views.DETER.children.CAR_DETER_X_EXPLORA.tableName
         } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
@@ -457,7 +457,7 @@ module.exports.setDeterData = async (
       UNION ALL
         SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_DESMATE.table_name
+            views.DETER.children.CAR_DETER_X_DESMATE.tableName
         } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
@@ -468,7 +468,7 @@ module.exports.setDeterData = async (
         ) }
       UNION ALL
         SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_EMB.table_name } WHERE ${
+        FROM public.${ views.DETER.children.CAR_DETER_X_EMB.tableName } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
             dateSql,
@@ -479,7 +479,7 @@ module.exports.setDeterData = async (
       UNION ALL
         SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_DESEMB.table_name
+            views.DETER.children.CAR_DETER_X_DESEMB.tableName
         } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
@@ -490,7 +490,7 @@ module.exports.setDeterData = async (
         ) }
       UNION ALL
         SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_UC.table_name } 
+        FROM public.${ views.DETER.children.CAR_DETER_X_UC.tableName } 
         WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
@@ -501,7 +501,7 @@ module.exports.setDeterData = async (
         ) }  AND de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
       UNION ALL
         SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-        FROM public.${ views.DETER.children.CAR_DETER_X_UC.table_name } 
+        FROM public.${ views.DETER.children.CAR_DETER_X_UC.tableName } 
         WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
@@ -513,7 +513,7 @@ module.exports.setDeterData = async (
       UNION ALL
         SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
         FROM public.${
-            views.DETER.children.CAR_DETER_X_QUEIMA.table_name
+            views.DETER.children.CAR_DETER_X_QUEIMA.tableName
         } WHERE ${
             views.DETER.tableOwner
         }_${ columnCarEstadual } = '${ carRegister }' ${ this.getFilterClassSearch(
@@ -565,7 +565,7 @@ module.exports.setProdesData = async (
         const sqlProdesYear = `SELECT
         extract(year from date_trunc('year', cp.${ columnExecutionDate })) AS date,
         ROUND(COALESCE(SUM(CAST(cp.${ columnCalculatedAreaHa }  AS DECIMAL)), 0), 4) AS area
-      FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } AS cp
+      FROM public.${ views.PRODES.children.CAR_X_PRODES.tableName } AS cp
       WHERE cp.${ columnCarEstadual } = '${ carRegister }'
         ${ dateSql }
       GROUP BY date
@@ -589,7 +589,7 @@ module.exports.setProdesData = async (
       SELECT
              fisionomia AS class,
              SUM(ST_Area(ST_Intersection(car_prodes.intersection_geom, radam.geom)::geography) / 10000.0) AS area
-      FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } AS car_prodes, public.${ views.STATIC.children.VEGETACAO_RADAM_BR.table_name } AS radam
+      FROM public.${ views.PRODES.children.CAR_X_PRODES.tableName } AS car_prodes, public.${ views.STATIC.children.VEGETACAO_RADAM_BR.tableName } AS radam
       WHERE car_prodes.de_car_validado_sema_gid = '${ carRegister }' ${ dateSql }
        AND ST_Intersects(car_prodes.intersection_geom, radam.geom)
       GROUP BY radam.fisionomia`;
@@ -602,7 +602,7 @@ module.exports.setProdesData = async (
 
         // --- Total area of prodes ----------------------------------------------------------------------------------------
         const sqlProdesTotalArea = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area
-      FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name }
+      FROM public.${ views.PRODES.children.CAR_X_PRODES.tableName }
       WHERE ${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
         const resultProdesTotalArea = await sequelize.query(
             sqlProdesTotalArea,
@@ -615,7 +615,7 @@ module.exports.setProdesData = async (
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Total area of prodes period ----------------------------------------------------------------------------------------
-        const sqlProdesAreaPastDeforestation = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql } `;
+        const sqlProdesAreaPastDeforestation = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.tableName } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql } `;
         const resultProdesAreaPastDeforestation = await sequelize.query(
             sqlProdesAreaPastDeforestation,
             {
@@ -627,7 +627,7 @@ module.exports.setProdesData = async (
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Total area of UsoCon ----------------------------------------------------------------------------------------
-        const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${ views.STATIC.children.CAR_X_USOCON.table_name } where gid_car = '${ carRegister }'`;
+        const sqlUsoConArea = `SELECT ROUND(COALESCE(SUM(CAST(area_ha_car_usocon AS DECIMAL)), 0), 4) AS area FROM public.${ views.STATIC.children.CAR_X_USOCON.tableName } where gid_car = '${ carRegister }'`;
         const resultUsoConArea = await sequelize.query(
             sqlUsoConArea,
             {
@@ -639,7 +639,7 @@ module.exports.setProdesData = async (
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Prodes area by period ---------------------------------------------------------------------------------------
-        const sqlProdesArea = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlProdesArea = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_X_PRODES.tableName } where ${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
         const resultProdesArea = await sequelize.query(
             sqlProdesArea,
             {
@@ -651,27 +651,27 @@ module.exports.setProdesData = async (
         // -----------------------------------------------------------------------------------------------------------------
 
         // ---- Values of table --------------------------------------------------------------------------------------------
-        const sqlCrossings = ` SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_TI.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        const sqlCrossings = ` SELECT 'indigenousLand' AS relationship, 'TI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_TI.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_RESERVA.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'legalReserve' AS relationship, 'ARL' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_RESERVA.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_APP.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'app' AS relationship, 'APP' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_APP.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_EXPLORA.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'exploration' AS relationship, 'AUTEX' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_EXPLORA.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_DESMATE.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'deforestation' AS relationship, 'AD' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_DESMATE.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL 
-        SELECT 'restrictedUse' AS relationship, 'AUR' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_USO_RESTRITO.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'restrictedUse' AS relationship, 'AUR' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_USO_RESTRITO.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_EMB.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'embargoedArea' AS relationship, 'Área embargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_EMB.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_DESEMB.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'landArea' AS relationship, 'Área desembargada' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_DESEMB.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_QUEIMA.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
+        SELECT 'burnAuthorization' AS relationship, 'AQC' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_QUEIMA.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }
         UNION ALL
-        SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql } and de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
+        SELECT 'ucUs' AS relationship, 'UC – US' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql } and de_unidade_cons_sema_grupo = 'USO SUSTENTÁVEL'
         UNION ALL 
-        SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.table_name } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql } and de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
+        SELECT 'ucPi' AS relationship, 'UC – PI' AS affected_area, COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.PRODES.children.CAR_PRODES_X_UC.tableName } where ${ views.PRODES.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql } and de_unidade_cons_sema_grupo = 'PROTEÇÃO INTEGRAL'
       `;
         // -----------------------------------------------------------------------------------------------------------------
 
@@ -679,7 +679,7 @@ module.exports.setProdesData = async (
         const sqlDeforestationHistory = ` SELECT
                             extract(year from date_trunc('year', cp.${ columnExecutionDate })) AS date,
                             ROUND(COALESCE(SUM(CAST(cp.${ columnCalculatedAreaHa }  AS DECIMAL)), 0),4) AS area
-            FROM public.${ views.PRODES.children.CAR_X_PRODES.table_name } cp
+            FROM public.${ views.PRODES.children.CAR_X_PRODES.tableName } cp
             WHERE cp.${ columnCarEstadual } = '${ carRegister }'
             GROUP BY date
             ORDER BY date`;
@@ -688,9 +688,9 @@ module.exports.setProdesData = async (
             {type: QueryTypes.SELECT},
         );
 
-        // propertyData['period']  = await sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.table_name} AS prodes ` , {type: QueryTypes.SELECT});
+        // propertyData['period']  = await sequelize.query(  ` SELECT  (MAX(prodes.ano) - 11) AS start_year, MAX(prodes.ano) AS end_year  FROM ${views.DYNAMIC.children.PRODES.tableName} AS prodes ` , {type: QueryTypes.SELECT});
         propertyData['period'] = await sequelize.query(
-            ` SELECT  2006 AS start_year, MAX(prodes.ano) AS end_year  FROM ${ views.DYNAMIC.children.PRODES.table_name } AS prodes `,
+            ` SELECT  2006 AS start_year, MAX(prodes.ano) AS end_year  FROM ${ views.DYNAMIC.children.PRODES.tableName } AS prodes `,
             {type: QueryTypes.SELECT},
         );
 
@@ -765,8 +765,8 @@ module.exports.setBurnedData = async (
                 aut.titulo_nu1,
                 TO_CHAR(aut.data_apro1, 'DD/MM/YYYY') AS data_apro, TO_CHAR(aut.data_venc1, 'DD/MM/YYYY') AS data_venc,
                 SUM(ROUND((COALESCE(aut.area__m2_,0) / 10000), 4)) AS area_ha
-        FROM public.${ views.STATIC.children.AUTORIZACAO_QUEIMA.table_name } AS aut
-        JOIN public.${ views.STATIC.children.CAR_VALIDADO.table_name } AS car ON st_contains(car.geom, aut.geom)
+        FROM public.${ views.STATIC.children.AUTORIZACAO_QUEIMA.tableName } AS aut
+        JOIN public.${ views.STATIC.children.CAR_VALIDADO.tableName } AS car ON st_contains(car.geom, aut.geom)
         WHERE   car.${ columnCarEstadualSemas } = ${ carRegister }
             AND '${ filter.date[0] }' <= aut.data_apro1
             AND '${ filter.date[1] }' >= data_venc1
@@ -781,7 +781,7 @@ module.exports.setBurnedData = async (
         // ---  Firing Authorization ---------------------------------------------------------------------------------------
         const sqlBurnCount = `
         SELECT  COUNT(1) AS total_focus
-        FROM public.${ views.BURNED.children.CAR_X_FOCOS.table_name } car_focos
+        FROM public.${ views.BURNED.children.CAR_X_FOCOS.tableName } car_focos
         WHERE   car_focos.${ columnCarEstadual } = ${ carRegister }
             AND car_focos.${ columnExecutionDate } BETWEEN '${ filter.date[0] }' AND '${ filter.date[1] }'
     `;
@@ -801,7 +801,7 @@ module.exports.setBurnedData = async (
                     0 AS  unauthorized_focus,
                     COUNT(1) filter(where to_char(car_focos.execution_date, 'MMDD') between '0715' and '0915') as prohibitive_period, -- Contando focos no periodo proibitivo
                     (EXTRACT(YEAR FROM car_focos.execution_date))::INT AS month_year_occurrence
-            FROM public.${ views.BURNED.children.CAR_X_FOCOS.table_name } car_focos
+            FROM public.${ views.BURNED.children.CAR_X_FOCOS.tableName } car_focos
             WHERE car_focos.${ columnCarEstadual } = ${ carRegister }
                 AND car_focos.${ columnExecutionDate } BETWEEN '2008-01-01T00:00:00.000Z' AND '${ filter.date[1] }'
             GROUP BY month_year_occurrence
@@ -832,8 +832,8 @@ module.exports.setBurnedAreaData = async (
       SELECT
         ROUND(COALESCE(SUM(CAST(areaq.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS burnedAreas,
         extract('YEAR' FROM areaq.${ columnExecutionDate }) AS date
-      FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.table_name } AS areaq
-      INNER JOIN public.${ views.STATIC.children.CAR_VALIDADO.table_name } AS car on
+      FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.tableName } AS areaq
+      INNER JOIN public.${ views.STATIC.children.CAR_VALIDADO.tableName } AS car on
       areaq.${ columnCarEstadual } = car.${ columnCarEstadualSemas } AND
       car.${ columnCarEstadualSemas } = '${ carRegister }'
       group by date
@@ -848,7 +848,7 @@ module.exports.setBurnedAreaData = async (
       SELECT
         extract(year from date_trunc('year', areaq.${ columnExecutionDate })) AS date,
         ROUND(COALESCE(SUM(CAST(areaq.${ columnCalculatedAreaHa }  AS DECIMAL)), 0), 4) AS burnedAreas
-      FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.table_name } AS areaq
+      FROM public.${ views.BURNED_AREA.children.CAR_X_AREA_Q.tableName } AS areaq
       WHERE areaq.${ columnCarEstadual } = '${ carRegister }'
       GROUP BY date
       ORDER BY date`;
@@ -857,20 +857,20 @@ module.exports.setBurnedAreaData = async (
             sqlBurnedAreasYear,
             {type: QueryTypes.SELECT},
         );
-        const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_APP.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlLegalReserveBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_RESERVA.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlAPPBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_APP.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlLegalReserveBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_RESERVA.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
 
-        const sqlIndigenousLandBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_TI.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlIndigenousLandBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_TI.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
 
-        const sqlExploraBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_EXPLORA.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlExploraBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_EXPLORA.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
 
-        const sqlDesmateBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_DESMATE.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlEmbargoedAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_EMB.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlLandAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_DESEMB.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlDesmateBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_DESMATE.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlEmbargoedAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_EMB.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlLandAreaBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_DESEMB.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
 
-        const sqlRestrictUseBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_USO_RESTRITO.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        const sqlBurnAuthorizationBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_QUEIMA.table_name } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
-        // const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.table_name} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
+        const sqlRestrictUseBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_USO_RESTRITO.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        const sqlBurnAuthorizationBURNEDAREASum = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ views.BURNED_AREA.children.CAR_AQ_X_QUEIMA.tableName } where ${ views.BURNED_AREA.tableOwner }_${ columnCarEstadual } = '${ carRegister }' ${ dateSql }`;
+        // const sqlFisionomiaBURNEDAREASum = `SELECT de_veg_radambr_fisionomia AS class, sum(CAST(${columnCalculatedAreaHa}  AS DECIMAL)) AS area FROM public.${views.BURNED_AREA.children.CAR_AQ_X_VEG_RADAM.tableName} where ${views.BURNED_AREA.tableOwner}_${columnCarEstadual} = '${carRegister}' ${dateSql} group by de_veg_radambr_fisionomia`
 
         const restrictUseBURNEDAREASum = await sequelize.query(
             sqlRestrictUseBURNEDAREASum,
@@ -1483,11 +1483,11 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     const columnCarSemas = 'gid';
     const columnCar = `de_car_validado_sema_gid`;
 
-    const tableName = views.STATIC.children.CAR_VALIDADO.table_name;
+    const tableName = views.STATIC.children.CAR_VALIDADO.tableName;
 
     let propertyData = await this.getCarData(
         tableName,
-        views.STATIC.children.MUNICIPIOS.table_name,
+        views.STATIC.children.MUNICIPIOS.tableName,
         columnCarEstadualSemas,
         columnCarFederalSemas,
         columnAreaHaCar,
@@ -1590,7 +1590,7 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
                extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
                main_table.execution_date
         FROM public.${
-        views[type.toUpperCase()].children[groupType[type]].table_name
+        views[type.toUpperCase()].children[groupType[type]].tableName
     } AS main_table
         WHERE main_table.${ carColumnSemas } = '${ carRegister }'
           AND main_table.execution_date BETWEEN '${ date[0] }' AND '${ date[1] }'
@@ -1630,7 +1630,7 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
         }_red_style&bbox=${ bbox }&width=256&height=256&time=${
             point.startyear
         }/${ currentYear }&cql_filter=RED_BAND>0;rid='${ carRegister }';gid_car='${ carRegister }';${
-            views[type.toUpperCase()].children[groupType[type]].table_name
+            views[type.toUpperCase()].children[groupType[type]].tableName
         }_id=${ point.a_carprodes_1_id }&srs=EPSG:${
             config.geoserver.defaultSRID
         }&format=image/png`;

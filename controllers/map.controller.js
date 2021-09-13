@@ -1,5 +1,5 @@
 const mapService = require(__dirname + '/../services/map.service');
-const {response} = require("../utils/response");
+const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.getAnalysisCentroid = async (req, res, next) => {
