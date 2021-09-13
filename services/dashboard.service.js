@@ -205,7 +205,7 @@ module.exports.getAnalysisChartSql = async (analysis, params) => {
 }
 
 module.exports.getAnalysis = async (params) => {
-    let sidebarLayers = await ViewService.getSidebarLayers();
+    const sidebarLayers = await ViewService.getSidebarLayers();
     if (!sidebarLayers) {
         throw new InternalServerError('Layers not found');
     }

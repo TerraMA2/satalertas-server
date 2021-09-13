@@ -1,11 +1,11 @@
 const {camelCase} = require('case-anything');
-const ViewUtil = require('../utils/view.utils');
 const {
     InfocolumnsTableList,
     SecondaryTypes,
     InfocolumnColumnsList,
     sequelize,
 } = require('../models');
+const ViewService = require("../services/view.service");
 const {QueryTypes} = sequelize;
 
 module.exports.getAllTables = async () => {
@@ -137,10 +137,10 @@ module.exports.getInfoColumns = async (viewId) => {
     //   });
     // } else {
     // console.log('to no info-columns.service View.ID: ', viewId);
-    const groupView = await ViewUtil.getGrouped();
+    const groupViews = await ViewService.getSidebarLayers(true);
 
     const infoColumns = {
-        DETER: groupView.DETER
+        DETER: groupViews.DETER
             ? {
                 alerts: {
                     show: true,
@@ -245,57 +245,57 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: false,
                     alias: 'Cód. IBGE',
                 },
-                [`${ groupView.DETER.tableOwner }_dd_deter_inpe_classname`]: {
+                [`${ groupViews.DETER.tableOwner }_dd_deter_inpe_classname`]: {
                     show: true,
                     alias: 'Classe',
                 },
-                [`${ groupView.DETER.tableOwner }_dd_deter_inpe_orbitpoint`]: {
+                [`${ groupViews.DETER.tableOwner }_dd_deter_inpe_orbitpoint`]: {
                     show: true,
                     alias: 'Órbita/Ponto',
                 },
-                [`${ groupView.DETER.tableOwner }_dd_deter_inpe_satellite`]: {
+                [`${ groupViews.DETER.tableOwner }_dd_deter_inpe_satellite`]: {
                     show: true,
                     alias: 'Satélite',
                 },
-                [`${ groupView.DETER.tableOwner }_dd_deter_inpe_sensor`]: {
+                [`${ groupViews.DETER.tableOwner }_dd_deter_inpe_sensor`]: {
                     show: true,
                     alias: 'Sensor',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_area_ha_`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_area_ha_`]: {
                     show: true,
                     alias: 'Área do imóvel (ha)',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_cpfcnpj`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_cpfcnpj`]: {
                     show: true,
                     alias: 'CPF/CNPJ',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_municipio1`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_municipio1`]: {
                     show: true,
                     alias: 'Município',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_nome_da_p1`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_nome_da_p1`]: {
                     show: true,
                     alias: 'Imóvel',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_nomepropri`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_nomepropri`]: {
                     show: true,
                     alias: 'Proprietário',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_gid`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_gid`]: {
                     show: false,
                     alias: 'Id. CAR',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_numero_do2`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_numero_do2`]: {
                     show: true,
                     alias: 'CAR federal',
                 },
-                [`${ groupView.DETER.tableOwner }_de_car_validado_sema_situacao_1`]: {
+                [`${ groupViews.DETER.tableOwner }_de_car_validado_sema_situacao_1`]: {
                     show: true,
                     alias: 'Situação',
                 },
-                [`${ groupView.DETER.tableOwner }_id`]: {
+                [`${ groupViews.DETER.tableOwner }_id`]: {
                     show: false,
-                    alias: `${ groupView.DETER.tableOwner }_id`,
+                    alias: `${ groupViews.DETER.tableOwner }_id`,
                 },
                 areamunkm: {
                     show: true,
@@ -735,7 +735,7 @@ module.exports.getInfoColumns = async (viewId) => {
                 },
             }
             : '',
-        PRODES: groupView.PRODES
+        PRODES: groupViews.PRODES
             ? {
                 alerts: {
                     show: true,
@@ -840,11 +840,11 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: false,
                     alias: 'Cód. IBGE',
                 },
-                [`${ groupView.PRODES.tableOwner }_dd_prodes_inpe_class_name`]: {
+                [`${ groupViews.PRODES.tableOwner }_dd_prodes_inpe_class_name`]: {
                     show: true,
                     alias: 'Classe',
                 },
-                [`${ groupView.PRODES.tableOwner }_dd_prodes_inpe_mainclass`]: {
+                [`${ groupViews.PRODES.tableOwner }_dd_prodes_inpe_mainclass`]: {
                     show: true,
                     alias: 'Classe',
                 },
@@ -852,34 +852,34 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: false,
                     alias: 'Ano',
                 },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_area_ha_`]: {
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_area_ha_`]: {
                     show: true,
                     alias: 'Área do imóvel (ha)',
                 },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_cpfcnpj`]: {
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_cpfcnpj`]: {
                     show: true,
                     alias: 'CPF/CNPJ',
                 },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_municipio1`]:
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_municipio1`]:
                     {
                         show: true,
                         alias: 'Município',
                     },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_nome_da_p1`]:
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_nome_da_p1`]:
                     {
                         show: true,
                         alias: 'Imóvel',
                     },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_nomepropri`]:
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_nomepropri`]:
                     {
                         show: true,
                         alias: 'Proprietário',
                     },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_gid`]: {
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_gid`]: {
                     show: false,
                     alias: 'Id. Car',
                 },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_numero_do1`]:
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_numero_do1`]:
                     {
                         show: false,
                         alias: 'Id. ',
@@ -888,7 +888,7 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: false,
                     alias: 'Id.',
                 },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_nomes_prop`]:
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_nomes_prop`]:
                     {
                         show: false,
                         alias: 'CPF/Proprietário',
@@ -901,19 +901,19 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: true,
                     alias: 'CAR federal',
                 },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_numero_do2`]:
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_numero_do2`]:
                     {
                         show: true,
                         alias: 'CAR federal',
                     },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_situacao_1`]:
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_situacao_1`]:
                     {
                         show: true,
                         alias: 'Situação',
                     },
-                [`${ groupView.PRODES.tableOwner }_id`]: {
+                [`${ groupViews.PRODES.tableOwner }_id`]: {
                     show: false,
-                    alias: `${ groupView.PRODES.tableOwner }_id`,
+                    alias: `${ groupViews.PRODES.tableOwner }_id`,
                 },
                 ano: {
                     show: true,
@@ -1327,7 +1327,7 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: true,
                     alias: 'Data',
                 },
-                [`${ groupView.PRODES.tableOwner }_de_car_validado_sema_geocodigo`]: {
+                [`${ groupViews.PRODES.tableOwner }_de_car_validado_sema_geocodigo`]: {
                     show: false,
                     alias: 'Cod. IBGE',
                 },
@@ -1335,7 +1335,7 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: false,
                     alias: 'Cod. IBGE',
                 },
-                [`${ groupView.PRODES.tableOwner }_dd_prodes_inpe_pathrow`]: {
+                [`${ groupViews.PRODES.tableOwner }_dd_prodes_inpe_pathrow`]: {
                     show: false,
                     alias: 'dd_prodes_inpe_pathrow',
                 },
@@ -1345,7 +1345,7 @@ module.exports.getInfoColumns = async (viewId) => {
                 },
             }
             : '',
-        BURNED: groupView.BURNED
+        BURNED: groupViews.BURNED
             ? {
                 alerts: {
                     show: true,
@@ -1450,62 +1450,62 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: false,
                     alias: 'Cód. IBGE',
                 },
-                [`${ groupView.BURNED.tableOwner }_dd_focos_inpe_bioma`]: {
+                [`${ groupViews.BURNED.tableOwner }_dd_focos_inpe_bioma`]: {
                     show: true,
                     alias: 'Bioma',
                 },
-                [`${ groupView.BURNED.tableOwner }_dd_focos_inpe_id_2`]: {
+                [`${ groupViews.BURNED.tableOwner }_dd_focos_inpe_id_2`]: {
                     show: false,
-                    alias: `${ groupView.BURNED.tableOwner }_dd_focos_inpe_id_2`,
+                    alias: `${ groupViews.BURNED.tableOwner }_dd_focos_inpe_id_2`,
                 },
-                [`${ groupView.BURNED.tableOwner }_dd_focos_inpe_municipio`]: {
+                [`${ groupViews.BURNED.tableOwner }_dd_focos_inpe_municipio`]: {
                     show: true,
                     alias: 'Município',
                 },
-                [`${ groupView.BURNED.tableOwner }_dd_focos_inpe_satelite`]: {
+                [`${ groupViews.BURNED.tableOwner }_dd_focos_inpe_satelite`]: {
                     show: true,
                     alias: 'Satélite',
                 },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_area_ha_`]: {
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_area_ha_`]: {
                     show: true,
                     alias: 'Área do imóvel (ha)',
                 },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_cpfcnpj`]: {
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_cpfcnpj`]: {
                     show: true,
                     alias: 'CPF/CNPJ',
                 },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_municipio1`]:
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_municipio1`]:
                     {
                         show: true,
                         alias: 'Município',
                     },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_nome_da_p1`]:
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_nome_da_p1`]:
                     {
                         show: true,
                         alias: 'Imóvel',
                     },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_nomepropri`]:
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_nomepropri`]:
                     {
                         show: true,
                         alias: 'Proprietário',
                     },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_gid`]: {
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_gid`]: {
                     show: true,
                     alias: 'Id. CAR',
                 },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_numero_do2`]:
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_numero_do2`]:
                     {
                         show: true,
                         alias: 'CAR federal',
                     },
-                [`${ groupView.BURNED.tableOwner }_de_car_validado_sema_situacao_1`]:
+                [`${ groupViews.BURNED.tableOwner }_de_car_validado_sema_situacao_1`]:
                     {
                         show: true,
                         alias: 'Situação',
                     },
-                [`${ groupView.BURNED.tableOwner }_id`]: {
+                [`${ groupViews.BURNED.tableOwner }_id`]: {
                     show: false,
-                    alias: `${ groupView.BURNED.tableOwner }_id`,
+                    alias: `${ groupViews.BURNED.tableOwner }_id`,
                 },
                 bioma: {
                     show: true,
@@ -1941,7 +1941,7 @@ module.exports.getInfoColumns = async (viewId) => {
                 },
             }
             : '',
-        BURNED_AREA: groupView.BURNED_AREA
+        BURNED_AREA: groupViews.BURNED_AREA
             ? {
                 alerts: {
                     show: true,
@@ -2046,89 +2046,89 @@ module.exports.getInfoColumns = async (viewId) => {
                     show: false,
                     alias: 'Cód. IBGE',
                 },
-                [`${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_data_anter`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_data_anter`]:
                     {
                         show: false,
                         alias: [
-                            `${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_data_anter`,
+                            `${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_data_anter`,
                         ],
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_timestamp`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_timestamp`]:
                     {
                         show: false,
-                        alias: `${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_timestamp`,
+                        alias: `${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_timestamp`,
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_ha`]: {
+                [`${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_ha`]: {
                     show: false,
-                    alias: `${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_ha`,
+                    alias: `${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_ha`,
                 },
-                [`${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_id_cena_an`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_id_cena_an`]:
                     {
                         show: false,
                         alias: [
-                            `${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_id_cena_an`,
+                            `${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_id_cena_an`,
                         ],
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_km2`]: {
+                [`${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_km2`]: {
                     show: false,
                     alias: [
-                        `${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_km2`,
+                        `${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_km2`,
                     ],
                 },
-                [`${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_nome_arq`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_nome_arq`]:
                     {
                         show: false,
                         alias: [
-                            `${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_nome_arq`,
+                            `${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_nome_arq`,
                         ],
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_orb_pto`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_dd_area_queimada_inpe_orb_pto`]:
                     {
                         show: true,
                         alias: 'Órbita/Ponto',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_area_ha_`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_area_ha_`]:
                     {
                         show: true,
                         alias: 'Área do imóvel (ha)',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_cpfcnpj`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_cpfcnpj`]:
                     {
                         show: true,
                         alias: 'CPF/CNPJ',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_municipio1`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_municipio1`]:
                     {
                         show: true,
                         alias: 'Município',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_nome_da_p1`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_nome_da_p1`]:
                     {
                         show: true,
                         alias: 'Imóvel',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_nomepropri`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_nomepropri`]:
                     {
                         show: true,
                         alias: 'Proprietário',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_gid`]: {
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_gid`]: {
                     show: true,
                     alias: 'Id. CAR',
                 },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_numero_do2`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_numero_do2`]:
                     {
                         show: true,
                         alias: 'CAR federal',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_de_car_validado_sema_situacao_1`]:
+                [`${ groupViews.BURNED_AREA.tableOwner }_de_car_validado_sema_situacao_1`]:
                     {
                         show: true,
                         alias: 'Situação',
                     },
-                [`${ groupView.BURNED_AREA.tableOwner }_id`]: {
+                [`${ groupViews.BURNED_AREA.tableOwner }_id`]: {
                     show: false,
-                    alias: `${ groupView.BURNED_AREA.tableOwner }_id`,
+                    alias: `${ groupViews.BURNED_AREA.tableOwner }_id`,
                 },
                 calculated_area_ha: {
                     show: true,
@@ -2512,7 +2512,7 @@ module.exports.getInfoColumns = async (viewId) => {
                 },
             }
             : '',
-        STATIC: groupView.STATIC
+        STATIC: groupViews.STATIC
             ? {
                 alerts: {
                     show: true,
@@ -3151,7 +3151,7 @@ module.exports.getInfoColumns = async (viewId) => {
                 },
             }
             : '',
-        DYNAMIC: groupView.DYNAMIC
+        DYNAMIC: groupViews.DYNAMIC
             ? {
                 ano: {
                     show: true,

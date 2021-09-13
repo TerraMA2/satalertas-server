@@ -34,11 +34,14 @@ module.exports.getLayerData = (data_view) => {
     };
 };
 
-module.exports.getSidebarLayers = async () => {
+module.exports.getSidebarLayers = async (childrenAsMap = false) => {
     let groupViews = await this.getGroupViews();
     const views = await this.getViews();
-    groupViews = await this.setViews(views, groupViews);
-    return await this.sortViews(groupViews);
+    groupViews = await this.setGroupViewsChildren(views, groupViews, childrenAsMap);
+    if (!childrenAsMap) {
+        groupViews = await this.sortViews(groupViews);
+    }
+    return groupViews;
 }
 
 module.exports.getGroupViews = async () => {
@@ -209,7 +212,7 @@ module.exports.getViews = async () => {
     return await sequelize.query(sql, options);
 }
 
-module.exports.setViews = async (views, groupViews) => {
+module.exports.setGroupViewsChildren = async (views, groupViews, asMap = true) => {
     views.forEach(view => {
         if (!groupViews[view.groupCode].children) {
             groupViews[view.groupCode].children = [];
@@ -218,10 +221,12 @@ module.exports.setViews = async (views, groupViews) => {
             groupViews[view.groupCode].tableOwner = view.tableName;
         }
     });
-    views.forEach(view => {
-        const viewObject = this.getViewObject(groupViews, view);
-        groupViews[view.groupCode].children.push(viewObject);
-    });
+
+    if (asMap) {
+        views.forEach(view => groupViews[view.groupCode].children[view.cod] = view);
+    } else {
+        views.forEach(view => groupViews[view.groupCode].children.push(this.getViewObject(groupViews, view)));
+    }
     return groupViews;
 }
 
