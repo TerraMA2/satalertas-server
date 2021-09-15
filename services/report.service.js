@@ -1040,12 +1040,12 @@ module.exports.getContextChartNdvi = async (chartImages, startDate, endDate) => 
             ndviContext.push({
                 margin: [30, 0, 30, 0],
                 alignment: 'center',
-                columns: [chartImages[i].geoserverImageNdvi],
+                columns: [chartImages[i].geoserverImage],
             });
             ndviContext.push({
                 margin: [30, 0, 30, 0],
                 alignment: 'center',
-                columns: [chartImages[i].myChart],
+                columns: [chartImages[i].ndviChartImage],
             });
         }
         ndviContext.push({
@@ -1548,7 +1548,6 @@ module.exports.getChartOptions = async (labels, data) => {
         type: 'line',
         data: {
             labels: labels,
-            lineColor: 'rgb(10,5,109)',
             datasets: [
                 {
                     label: 'NDVI',
@@ -1563,6 +1562,7 @@ module.exports.getChartOptions = async (labels, data) => {
         },
         options: {
             responsive: false,
+            animation: false,
             legend: {
                 display: false
             }
