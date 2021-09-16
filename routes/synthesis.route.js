@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const SynthesisController = require('../controllers/synthesis.controller');
+const synthesisController = require('../controllers/synthesis.controller');
 
-router.get('/', SynthesisController.get);
+router.get('/', synthesisController.get);
 
 module.exports = router;

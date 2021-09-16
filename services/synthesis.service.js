@@ -1,14 +1,13 @@
 const {sequelize} = require('../models');
-const GeoServerService = require("../services/geoServer.service");
+const geoServerService = require("../services/geoServer.service");
 const config = require(__dirname + '/../config/config.json');
 const synthesisConfig = require(__dirname + `/../config/${ config.project }/synthesis.json`);
 const {QueryTypes} = require("sequelize");
 const BadRequestError = require('../errors/bad-request.error');
-const ViewService = require("../services/view.service");
+const viewService = require("../services/view.service");
+const Layer = require("../utils/layer.utils");
 
-const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
-
-module.exports.getSynthesisHistory = (options) => {
+getSynthesisHistory = (options) => {
     let {
         data,
         period,
@@ -45,7 +44,7 @@ module.exports.getSynthesisHistory = (options) => {
             filteredCqlFilter = filteredCqlFilter.replace(/{cityName}/g, propertyData.city);
         }
         const time = `${ year }/P1Y`
-        const url = GeoServerService.getGeoserverURL(filteredLayers, bbox, time, filteredCqlFilter, filteredStyles);
+        const url = geoServerService.getGeoserverURL(filteredLayers, bbox, time, filteredCqlFilter, filteredStyles);
         const numberFormat = new Intl.NumberFormat('pt-BR', {
             style: 'unit',
             unit: 'hectare',
@@ -66,7 +65,7 @@ module.exports.getSynthesisHistory = (options) => {
     return analysisHistory;
 };
 
-module.exports.getSynthesisCard = (options) => {
+getSynthesisCard = (options) => {
     let {
         data,
         layers,
@@ -95,7 +94,7 @@ module.exports.getSynthesisCard = (options) => {
         minimumFractionDigits: 4,
         maximumFractionDigits: 4
     });
-    const url = GeoServerService.getGeoserverURL(layers, bbox, time, cqlFilter, style);
+    const url = geoServerService.getGeoserverURL(layers, bbox, time, cqlFilter, style);
     const area = data ? numberFormat.format(data.area) : numberFormat.format(0);
     const description = data ? `${ descriptionPrefix } ${ area } ${ descriptionSuffix }` : '';
     return {
@@ -105,34 +104,7 @@ module.exports.getSynthesisCard = (options) => {
     }
 };
 
-module.exports.setBoundingBox = (bBox) => {
-    const bboxArray = bBox.split(',');
-    const bbox1 = bboxArray[0].split(' ');
-    const bbox2 = bboxArray[1].split(' ');
-
-    let Xmax = parseFloat(bbox2[0]);
-    let Xmin = parseFloat(bbox1[0]);
-
-    let Ymax = parseFloat(bbox2[1]);
-    let Ymin = parseFloat(bbox1[1]);
-
-    let difX = Math.abs(Math.abs(Xmax) - Math.abs(Xmin));
-    let difY = Math.abs(Math.abs(Ymax) - Math.abs(Ymin));
-
-    if (difX > difY) {
-        const fac = difX - difY;
-        Ymin -= fac / 2;
-        Ymax += fac / 2;
-    } else if (difX < difY) {
-        const fac = difY - difX;
-        Xmin -= fac / 2;
-        Xmax += fac / 2;
-    }
-
-    return `${ Xmin },${ Ymin },${ Xmax },${ Ymax }`;
-};
-
-module.exports.getCarData = async (
+getCarData = async (
     carTableName,
     municipiosTableName,
     columnCarEstadualSemas,
@@ -171,19 +143,43 @@ module.exports.getCarData = async (
     });
 };
 
-module.exports.get = async (carRegister, date) => {
-    if (!carRegister) {
-        throw new BadRequestError('Missing car register');
+getChartOptions = async (labels, data) => {
+    return {
+        type: 'line',
+        data: {
+            labels: labels,
+            lineColor: 'rgb(10,5,109)',
+            datasets: [
+                {
+                    label: 'NDVI',
+                    data: data,
+                    backgroundColor: 'rgba(17,17,177,0)',
+                    borderColor: 'rgba(5,177,0,1)',
+                    showLine: true,
+                    borderWidth: 2,
+                    pointRadius: 0,
+                },
+            ],
+        },
+        options: {
+            responsive: false,
+            legend: {
+                display: false,
+            }
+        }
     }
-    if (!date) {
-        throw new BadRequestError('Missing filter date');
+}
+
+module.exports.get = async (carRegister, date) => {
+    if (!carRegister || !date) {
+        throw new BadRequestError('Error occurred while getting the synthesis');
     }
 
     const [startDate, endDate] = date;
     const geoserverTime = `${ startDate }/${ endDate }`;
     const formattedFilterDate = `${ new Date(startDate).toLocaleDateString('pt-BR') } - ${ new Date(endDate).toLocaleDateString('pt-BR') }`;
 
-    const groupViews = await ViewService.getSidebarLayers(true);
+    const groupViews = await viewService.getSidebarLayers(true);
 
     const columnCarEstadualSemas = 'numero_do1';
     const columnCarFederalSemas = 'numero_do2';
@@ -195,7 +191,7 @@ module.exports.get = async (carRegister, date) => {
 
     const tableName = groupViews.STATIC.children.CAR_VALIDADO.tableName;
 
-    const propertyData = await this.getCarData(
+    const propertyData = await getCarData(
         tableName,
         groupViews.STATIC.children.MUNICIPIOS.tableName,
         columnCarEstadualSemas,
@@ -204,9 +200,9 @@ module.exports.get = async (carRegister, date) => {
         carRegister,
     );
 
-    const bbox = this.setBoundingBox(propertyData['bbox']);
-    const cityBBox = this.setBoundingBox(propertyData['citybbox']);
-    const stateBBox = this.setBoundingBox(propertyData['statebbox']);
+    const bbox = Layer.setBoundingBox(propertyData['bbox']);
+    const cityBBox = Layer.setBoundingBox(propertyData['citybbox']);
+    const stateBBox = Layer.setBoundingBox(propertyData['statebbox']);
 
     const burnedAreasHistorySql = ` SELECT
                   extract(year from date_trunc('year', areaq.${ columnExecutionDate })) AS date,
@@ -217,7 +213,7 @@ module.exports.get = async (carRegister, date) => {
             ORDER BY date`;
     const burnedAreaHistory = await sequelize.query(
         burnedAreasHistorySql,
-        QUERY_TYPES_SELECT
+        {type: QueryTypes.SELECT}
     );
 
     const prodesHistorySql = ` SELECT
@@ -229,7 +225,7 @@ module.exports.get = async (carRegister, date) => {
             ORDER BY date`;
     const prodesHistory = await sequelize.query(
         prodesHistorySql,
-        QUERY_TYPES_SELECT
+        {type: QueryTypes.SELECT}
     );
 
     const deterHistorySql = ` SELECT
@@ -241,7 +237,7 @@ module.exports.get = async (carRegister, date) => {
             ORDER BY date`;
     const deterHistory = await sequelize.query(
         deterHistorySql,
-        QUERY_TYPES_SELECT,
+        {type: QueryTypes.SELECT},
     );
 
     const fireSpotHistorySql = ` SELECT
@@ -253,7 +249,7 @@ module.exports.get = async (carRegister, date) => {
             ORDER BY date`;
     const fireSpotHistory = await sequelize.query(
         fireSpotHistorySql,
-        QUERY_TYPES_SELECT,
+        {type: QueryTypes.SELECT},
     );
 
     const dateSql = ` AND ${ columnExecutionDate }::date >= '${ startDate }' AND ${ columnExecutionDate }::date <= '${ endDate }'`;
@@ -267,32 +263,32 @@ module.exports.get = async (carRegister, date) => {
 
     let indigenousLand = await sequelize.query(
         indigenousLandSql,
-        QUERY_TYPES_SELECT,
+        {type: QueryTypes.SELECT},
     );
     indigenousLand = indigenousLand[0];
     let conservationUnit = await sequelize.query(
         conservationUnitSql,
-        QUERY_TYPES_SELECT,
+        {type: QueryTypes.SELECT},
     );
     conservationUnit = conservationUnit[0];
     let legalReserve = await sequelize.query(
         legalReserveSql,
-        QUERY_TYPES_SELECT,
+        {type: QueryTypes.SELECT},
     );
     legalReserve = legalReserve[0];
     let app = await sequelize.query(
         aPPSql,
-        QUERY_TYPES_SELECT
+        {type: QueryTypes.SELECT}
     );
     app = app[0];
     let anthropizedUse = await sequelize.query(
         anthropizedUseSql,
-        QUERY_TYPES_SELECT,
+        {type: QueryTypes.SELECT},
     );
     anthropizedUse = anthropizedUse[0];
     let nativeVegetation = await sequelize.query(
         nativeVegetationSql,
-        QUERY_TYPES_SELECT,
+        {type: QueryTypes.SELECT},
     );
     nativeVegetation = nativeVegetation[0];
 
@@ -320,7 +316,7 @@ module.exports.get = async (carRegister, date) => {
 
         const datesSynthesis = await sequelize.query(
             sqlDatesSynthesis,
-            QUERY_TYPES_SELECT,
+            {type: QueryTypes.SELECT},
         );
         let analysisPeriod = [];
         datesSynthesis.forEach((years) => {
@@ -334,7 +330,7 @@ module.exports.get = async (carRegister, date) => {
 
         const visionsConfig = cardsConfig.visions;
 
-        const stateVisionCard = this.getSynthesisCard({
+        const stateVisionCard = getSynthesisCard({
             data: null,
             layers: visionsConfig.state.layers,
             bbox: stateBBox,
@@ -346,7 +342,7 @@ module.exports.get = async (carRegister, date) => {
             propertyData
         });
 
-        const cityVisionCard = this.getSynthesisCard({
+        const cityVisionCard = getSynthesisCard({
             data: null,
             layers: visionsConfig.city.layers,
             bbox: cityBBox,
@@ -357,7 +353,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: "",
             propertyData
         });
-        const deterAlertVisionCard = this.getSynthesisCard({
+        const deterAlertVisionCard = getSynthesisCard({
             data: null,
             layers: visionsConfig.deterAlert.layers,
             bbox: bbox,
@@ -369,7 +365,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: "",
             propertyData
         });
-        const ambientalDegradationVisionCard = this.getSynthesisCard({
+        const ambientalDegradationVisionCard = getSynthesisCard({
             data: null,
             layers: visionsConfig.ambientalDegradation.layers,
             bbox: bbox,
@@ -381,7 +377,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: "",
             propertyData
         });
-        const deforestationVisionCard = this.getSynthesisCard({
+        const deforestationVisionCard = getSynthesisCard({
             data: null,
             layers: visionsConfig.deforestation.layers,
             bbox: bbox,
@@ -393,7 +389,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: "",
             propertyData
         });
-        const burnedAreaVisionCard = this.getSynthesisCard({
+        const burnedAreaVisionCard = getSynthesisCard({
             data: null,
             layers: visionsConfig.burnedArea.layers,
             bbox: bbox,
@@ -429,16 +425,16 @@ module.exports.get = async (carRegister, date) => {
 
         const legendsConfig = cardsConfig.legends;
 
-        const municipalBoundariesLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.municipalBoundaries.layer);
-        const nativeVegetationAreaLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.nativeVegetationArea.layer);
-        const indigenousLandLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.indigenousLand.layer);
-        const appAreaLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.appArea.layer);
-        const consolidatedUseAreaLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.consolidatedUseArea.layer);
-        const carLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.car.layer);
-        const anthropizedUseLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.anthropizedUse.layer);
-        const carDeterLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.carDeter.layer);
-        const legalreserveLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.legalreserve.layer);
-        const carProdesLegend = GeoServerService.getGeoserverLegendURL(legendsConfig.carProdes.layer);
+        const municipalBoundariesLegend = geoServerService.getGeoserverLegendURL(legendsConfig.municipalBoundaries.layer);
+        const nativeVegetationAreaLegend = geoServerService.getGeoserverLegendURL(legendsConfig.nativeVegetationArea.layer);
+        const indigenousLandLegend = geoServerService.getGeoserverLegendURL(legendsConfig.indigenousLand.layer);
+        const appAreaLegend = geoServerService.getGeoserverLegendURL(legendsConfig.appArea.layer);
+        const consolidatedUseAreaLegend = geoServerService.getGeoserverLegendURL(legendsConfig.consolidatedUseArea.layer);
+        const carLegend = geoServerService.getGeoserverLegendURL(legendsConfig.car.layer);
+        const anthropizedUseLegend = geoServerService.getGeoserverLegendURL(legendsConfig.anthropizedUse.layer);
+        const carDeterLegend = geoServerService.getGeoserverLegendURL(legendsConfig.carDeter.layer);
+        const legalreserveLegend = geoServerService.getGeoserverLegendURL(legendsConfig.legalreserve.layer);
+        const carProdesLegend = geoServerService.getGeoserverLegendURL(legendsConfig.carProdes.layer);
 
         const legends = [
             municipalBoundariesLegend,
@@ -455,7 +451,7 @@ module.exports.get = async (carRegister, date) => {
 
         const detailedVisionsConfig = cardsConfig.detailedVisions;
 
-        const indigenousLandCard = this.getSynthesisCard({
+        const indigenousLandCard = getSynthesisCard({
             data: indigenousLand,
             layers: detailedVisionsConfig.indigenousLand.layers,
             bbox: bbox,
@@ -467,7 +463,7 @@ module.exports.get = async (carRegister, date) => {
             propertyData
         });
 
-        const conservationUnitCard = this.getSynthesisCard({
+        const conservationUnitCard = getSynthesisCard({
             data: conservationUnit,
             layers: detailedVisionsConfig.conservationUnit.layers,
             bbox: bbox,
@@ -478,7 +474,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: detailedVisionsConfig.conservationUnit.descriptionSuffix,
             propertyData
         });
-        const legalReserveCard = this.getSynthesisCard({
+        const legalReserveCard = getSynthesisCard({
             data: legalReserve,
             layers: detailedVisionsConfig.legalReserve.layers,
             bbox: bbox,
@@ -489,7 +485,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: detailedVisionsConfig.legalReserve.descriptionSuffix,
             propertyData
         });
-        const appCard = this.getSynthesisCard({
+        const appCard = getSynthesisCard({
             data: app,
             layers: detailedVisionsConfig.app.layers,
             bbox: bbox,
@@ -500,7 +496,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: detailedVisionsConfig.app.descriptionSuffix,
             propertyData
         });
-        const anthropizedUseCard = this.getSynthesisCard({
+        const anthropizedUseCard = getSynthesisCard({
             data: anthropizedUse,
             layers: detailedVisionsConfig.anthropizedUse.layers,
             bbox: bbox,
@@ -511,7 +507,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: detailedVisionsConfig.anthropizedUse.descriptionSuffix,
             propertyData
         });
-        const nativeVegetationCard = this.getSynthesisCard({
+        const nativeVegetationCard = getSynthesisCard({
             data: nativeVegetation,
             layers: detailedVisionsConfig.nativeVegetation.layers,
             bbox: bbox,
@@ -534,7 +530,7 @@ module.exports.get = async (carRegister, date) => {
 
         const deforestationConfig = cardsConfig.deforestation;
 
-        const spotCard = this.getSynthesisCard({
+        const spotCard = getSynthesisCard({
             data: null,
             layers: deforestationConfig.spot.layers,
             bbox: bbox,
@@ -546,7 +542,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: "",
             propertyData
         });
-        const landsatCard = this.getSynthesisCard({
+        const landsatCard = getSynthesisCard({
             data: null,
             layers: deforestationConfig.landsat.layers,
             bbox: bbox,
@@ -558,7 +554,7 @@ module.exports.get = async (carRegister, date) => {
             descriptionSuffix: "",
             propertyData
         });
-        const sentinelCard = this.getSynthesisCard({
+        const sentinelCard = getSynthesisCard({
             data: null,
             layers: deforestationConfig.sentinel.layers,
             bbox: bbox,
@@ -604,7 +600,7 @@ module.exports.get = async (carRegister, date) => {
         const burnedAreaHistoryConfig = cardsConfig.histories.burnedAreaHistory;
         const landsatLayers = cardsConfig.histories.landsatLayers;
 
-        propertyData.deterHistory = this.getSynthesisHistory(
+        propertyData.deterHistory = getSynthesisHistory(
             {
                 data: deterHistory,
                 period: analysisPeriod['deterYear'],
@@ -618,7 +614,7 @@ module.exports.get = async (carRegister, date) => {
                 propertyData
             }
         );
-        propertyData.prodesHistory = this.getSynthesisHistory(
+        propertyData.prodesHistory = getSynthesisHistory(
             {
                 data: prodesHistory,
                 period: {
@@ -636,7 +632,7 @@ module.exports.get = async (carRegister, date) => {
                 propertyData
             }
         );
-        propertyData.fireSpotHistory = this.getSynthesisHistory(
+        propertyData.fireSpotHistory = getSynthesisHistory(
             {
                 data: fireSpotHistory,
                 period: analysisPeriod['fireSpotYear'],
@@ -650,7 +646,7 @@ module.exports.get = async (carRegister, date) => {
                 propertyData
             }
         );
-        propertyData.burnedAreaHistory = this.getSynthesisHistory(
+        propertyData.burnedAreaHistory = getSynthesisHistory(
             {
                 data: burnedAreaHistory,
                 period: analysisPeriod['burnedAreaYear'],
@@ -666,31 +662,5 @@ module.exports.get = async (carRegister, date) => {
         );
 
         return propertyData;
-    }
-}
-module.exports.getChartOptions = async (labels, data) => {
-    return {
-        type: 'line',
-        data: {
-            labels: labels,
-            lineColor: 'rgb(10,5,109)',
-            datasets: [
-                {
-                    label: 'NDVI',
-                    data: data,
-                    backgroundColor: 'rgba(17,17,177,0)',
-                    borderColor: 'rgba(5,177,0,1)',
-                    showLine: true,
-                    borderWidth: 2,
-                    pointRadius: 0,
-                },
-            ],
-        },
-        options: {
-            responsive: false,
-            legend: {
-                display: false,
-            }
-        }
     }
 }

@@ -1,4 +1,4 @@
-const SatVegService = require(__dirname + '/../services/sat-veg.service');
+const satVegService = require(__dirname + '/../services/sat-veg.service');
 const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
@@ -13,7 +13,7 @@ exports.get = async (req, res, next) => {
             sat
         } = req.query;
 
-        const satVegs = await SatVegService.get(
+        const satVegs = await satVegService.get(
             coordinates,
             type,
             preFilter,

@@ -14,11 +14,11 @@ module.exports.get = async (params) => {
     if (fileFormatsLength === 0) {
         throw new BadRequestError('Format(s) not found');
     }
-    const formats = await this.getFormats(fileFormats);
+    const formats = await getFormats(fileFormats);
     const layer = JSON.parse(params.specificParameters)
     const tableName = layer.tableName;
     const connectionString = "PG:host=" + config.db.host + " port=" + config.db.port + " user=" + config.db.username + " password=" + config.db.password + " dbname=" + config.db.database;
-    const sql = await this.getSql(params);
+    const sql = await getSql(params);
     const tmpFolder = path.resolve(__dirname, '..', 'tmp');
     fs.rmdirSync(tmpFolder, {recursive: true});
     let file = '';
@@ -51,7 +51,7 @@ module.exports.get = async (params) => {
     }
     return fs.readFileSync(file, 'base64')
 }
-module.exports.getFormats = async (formats) => {
+getFormats = async (formats) => {
     let fileExtension = '';
     let ogr2ogrFormat = '';
     let contentType = '';
@@ -86,7 +86,7 @@ module.exports.getFormats = async (formats) => {
     })
 }
 
-module.exports.getSql = async (params) => {
+getSql = async (params) => {
     const view = JSON.parse(params.specificParameters);
     if (!view) {
         throw new BadRequestError('Missing specificParameters');
