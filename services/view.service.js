@@ -4,7 +4,8 @@ const {QueryTypes} = sequelize;
 const config = require(__dirname + '/../config/config.json')
 const VIEWS = require(__dirname + '/../utils/helpers/views/view');
 const layerType = require('../enum/layer-type');
-module.exports.setFilter = (groupViews, viewData) => {
+
+setFilter = (groupViews, viewData) => {
     const view_default = `${ viewData.workspace }:${ viewData.view }`;
     return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter ? VIEWS[viewData.groupCode].filter(
             view_default,
@@ -16,14 +17,14 @@ module.exports.setFilter = (groupViews, viewData) => {
         : {};
 };
 
-module.exports.getLegend = (data_view) => {
+getLegend = (data_view) => {
     return {
         title: data_view.cod,
         url: `${ config.geoserver.legendUrl }${ data_view.workspace }:${ data_view.view }`,
     };
 };
 
-module.exports.getLayerData = (data_view) => {
+getLayerData = (data_view) => {
     return {
         url: `${ config.geoserver.baseUrl }/wms`,
         layers: `${ data_view.workspace }:${ data_view.view }`,
@@ -34,17 +35,90 @@ module.exports.getLayerData = (data_view) => {
     };
 };
 
-module.exports.getSidebarLayers = async (childrenAsMap = false) => {
-    let groupViews = await this.getGroupViews();
-    const views = await this.getViews();
-    groupViews = await this.setGroupViewsChildren(views, groupViews, childrenAsMap);
-    if (!childrenAsMap) {
-        groupViews = await this.sortViews(groupViews);
-    }
-    return groupViews;
-}
+getViewObject = (groupViews, viewData) => {
+    return {
+        groupCode: viewData.groupCode,
+        cod: viewData.cod,
+        label: viewData.name_view,
+        description: viewData.description,
+        shortLabel:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].shortLabel
+                ? VIEWS[viewData.groupCode][viewData.cod].shortLabel
+                : viewData.name_view,
+        value: viewData.view_id,
+        tableOwner: groupViews[viewData.groupCode].tableOwner,
+        tableName: viewData.tableName,
+        carRegisterColumn:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+                ? !viewData.isPrimary
+                    ? `${ groupViews[viewData.groupCode].tableOwner }_${
+                        VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+                    }`
+                    : VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+                : null,
+        type: viewData.type,
+        workspace: viewData.workspace,
+        view: viewData.view,
+        dataStore: viewData.datastore ? viewData.datastore : '',
+        isPrivate: viewData.type === 'analysis',
+        isChild:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].isChild
+                ? VIEWS[viewData.groupCode][viewData.cod].isChild
+                : false,
+        isHidden:
+            VIEWS[viewData.groupCode] &&
+            VIEWS[viewData.groupCode][viewData.cod] &&
+            VIEWS[viewData.groupCode][viewData.cod].isHidden
+                ? VIEWS[viewData.groupCode][viewData.cod].isHidden
+                : false,
+        isPrimary: viewData.isPrimary,
+        isDisabled: viewData.is_disable,
+        filter: viewData.type === 'analysis' ? setFilter(groupViews, viewData) : null,
+        layerData: getLayerData(viewData),
+        legend: getLegend(viewData),
+        tools: [
+            {
+                icon: 'fas fa-info',
+                name: 'description',
+                title: 'description',
+            },
+            {
+                icon: 'fas fa-save',
+                name: 'export',
+                title: 'export',
+            },
+            {
+                icon: 'fas fa-adjust',
+                name: 'opacity',
+                title: 'opacity',
+            },
+            // Do not replace or delete, it will be implemented later.
+            // {
+            //     icon: "fas fa-expand-alt",
+            //     name: "extent",
+            //     title: "Extent"
+            // },
+            // {
+            //   icon: "fas fa-calendar-alt",
+            //   name: "calendar",
+            //   title: "Filtrar por intervalo de data"
+            // },
+            // {
+            //   icon: "fas fa-sliders-h",
+            //   name: "slider",
+            //   title: "Filtrar por data"
+            // }
+        ]
+    };
+};
 
-module.exports.getGroupViews = async () => {
+getGroupViews = async () => {
     const sql = `
         SELECT  
                (CASE
@@ -137,7 +211,7 @@ module.exports.getGroupViews = async () => {
     return groupViews;
 }
 
-module.exports.getViews = async () => {
+getViews = async () => {
     const sql = `SELECT
                view.id AS view_id,
                TRIM(view.name) AS name_view,
@@ -212,7 +286,7 @@ module.exports.getViews = async () => {
     return await sequelize.query(sql, options);
 }
 
-module.exports.setGroupViewsChildren = async (views, groupViews, asMap = true) => {
+setGroupViewsChildren = async (views, groupViews, asMap = true) => {
     views.forEach(view => {
         if (!groupViews[view.groupCode].children) {
             groupViews[view.groupCode].children = [];
@@ -225,12 +299,12 @@ module.exports.setGroupViewsChildren = async (views, groupViews, asMap = true) =
     if (asMap) {
         views.forEach(view => groupViews[view.groupCode].children[view.cod] = view);
     } else {
-        views.forEach(view => groupViews[view.groupCode].children.push(this.getViewObject(groupViews, view)));
+        views.forEach(view => groupViews[view.groupCode].children.push(getViewObject(groupViews, view)));
     }
     return groupViews;
 }
 
-module.exports.sortViews = async (groupViews) => {
+sortViews = async (groupViews) => {
     const groupCodes = [
         'DETER',
         'PRODES',
@@ -295,88 +369,15 @@ module.exports.sortViews = async (groupViews) => {
     })
 }
 
-module.exports.getViewObject = (groupViews, viewData) => {
-    return {
-        groupCode: viewData.groupCode,
-        cod: viewData.cod,
-        label: viewData.name_view,
-        description: viewData.description,
-        shortLabel:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].shortLabel
-                ? VIEWS[viewData.groupCode][viewData.cod].shortLabel
-                : viewData.name_view,
-        value: viewData.view_id,
-        tableOwner: groupViews[viewData.groupCode].tableOwner,
-        tableName: viewData.tableName,
-        carRegisterColumn:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
-                ? !viewData.isPrimary
-                    ? `${ groupViews[viewData.groupCode].tableOwner }_${
-                        VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
-                    }`
-                    : VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
-                : null,
-        type: viewData.type,
-        workspace: viewData.workspace,
-        view: viewData.view,
-        dataStore: viewData.datastore ? viewData.datastore : '',
-        isPrivate: viewData.type === 'analysis',
-        isChild:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].isChild
-                ? VIEWS[viewData.groupCode][viewData.cod].isChild
-                : false,
-        isHidden:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].isHidden
-                ? VIEWS[viewData.groupCode][viewData.cod].isHidden
-                : false,
-        isPrimary: viewData.isPrimary,
-        isDisabled: viewData.is_disable,
-        filter: viewData.type === 'analysis' ? this.setFilter(groupViews, viewData) : null,
-        layerData: this.getLayerData(viewData),
-        legend: this.getLegend(viewData),
-        tools: [
-            {
-                icon: 'fas fa-info',
-                name: 'description',
-                title: 'description',
-            },
-            {
-                icon: 'fas fa-save',
-                name: 'export',
-                title: 'export',
-            },
-            {
-                icon: 'fas fa-adjust',
-                name: 'opacity',
-                title: 'opacity',
-            },
-            // Do not replace or delete, it will be implemented later.
-            // {
-            //     icon: "fas fa-expand-alt",
-            //     name: "extent",
-            //     title: "Extent"
-            // },
-            // {
-            //   icon: "fas fa-calendar-alt",
-            //   name: "calendar",
-            //   title: "Filtrar por intervalo de data"
-            // },
-            // {
-            //   icon: "fas fa-sliders-h",
-            //   name: "slider",
-            //   title: "Filtrar por data"
-            // }
-        ]
-    };
-};
+module.exports.getSidebarLayers = async (childrenAsMap = false) => {
+    let groupViews = await getGroupViews();
+    const views = await getViews();
+    groupViews = await setGroupViewsChildren(views, groupViews, childrenAsMap);
+    if (!childrenAsMap) {
+        groupViews = await sortViews(groupViews);
+    }
+    return groupViews;
+}
 
 module.exports.getReportLayers = async () => {
     const sql = `

@@ -2,17 +2,13 @@ const {QueryTypes} = require('sequelize');
 const models = require('../models');
 const {View, sequelize} = models;
 const Filter = require("../utils/filter.utils");
-const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
-const ViewService = require("../services/view.service");
+const viewService = require("../services/view.service");
 const LayerTypeName = require('../enum/layer-type-name');
 const InternalServerError = require('../errors/internal-server.error');
 const BadRequestError = require('../errors/bad-request.error');
 
-module.exports.getSqlAnalysisTotals = async (params) => {
+getSqlAnalysisTotals = async (params) => {
     const analysisList = JSON.parse(params.specificParameters);
-    if (!analysisList) {
-        throw new BadRequestError('Missing specificParameters');
-    }
 
     let sql = '';
     for (let analysis of analysisList) {
@@ -67,7 +63,7 @@ module.exports.getSqlAnalysisTotals = async (params) => {
     return sql;
 }
 
-module.exports.getAnalysisChart = (analysis, chart1, chart2) => {
+getAnalysisChart = (analysis, chart1, chart2) => {
     return {
         cod: analysis.cod,
         groupCode: analysis.groupCode,
@@ -105,7 +101,7 @@ module.exports.getAnalysisChart = (analysis, chart1, chart2) => {
     }
 }
 
-module.exports.getChart = async (chartData, value, subtitle, label) => {
+getChart = async (chartData, value, subtitle, label) => {
     let labels = [];
     let data = [];
     let backgroundColor = [];
@@ -134,7 +130,7 @@ module.exports.getChart = async (chartData, value, subtitle, label) => {
     };
 }
 
-module.exports.getAnalysisChartSql = async (analysis, params) => {
+getAnalysisChartSql = async (analysis, params) => {
     let sql1 = '';
     let sql2 = '';
 
@@ -205,9 +201,9 @@ module.exports.getAnalysisChartSql = async (analysis, params) => {
 }
 
 module.exports.getAnalysis = async (params) => {
-    const sidebarLayers = await ViewService.getSidebarLayers();
+    const sidebarLayers = await viewService.getSidebarLayers();
     if (!sidebarLayers) {
-        throw new InternalServerError('Layers not found');
+        throw new InternalServerError('No layers were found');
     }
     let analysisList = sidebarLayers
         .filter(layerGroup => layerGroup['viewGraph'])
@@ -245,11 +241,8 @@ module.exports.getAnalysis = async (params) => {
             };
         });
     params.specificParameters = JSON.stringify(analysisList);
-    const sqlTotals = await this.getSqlAnalysisTotals(params);
-    if (!sqlTotals) {
-        throw new InternalServerError("Couldn't calculate totals");
-    }
-    const analysisTotals = await sequelize.query(sqlTotals, QUERY_TYPES_SELECT);
+    const sqlTotals = await getSqlAnalysisTotals(params);
+    const analysisTotals = await sequelize.query(sqlTotals, {type: QueryTypes.SELECT});
     analysisTotals[0].activearea = true;
     return analysisList.map((analysis, index) => {
         const {alert, area} = analysisTotals[index];
@@ -262,18 +255,18 @@ module.exports.getAnalysis = async (params) => {
 module.exports.getAnalysisCharts = async (params) => {
     const analysisList = JSON.parse(params.specificParameters);
     if (!analysisList) {
-        throw new BadRequestError('Missing specificParameters');
+        throw new BadRequestError('Error occurred while getting the charts');
     }
     const analysisCharts = [];
     for (const analysis of analysisList) {
         const labelChart1 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por CAR' : 'Área (ha) de alertas por CAR';
         const labelChart2 = analysis.groupCode === 'BURNED' ? 'Quantidade de alertas de focos por Bioma' : 'Área (ha) de alertas por classe';
-        const sql = await this.getAnalysisChartSql(analysis, params);
-        let resultAux = await sequelize.query(sql.sql1, QUERY_TYPES_SELECT);
-        const chart1 = await this.getChart(resultAux, sql.value, sql.subtitle, labelChart1);
-        resultAux = await sequelize.query(sql.sql2, QUERY_TYPES_SELECT);
-        const chart2 = await this.getChart(resultAux, sql.value, sql.subtitle, labelChart2);
-        analysisCharts.push(this.getAnalysisChart(analysis, chart1, chart2));
+        const sql = await getAnalysisChartSql(analysis, params);
+        let resultAux = await sequelize.query(sql.sql1, {type: QueryTypes.SELECT});
+        const chart1 = await getChart(resultAux, sql.value, sql.subtitle, labelChart1);
+        resultAux = await sequelize.query(sql.sql2, {type: QueryTypes.SELECT});
+        const chart2 = await getChart(resultAux, sql.value, sql.subtitle, labelChart2);
+        analysisCharts.push(getAnalysisChart(analysis, chart1, chart2));
     }
     return analysisCharts;
 }

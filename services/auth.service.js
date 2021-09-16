@@ -4,7 +4,7 @@ const BadRequestError = require('../errors/bad-request.error');
 
 module.exports.login = async (userName, password) => {
     if (!userName) {
-        throw new BadRequestError('Usuário inválido');
+        throw new BadRequestError('Invalid user');
     }
     const user = await User.findOne({
         where: {
@@ -12,12 +12,12 @@ module.exports.login = async (userName, password) => {
         }
     });
     if (!user) {
-        throw new BadRequestError('Usuário não encontrado');
+        throw new BadRequestError('User not found');
     }
     const hashedPassword = bcrypt.hashSync(password, user.salt);
 
     if (user.password !== hashedPassword) {
-        throw new BadRequestError('Senha incorreta');
+        throw new BadRequestError('Wrong password');
     }
     return {
         id: user.id,

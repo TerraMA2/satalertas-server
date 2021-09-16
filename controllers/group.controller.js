@@ -1,10 +1,10 @@
-const GroupService = require(__dirname + '/../services/group.service');
+const groupService = require(__dirname + '/../services/group.service');
 const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.get = async (req, res, next) => {
     try {
-        const groups = await GroupService.get();
+        const groups = await groupService.get();
         res.json(response(httpStatus.SUCCESS, groups));
     } catch (e) {
         next(e);
@@ -13,7 +13,7 @@ exports.get = async (req, res, next) => {
 
 exports.getCodGroups = async (req, res, next) => {
     try {
-        const codGroups = await GroupService.getCodGroups();
+        const codGroups = await groupService.getCodGroups();
         res.json(response(httpStatus.SUCCESS, codGroups));
     } catch (e) {
         next(e);
@@ -23,7 +23,7 @@ exports.getCodGroups = async (req, res, next) => {
 exports.getById = async (req, res, next) => {
     try {
         const {query} = req;
-        const group = await GroupService.getById(query.id);
+        const group = await groupService.getById(query.id);
         res.json(response(httpStatus.SUCCESS, group));
     } catch (e) {
         next(e);
@@ -33,7 +33,7 @@ exports.getById = async (req, res, next) => {
 exports.add = async (req, res, next) => {
     try {
         const newGroup = req.body;
-        const group = await GroupService.add(newGroup);
+        const group = await groupService.add(newGroup);
         res.json(response(httpStatus.SUCCESS, group));
     } catch (e) {
         next(e);
@@ -43,7 +43,7 @@ exports.add = async (req, res, next) => {
 exports.update = async (req, res, next) => {
     try {
         const groupModify = req.body;
-        const group = await GroupService.update(groupModify);
+        const group = await groupService.update(groupModify);
         res.json(response(httpStatus.SUCCESS, group));
     } catch (e) {
         next(e);
@@ -53,7 +53,7 @@ exports.update = async (req, res, next) => {
 exports.deleteGroup = async (req, res, next) => {
     try {
         const groupDelete = req.params.id;
-        const result = await GroupService.deleteGroup(groupDelete);
+        const result = await groupService.deleteGroup(groupDelete);
         res.json(response(httpStatus.SUCCESS, result));
     } catch (e) {
         next(e);

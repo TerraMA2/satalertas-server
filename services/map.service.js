@@ -1,9 +1,8 @@
 const {QueryTypes} = require('sequelize');
-const QUERY_TYPES_SELECT = {type: QueryTypes.SELECT};
 const models = require('../models');
 const {View, sequelize} = models;
 const Filter = require("../utils/filter.utils");
-const InfoColumnsService = require("../services/info-columns.service");
+const infoColumnsService = require("../services/info-columns.service");
 const config = require(__dirname + '/../config/config.json');
 
 module.exports.getColumnsTable = async (tableName, schema, alias = '') => {
@@ -13,7 +12,7 @@ module.exports.getColumnsTable = async (tableName, schema, alias = '') => {
       WHERE table_name = '${ tableName }'
         AND table_schema = '${ schema }'
         AND column_name not like '%geom%' `;
-    const columns = await sequelize.query(sql, QUERY_TYPES_SELECT)
+    const columns = await sequelize.query(sql, {type: QueryTypes.SELECT})
 
     alias = alias ? `${ alias }.` : '';
     return columns.map((column, index) => index === 0 ? `${ alias }${ column.column_name }` : `, ${ alias }${ column.column_name }`).join('');
@@ -26,7 +25,7 @@ module.exports.getColumnByType = async (tableName, schema, type) => {
         AND table_schema = '${ schema }'
         AND udt_name = '${ type }'
       ORDER BY ordinal_position`;
-    const columns = await sequelize.query(sql, QUERY_TYPES_SELECT)
+    const columns = await sequelize.query(sql, {type: QueryTypes.SELECT})
 
     return columns.length > 0 ? columns[0].column_name : '';
 }
@@ -84,7 +83,7 @@ module.exports.getBurnedCentroid = async (params) => {
            group_result
       WHERE group_result.de_car_validado_sema_gid= c.gid
     `;
-    return await sequelize.query(sql, QUERY_TYPES_SELECT);
+    return await sequelize.query(sql, {type: QueryTypes.SELECT});
 }
 module.exports.getOthersCentroid = async (params) => {
     const layer = JSON.parse(params.view);
@@ -127,7 +126,7 @@ module.exports.getOthersCentroid = async (params) => {
                     ${ filter.limit }
                     ${ filter.offset } `;
 
-    const dataJson = await sequelize.query(sql, QUERY_TYPES_SELECT);
+    const dataJson = await sequelize.query(sql, {type: QueryTypes.SELECT});
 
     if (params.countTotal) {
         const sqlCount =
@@ -135,7 +134,7 @@ module.exports.getOthersCentroid = async (params) => {
               ${ filter.secondaryTables }
               ${ sqlWhere } `;
 
-        const resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+        const resultCount = await sequelize.query(sqlCount, {type: QueryTypes.SELECT});
         dataJson.push(resultCount[0]['count']);
     }
 
@@ -162,9 +161,9 @@ module.exports.getPopupInfo = async (params) => {
 
     const sql = await this[type](filter)
 
-    const data = await sequelize.query(sql, QUERY_TYPES_SELECT)
+    const data = await sequelize.query(sql, {type: QueryTypes.SELECT})
     const groupCode = params.groupCode;
-    const infoColumns = await InfoColumnsService.getInfoColumns(groupCode);
+    const infoColumns = await infoColumnsService.getInfoColumns(groupCode);
     return Object.entries(data[0])
         .filter(column => !column[0].includes('alerts') &&!column[0].includes('lat') && !column[0].includes('long'))
         .map(column => {
@@ -222,7 +221,7 @@ module.exports.getAnalysisData = async (params) => {
     let result;
     let resultCount;
 
-    result = await sequelize.query(sql, QUERY_TYPES_SELECT);
+    result = await sequelize.query(sql, {type: QueryTypes.SELECT});
     let dataJson = result;
 
     if (params.countTotal) {
@@ -231,7 +230,7 @@ module.exports.getAnalysisData = async (params) => {
             ${ filter.secondaryTables }
             ${ sqlWhere } `;
 
-        resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+        resultCount = await sequelize.query(sqlCount, {type: QueryTypes.SELECT});
         dataJson.push(resultCount[0]['count']);
     }
 
@@ -270,13 +269,13 @@ module.exports.getStaticData = async (params) => {
     let result;
     let resultCount;
 
-    result = await sequelize.query(sql, QUERY_TYPES_SELECT);
+    result = await sequelize.query(sql, {type: QueryTypes.SELECT});
     let dataJson = result;
 
     let sqlCount;
     if (specificParameters.countTotal) {
         sqlCount = `SELECT COUNT(1) AS count FROM public.${ layer.tableName }`;
-        resultCount = await sequelize.query(sqlCount, QUERY_TYPES_SELECT);
+        resultCount = await sequelize.query(sqlCount, {type: QueryTypes.SELECT});
 
         dataJson.push(resultCount[0]['count']);
     }

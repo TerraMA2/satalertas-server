@@ -5,7 +5,7 @@ const {
     InfocolumnColumnsList,
     sequelize,
 } = require('../models');
-const ViewService = require("../services/view.service");
+const viewService = require("../services/view.service");
 const {QueryTypes} = sequelize;
 
 module.exports.getAllTables = async () => {
@@ -137,7 +137,7 @@ module.exports.getInfoColumns = async (viewId) => {
     //   });
     // } else {
     // console.log('to no info-columns.service View.ID: ', viewId);
-    const groupViews = await ViewService.getSidebarLayers(true);
+    const groupViews = await viewService.getSidebarLayers(true);
 
     const infoColumns = {
         DETER: groupViews.DETER

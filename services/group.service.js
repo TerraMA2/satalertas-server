@@ -20,6 +20,13 @@ module.exports.getCodGroups = async () => {
 }
 
 module.exports.getById = async (id) => {
+    // const group = await Group.findOne({
+    //     where: {
+    //         id
+    //     },
+    //     include: { all: true }
+    // }).then((result) => result);
+
     // Melhorar usando o include das relações
     const group = await Group.findByPk(id).then((result) => result);
 
@@ -58,7 +65,7 @@ module.exports.update = async (groupModify) => {
 
 module.exports.deleteGroup = async (groupId) => {
     if (!groupId) {
-        throw new BadRequestError('Missing groupId');
+        throw new BadRequestError('Group not found');
     }
     const group = await Group.findByPk(groupId);
     return await group.destroy().then((result) => result);

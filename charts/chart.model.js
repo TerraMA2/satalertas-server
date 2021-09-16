@@ -9,7 +9,7 @@ class Chart extends QuickChart {
     this.baseUrl = `${this.protocol}://${this.host}`;
     this.width = 480;
     this.height = 200;
-    this.version = 3;
+    this.version = "3.5.1";
   }
 }
 

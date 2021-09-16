@@ -15,7 +15,7 @@ const {
     setLegend,
     setFilter,
 } = require('../utils/helpers/geoserver/assemblyLayer');
-const InfoColumns = require('./info-columns.service');
+const infoColumnsService = require('./info-columns.service');
 const layerTypeName = require('../enum/layer-type-name');
 const BadRequestError = require('../errors/bad-request.error');
 const {QueryTypes} = require("sequelize");
@@ -32,7 +32,7 @@ const viewTableName = {
     }
 };
 
-module.exports.setTableName = (data) => {
+setTableName = (data) => {
     const {
         dataSet: {
             dataSetFormat: [
@@ -48,29 +48,16 @@ module.exports.setTableName = (data) => {
     }
 }
 
-module.exports.getModelFields = async (model) => {
+getModelFields = async (model) => {
     return await model.describe();
 }
 
-module.exports.removeNullProperties = (data) => {
+removeNullProperties = (data) => {
     const filteredData = Object.entries(data).filter(([_, val]) => val);
     return Object.fromEntries(filteredData);
 }
 
-// use at routes?
-module.exports.get = async () => {
-    const modelFields = Object.keys(await this.getModelFields(RelGroupView));
-    const groupViews = await RelGroupView.findAll({
-        attributes: modelFields
-    });
-    for (const groupView of groupViews) {
-        const id = groupView.viewId;
-        groupView.dataValues.view = await View.findByPk(id);
-    }
-    return groupViews;
-}
-
-module.exports.getTableName = async (viewId) => {
+getTableName = async (viewId) => {
     let sql = `SELECT
   (CASE
     WHEN vw.source_type = 3 THEN concat(TRIM(dsf.value), '_', analysis.id)
@@ -90,74 +77,89 @@ module.exports.getTableName = async (viewId) => {
     const result = await sequelize.query(sql, options);
     return result.tableName;
 }
+
+// use at routes?
+module.exports.get = async () => {
+    const modelFields = Object.keys(await getModelFields(RelGroupView));
+    const groupViews = await RelGroupView.findAll({
+        attributes: modelFields
+    });
+    for (const groupView of groupViews) {
+        const id = groupView.viewId;
+        groupView.dataValues.view = await View.findByPk(id);
+    }
+    return groupViews;
+}
+
 module.exports.getByGroupId = async (groupId) => {
+    if (!groupId) {
+        throw new BadRequestError('Group not found.')
+    }
     let viewsGroup = [];
-    if (groupId) {
-        const {code: groupCode} = await Group.findByPk(groupId, {raw: true});
-        const where = {
-            where: {
-                groupId,
-            },
-            order: [['id', 'ASC']],
+    const {code: groupCode} = await Group.findByPk(groupId, {raw: true});
+    const where = {
+        where: {
+            groupId,
+        },
+        order: [['id', 'ASC']],
+    };
+
+    const groupViews = await RelGroupView.findAll({
+        ...where,
+        attributes: {exclude: ['group_id', 'view_id']},
+        raw: true,
+    });
+    for (const groupView of groupViews) {
+        const {viewId} = groupView;
+        let layer = {
+            groupCode,
+            tools: Tools
+        };
+        const options = {
+            attributes: {exclude: ['id', 'project_id', 'data_series_id']},
+            include: [viewTableName],
         };
 
-        const groupViews = await RelGroupView.findAll({
-            ...where,
-            attributes: {exclude: ['group_id', 'view_id']},
-            raw: true,
+        await View.findByPk(viewId, options).then((response) => {
+            const filteredResponse = removeNullProperties(response.toJSON());
+            layer['type'] = layerTypeName[filteredResponse['sourceType']]
+            Object.assign(layer, filteredResponse);
         });
-        for (const groupView of groupViews) {
-            const {viewId} = groupView;
-            let layer = {
-                groupCode,
-                tools: Tools
-            };
-            const options = {
-                attributes: {exclude: ['id', 'project_id', 'data_series_id']},
-                include: [viewTableName],
-            };
-
-            await View.findByPk(viewId, options).then((response) => {
-                const filteredResponse = this.removeNullProperties(response.toJSON());
-                layer['type'] = layerTypeName[filteredResponse['sourceType']]
-                Object.assign(layer, filteredResponse);
+        layer.tableName = await getTableName(viewId)
+        const filteredGroupView = removeNullProperties(groupView);
+        Object.assign(layer, filteredGroupView);
+        if (viewId) {
+            layer['tableInfocolumns'] = await infoColumnsService.getInfocolumnsByViewId(
+                viewId,
+            ).then((response) => response.tableInfocolumns);
+            const viewName = `view${ viewId }`;
+            layer.viewName = viewName;
+            const registeredData = await RegisteredView.findOne({
+                where: {
+                    view_id: viewId,
+                },
+                raw: true,
             });
-            layer.tableName = await this.getTableName(viewId)
-            const filteredGroupView = this.removeNullProperties(groupView);
-            Object.assign(layer, filteredGroupView);
-            if (viewId) {
-                layer['tableInfocolumns'] = await InfoColumns.getInfocolumnsByViewId(
-                    viewId,
-                ).then((response) => response.tableInfocolumns);
-                const viewName = `view${ viewId }`;
-                layer.viewName = viewName;
-                const registeredData = await RegisteredView.findOne({
-                    where: {
-                        view_id: viewId,
-                    },
-                    raw: true,
-                });
-                const {workspace} = registeredData;
-                const layerDataOptions = {geoservice: 'wms'};
-                layer.layerData = layerData(
-                    `${ workspace }:${ viewName }`,
-                    layerDataOptions,
-                );
-                layer.legend = setLegend(layer.name, workspace, viewName);
-                if (!layer['shortName']) {
-                    layer.shortName = layer.name;
-                }
-                if (layer.isPrimary) {
-                    layer.tableOwner = layer.tableName;
-                }
-                const gp = {
-                    workspace,
-                    groupView,
-                };
-                layer.filter = setFilter(gp, layer);
+            const {workspace} = registeredData;
+            const layerDataOptions = {geoservice: 'wms'};
+            layer.layerData = layerData(
+                `${ workspace }:${ viewName }`,
+                layerDataOptions,
+            );
+            layer.legend = setLegend(layer.name, workspace, viewName);
+            if (!layer['shortName']) {
+                layer.shortName = layer.name;
             }
-            viewsGroup.push(layer);
+            if (layer.isPrimary) {
+                layer.tableOwner = layer.tableName;
+            }
+            const gp = {
+                workspace,
+                groupView,
+            };
+            layer.filter = setFilter(gp, layer);
         }
+        viewsGroup.push(layer);
     }
     if (viewsGroup.length > 2) {
         viewsGroup.forEach((view) => {
@@ -195,7 +197,7 @@ module.exports.getAvailableLayers = async (groupId) => {
     };
     return await View.findAll(option).then((views) => {
         views.forEach((vw) => {
-            this.setTableName(vw);
+            setTableName(vw);
         });
         return views.map((view) => view.toJSON());
     });
