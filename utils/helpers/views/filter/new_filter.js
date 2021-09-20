@@ -10,57 +10,58 @@ module.exports = function (
     if (areaCar) {
         areaCar = areaCar["columnName"];
     }
+    const baseView = `${ workspaceAlertas }:${ cod_view }`
     return {
         default: {
             view: geoserverView,
         },
         biome: {
-            view: `${ workspaceAlertas }:${ cod_view }_biome_sql`,
+            view: `${ baseView }_biome_sql`,
             field: 'gid',
             value: 'gid',
         },
         region: {
-            view: `${ workspaceAlertas }:${ cod_view }_city_sql`,
+            view: `${ baseView }_city_sql`,
             field: `comarca`,
             value: `name`,
         },
         mesoregion: {
-            view: `${ workspaceAlertas }:${ cod_view }_city_sql`,
+            view: `${ baseView }_city_sql`,
             field: `nm_meso`,
             value: `name`,
         },
         microregion: {
-            view: `${ workspaceAlertas }:${ cod_view }_city_sql`,
+            view: `${ baseView }_city_sql`,
             field: `nm_micro`,
             value: `name`,
         },
         immediateregion: {
-            view: `${ workspaceAlertas }:${ cod_view }_city_sql`,
+            view: `${ baseView }_city_sql`,
             field: `nm_rgi`,
             value: `name`,
         },
         intermediateregion: {
-            view: `${ workspaceAlertas }:${ cod_view }_city_sql`,
+            view: `${ baseView }_city_sql`,
             field: `nm_rgint`,
             value: `name`,
         },
         pjbh: {
-            view: `${ workspaceAlertas }:${ cod_view }_city_sql`,
+            view: `${ baseView }_city_sql`,
             field: `pjbh`,
             value: `name`,
         },
         city: {
-            view: `${ workspaceAlertas }:${ cod_view }_city_sql`,
+            view: `${ baseView }_city_sql`,
             field: `gid`,
             value: `gid`,
         },
         uc: {
-            view: `${ workspaceAlertas }:${ cod_view }_uc_sql`,
+            view: `${ baseView }_uc_sql`,
             field: `gid`,
             value: `gid`,
         },
         ti: {
-            view: `${ workspaceAlertas }:${ cod_view }_ti_sql`,
+            view: `${ baseView }_ti_sql`,
             field: `gid`,
             value: `gid`,
         },
@@ -69,7 +70,7 @@ module.exports = function (
             field: areaCar,
         },
         projus: {
-            view: `${ workspaceAlertas }:${ cod_view }_projus_sql`,
+            view: `${ baseView }_projus_sql`,
             field: `gid`,
             value: `gid`,
         },
