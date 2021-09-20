@@ -16,22 +16,21 @@ itl.id,
     cols.ordinal_position
 FROM terrama2.infocolumn_table_list AS itl
 INNER JOIN information_schema.columns AS cols ON (itl.table_name = cols.table_name)
-ORDER BY itl.table_name, cols.ordinal_position, cols.column_name;`
+ORDER BY itl.table_name, cols.ordinal_position, cols.column_name;`;
 const sqlUpdate = `UPDATE terrama2.infocolumn_columns_list
 SET secondary_type = 'car_area'
-WHERE alias like '%de_car_validado_sema_area_ha_'`
+WHERE alias like '%de_car_validado_sema_area_ha_'`;
 
 module.exports = {
   up: async (queryInterface, _Sequelize) => {
-    return Promise.all([
-      queryInterface.sequelize.query(sqlInsert),
-      queryInterface.sequelize.query(sqlUpdate)
-    ])
+    return await queryInterface.sequelize.query(sqlInsert).then(() => {
+      queryInterface.sequelize.query(sqlUpdate);
+    });
   },
 
   down: async (queryInterface, _Sequelize) => {
     return await queryInterface.sequelize.query(
-      'TRUNCATE terrama2.infocolumn_columns_list RESTART IDENTITY CASCADE;'
-    )
-  }
+      'TRUNCATE terrama2.infocolumn_columns_list RESTART IDENTITY CASCADE;',
+    );
+  },
 };
