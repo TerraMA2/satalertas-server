@@ -15,7 +15,8 @@ VALUES
   ('county_geocode', 'Geocódigo (comarca)', 'Geocódigo da comarca'),
   ('city_geocode', 'Geocódigo (municipio)', 'Geocódigo do município'),
   ('city_name', 'Nome (município)', 'Nome do Municipio'),
-  ('description', 'Descrição', 'Descrição do campo');
+  ('description', 'Descrição', 'Descrição do campo'),
+  ('car_area', 'Área', 'Área dos polígonos');
 `;
 
 module.exports = {
