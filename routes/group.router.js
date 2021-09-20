@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const GroupController = require('../controllers/group.controller');
+const groupController = require('../controllers/group.controller');
 
-router.delete('/:id', GroupController.deleteGroup);
-router.put('/', GroupController.update);
-router.post('/', GroupController.add);
-router.get('/', GroupController.get);
-router.get('/getCodGroups', GroupController.getCodGroups);
-router.get('/getById?:id*', GroupController.getById);
+router.delete('/:id', groupController.deleteGroup);
+router.put('/', groupController.update);
+router.post('/', groupController.add);
+router.get('/', groupController.get);
+router.get('/getCodGroups', groupController.getCodGroups);
+router.get('/getById?:id*', groupController.getById);
 
 module.exports = router;

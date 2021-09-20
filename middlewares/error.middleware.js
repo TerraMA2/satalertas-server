@@ -9,7 +9,8 @@ exports.errorHandling = (error, req, res, next) => {
     if (!status) {
         status = 500;
     }
-    debug(stack);
-    logger.error(`${ status } - ${ message } - ${ stack }`);
+    const fullMessage = `${ status } - ${ message } - ${ stack }`;
+    debug(fullMessage);
+    logger.error(fullMessage);
     res.status(status).json(response(status, null, message))
 }

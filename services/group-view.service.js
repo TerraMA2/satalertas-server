@@ -15,7 +15,7 @@ const {
   setLegend,
   setFilter,
 } = require('../utils/helpers/geoserver/assemblyLayer');
-const InfoColumns = require('./info-columns.service');
+const infoColumnsService = require('./info-columns.service');
 const layerTypeName = require('../enum/layer-type-name');
 const BadRequestError = require('../errors/bad-request.error');
 const { QueryTypes } = require('sequelize');
