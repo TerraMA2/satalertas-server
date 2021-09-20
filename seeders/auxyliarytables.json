@@ -1,0 +1,174 @@
+[
+  {
+    "tableName": "layers-advanced-edition",
+    "type": "auxiliar-table",
+    "columns": [
+      {
+        "columnName": "name",
+        "alias": "Nome",
+        "primaryType": "string",
+        "secondaryType": null,
+        "disableEditing": false,
+        "hide": false,
+        "columnPosition": 0,
+        "description": "Nome da Camada"
+      },
+      {
+        "columnName": "short_name",
+        "alias": "Alias",
+        "primaryType": "string",
+        "secondaryType": null,
+        "disableEditing": false,
+        "hide": false,
+        "columnPosition": 1,
+        "description": "Nome a ser Exibido"
+      },
+      {
+        "columnName": "description",
+        "alias": "Descrição",
+        "primaryType": "string",
+        "secondaryType": null,
+        "disableEditing": false,
+        "hide": false,
+        "columnPosition": 2,
+        "description": "Descrição da camada"
+      },
+      {
+        "columnName": "is_private",
+        "alias": "Privada",
+        "primaryType": "boolean",
+        "secondaryType": null,
+        "disableEditing": false,
+        "hide": false,
+        "columnPosition": 5,
+        "description": "A camada é privada?" 
+      },
+      {
+        "columnName": "is_primary",
+        "alias": "Primária",
+        "primaryType": "boolean",
+        "secondaryType": null,
+        "disableEditing": false,
+        "hide": false,
+        "columnPosition": 3,
+        "description": "É camada primária"
+      },
+      {
+        "columnName": "is_sublayer",
+        "alias": "Sub Camada",
+        "primaryType": "boolean",
+        "secondaryType": null,
+        "disableEditing": false,
+        "hide": false,
+        "columnPosition": 4,
+        "description": "É sub camada"
+      },
+      {
+        "columnName": "sub_layers",
+        "alias": "Sub Camadas",
+        "primaryType": "ARRAY",
+        "secondaryType": null,
+        "disableEditing": false,
+        "hide": true,
+        "columnPosition": 6,
+        "description": "Lista de sub camadas"
+      }
+    ]
+  },
+  {
+    "tableName": "infocolumn_columns_list",
+    "type": "auxiliar-table",
+    "columns": [
+      {
+        "columnName":"id",
+        "primaryType": "integer",
+        "secondaryType": null,
+        "alias": "id",
+        "columnPosition": 0,
+        "hide": true,
+        "disableEditing": true,
+        "description": "Campo de identificação"
+      },
+      {
+        "columnName":"column_name",
+        "primaryType": "string",
+        "secondaryType": null,
+        "alias": "Nome da Coluna",
+        "columnPosition": 1,
+        "hide": false,
+        "disableEditing": false,
+        "description": "Nome da Coluna no Banco"
+      },
+      {
+        "columnName":"alias",
+        "primaryType": "string",
+        "secondaryType": null,
+        "alias": "Apelido",
+        "columnPosition": 2,
+        "hide": false,
+        "disableEditing": false,
+        "description": "Nome a ser exibido."
+      },
+      {
+        "columnName":"primary_type",
+        "primaryType": "string",
+        "secondaryType": null,
+        "alias": "Tipo Primário",
+        "columnPosition": 3,
+        "hide": false,
+        "disableEditing": true,
+        "description": "Tipo do campo na tabela do banco"
+      },
+      {
+        "columnName":"secondary_type",
+        "primaryType": "type",
+        "secondaryType": null,
+        "alias": "Tipo Secundário",
+        "columnPosition": 4,
+        "hide": false,
+        "disableEditing": true,
+        "description": "Tipo auxiliar do campo"
+      },
+      {
+        "columnName":"hide",
+        "primaryType": "boolean",
+        "secondaryType": null,
+        "alias": "Exibe ou não o campo para o usuário",
+        "columnPosition": 5,
+        "hide": false,
+        "disableEditing": false,
+        "description": "Exibe ou não o campo para o usuário"
+      },
+      {
+        "columnName":"disable_editing",
+        "primaryType": "boolean",
+        "secondaryType": null,
+        "alias": "Bloquear Edição",
+        "columnPosition": 6,
+        "hide": false,
+        "disableEditing": false,
+        "description": "Desabilita a edição do campo"
+      },
+      {
+        "columnName":"column_position",
+        "primaryType": "integer",
+        "secondaryType": null,
+        "alias": "Posição da coluna",
+        "columnPosition": 7,
+        "hide": true,
+        "disableEditing": false,
+        "description": "Posição da coluna na exibição"
+      },
+      {
+        "columnName":"description",
+        "primaryType": "string",
+        "secondaryType": null,
+        "alias": "Descrição",
+        "columnPosition": 8,
+        "hide": false,
+        "disableEditing": false,
+        "description": "Descrição do campo"
+      }
+    ]
+  }
+]
