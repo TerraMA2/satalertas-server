@@ -128,7 +128,7 @@ module.exports.getByGroupId = async (params) => {
       const filteredGroupView = this.removeNullProperties(groupView);
       Object.assign(layer, filteredGroupView);
       if (viewId) {
-        layer['tableInfocolumns'] = await InfoColumns.getInfocolumnsByViewId(
+        layer['tableInfocolumns'] = await infoColumnsService.getInfocolumnsByViewId(
           viewId,
         ).then((response) => response.tableInfocolumns);
         const viewName = `view${viewId}`;
