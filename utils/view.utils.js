@@ -1,5 +1,7 @@
 const   models = require('../models');
         View = models.views;
+        logger = require('../utils/logger');
+const { msgError } = require('../utils/messageError');
 
 const QUERY_TYPES_SELECT = { type: "SELECT" };
 
@@ -214,6 +216,7 @@ const ViewUtils = {
 
             return groupViews
         } catch (e) {
+            msgError(__filename, 'getGrouped', e)
             return {}
         }
     }
