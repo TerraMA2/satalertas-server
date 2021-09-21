@@ -8,6 +8,12 @@ module.exports = carService = {
   async getAllSimplified(params) {
     const specificParameters = JSON.parse(params.specificParameters);
     const filterReceived = JSON.parse(params.filter);
+    if(filterReceived.hasOwnProperty('themeSelected') && filterReceived.themeSelected.hasOwnProperty('value')) {
+      const { value } = filterReceived.themeSelected;
+      if (value.hasOwnProperty('name')) {
+        value.name = value.name.replace("'", "''")
+      }
+    }
     const layer = JSON.parse(specificParameters.view);
 
     try {
@@ -47,19 +53,18 @@ module.exports = carService = {
                 ${sqlSelectCount} `;
 
       const sqlFrom = ` FROM public.${table.name} AS ${specificParameters.tableAlias}`;
-
       const sqlGroupBy = layer && layer.codgroup && layer.codgroup === 'CAR' ? '' : ` GROUP BY property.gid `;
-
+      
       const column = layer.isPrimary ? 'de_car_validado_sema_gid' : 'a_carfocos_20_de_car_validado_sema_gid';
-
-
+      
+      
       filter.secondaryTables += specificParameters.isDynamic ?
-        '  , public.de_car_validado_sema AS property' :
-        '';
-
+      '  , public.de_car_validado_sema AS property' :
+      '';
+      
       filter.sqlWhere += specificParameters.isDynamic ?
-        ` AND property.gid = ${specificParameters.tableAlias}.de_car_validado_sema_gid ` : '';
-
+      ` AND property.gid = ${specificParameters.tableAlias}.de_car_validado_sema_gid ` : '';
+      
       if (filterReceived.themeSelected && specificParameters.isDynamic) {
         filter.sqlWhere += ' AND property.geocodigo = county.geocodigo '
       }

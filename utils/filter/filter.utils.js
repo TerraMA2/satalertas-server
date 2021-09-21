@@ -331,7 +331,6 @@ const filterUtils = {
   async getFilter(conn, table, params, view, columns) {
     const filter = params.filter && params.filter !== 'null' ? JSON.parse(params.filter) : {};
     params.sortColumn = params.sortField ? params.sortField : params.sortColumn;
-
     const sql = {
       sqlWhere: '',
       secondaryTables: '',
@@ -349,6 +348,12 @@ const filterUtils = {
       }
 
       if (filter) {
+        if(filter.hasOwnProperty('themeSelected') && filter.themeSelected.hasOwnProperty('value')) {
+                const { value } = filter.themeSelected;
+                if (value.hasOwnProperty('name')) {
+                  value.name = value.name.replace("'", "''")
+                }
+              }
         const filtered = filter.specificSearch && filter.specificSearch.isChecked ? 'specificSearch' : 'others';
 
         const cod = (view.codgroup === 'BURNED') ? 'focos' : 'others';
