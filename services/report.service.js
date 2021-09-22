@@ -1129,32 +1129,6 @@ saveReport = async (docName, newNumber, reportData, path) => {
     });
     return await Report.create(report.dataValues).then((report) => report.dataValues);
 }
-save = async (document) => {
-    const binaryData = new Buffer(document.base64, 'base64').toString('binary');
-    const code = await this.newNumber(document.type.trim());
-    const docName = `${ code.data[0].newnumber }_${ code.data[0].year }_${ code.data[0].type }.pdf`;
-
-    await fs.writeFile(
-        `${ document.path }/${ docName }`,
-        binaryData,
-        'binary',
-        (err) => {
-            if (err) {
-                throw new InternalServerError("Couldn't save the report");
-            }
-        },
-    );
-
-    const report = new Report({
-        name: docName.trim(),
-        code: parseInt(code.data[0].newnumber),
-        carCode: document['carCode'].trim(),
-        path: document['path'].trim(),
-        type: document['type'].trim(),
-    });
-
-    return await Report.create(report.dataValues).then((report) => report.dataValues);
-}
 getChartOptions = async (labels, data) => {
     return {
         type: 'line',
@@ -1416,7 +1390,7 @@ module.exports.get = async (id) => {
         });
     }
 }
-module.exports.newNumber = async (type) => {
+module.exports.generateNumber = async (type) => {
     const sql = ` SELECT '${ type.trim() }' AS type,
                EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
                LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS newnumber,
@@ -1457,10 +1431,8 @@ module.exports.generatePdf = async (reportData) => {
 
     const pathDoc = `documentos/`;
 
-    reportData['code'] = await this.newNumber(reportData.type.trim());
-    const docName = `${ reportData['code'].newnumber }_${ reportData[
-        'code'
-        ].data[0].year.toString() }_${ reportData['code'].type.trim() }.pdf`;
+    const code = await this.generateNumber(reportData.type.trim());
+    const docName = `${ code.newNumber }_${ code.year.toString() }_${ code.type.trim() }.pdf`;
 
     const printer = new PdfPrinter(fonts);
     const document = await getDocDefinitions(reportData);
@@ -1468,30 +1440,15 @@ module.exports.generatePdf = async (reportData) => {
     pdfDoc.pipe(await fs.createWriteStream(`${ pathDoc }/${ docName }`));
     pdfDoc.end();
 
+    reportData['code'] = code;
     const report = await saveReport(
         docName,
-        reportData['code'].newnumber,
+        reportData['code'].newNumber,
         reportData,
         pathDoc
     );
     report['document'] = document;
-
     return report;
-}
-module.exports.delete = async (id) => {
-    const report = await Report.findByPk(id);
-    await fs.unlink(
-        `${ report.dataValues.path }/${ report.dataValues.name }`,
-        (err) => {
-            if (err) {
-                throw new InternalServerError("Couldn't delete the report");
-            }
-        },
-    );
-    const countRowDeleted = await Report.destroy({where: {id}}).then((rowDeleted) => rowDeleted);
-    return countRowDeleted
-        ? `Arquivo ${ report.dataValues.name }, id = ${ id }, excluído com Sucesso!`
-        : `Arquivo ${ report.dataValues.name }, id = ${ id }, não encontrado!`;
 }
 module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     if (!carRegister || !date || !filter || !type) {

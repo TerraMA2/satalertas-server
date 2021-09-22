@@ -24,7 +24,7 @@
     "pdfmake": "=0.1.63",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
-    "quickchart-js": "^1.4.1",
+    "quickchart-js": "^1.4.2",
     "sequelize": "^6.6.5",
     "umzug": "^2.3.0",
     "winston": "^3.3.3",
