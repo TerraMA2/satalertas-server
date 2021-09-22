@@ -22,16 +22,6 @@ exports.getReportsByCARCod = async (req, res, next) => {
     }
 };
 
-exports.delete = async (req, res, next) => {
-    try {
-        const {id} = req.params;
-        const result = await reportService.delete(id);
-        res.json(response(httpStatus.SUCCESS, null, result));
-    } catch (e) {
-        next(e);
-    }
-};
-
 exports.generatePdf = async (req, res, next) => {
     try {
         const {reportData} = req.body.params
