@@ -8,5 +8,4 @@ router.get('/getReportCarData?:carRegister?:date?:filter?:type', reportControlle
 router.get('/getPointsAlerts?:carRegister?:date?:filter?:type', reportController.getPointsAlerts);
 router.get('/getReportsByCARCod?:carCode', reportController.getReportsByCARCod);
 router.get('/:id*?', reportController.get);
-router.delete('/:id*?', reportController.delete);
 module.exports = router;
