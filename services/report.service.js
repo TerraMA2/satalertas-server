@@ -1,4 +1,4 @@
-const FiringCharts = require('../charts/chart');
+const FiringCharts = require('../charts/firing-chart');
 const {Report, sequelize} = require('../models');
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
@@ -166,7 +166,7 @@ setDeterData = async (
         // -----------------------------------------------------------------------------------------------------------------
 
         // --- Deforestation alerts and areas ------------------------------------------------------------------------------
-        const sqlDeflorestationAlerts = `
+        const sqlDeforestationAlerts = `
       SELECT 
             carxdeter.${ views.DETER.children.CAR_X_DETER.tableName }_id AS id,
             SUBSTRING(ST_EXTENT(carxdeter.intersection_geom)::TEXT, 5, length(ST_EXTENT(carxdeter.intersection_geom)::TEXT) - 5) AS bbox,
@@ -190,8 +190,8 @@ setDeterData = async (
             AND st_intersects(bio.geom, carxdeter.intersection_geom)
       GROUP BY a_cardeter_31_id, bio.gid `;
 
-        propertyData['deflorestationAlerts'] = await sequelize.query(
-            sqlDeflorestationAlerts,
+        propertyData['deforestationAlerts'] = await sequelize.query(
+            sqlDeforestationAlerts,
             {type: QueryTypes.SELECT},
         );
         // -----------------------------------------------------------------------------------------------------------------
@@ -470,7 +470,7 @@ setProdesData = async (
             WHERE cp.${ columnCarEstadual } = '${ carRegister }'
             GROUP BY date
             ORDER BY date`;
-        const deflorestationHistory = await sequelize.query(
+        const deforestationHistory = await sequelize.query(
             sqlDeforestationHistory,
             {type: QueryTypes.SELECT},
         );
@@ -481,8 +481,8 @@ setProdesData = async (
             {type: QueryTypes.SELECT},
         );
 
-        propertyData['deflorestationHistory'] = getAnalysisYear(
-            deflorestationHistory,
+        propertyData['deforestationHistory'] = getAnalysisYear(
+            deforestationHistory,
             {
                 startYear: propertyData['period'][0]['start_year'],
                 endYear: propertyData['period'][0]['end_year'],
@@ -843,7 +843,7 @@ getContextChartNdvi = async (chartImages, startDate, endDate) => {
     }
     return ndviContext;
 };
-getDesflorestationHistoryAndChartNdviContext = async (
+getDeforestationHistoryAndChartNdviContext = async (
     docDefinitionContent,
     reportData,
 ) => {
@@ -854,7 +854,7 @@ getDesflorestationHistoryAndChartNdviContext = async (
     const content = [];
     for (let j = 0; j < docDefinitionContent.length; j++) {
         if (j === 73) {
-            reportData.desflorestationHistoryContext.forEach((desflorestationHistory) => content.push(desflorestationHistory));
+            reportData.deforestationHistoryContext.forEach((deforestationHistory) => content.push(deforestationHistory));
 
             const ndviContext = await getContextChartNdvi(
                 reportData['chartImages'],
@@ -869,14 +869,14 @@ getDesflorestationHistoryAndChartNdviContext = async (
 };
 getContentForDeflorestionAlertsContext = async (
     docDefinitionContent,
-    deflorestationAlertsContext,
+    deforestationAlertsContext,
 ) => {
     const content = [];
 
     for (let j = 0; j < docDefinitionContent.length; j++) {
         if (j === 65) {
-            deflorestationAlertsContext.forEach((deflorestationAlerts) => {
-                content.push(deflorestationAlerts);
+            deforestationAlertsContext.forEach((deforestationAlerts) => {
+                content.push(deforestationAlerts);
             });
         }
 
@@ -937,7 +937,7 @@ setDocDefinitions = async (reportData, docDefinition) => {
         reportData.property.comments
     );
     if (reportData.type === 'prodes') {
-        docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(
+        docDefinition.content = await getDeforestationHistoryAndChartNdviContext(
             docDefinition.content,
             reportData
         );
@@ -950,7 +950,7 @@ setDocDefinitions = async (reportData, docDefinition) => {
         // );
         docDefinition.content = await getContentForDeflorestionAlertsContext(
             docDefinition.content,
-            reportData.deflorestationAlertsContext
+            reportData.deforestationAlertsContext
         );
     }
 
@@ -1319,10 +1319,10 @@ module.exports.reportFormatDeter = (
         ] = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ views.STATIC.children.CAR_VALIDADO.workspace }:planet_latest_global_monthly,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view },${ views.STATIC.children.CAR_X_USOCON.workspace }:${ views.STATIC.children.CAR_X_USOCON.view },${ views.DETER.children.CAR_X_DETER.workspace }:${ views.DETER.children.CAR_X_DETER.view }&styles=,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }_Mod_style,${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_X_USOCON.view }_hatched_style,${ views.PRODES.children.CAR_X_PRODES.workspace }:${ views.PRODES.children.CAR_X_PRODES.view }_Mod_style&bbox=${ resultReportData.property.bboxplanet }&width=${ config.geoserver.imgWidth }&height=${ config.geoserver.imgHeight }&time=${ date[0] }/${ date[1] }&cql_filter=RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ cql_filter_deter }&srs=EPSG:${ config.geoserver.planetSRID }&format=image/png`;
 
     if (
-        resultReportData.property['deflorestationAlerts'] &&
-        resultReportData.property['deflorestationAlerts'].length > 0
+        resultReportData.property['deforestationAlerts'] &&
+        resultReportData.property['deforestationAlerts'].length > 0
     ) {
-        resultReportData.property['deflorestationAlerts'].forEach((alert) => {
+        resultReportData.property['deforestationAlerts'].forEach((alert) => {
             alert.bbox = Layer.setBoundingBox(alert.bbox);
             const bboxDeter = alert.bbox.split(',');
             const yearBefore = alert.year - 1;
