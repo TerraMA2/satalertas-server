@@ -5,7 +5,9 @@
   "scripts": {
     "start": "DEBUG=satalertas-server:development NODE_ENV=development nodemon --inspect ./bin/www",
     "dev": "DEBUG=satalertas-server:development NODE_ENV=development nodemon --inspect ./bin/www",
-    "prod": "NODE_ENV=production node ./bin/www"
+    "prod": "NODE_ENV=production node ./bin/www",
+    "sequelize-undo-migrations": "export NODE_ENV=db; npx sequelize db:migrate:undo:all",
+    "sequelize-undo-seeds": "export NODE_ENV=db; npx sequelize db:seed:undo:all"
   },
   "dependencies": {
     "axios": "^0.21.4",

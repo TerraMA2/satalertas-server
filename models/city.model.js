@@ -85,7 +85,6 @@ module.exports = (sequelize, DataTypes) => {
         schema: 'public',
         tableName: 'de_municipios_sema',
         underscored: true,
-        // underscoredAll: true,
         timestamps: false,
         freezeTableName: true,
         sequelize

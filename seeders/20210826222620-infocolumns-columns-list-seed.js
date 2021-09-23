@@ -6,11 +6,10 @@ sqlInsert += auxiliaryTables
   .map((table) => `('${table.tableName}', '${table.type}')`)
   .join(',\n\t');
 sqlInsert += '\nRETURNING table_name, id;';
-console.log("sqlInsert")
 
 module.exports = {
   up: async (queryInterface, _Sequelize) => {
-    const { query, QueryTypes } = queryInterface.sequelize;
+    const { QueryTypes } = queryInterface.sequelize;
     const options = { raw: true, type: QueryTypes.INSERT }
     await queryInterface.sequelize.query(sqlInsert, options)
       .then((result) => result[0])
