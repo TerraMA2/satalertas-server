@@ -1134,6 +1134,7 @@ getChartOptions = async (labels, data) => {
         type: 'line',
         data: {
             labels: labels,
+            lineColor: 'rgb(10,5,109)',
             datasets: [
                 {
                     label: 'NDVI',
@@ -1142,18 +1143,17 @@ getChartOptions = async (labels, data) => {
                     borderColor: 'rgba(5,177,0,1)',
                     showLine: true,
                     borderWidth: 2,
-                    pointRadius: 0
-                }
-            ]
+                    pointRadius: 0,
+                },
+            ],
         },
         options: {
             responsive: false,
-            animation: false,
             legend: {
-                display: false
+                display: false,
             }
         }
-    };
+    }
 }
 getDocDefinitions = async (reportData) => {
     const code = reportData['code']
@@ -1607,11 +1607,9 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
             'wav',
             '',
             'aqua',
-        ).then(response => {
-            const responseData = response.data;
-            const labels = responseData['listaDatas'];
-            const data = responseData['listaSerie'];
-            return getChartOptions(labels, data);
+        ).then(({data}) => {
+            const { listaDatas, listaSerie } = data;
+            return getChartOptions(listaDatas, listaSerie);
         });
     }
     return points;
