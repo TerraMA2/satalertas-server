@@ -26,6 +26,7 @@ getInformationVegRadam = function (vegRadam) {
 };
 
 module.exports = function (headerDocument, reportData, title) {
+    console.log('graficos ', reportData.chartImages)
     return {
         info: {
             title: 'Relatório PRODES',
@@ -1069,6 +1070,13 @@ module.exports = function (headerDocument, reportData, title) {
                 alignment: 'center',
                 fontSize: 9,
             },
+            // reportData.chartsImages.ndviChartImage1,
+            {
+                text: 'Teste Novos Gráficos',
+                margin: [30, 20, 30, 0],
+                style: 'listItem'
+            },
+            reportData.chartsImages.toDoido,
             {
                 text: '4 CONCLUSÃO',
                 margin: [30, 20, 30, 0],
