@@ -5,7 +5,6 @@ function chartBase64(params) {
   newChart.setConfig(params);
   newChart.setWidth(600)
   newChart.setHeight(250)
-  console.log('chartUrl: ');
   return newChart.toDataUrl();
 }
 

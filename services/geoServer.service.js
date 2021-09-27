@@ -191,3 +191,53 @@ module.exports.getGeoserverLegendURL = (layer) => {
         url: `${ config.geoserver.legendUrl }${ layer }`
     }
 }
+
+module.exports.getMapURL = async (params) => {
+    return this.getMap(params, true);
+}
+
+module.exports.getMapImage = async (params) => {
+    return this.getMap(params, false);
+}
+
+module.exports.getMapImageDETER = async (params, onlyUrl = false) => {
+    return this.getMap(params, onlyUrl, config.geoserver.baseHostDeter);
+}
+
+module.exports.getWMSInfo = async (params) => {
+    return this.getInfo(params, 'wms');
+}
+
+module.exports.getWFSInfo = async (params) => {
+    return this.getInfo(params, 'wfs');
+}
+
+module.exports.getInfo = async (params, type = 'wms') => {
+    params['geoserverBasePath'] = config.geoserver.basePath;
+    return axios({url: `${ config.geoserver.api }info/${type}`, method: 'get', params}).then(response => response.data.data);
+}
+
+module.exports.getMap = async (params, onlyUrl = false, baseURL = null) => {
+    if (onlyUrl) {
+        params['onlyUrl'] = '1';
+    }
+    params['baseURL'] = baseURL;
+    params['geoserverBasePath'] = config.geoserver.basePath;
+    return axios({url: `${ config.geoserver.api }image/map`, method: 'get', params}).then(response => response.data.data);
+}
+
+module.exports.getLegend = async (params, onlyUrl = false) => {
+    if (onlyUrl) {
+        params['onlyUrl'] = '1';
+    }
+    params['geoserverBasePath'] = config.geoserver.basePath;
+    return axios({url: `${ config.geoserver.api }image/legend`, method: 'get', params}).then(response => response.data.data);
+}
+
+module.exports.getLegendURL = async (params) => {
+    return this.getLegend(params, true);
+}
+
+module.exports.getLegendImage = async (params) => {
+    return this.getLegend(params, false);
+}

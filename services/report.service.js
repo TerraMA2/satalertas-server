@@ -14,6 +14,8 @@ const viewService = require('../services/view.service');
 const Layer = require('../utils/layer.utils');
 const REPORTTYPE = require('../enum/report-types');
 const ProdesChart = require('../charts/prodes-chart');
+const geoserverService = require('./geoServer.service')
+const gsLayers = require('../enum/geoserver-layers');
 
 getFilterClassSearch = (sql, filter, view, tableOwner) => {
   const classSearch = filter && filter.classSearch ? filter.classSearch : null;
@@ -1181,18 +1183,14 @@ firingChartsReport = async (reportData) => {
     alignment: 'center',
   };
 };
-prodesChartsReport = async (reportData, options, idx) => {
-  const cht = {
+prodesChartsReport = async (options, idx) => {
+  const image = await ProdesChart.chartBase64(options);
+  return {
     alignment: 'center',
     fit: [500, 500],
     // margin: [10, 0],
-    // image: await ProdesChart.chartBase64(options),
+    image,
   };
-  await ProdesChart.chartBase64(options).then(b64 => {
-    console.log("cht: ")
-    cht['image'] = b64
-    reportData.chartImages.push({ndviChartImage: cht, geoserverImage: cht});
-  })
 };
 
 setCharts = async (reportData) => {
@@ -1204,26 +1202,23 @@ setCharts = async (reportData) => {
     await firingChartsReport(reportData);
   }
   if (charts && reportData.type === REPORTTYPE.PRODES) {
-    charts['toDoido'] = { text: 'é prodes'}
+    charts['toDoido'] = { text: 'é prodes' };
     const { property, date } = reportData;
-    await getPointsAlerts2(
+    const points = await getPointsAlerts(
       property.gid,
       date,
       REPORTTYPE.PRODES,
-    ).then(points => {
-      let idx = 0
-      for (point of points) {
-        console.log("meleeeecaaaaaaa")
-        const { options } = point;
-        prodesChartsReport(reportData, options, idx).then(() => idx++);
-      }
-    });
-    // console.log('usar esse ponto: ', points[0])
-    // await points.forEach( async (point, idx) => {
-    //   console.log("meleeeecaaaaaaa")
-    //   const { options } = point;
-    //   await prodesChartsReport(reportData, options, idx);
-    // });
+    );
+    let idx = 0;
+    for (const point of points) {
+      const { options, url } = point;
+      const chart = await prodesChartsReport(options, idx);
+      reportData.chartImages.push({
+        ndviChartImage: chart,
+        geoserverImage: getImageObject(url, [200, 200], [10, 70], 'center'),
+      });
+      idx++;
+    }
   }
 };
 saveReport = async (docName, newNumber, reportData, path) => {
@@ -1240,32 +1235,6 @@ saveReport = async (docName, newNumber, reportData, path) => {
   return await Report.create(report.dataValues).then(
     (report) => report.dataValues,
   );
-};
-getChartOptions = async (labels, data) => {
-  return {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'NDVI',
-          data: data,
-          backgroundColor: 'rgba(17,17,177,0)',
-          borderColor: 'rgba(5,177,0,1)',
-          showLine: true,
-          borderWidth: 2,
-          pointRadius: 0,
-        },
-      ],
-    },
-    options: {
-      responsive: false,
-      animation: false,
-      legend: {
-        display: false,
-      },
-    },
-  };
 };
 getDocDefinitions = async (reportData) => {
   const code = reportData['code']
@@ -1710,112 +1679,38 @@ getPointsAlerts = async (carRegister, date, type) => {
 
   const currentYear = new Date().getFullYear();
   for (const point of points) {
-    point['url'] = `${
-      config.geoserver.baseUrl
-    }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_119:planet_latest_global_monthly,${
-      groupViews.STATIC.children.CAR_VALIDADO.workspace
-    }:${groupViews.STATIC.children.CAR_VALIDADO.view},${
-      groupViews.STATIC.children.CAR_X_USOCON.workspace
-    }:${groupViews.STATIC.children.CAR_X_USOCON.view},${
-      groupViews[type.toUpperCase()].children[groupType[type]].workspace
-    }:${
-      groupViews[type.toUpperCase()].children[groupType[type]].view
-    }&styles=,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${
-      groupViews.STATIC.children.CAR_VALIDADO.view
-    }_yellow_style,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${
-      groupViews.STATIC.children.CAR_X_USOCON.view
-    }_hatched_style,${
-      groupViews[type.toUpperCase()].children[groupType[type]].workspace
-    }:${
-      groupViews[type.toUpperCase()].children[groupType[type]].view
-    }_red_style&bbox=${bbox}&width=256&height=256&time=${
-      point.startyear
-    }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
-      groupViews[type.toUpperCase()].children[groupType[type]].tableName
-    }_id=${point.a_carprodes_1_id}&srs=EPSG:${planetSRID}&format=image/png`;
-
-    point['options'] = await satVegService
-      .get({ long: point.long, lat: point.lat }, 'ndvi', 3, 'wav', '', 'aqua')
-      .then((response) => {
-        const responseData = response.data;
-        const labels = responseData['listaDatas'];
-        const data = responseData['listaSerie'];
-        return getChartOptions(labels, data);
-      });
-    // console.log('grafico ponto: ', point.options)
-  }
-  return points;
-};
-getPointsAlerts2 = async (carRegister, date, type) => {
-  console.log('getPointsAlerts2');
-  const { planetSRID } = config.geoserver;
-  const groupViews = await viewService.getSidebarLayers(true);
-
-  const carColumn = 'gid';
-  const carColumnSemas = 'de_car_validado_sema_gid';
-
-  const groupType = {
-    prodes: 'CAR_X_PRODES',
-    deter: 'CAR_X_DETER',
-    queimada: '',
-  };
-
-  const sql = `
-        SELECT CAST(main_table.monitored_id AS integer),
-               main_table.a_carprodes_1_id,
-               ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
-               ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
-               extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
-               main_table.execution_date
-        FROM public.${
+    const gsConfig = {
+      bbox: `${bbox}`,
+      cql_filter: `RED_BAND>0;
+        rid='${carRegister}';
+        gid_car='${carRegister}';
+        ${
           groupViews[type.toUpperCase()].children[groupType[type]].tableName
-        } AS main_table
-        WHERE main_table.${carColumnSemas} = '${carRegister}'
-          AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
-        ORDER BY main_table.calculated_area_ha DESC
-        LIMIT 5
-    `;
-
-  const sqlBbox = `SELECT
-        substring(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT) - 5) AS bbox
-      FROM de_car_validado_sema
-      WHERE ${carColumn} = ${carRegister}
-      GROUP BY gid`;
-  const bboxOptions = {
-    type: QueryTypes.SELECT,
-    plain: true,
-  };
-
-  const carBbox = await sequelize.query(sqlBbox, bboxOptions);
-  const points = await sequelize.query(sql, { type: QueryTypes.SELECT });
-
-  let bbox = Layer.setBoundingBox(carBbox.bbox);
-
-  const currentYear = new Date().getFullYear();
-  for (const point of points) {
-    // point['url'] = `${
-    //   config.geoserver.baseUrl
-    // }/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_119:planet_latest_global_monthly,${
-    //   groupViews.STATIC.children.CAR_VALIDADO.workspace
-    // }:${groupViews.STATIC.children.CAR_VALIDADO.view},${
-    //   groupViews.STATIC.children.CAR_X_USOCON.workspace
-    // }:${groupViews.STATIC.children.CAR_X_USOCON.view},${
-    //   groupViews[type.toUpperCase()].children[groupType[type]].workspace
-    // }:${
-    //   groupViews[type.toUpperCase()].children[groupType[type]].view
-    // }&styles=,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${
-    //   groupViews.STATIC.children.CAR_VALIDADO.view
-    // }_yellow_style,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${
-    //   groupViews.STATIC.children.CAR_X_USOCON.view
-    // }_hatched_style,${
-    //   groupViews[type.toUpperCase()].children[groupType[type]].workspace
-    // }:${
-    //   groupViews[type.toUpperCase()].children[groupType[type]].view
-    // }_red_style&bbox=${bbox}&width=256&height=256&time=${
-    //   point.startyear
-    // }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
-    //   groupViews[type.toUpperCase()].children[groupType[type]].tableName
-    // }_id=${point.a_carprodes_1_id}&srs=EPSG:${planetSRID}&format=image/png`;
+        }_id=${point.a_carprodes_1_id}`,
+      format: 'image/png',
+      height: config.geoserver.imgHeight,
+      layers: `${gsLayers.image.PLANET_LATEST},${
+        groupViews.STATIC.children.CAR_VALIDADO.workspace
+      }:${groupViews.STATIC.children.CAR_VALIDADO.view},${
+        groupViews.STATIC.children.CAR_X_USOCON.workspace
+      }:${groupViews.STATIC.children.CAR_X_USOCON.view},${
+        groupViews[type.toUpperCase()].children[groupType[type]].workspace
+      }:${groupViews[type.toUpperCase()].children[groupType[type]].view}`,
+      srs: `EPSG:${planetSRID}`,
+      styles: `,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${
+        groupViews.STATIC.children.CAR_VALIDADO.view
+      }_yellow_style,${groupViews.STATIC.children.CAR_VALIDADO.workspace}:${
+        groupViews.STATIC.children.CAR_X_USOCON.view
+      }_hatched_style,${
+        groupViews[type.toUpperCase()].children[groupType[type]].workspace
+      }:${
+        groupViews[type.toUpperCase()].children[groupType[type]].view
+      }_red_style`,
+      time: `${ point.startyear }/${currentYear}`,
+      version: '1.1.0',
+      width: config.geoserver.imgWidth,
+    };
+    point['url'] = await geoserverService.getMapImage(gsConfig);
 
     point['options'] = await satVegService
       .get({ long: point.long, lat: point.lat }, 'ndvi', 3, 'wav', '', 'aqua')
@@ -1823,11 +1718,9 @@ getPointsAlerts2 = async (carRegister, date, type) => {
         const responseData = response.data;
         const labels = responseData['listaDatas'];
         const data = responseData['listaSerie'];
-        return getChartOptions(labels, data);
+        return ProdesChart.getChartOptions(labels, data);
       });
-    console.log('grafico ponto: ', point.options)
   }
-  console.log("saindo do getPointsAlerts2")
   return points;
 };
 module.exports.getPointsAlerts = getPointsAlerts;
