@@ -28,7 +28,7 @@ module.exports.configGeoserver = async () => {
     }).then(res => res.data);
 
     const dataStoresResponse = await axios({
-        url: "/dataStore/createAll",
+        url: "/datastore/createAll",
         method: 'post',
         baseURL: api,
         data: dataStoresConfig,
@@ -58,7 +58,7 @@ module.exports.configGeoserver = async () => {
     }).then(res => res.data);
 
     const layerGroupsResponse = axios({
-        url: "/layerGroup/createAll",
+        url: "/layergroup/createAll",
         method: 'post',
         baseURL: api,
         data: layerGroupsConfig,

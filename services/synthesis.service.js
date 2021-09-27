@@ -143,33 +143,6 @@ getCarData = async (
     });
 };
 
-getChartOptions = async (labels, data) => {
-    return {
-        type: 'line',
-        data: {
-            labels: labels,
-            lineColor: 'rgb(10,5,109)',
-            datasets: [
-                {
-                    label: 'NDVI',
-                    data: data,
-                    backgroundColor: 'rgba(17,17,177,0)',
-                    borderColor: 'rgba(5,177,0,1)',
-                    showLine: true,
-                    borderWidth: 2,
-                    pointRadius: 0,
-                },
-            ],
-        },
-        options: {
-            responsive: false,
-            legend: {
-                display: false,
-            }
-        }
-    }
-}
-
 module.exports.get = async (carRegister, date) => {
     if (!carRegister || !date) {
         throw new BadRequestError('Error occurred while getting the synthesis');
