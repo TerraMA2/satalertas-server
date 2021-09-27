@@ -1202,7 +1202,6 @@ setCharts = async (reportData) => {
     await firingChartsReport(reportData);
   }
   if (charts && reportData.type === REPORTTYPE.PRODES) {
-    charts['toDoido'] = { text: 'é prodes' };
     const { property, date } = reportData;
     const points = await getPointsAlerts(
       property.gid,
@@ -1236,6 +1235,7 @@ saveReport = async (docName, newNumber, reportData, path) => {
     (report) => report.dataValues,
   );
 };
+
 getDocDefinitions = async (reportData) => {
   const code = reportData['code']
     ? reportData['code'].code
