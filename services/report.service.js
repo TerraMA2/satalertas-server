@@ -881,7 +881,8 @@ getDeforestationHistoryAndChartNdviContext = async (
   docDefinitionContent.splice(paragraphIndex, 1, chartAndImages)
   return docDefinitionContent;
 };
-getContentForDeflorestionAlertsContext = async (
+
+getContentForDeforestionAlertsContext = async (
   docDefinitionContent,
   deforestationAlertsContext,
 ) => {
@@ -938,7 +939,7 @@ setDocDefinitions = async (reportData, docDefinition) => {
     );
   }
   if (reportData.type === 'deter') {
-    docDefinition.content = await getContentForDeflorestionAlertsContext(
+    docDefinition.content = await getContentForDeforestionAlertsContext(
       docDefinition.content,
       reportData.deforestationAlertsContext,
     );
