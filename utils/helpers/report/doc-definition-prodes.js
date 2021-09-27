@@ -1069,7 +1069,7 @@ module.exports = function (headerDocument, reportData, title) {
                 fontSize: 9,
             },
             {
-                text: 'graficosNDVI',
+                text: 'NDVIGraphs',
             },
             {
                 text: '4 CONCLUSÃO',
