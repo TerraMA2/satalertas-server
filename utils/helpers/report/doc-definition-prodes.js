@@ -813,7 +813,6 @@ module.exports = function (headerDocument, reportData, title) {
                     ', conforme desmatamento explicitado ' +
                     'no Quadro 1 (quantificação e descrição das áreas desmatadas que ' +
                     'foram identificadas com o cruzamento dos dados descritos no histórico desse relatório) ' +
-                    // 'e no Anexo 2 (relatório do histórico de imagens de satélite e desmatamentos e queimadas no imóvel rural). ' +
                     'e no histórico de imagens de satélite e desmatamentos no imóvel rural. ' +
                     'O proprietário/posseiro do imóvel rural foi identificado com base nos dados do SIMCAR / INCRA.',
                 margin: [30, 0, 30, 15],
@@ -1068,6 +1067,9 @@ module.exports = function (headerDocument, reportData, title) {
                 margin: [30, 0, 30, 0],
                 alignment: 'center',
                 fontSize: 9,
+            },
+            {
+                text: 'NDVIGraphs',
             },
             {
                 text: '4 CONCLUSÃO',

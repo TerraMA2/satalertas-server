@@ -111,32 +111,6 @@ module.exports.getInfocolumnsByViewId = async (viewId) => {
 }
 
 module.exports.getInfoColumns = async (viewId) => {
-    //   const SQL = `SELECT
-    //   -- dsf.key,
-    //   dsf.value
-    // FROM terrama2.views
-    // JOIN terrama2.data_sets AS dst ON (views.data_series_id = dst.data_series_id)
-    // JOIN terrama2.data_set_formats AS dsf ON (dst.id = dsf.data_set_id)
-    // WHERE views.id = $viewId AND (-- dsf.key = 'table_name' OR
-    //                                 dsf.key = 'attributes')
-    // ORDER BY views.id;`;
-    //   let infoColumns = {};
-    // if (viewId) {
-    //   const result = await models.sequelize.query(SQL, {
-    //     bind: { viewId },
-    //     type: QueryTypes.SELECT,
-    //   });
-    //   const dumpResult = JSON.parse(result[0].value);
-
-    //   dumpResult.forEach((element) => {
-    //     const { name, alias, visible: show } = element;
-    //     infoColumns[name] = {
-    //       show,
-    //       alias,
-    //     };
-    //   });
-    // } else {
-    // console.log('to no info-columns.service View.ID: ', viewId);
     const groupViews = await viewService.getSidebarLayers(true);
 
     const infoColumns = {
