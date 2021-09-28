@@ -102,7 +102,7 @@ module.exports = function (headerDocument, reportData, title) {
                 text: [
                     {
                         text: (
-                            ` com o uso de Sistema de Informações Geográficas no imóvel rural ${ reportData.property.name } (Figura 1) com área igual a ${ reportData.property.area } ha, localizado no município de ${ reportData.property.city }-MT, de coordenada central longitude = ${ reportData.property.long } e latitude = ${ reportData.property.lat }, pertencente a ${ reportData.property.owner }, conforme informações declaradas no ${ reportData.property.register ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ' + reportData.property.register : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR ' + reportData.property.federalregister }`
+                            ` com o uso de Sistema de Informações Geográficas no imóvel rural ${ reportData.property.name } (Figura 1) com área igual a ${ reportData.property.area } ha, localizado no município de ${ reportData.property.city }-MT, de coordenada central longitude = ${ reportData.property.long } e latitude = ${ reportData.property.lat }, pertencente a ${ reportData.property.owner }, conforme informações declaradas no ${ reportData.property.stateRegister ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ' + reportData.property.stateRegister : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR ' + reportData.property.federalregister }`
                         ),
                     },
                     {

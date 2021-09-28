@@ -29,8 +29,8 @@ function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
 }
 
 module.exports = function (headerDocument, reportData, title) {
-    const registerToUse = reportData.property.register
-        ? reportData.property.register
+    const registerToUse = reportData.property.stateRegister
+        ? reportData.property.stateRegister
         : reportData.property.federalregister;
     return {
         info: {
