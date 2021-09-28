@@ -7,7 +7,7 @@ const BadRequestError = require('../errors/bad-request.error');
 const viewService = require("../services/view.service");
 const Layer = require("../utils/layer.utils");
 
-getSynthesisHistory = (options) => {
+getSynthesisHistory = async (options) => {
     let {
         data,
         period,
@@ -44,19 +44,30 @@ getSynthesisHistory = (options) => {
             filteredCqlFilter = filteredCqlFilter.replace(/{cityName}/g, propertyData.city);
         }
         const time = `${ year }/P1Y`
-        const url = geoServerService.getGeoserverURL(filteredLayers, bbox, time, filteredCqlFilter, filteredStyles);
+        const image = await geoServerService.getMapImage({
+            layers: filteredLayers,
+            bbox,
+            time,
+            cql_filter: filteredCqlFilter,
+            styles: filteredStyles,
+            version: '1.1.0',
+            srs: `EPSG:${ config.geoserver.defaultSRID }`,
+            format: 'image/png',
+            width: 400,
+            height: 400
+        });
         const numberFormat = new Intl.NumberFormat('pt-BR', {
             style: 'unit',
             unit: 'hectare',
             minimumFractionDigits: 4,
             maximumFractionDigits: 4
         });
-        const analysisData = data && data.length > 0 ? data.find((analysis) => analysis.date === year) : null;
+        const analysisData = data && data.length > 0 ? data.find(analysis => analysis.year === year) : null;
         const value = analysisData ? numberFormat.format(analysisData.value) : numberFormat.format(0);
 
         analysisHistory.push({
             title: `${ title } ${ year }`,
-            image: url,
+            image,
             description: `${ descriptionPrefix } ${ year }: ${ value } ${ descriptionSuffix }`,
             year,
             value: value.split(' ').splice(0, 1).join('')
@@ -65,7 +76,7 @@ getSynthesisHistory = (options) => {
     return analysisHistory;
 };
 
-getSynthesisCard = (options) => {
+getSynthesisCard = async (options) => {
     let {
         data,
         layers,
@@ -94,489 +105,533 @@ getSynthesisCard = (options) => {
         minimumFractionDigits: 4,
         maximumFractionDigits: 4
     });
-    const url = geoServerService.getGeoserverURL(layers, bbox, time, cqlFilter, style);
+    const image = await geoServerService.getMapImage({
+        layers,
+        bbox,
+        time,
+        cql_filter: cqlFilter,
+        styles: style,
+        version: '1.1.0',
+        srs: `EPSG:${ config.geoserver.defaultSRID }`,
+        format: 'image/png',
+        width: 400,
+        height: 400
+    });
     const area = data ? numberFormat.format(data.area) : numberFormat.format(0);
     const description = data ? `${ descriptionPrefix } ${ area } ${ descriptionSuffix }` : '';
     return {
         title,
-        image: url,
+        image,
         description
     }
 };
 
 getCarData = async (
     carTableName,
-    municipiosTableName,
-    columnCarEstadualSemas,
-    columnCarFederalSemas,
-    columnAreaHaCar,
-    carRegister,
+    cityTableName,
+    sateCarColumn,
+    federalCarColumn,
+    carAreaColumn,
+    carGId
 ) => {
     const sql = `
       SELECT
               car.gid AS gid,
-              car.${ columnCarEstadualSemas } AS register,
-              car.${ columnCarFederalSemas } AS federalregister,
-              ROUND(COALESCE(car.${ columnAreaHaCar }, 0), 4) AS area,
-              ROUND(COALESCE((car.${ columnAreaHaCar }/100), 0), 4) AS area_km,
+              car.${ sateCarColumn } AS state_register,
+              car.${ federalCarColumn } AS federal_register,
+              ROUND(COALESCE(car.${ carAreaColumn }, 0), 4) AS area,
+              ROUND(COALESCE((car.${ carAreaColumn }/100), 0), 4) AS area_km,
               car.nome_da_p1 AS name,
               car.municipio1 AS city,
               car.cpfcnpj AS cpf,
               car.nomepropri AS owner,
-              munic.comarca AS county,
-              substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
-              substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
-              substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${ config.geoserver.planetSRID }))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${ config.geoserver.planetSRID }))::TEXT) - 5) AS bboxplanet,
-              ST_Y(ST_Centroid(car.geom)) AS "lat",
-              ST_X(ST_Centroid(car.geom)) AS "long"
+              substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS city_bbox,
+              substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS state_bbox,
+              substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
       FROM public.${ carTableName } AS car
-      INNER JOIN public.${ municipiosTableName } munic ON
-              car.gid = '${ carRegister }'
+      INNER JOIN public.${ cityTableName } munic ON
+              car.gid = '${ carGId }'
               AND munic.municipio = car.municipio1
       INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
-      GROUP BY car.${ columnCarEstadualSemas }, car.${ columnCarFederalSemas }, car.${ columnAreaHaCar }, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
+      GROUP BY car.${ sateCarColumn }, car.${ federalCarColumn }, car.${ carAreaColumn }, car.gid, car.nome_da_p1, car.municipio1, car.geom, car.cpfcnpj, car.nomepropri
     `;
     return await sequelize.query(sql, {
         type: QueryTypes.SELECT,
-        plain: true
+        plain: true,
+        fieldMap: {
+            state_register: 'stateRegister',
+            federal_register: 'federalRegister',
+            area_km: 'areaKm',
+            city_bbox: 'cityBBox',
+            state_bbox: 'stateBBox'
+        }
     });
 };
 
-module.exports.get = async (carRegister, date) => {
-    if (!carRegister || !date) {
-        throw new BadRequestError('Error occurred while getting the synthesis');
+module.exports.getPropertyData = async (carGId) => {
+    if (!carGId) {
+        throw new BadRequestError('CAR not found');
     }
-
+    const groupViews = await viewService.getSidebarLayers(true);
+    const carTableName = groupViews.STATIC.children.CAR_VALIDADO.tableName;
+    const cityTableName = groupViews.STATIC.children.MUNICIPIOS.tableName;
+    const sateCarColumn = 'numero_do1';
+    const federalCarColumn = 'numero_do2';
+    const carAreaColumn = 'area_ha_';
+    const propertyData = await getCarData(
+        carTableName,
+        cityTableName,
+        sateCarColumn,
+        federalCarColumn,
+        carAreaColumn,
+        carGId
+    );
+    propertyData['bbox'] = Layer.setBoundingBox(propertyData['bbox']);
+    propertyData['cityBBox'] = Layer.setBoundingBox(propertyData['cityBBox']);
+    propertyData['stateBBox'] = Layer.setBoundingBox(propertyData['stateBBox']);
+    return propertyData;
+}
+module.exports.getVisions = async (carGId, date) => {
     const [startDate, endDate] = date;
     const geoserverTime = `${ startDate }/${ endDate }`;
     const formattedFilterDate = `${ new Date(startDate).toLocaleDateString('pt-BR') } - ${ new Date(endDate).toLocaleDateString('pt-BR') }`;
 
+    const propertyData = await this.getPropertyData(carGId);
+
+    const cardsConfig = synthesisConfig.cards;
+    const visionsConfig = cardsConfig.visions;
+
+    const stateVisionCard = await getSynthesisCard({
+        data: null,
+        layers: visionsConfig.state.layers,
+        bbox: propertyData.stateBBox,
+        cqlFilter: visionsConfig.state.cqlFilter,
+        time: geoserverTime,
+        title: visionsConfig.state.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+
+    const cityVisionCard = await getSynthesisCard({
+        data: null,
+        layers: visionsConfig.city.layers,
+        bbox: propertyData.cityBBox,
+        cqlFilter: visionsConfig.city.cqlFilter,
+        time: geoserverTime,
+        title: visionsConfig.city.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+    const deterAlertVisionCard = await getSynthesisCard({
+        data: null,
+        layers: visionsConfig.deterAlert.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: visionsConfig.deterAlert.cqlFilter,
+        time: geoserverTime,
+        date: formattedFilterDate,
+        title: visionsConfig.deterAlert.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+    const ambientalDegradationVisionCard = await getSynthesisCard({
+        data: null,
+        layers: visionsConfig.ambientalDegradation.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: visionsConfig.ambientalDegradation.cqlFilter,
+        time: geoserverTime,
+        date: formattedFilterDate,
+        title: visionsConfig.ambientalDegradation.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+    const deforestationVisionCard = await getSynthesisCard({
+        data: null,
+        layers: visionsConfig.deforestation.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: visionsConfig.deforestation.cqlFilter,
+        time: geoserverTime,
+        date: formattedFilterDate,
+        title: visionsConfig.deforestation.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+    const burnedAreaVisionCard = await getSynthesisCard({
+        data: null,
+        layers: visionsConfig.burnedArea.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: visionsConfig.burnedArea.cqlFilter,
+        time: geoserverTime,
+        date: formattedFilterDate,
+        title: visionsConfig.burnedArea.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+
+    return [
+        stateVisionCard,
+        cityVisionCard,
+        deterAlertVisionCard,
+        ambientalDegradationVisionCard,
+        deforestationVisionCard,
+        burnedAreaVisionCard
+    ];
+}
+module.exports.getLegends = async () => {
+    const cardsConfig = synthesisConfig.cards;
+    const legendsConfig = cardsConfig.legends;
+    const municipalBoundariesLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.municipalBoundaries.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const nativeVegetationAreaLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.nativeVegetationArea.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const indigenousLandLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.indigenousLand.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const appAreaLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.appArea.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const consolidatedUseAreaLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.consolidatedUseArea.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const carLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.car.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const anthropizedUseLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.anthropizedUse.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const carDeterLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.carDeter.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const legalreserveLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.legalreserve.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+    const carProdesLegend = await geoServerService.getLegendImage({
+        layer: legendsConfig.carProdes.layer,
+        format: 'image/png',
+        version: '1.0.0',
+        width: 20,
+        height: 20,
+        legend_options: 'forceLabels:on'
+    });
+
+    return [
+        municipalBoundariesLegend,
+        nativeVegetationAreaLegend,
+        indigenousLandLegend,
+        appAreaLegend,
+        consolidatedUseAreaLegend,
+        carLegend,
+        anthropizedUseLegend,
+        carDeterLegend,
+        legalreserveLegend,
+        carProdesLegend
+    ];
+}
+module.exports.getDetailedVisions = async (carGId, date) => {
+    const calculatedAreaColumn = 'calculated_area_ha';
+    const executionDateColumn = 'execution_date';
+    const carGIDColumn = `de_car_validado_sema_gid`;
+
+    const [startDate, endDate] = date;
+    const geoserverTime = `${ startDate }/${ endDate }`;
+
     const groupViews = await viewService.getSidebarLayers(true);
 
-    const columnCarEstadualSemas = 'numero_do1';
-    const columnCarFederalSemas = 'numero_do2';
-    const columnAreaHaCar = 'area_ha_';
-    const columnCalculatedAreaHa = 'calculated_area_ha';
-    const columnExecutionDate = 'execution_date';
+    const propertyData = await this.getPropertyData(carGId)
 
-    const columnCar = `de_car_validado_sema_gid`;
+    const cardsConfig = synthesisConfig.cards;
+    const detailedVisionsConfig = cardsConfig.detailedVisions;
+    const titleDetailedVisions = detailedVisionsConfig.title
 
-    const tableName = groupViews.STATIC.children.CAR_VALIDADO.tableName;
+    const dateSql = ` AND ${ executionDateColumn }::date >= '${ startDate }' AND ${ executionDateColumn }::date <= '${ endDate }'`;
 
-    const propertyData = await getCarData(
-        tableName,
-        groupViews.STATIC.children.MUNICIPIOS.tableName,
-        columnCarEstadualSemas,
-        columnCarFederalSemas,
-        columnAreaHaCar,
-        carRegister,
-    );
-
-    const bbox = Layer.setBoundingBox(propertyData['bbox']);
-    const cityBBox = Layer.setBoundingBox(propertyData['citybbox']);
-    const stateBBox = Layer.setBoundingBox(propertyData['statebbox']);
-
-    const burnedAreasHistorySql = ` SELECT
-                  extract(year from date_trunc('year', areaq.${ columnExecutionDate })) AS date,
-                  COALESCE(SUM(CAST(areaq.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS value
-            FROM public.${ groupViews.BURNED_AREA.children.CAR_X_AREA_Q.tableName } areaq
-            WHERE areaq.${ columnCar } = '${ carRegister }'
-            GROUP BY date
-            ORDER BY date`;
-    const burnedAreaHistory = await sequelize.query(
-        burnedAreasHistorySql,
-        {type: QueryTypes.SELECT}
-    );
-
-    const prodesHistorySql = ` SELECT
-                  extract(year from date_trunc('year', cp.${ columnExecutionDate })) AS date,
-                  COALESCE(SUM(CAST(cp.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS value
-            FROM public.${ groupViews.PRODES.children.CAR_X_PRODES.tableName } cp
-            WHERE cp.${ columnCar } = '${ carRegister }'
-            GROUP BY date
-            ORDER BY date`;
-    const prodesHistory = await sequelize.query(
-        prodesHistorySql,
-        {type: QueryTypes.SELECT}
-    );
-
-    const deterHistorySql = ` SELECT
-                  extract(year from date_trunc('year', cd.${ columnExecutionDate })) AS date,
-                  COALESCE(SUM(CAST(cd.${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS value
-            FROM public.${ groupViews.DETER.children.CAR_X_DETER.tableName } cd
-            WHERE cd.${ columnCar } = '${ carRegister }'
-            GROUP BY date
-            ORDER BY date`;
-    const deterHistory = await sequelize.query(
-        deterHistorySql,
-        {type: QueryTypes.SELECT},
-    );
-
-    const fireSpotHistorySql = ` SELECT
-                  extract(year from date_trunc('year', cf.${ columnExecutionDate })) AS date,
-                  COUNT(cf.*) AS value
-            FROM public.${ groupViews.BURNED.children.CAR_X_FOCOS.tableName } cf
-            WHERE cf.${ columnCar } = '${ carRegister }'
-            GROUP BY date
-            ORDER BY date`;
-    const fireSpotHistory = await sequelize.query(
-        fireSpotHistorySql,
-        {type: QueryTypes.SELECT},
-    );
-
-    const dateSql = ` AND ${ columnExecutionDate }::date >= '${ startDate }' AND ${ columnExecutionDate }::date <= '${ endDate }'`;
-
-    const indigenousLandSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_TI.tableName } where ${ groupViews.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const conservationUnitSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_UC.tableName } where ${ groupViews.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const legalReserveSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_RESERVA.tableName } where ${ groupViews.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const aPPSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_APP.tableName } where ${ groupViews.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const anthropizedUseSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_USOANT.tableName } where ${ groupViews.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
-    const nativeVegetationSql = `SELECT COALESCE(SUM(CAST(${ columnCalculatedAreaHa }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_VEGNAT.tableName } where ${ groupViews.PRODES.tableOwner }_${ columnCar } = '${ carRegister }' ${ dateSql }`;
+    const indigenousLandSql = `SELECT COALESCE(SUM(CAST(${ calculatedAreaColumn }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_TI.tableName } where ${ groupViews.PRODES.tableOwner }_${ carGIDColumn } = '${ carGId }' ${ dateSql }`;
+    const conservationUnitSql = `SELECT COALESCE(SUM(CAST(${ calculatedAreaColumn }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_UC.tableName } where ${ groupViews.PRODES.tableOwner }_${ carGIDColumn } = '${ carGId }' ${ dateSql }`;
+    const legalReserveSql = `SELECT COALESCE(SUM(CAST(${ calculatedAreaColumn }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_RESERVA.tableName } where ${ groupViews.PRODES.tableOwner }_${ carGIDColumn } = '${ carGId }' ${ dateSql }`;
+    const aPPSql = `SELECT COALESCE(SUM(CAST(${ calculatedAreaColumn }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_APP.tableName } where ${ groupViews.PRODES.tableOwner }_${ carGIDColumn } = '${ carGId }' ${ dateSql }`;
+    const anthropizedUseSql = `SELECT COALESCE(SUM(CAST(${ calculatedAreaColumn }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_USOANT.tableName } where ${ groupViews.PRODES.tableOwner }_${ carGIDColumn } = '${ carGId }' ${ dateSql }`;
+    const nativeVegetationSql = `SELECT COALESCE(SUM(CAST(${ calculatedAreaColumn }  AS DECIMAL)), 0) AS area FROM public.${ groupViews.PRODES.children.CAR_PRODES_X_VEGNAT.tableName } where ${ groupViews.PRODES.tableOwner }_${ carGIDColumn } = '${ carGId }' ${ dateSql }`;
 
     let indigenousLand = await sequelize.query(
         indigenousLandSql,
-        {type: QueryTypes.SELECT},
+        {
+            type: QueryTypes.SELECT,
+            plain: true
+        }
     );
-    indigenousLand = indigenousLand[0];
     let conservationUnit = await sequelize.query(
         conservationUnitSql,
-        {type: QueryTypes.SELECT},
+        {
+            type: QueryTypes.SELECT,
+            plain: true
+        }
     );
-    conservationUnit = conservationUnit[0];
     let legalReserve = await sequelize.query(
         legalReserveSql,
-        {type: QueryTypes.SELECT},
+        {
+            type: QueryTypes.SELECT,
+            plain: true
+        }
     );
-    legalReserve = legalReserve[0];
     let app = await sequelize.query(
         aPPSql,
-        {type: QueryTypes.SELECT}
+        {
+            type: QueryTypes.SELECT,
+            plain: true
+        }
     );
-    app = app[0];
     let anthropizedUse = await sequelize.query(
         anthropizedUseSql,
-        {type: QueryTypes.SELECT},
+        {
+            type: QueryTypes.SELECT,
+            plain: true
+        }
     );
-    anthropizedUse = anthropizedUse[0];
     let nativeVegetation = await sequelize.query(
         nativeVegetationSql,
-        {type: QueryTypes.SELECT},
+        {
+            type: QueryTypes.SELECT,
+            plain: true
+        }
     );
-    nativeVegetation = nativeVegetation[0];
 
-    if (propertyData) {
-        //---- Year of beginning and end of each analysis --------------------------------------------------------------
-        const sqlDatesSynthesis = `
-          SELECT 'prodesYear' AS key, MIN(prodes.ano) AS start_year, MAX(prodes.ano) AS end_year
-          FROM ${ groupViews.DYNAMIC.children.PRODES.tableName } AS prodes
-          UNION ALL
-          SELECT 'deterYear' AS key,
-                 MIN(extract(year from date_trunc('year', deter.date))) AS start_year,
-                 MAX(extract(year from date_trunc('year', deter.date))) AS end_year
-          FROM ${ groupViews.DYNAMIC.children.DETER.tableName } AS deter
-          UNION ALL
-          SELECT 'fireSpotYear' AS key,
-                 MIN(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS start_year,
-                 MAX(extract(year from date_trunc('year', spotlights.data_hora_gmt))) AS end_year
-          FROM ${ groupViews.DYNAMIC.children.FOCOS_QUEIMADAS.tableName }  AS spotlights
-          UNION ALL
-          SELECT 'burnedAreaYear' AS key,
-                 MIN(extract(year from date_trunc('year', burnedarea.timestamp))) AS start_year,
-                 MAX(extract(year from date_trunc('year', burnedarea.timestamp))) AS end_year
-          FROM ${ groupViews.DYNAMIC.children.AREAS_QUEIMADAS.tableName }  AS burnedarea;
-        `;
+    const indigenousLandCard = await getSynthesisCard({
+        data: indigenousLand,
+        layers: detailedVisionsConfig.indigenousLand.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: detailedVisionsConfig.indigenousLand.cqlFilter,
+        time: geoserverTime,
+        title: detailedVisionsConfig.indigenousLand.title,
+        descriptionPrefix: detailedVisionsConfig.indigenousLand.descriptionPrefix,
+        descriptionSuffix: detailedVisionsConfig.indigenousLand.descriptionSuffix,
+        propertyData
+    });
 
-        const datesSynthesis = await sequelize.query(
-            sqlDatesSynthesis,
-            {type: QueryTypes.SELECT},
-        );
-        let analysisPeriod = [];
-        datesSynthesis.forEach((years) => {
-            analysisPeriod[years.key] = {
-                startYear: years.start_year,
-                endYear: years.end_year
-            };
-        });
-        const cardsConfig = synthesisConfig.cards;
-        const chartsConfig = synthesisConfig.charts;
+    const conservationUnitCard = await getSynthesisCard({
+        data: conservationUnit,
+        layers: detailedVisionsConfig.conservationUnit.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: detailedVisionsConfig.conservationUnit.cqlFilter,
+        time: geoserverTime,
+        title: detailedVisionsConfig.conservationUnit.title,
+        descriptionPrefix: detailedVisionsConfig.conservationUnit.descriptionPrefix,
+        descriptionSuffix: detailedVisionsConfig.conservationUnit.descriptionSuffix,
+        propertyData
+    });
+    const legalReserveCard = await getSynthesisCard({
+        data: legalReserve,
+        layers: detailedVisionsConfig.legalReserve.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: detailedVisionsConfig.legalReserve.cqlFilter,
+        time: geoserverTime,
+        title: detailedVisionsConfig.legalReserve.title,
+        descriptionPrefix: detailedVisionsConfig.legalReserve.descriptionPrefix,
+        descriptionSuffix: detailedVisionsConfig.legalReserve.descriptionSuffix,
+        propertyData
+    });
+    const appCard = await getSynthesisCard({
+        data: app,
+        layers: detailedVisionsConfig.app.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: detailedVisionsConfig.app.cqlFilter,
+        time: geoserverTime,
+        title: detailedVisionsConfig.app.title,
+        descriptionPrefix: detailedVisionsConfig.app.descriptionPrefix,
+        descriptionSuffix: detailedVisionsConfig.app.descriptionSuffix,
+        propertyData
+    });
+    const anthropizedUseCard = await getSynthesisCard({
+        data: anthropizedUse,
+        layers: detailedVisionsConfig.anthropizedUse.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: detailedVisionsConfig.anthropizedUse.cqlFilter,
+        time: geoserverTime,
+        title: detailedVisionsConfig.anthropizedUse.title,
+        descriptionPrefix: detailedVisionsConfig.anthropizedUse.descriptionPrefix,
+        descriptionSuffix: detailedVisionsConfig.anthropizedUse.descriptionSuffix,
+        propertyData
+    });
+    const nativeVegetationCard = await getSynthesisCard({
+        data: nativeVegetation,
+        layers: detailedVisionsConfig.nativeVegetation.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: detailedVisionsConfig.nativeVegetation.cqlFilter,
+        time: geoserverTime,
+        title: detailedVisionsConfig.nativeVegetation.title,
+        descriptionPrefix: detailedVisionsConfig.nativeVegetation.descriptionPrefix,
+        descriptionSuffix: detailedVisionsConfig.nativeVegetation.descriptionSuffix,
+        propertyData
+    });
 
-        const visionsConfig = cardsConfig.visions;
-
-        const stateVisionCard = getSynthesisCard({
-            data: null,
-            layers: visionsConfig.state.layers,
-            bbox: stateBBox,
-            cqlFilter: visionsConfig.state.cqlFilter,
-            time: geoserverTime,
-            title: visionsConfig.state.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-
-        const cityVisionCard = getSynthesisCard({
-            data: null,
-            layers: visionsConfig.city.layers,
-            bbox: cityBBox,
-            cqlFilter: visionsConfig.city.cqlFilter,
-            time: geoserverTime,
-            title: visionsConfig.city.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-        const deterAlertVisionCard = getSynthesisCard({
-            data: null,
-            layers: visionsConfig.deterAlert.layers,
-            bbox: bbox,
-            cqlFilter: visionsConfig.deterAlert.cqlFilter,
-            time: geoserverTime,
-            date: formattedFilterDate,
-            title: visionsConfig.deterAlert.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-        const ambientalDegradationVisionCard = getSynthesisCard({
-            data: null,
-            layers: visionsConfig.ambientalDegradation.layers,
-            bbox: bbox,
-            cqlFilter: visionsConfig.ambientalDegradation.cqlFilter,
-            time: geoserverTime,
-            date: formattedFilterDate,
-            title: visionsConfig.ambientalDegradation.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-        const deforestationVisionCard = getSynthesisCard({
-            data: null,
-            layers: visionsConfig.deforestation.layers,
-            bbox: bbox,
-            cqlFilter: visionsConfig.deforestation.cqlFilter,
-            time: geoserverTime,
-            date: formattedFilterDate,
-            title: visionsConfig.deforestation.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-        const burnedAreaVisionCard = getSynthesisCard({
-            data: null,
-            layers: visionsConfig.burnedArea.layers,
-            bbox: bbox,
-            cqlFilter: visionsConfig.burnedArea.cqlFilter,
-            time: geoserverTime,
-            date: formattedFilterDate,
-            title: visionsConfig.burnedArea.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-
-        const titleDeter = cardsConfig.histories.titleDeter
-        const titleProdes = cardsConfig.histories.titleProdes
-        const titleFireSpot = cardsConfig.histories.titleFireSpot
-        const titleBurnedArea = cardsConfig.histories.titleBurnedArea
-        const titleDetailedVisions = cardsConfig.detailedVisions.title
-        const titleDeforestation = cardsConfig.deforestation.title
-
-        const historyDeterChartOptions = chartsConfig.deter;
-        const historyProdesChartOptions = chartsConfig.prodes;
-        const historyFireSpotChartOptions = chartsConfig.fireSpot;
-        const historyBurnedChartOptions = chartsConfig.burnedArea;
-
-        const visions = [
-            stateVisionCard,
-            cityVisionCard,
-            deterAlertVisionCard,
-            ambientalDegradationVisionCard,
-            deforestationVisionCard,
-            burnedAreaVisionCard
-        ]
-
-        const legendsConfig = cardsConfig.legends;
-
-        const municipalBoundariesLegend = geoServerService.getGeoserverLegendURL(legendsConfig.municipalBoundaries.layer);
-        const nativeVegetationAreaLegend = geoServerService.getGeoserverLegendURL(legendsConfig.nativeVegetationArea.layer);
-        const indigenousLandLegend = geoServerService.getGeoserverLegendURL(legendsConfig.indigenousLand.layer);
-        const appAreaLegend = geoServerService.getGeoserverLegendURL(legendsConfig.appArea.layer);
-        const consolidatedUseAreaLegend = geoServerService.getGeoserverLegendURL(legendsConfig.consolidatedUseArea.layer);
-        const carLegend = geoServerService.getGeoserverLegendURL(legendsConfig.car.layer);
-        const anthropizedUseLegend = geoServerService.getGeoserverLegendURL(legendsConfig.anthropizedUse.layer);
-        const carDeterLegend = geoServerService.getGeoserverLegendURL(legendsConfig.carDeter.layer);
-        const legalreserveLegend = geoServerService.getGeoserverLegendURL(legendsConfig.legalreserve.layer);
-        const carProdesLegend = geoServerService.getGeoserverLegendURL(legendsConfig.carProdes.layer);
-
-        const legends = [
-            municipalBoundariesLegend,
-            nativeVegetationAreaLegend,
-            indigenousLandLegend,
-            appAreaLegend,
-            consolidatedUseAreaLegend,
-            carLegend,
-            anthropizedUseLegend,
-            carDeterLegend,
-            legalreserveLegend,
-            carProdesLegend
-        ]
-
-        const detailedVisionsConfig = cardsConfig.detailedVisions;
-
-        const indigenousLandCard = getSynthesisCard({
-            data: indigenousLand,
-            layers: detailedVisionsConfig.indigenousLand.layers,
-            bbox: bbox,
-            cqlFilter: detailedVisionsConfig.indigenousLand.cqlFilter,
-            time: geoserverTime,
-            title: detailedVisionsConfig.indigenousLand.title,
-            descriptionPrefix: detailedVisionsConfig.indigenousLand.descriptionPrefix,
-            descriptionSuffix: detailedVisionsConfig.indigenousLand.descriptionSuffix,
-            propertyData
-        });
-
-        const conservationUnitCard = getSynthesisCard({
-            data: conservationUnit,
-            layers: detailedVisionsConfig.conservationUnit.layers,
-            bbox: bbox,
-            cqlFilter: detailedVisionsConfig.conservationUnit.cqlFilter,
-            time: geoserverTime,
-            title: detailedVisionsConfig.conservationUnit.title,
-            descriptionPrefix: detailedVisionsConfig.conservationUnit.descriptionPrefix,
-            descriptionSuffix: detailedVisionsConfig.conservationUnit.descriptionSuffix,
-            propertyData
-        });
-        const legalReserveCard = getSynthesisCard({
-            data: legalReserve,
-            layers: detailedVisionsConfig.legalReserve.layers,
-            bbox: bbox,
-            cqlFilter: detailedVisionsConfig.legalReserve.cqlFilter,
-            time: geoserverTime,
-            title: detailedVisionsConfig.legalReserve.title,
-            descriptionPrefix: detailedVisionsConfig.legalReserve.descriptionPrefix,
-            descriptionSuffix: detailedVisionsConfig.legalReserve.descriptionSuffix,
-            propertyData
-        });
-        const appCard = getSynthesisCard({
-            data: app,
-            layers: detailedVisionsConfig.app.layers,
-            bbox: bbox,
-            cqlFilter: detailedVisionsConfig.app.cqlFilter,
-            time: geoserverTime,
-            title: detailedVisionsConfig.app.title,
-            descriptionPrefix: detailedVisionsConfig.app.descriptionPrefix,
-            descriptionSuffix: detailedVisionsConfig.app.descriptionSuffix,
-            propertyData
-        });
-        const anthropizedUseCard = getSynthesisCard({
-            data: anthropizedUse,
-            layers: detailedVisionsConfig.anthropizedUse.layers,
-            bbox: bbox,
-            cqlFilter: detailedVisionsConfig.anthropizedUse.cqlFilter,
-            time: geoserverTime,
-            title: detailedVisionsConfig.anthropizedUse.title,
-            descriptionPrefix: detailedVisionsConfig.anthropizedUse.descriptionPrefix,
-            descriptionSuffix: detailedVisionsConfig.anthropizedUse.descriptionSuffix,
-            propertyData
-        });
-        const nativeVegetationCard = getSynthesisCard({
-            data: nativeVegetation,
-            layers: detailedVisionsConfig.nativeVegetation.layers,
-            bbox: bbox,
-            cqlFilter: detailedVisionsConfig.nativeVegetation.cqlFilter,
-            time: geoserverTime,
-            title: detailedVisionsConfig.nativeVegetation.title,
-            descriptionPrefix: detailedVisionsConfig.nativeVegetation.descriptionPrefix,
-            descriptionSuffix: detailedVisionsConfig.nativeVegetation.descriptionSuffix,
-            propertyData
-        });
-
-        const detailedVisions = [
+    return {
+        title: titleDetailedVisions,
+        detailedVisions: [
             indigenousLandCard,
             conservationUnitCard,
             legalReserveCard,
             appCard,
             anthropizedUseCard,
             nativeVegetationCard
-        ];
+        ]
+    }
+}
+module.exports.getDeforestation = async (carGId) => {
+    const propertyData = await this.getPropertyData(carGId)
 
-        const deforestationConfig = cardsConfig.deforestation;
+    const cardsConfig = synthesisConfig.cards;
+    const deforestationConfig = cardsConfig.deforestation;
+    const titleDeforestation = deforestationConfig.title
 
-        const spotCard = getSynthesisCard({
-            data: null,
-            layers: deforestationConfig.spot.layers,
-            bbox: bbox,
-            cqlFilter: deforestationConfig.spot.cqlFilter,
-            time: deforestationConfig.spot.time,
-            styles: deforestationConfig.spot.styles,
-            title: deforestationConfig.spot.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-        const landsatCard = getSynthesisCard({
-            data: null,
-            layers: deforestationConfig.landsat.layers,
-            bbox: bbox,
-            cqlFilter: deforestationConfig.landsat.cqlFilter,
-            time: deforestationConfig.landsat.time,
-            styles: deforestationConfig.landsat.styles,
-            title: deforestationConfig.landsat.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
-        const sentinelCard = getSynthesisCard({
-            data: null,
-            layers: deforestationConfig.sentinel.layers,
-            bbox: bbox,
-            cqlFilter: deforestationConfig.sentinel.cqlFilter,
-            time: deforestationConfig.sentinel.time,
-            styles: deforestationConfig.sentinel.styles,
-            title: deforestationConfig.sentinel.title,
-            descriptionPrefix: "",
-            descriptionSuffix: "",
-            propertyData
-        });
+    const spotCard = await getSynthesisCard({
+        data: null,
+        layers: deforestationConfig.spot.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: deforestationConfig.spot.cqlFilter,
+        time: deforestationConfig.spot.time,
+        styles: deforestationConfig.spot.styles,
+        title: deforestationConfig.spot.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+    const landsatCard = await getSynthesisCard({
+        data: null,
+        layers: deforestationConfig.landsat.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: deforestationConfig.landsat.cqlFilter,
+        time: deforestationConfig.landsat.time,
+        styles: deforestationConfig.landsat.styles,
+        title: deforestationConfig.landsat.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
+    const sentinelCard = await getSynthesisCard({
+        data: null,
+        layers: deforestationConfig.sentinel.layers,
+        bbox: propertyData.bbox,
+        cqlFilter: deforestationConfig.sentinel.cqlFilter,
+        time: deforestationConfig.sentinel.time,
+        styles: deforestationConfig.sentinel.styles,
+        title: deforestationConfig.sentinel.title,
+        descriptionPrefix: "",
+        descriptionSuffix: "",
+        propertyData
+    });
 
-        const deforestations = [
+    return {
+        title: titleDeforestation,
+        deforestation: [
             spotCard,
             landsatCard,
             sentinelCard
-        ];
+        ]
+    };
+}
+module.exports.getDeterHistory = async (carGId) => {
+    const calculatedAreaColumn = 'calculated_area_ha';
+    const executionDateColumn = 'execution_date';
+    const carGIDColumn = `de_car_validado_sema_gid`;
 
-        propertyData.titleDeter = titleDeter;
-        propertyData.titleProdes = titleProdes;
-        propertyData.titleFireSpot = titleFireSpot;
-        propertyData.titleBurnedArea = titleBurnedArea;
-        propertyData.titleDetailedVisions = titleDetailedVisions;
-        propertyData.titleDeforestation = titleDeforestation;
+    const groupViews = await viewService.getSidebarLayers(true);
 
-        propertyData.historyDeterChartOptions = historyDeterChartOptions;
-        propertyData.historyProdesChartOptions = historyProdesChartOptions;
-        propertyData.historyFireSpotChartOptions = historyFireSpotChartOptions;
-        propertyData.historyBurnedChartOptions = historyBurnedChartOptions;
+    const propertyData = await this.getPropertyData(carGId);
 
-        propertyData.bbox = bbox;
-        propertyData.citybbox = cityBBox;
-        propertyData.statebbox = stateBBox;
+    const cardsConfig = synthesisConfig.cards;
+    const deterHistoryConfig = cardsConfig.histories.deterHistory;
 
-        propertyData.visions = visions;
-        propertyData.legends = legends;
-        propertyData.detailedVisions = detailedVisions;
-        propertyData.deforestations = deforestations;
+    const titleDeter = deterHistoryConfig.titleDeter;
 
-        const deterHistoryConfig = cardsConfig.histories.deterHistory;
-        const prodesHistoryConfig = cardsConfig.histories.prodesHistory;
-        const fireSpotHistoryConfig = cardsConfig.histories.fireSpotHistory;
-        const burnedAreaHistoryConfig = cardsConfig.histories.burnedAreaHistory;
-        const landsatLayers = cardsConfig.histories.landsatLayers;
+    const deterHistorySql = `
+            SELECT extract(year from date_trunc('year', cd.${ executionDateColumn })) AS year,
+                   COALESCE(SUM(CAST(cd.${ calculatedAreaColumn } AS DECIMAL)), 0) AS value
+            FROM public.${ groupViews.DETER.children.CAR_X_DETER.tableName } cd
+            WHERE cd.${ carGIDColumn } = '${ carGId }'
+            GROUP BY year
+            ORDER BY year
+            `;
 
-        propertyData.deterHistory = getSynthesisHistory(
+    const deterHistory = await sequelize.query(
+        deterHistorySql,
+        {type: QueryTypes.SELECT}
+    );
+
+    const periodSql = `
+          SELECT MIN(extract(year from date_trunc('year', deter.date))) AS start_year,
+                 MAX(extract(year from date_trunc('year', deter.date))) AS end_year
+          FROM ${ groupViews.DYNAMIC.children.DETER.tableName } AS deter
+        `;
+
+    const period = await sequelize.query(
+        periodSql,
+        {
+            type: QueryTypes.SELECT,
+            fieldMap: {
+                start_year: 'startYear',
+                end_year: 'endYear'
+            },
+            plain: true
+        }
+    );
+
+    return {
+        title: titleDeter,
+        deterHistory: await getSynthesisHistory(
             {
                 data: deterHistory,
-                period: analysisPeriod['deterYear'],
+                period,
                 layers: deterHistoryConfig.layers,
                 bbox: propertyData.bbox,
                 cqlFilter: deterHistoryConfig.cqlFilter,
@@ -586,13 +641,63 @@ module.exports.get = async (carRegister, date) => {
                 descriptionSuffix: deterHistoryConfig.descriptionSuffix,
                 propertyData
             }
-        );
-        propertyData.prodesHistory = getSynthesisHistory(
+        )
+    };
+};
+module.exports.getProdesHistory = async (carGId) => {
+    const calculatedAreaColumn = 'calculated_area_ha';
+    const executionDateColumn = 'execution_date';
+    const carGIDColumn = `de_car_validado_sema_gid`;
+
+    const groupViews = await viewService.getSidebarLayers(true);
+
+    const propertyData = await this.getPropertyData(carGId);
+
+    const cardsConfig = synthesisConfig.cards;
+    const prodesHistoryConfig = cardsConfig.histories.prodesHistory;
+    const landsatLayers = cardsConfig.histories.landsatLayers;
+    const titleProdes = prodesHistoryConfig.titleProdes;
+
+    const prodesHistorySql = `
+            SELECT extract(year from date_trunc('year', cd.${ executionDateColumn })) AS year,
+                   COALESCE(SUM(CAST(cd.${ calculatedAreaColumn } AS DECIMAL)), 0) AS value
+            FROM public.${ groupViews.PRODES.children.CAR_X_PRODES.tableName } cd
+            WHERE cd.${ carGIDColumn } = '${ carGId }'
+            GROUP BY year
+            ORDER BY year
+            `;
+
+    const prodesHistory = await sequelize.query(
+        prodesHistorySql,
+        {type: QueryTypes.SELECT},
+    );
+
+    const periodSql = `
+          SELECT MIN(prodes.ano) AS start_year,
+                 MAX(prodes.ano) AS end_year
+          FROM ${ groupViews.DYNAMIC.children.PRODES.tableName } AS prodes
+        `;
+
+    const period = await sequelize.query(
+        periodSql,
+        {
+            type: QueryTypes.SELECT,
+            fieldMap: {
+                start_year: 'startYear',
+                end_year: 'endYear'
+            },
+            plain: true
+        }
+    );
+
+    return {
+        title: titleProdes,
+        prodesHistory: await getSynthesisHistory(
             {
                 data: prodesHistory,
                 period: {
                     startYear: 1999,
-                    endYear: analysisPeriod['prodesYear']['endYear'],
+                    endYear: period['endYear'],
                 },
                 layers: prodesHistoryConfig.layers,
                 bbox: propertyData.bbox,
@@ -604,11 +709,58 @@ module.exports.get = async (carRegister, date) => {
                 landsatLayers,
                 propertyData
             }
-        );
-        propertyData.fireSpotHistory = getSynthesisHistory(
+        )
+    };
+};
+module.exports.getFireSpotHistory = async (carGId) => {
+    const executionDateColumn = 'execution_date';
+    const carGIDColumn = `de_car_validado_sema_gid`;
+
+    const groupViews = await viewService.getSidebarLayers(true);
+
+    const propertyData = await this.getPropertyData(carGId);
+
+    const cardsConfig = synthesisConfig.cards;
+    const fireSpotHistoryConfig = cardsConfig.histories.fireSpotHistory;
+    const titleFireSpot = fireSpotHistoryConfig.titleFireSpot;
+
+    const fireSpotHistorySql = `SELECT
+                  extract(year from date_trunc('year', cf.${ executionDateColumn })) AS year,
+                  COUNT(cf.*) AS value
+            FROM public.${ groupViews.BURNED.children.CAR_X_FOCOS.tableName } cf
+            WHERE cf.${ carGIDColumn } = '${ carGId }'
+            GROUP BY year
+            ORDER BY year`;
+
+    const fireSpotHistory = await sequelize.query(
+        fireSpotHistorySql,
+        {type: QueryTypes.SELECT}
+    );
+
+    const periodSql = `
+          SELECT MIN(extract(year from date_trunc('year', fireSpots.data_hora_gmt))) AS start_year,
+                 MAX(extract(year from date_trunc('year', fireSpots.data_hora_gmt))) AS end_year
+          FROM ${ groupViews.DYNAMIC.children.FOCOS_QUEIMADAS.tableName } AS fireSpots
+        `;
+
+    const period = await sequelize.query(
+        periodSql,
+        {
+            type: QueryTypes.SELECT,
+            fieldMap: {
+                start_year: 'startYear',
+                end_year: 'endYear'
+            },
+            plain: true
+        }
+    );
+
+    return {
+        title: titleFireSpot,
+        fireSpotHistory: await getSynthesisHistory(
             {
                 data: fireSpotHistory,
-                period: analysisPeriod['fireSpotYear'],
+                period,
                 layers: fireSpotHistoryConfig.layers,
                 bbox: propertyData.bbox,
                 cqlFilter: fireSpotHistoryConfig.cqlFilter,
@@ -618,11 +770,59 @@ module.exports.get = async (carRegister, date) => {
                 descriptionSuffix: fireSpotHistoryConfig.descriptionSuffix,
                 propertyData
             }
-        );
-        propertyData.burnedAreaHistory = getSynthesisHistory(
+        )
+    };
+};
+module.exports.getBurnedAreaHistory = async (carGId) => {
+    const calculatedAreaColumn = 'calculated_area_ha';
+    const executionDateColumn = 'execution_date';
+    const carGIDColumn = `de_car_validado_sema_gid`;
+
+    const groupViews = await viewService.getSidebarLayers(true);
+
+    const propertyData = await this.getPropertyData(carGId);
+
+    const cardsConfig = synthesisConfig.cards;
+    const burnedAreaHistoryConfig = cardsConfig.histories.burnedAreaHistory;
+    const titleBurnedArea = burnedAreaHistoryConfig.titleBurnedArea
+
+    const burnedAreasHistorySql = ` SELECT
+                  extract(year from date_trunc('year', areaq.${ executionDateColumn })) AS date,
+                  COALESCE(SUM(CAST(areaq.${ calculatedAreaColumn }  AS DECIMAL)), 0) AS value
+            FROM public.${ groupViews.BURNED_AREA.children.CAR_X_AREA_Q.tableName } areaq
+            WHERE areaq.${ carGIDColumn } = '${ carGId }'
+            GROUP BY date
+            ORDER BY date`;
+
+    const burnedAreaHistory = await sequelize.query(
+        burnedAreasHistorySql,
+        {type: QueryTypes.SELECT}
+    );
+
+    const periodSql = `
+         SELECT MIN(extract(year from date_trunc('year', burnedarea.timestamp))) AS start_year,
+                MAX(extract(year from date_trunc('year', burnedarea.timestamp))) AS end_year
+          FROM ${ groupViews.DYNAMIC.children.AREAS_QUEIMADAS.tableName } AS burnedarea;
+        `;
+
+    const period = await sequelize.query(
+        periodSql,
+        {
+            type: QueryTypes.SELECT,
+            fieldMap: {
+                start_year: 'startYear',
+                end_year: 'endYear'
+            },
+            plain: true
+        }
+    );
+
+    return {
+        title: titleBurnedArea,
+        burnedAreaHistory: await getSynthesisHistory(
             {
                 data: burnedAreaHistory,
-                period: analysisPeriod['burnedAreaYear'],
+                period,
                 layers: burnedAreaHistoryConfig.layers,
                 bbox: propertyData.bbox,
                 cqlFilter: burnedAreaHistoryConfig.cqlFilter,
@@ -632,8 +832,22 @@ module.exports.get = async (carRegister, date) => {
                 descriptionSuffix: burnedAreaHistoryConfig.descriptionSuffix,
                 propertyData
             }
-        );
+        ),
+        area: propertyData.area
+    };
+};
+module.exports.getCharts = async () => {
+    const chartsConfig = synthesisConfig.charts;
 
-        return propertyData;
-    }
+    const historyDeterChartOptions = chartsConfig.deter;
+    const historyProdesChartOptions = chartsConfig.prodes;
+    const historyFireSpotChartOptions = chartsConfig.fireSpot;
+    const historyBurnedChartOptions = chartsConfig.burnedArea;
+
+    return {
+        'historyDeterChartOptions': historyDeterChartOptions,
+        'historyProdesChartOptions': historyProdesChartOptions,
+        'historyFireSpotChartOptions': historyFireSpotChartOptions,
+        'historyBurnedChartOptions': historyBurnedChartOptions
+    };
 }

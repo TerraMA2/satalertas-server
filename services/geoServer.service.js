@@ -178,20 +178,6 @@ module.exports.get = async ({type, workspaceName = null, dataStoreName = '', nam
     return await axios.get(url, options).then(response => response.data.data);
 }
 
-module.exports.getGeoserverURL = (layers, bbox, time, cqlFilter, styles) => {
-    let url = `${ config.geoserver.baseUrl }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${ layers }&bbox=${ bbox }&width=400&height=400&time=${ time }&cql_filter=${ cqlFilter }&srs=EPSG:${ config.geoserver.defaultSRID }&format=image/png`;
-    if (styles) {
-        url += `&styles=${ styles }`
-    }
-    return url;
-}
-module.exports.getGeoserverLegendURL = (layer) => {
-    return {
-        title: layer,
-        url: `${ config.geoserver.legendUrl }${ layer }`
-    }
-}
-
 module.exports.getMapURL = async (params) => {
     return this.getMap(params, true);
 }
@@ -239,5 +225,8 @@ module.exports.getLegendURL = async (params) => {
 }
 
 module.exports.getLegendImage = async (params) => {
-    return this.getLegend(params, false);
+    return {
+        title: params.layer,
+        url: await this.getLegend(params, false)
+    };
 }
