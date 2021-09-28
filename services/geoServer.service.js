@@ -225,8 +225,5 @@ module.exports.getLegendURL = async (params) => {
 }
 
 module.exports.getLegendImage = async (params) => {
-    return {
-        title: params.layer,
-        url: await this.getLegend(params, false)
-    };
+    return await this.getLegend(params, false);
 }
