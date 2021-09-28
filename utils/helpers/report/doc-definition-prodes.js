@@ -138,9 +138,9 @@ module.exports = function (headerDocument, reportData, title) {
                             `de coordenada central longitude = ${ reportData.property.long } e ` +
                             `latitude = ${ reportData.property.lat }, pertencente a ${ reportData.property.owner }, ` +
                             `conforme informações declaradas no ${
-                                reportData.property.register
+                                reportData.property.stateRegister
                                     ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ' +
-                                    reportData.property.register
+                                    reportData.property.stateRegister
                                     : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR ' +
                                     reportData.property.federalregister
                             }`,
