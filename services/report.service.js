@@ -14,6 +14,7 @@ const Layer = require('../utils/layer.utils');
 const REPORTTYPE = require('../enum/report-types');
 const ProdesChart = require('../charts/prodes-chart');
 const geoserverService = require('./geoServer.service');
+const carService = require('./car.service');
 const gsLayers = require('../enum/geoserver-layers');
 
 getFilterClassSearch = (sql, filter, view, tableOwner) => {
@@ -63,10 +64,10 @@ setReportFormat = async (
 
   resultReportData['property'] = reportData;
 
-  reportData['statebbox'] = Layer.setBoundingBox(reportData['statebbox']);
+  reportData['stateBBox'] = Layer.setBoundingBox(reportData.stateBBox);
   carColumnSema = 'rid';
 
-  reportData['bboxplanet'] = Layer.setBoundingBox(reportData['bboxplanet']);
+  reportData['planetBBox'] = Layer.setBoundingBox(reportData.planetBBox);
 
   await this['reportFormat' + type.charAt(0).toUpperCase() + type.slice(1)](
     reportData,
@@ -102,44 +103,6 @@ getImageObject = (image, fit, margin, alignment) => {
       margin: [30, 60, 30, 60],
     };
   }
-};
-getCarData = async (
-  carTableName,
-  municipiosTableName,
-  columnCarEstadualSemas,
-  columnCarFederalSemas,
-  columnAreaHaCar,
-  carRegister,
-) => {
-  const sql = `
-      SELECT
-              car.gid AS gid,
-              car.${columnCarEstadualSemas} AS register,
-              car.${columnCarFederalSemas} AS federalregister,
-              ROUND(COALESCE(car.${columnAreaHaCar}, 0), 4) AS area,
-              ROUND(COALESCE((car.${columnAreaHaCar}/100), 0), 4) AS area_km,
-              car.nome_da_p1 AS name,
-              car.municipio1 AS city,
-              car.cpfcnpj AS cpf,
-              car.nomepropri AS owner,
-              munic.comarca AS county,
-              substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS citybbox,
-              substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS statebbox,
-              substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox,
-              substring(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT) - 5) AS bboxplanet,
-              ST_Y(ST_Centroid(car.geom)) AS "lat",
-              ST_X(ST_Centroid(car.geom)) AS "long"
-      FROM public.${carTableName} AS car
-      INNER JOIN public.${municipiosTableName} munic ON
-              car.gid = '${carRegister}'
-              AND munic.municipio = car.municipio1
-      INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
-      GROUP BY car.${columnCarEstadualSemas}, car.${columnCarFederalSemas}, car.${columnAreaHaCar}, car.gid, car.nome_da_p1, car.municipio1, car.geom, munic.comarca, car.cpfcnpj, car.nomepropri
-    `;
-  return await sequelize.query(sql, {
-    type: QueryTypes.SELECT,
-    plain: true,
-  });
 };
 setDeterData = async (
   type,
@@ -333,9 +296,7 @@ setDeterData = async (
         pastDeforestation: crossing['area'],
       });
 
-      deterSumArea += parseFloat(crossing['area'])
-        ? parseFloat(crossing['area'])
-        : 0.0;
+      deterSumArea += parseFloat(crossing['area']) ? parseFloat(crossing['area']) : 0.0;
     });
 
     if (!propertyData['foundDeter']) {
@@ -1239,7 +1200,7 @@ module.exports.reportFormatProdes = async (
     resultReportData.vectorViews = {layers, filters};
 
     resultReportData['urlGsImage'] = await geoserverService.getMapImage({
-        "bbox": `${ reportData['statebbox'] }`,
+        "bbox": `${ reportData['stateBBox'] }`,
         "cql_filter": `geocodigo<>'';municipio='${ resultReportData.property.city.replace("'", "''") }';numero_do1='${ resultReportData.property.register }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1257,7 +1218,7 @@ module.exports.reportFormatProdes = async (
     });
 
     resultReportData['urlGsImage1'] = await geoserverService.getMapImage({
-        "bbox": `${ resultReportData.property.bboxplanet }`,
+        "bbox": `${ resultReportData.property.planetBBox }`,
         "cql_filter": `RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1269,7 +1230,7 @@ module.exports.reportFormatProdes = async (
     });
 
     resultReportData['urlGsImage2'] = await geoserverService.getMapImage({
-        "bbox": `${ resultReportData.property.bboxplanet }`,
+        "bbox": `${ resultReportData.property.planetBBox }`,
         "cql_filter": `RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1330,7 +1291,7 @@ module.exports.reportFormatProdes = async (
     });
 
     resultReportData['urlGsImage6'] = await geoserverService.getMapImage({
-        "bbox": `${ resultReportData.property.bboxplanet }`,
+        "bbox": `${ resultReportData.property.planetBBox }`,
         "cql_filter": `RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ carColumn }='${ resultReportData.property.gid }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1366,7 +1327,7 @@ module.exports.reportFormatDeter = async (
     resultReportData.vectorViews = {layers, filters};
 
     resultReportData['urlGsImage'] = await geoserverService.getMapImage({
-        "bbox": `${ reportData['statebbox'] }`,
+        "bbox": `${ reportData['stateBBox'] }`,
         "cql_filter": `geocodigo<>'';municipio='${ resultReportData.property.city }';numero_do1='${ resultReportData.property.register }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1378,7 +1339,7 @@ module.exports.reportFormatDeter = async (
     });
 
     resultReportData['urlGsImage1'] = await geoserverService.getMapImage({
-        "bbox": `${ resultReportData.property.bboxplanet }`,
+        "bbox": `${ resultReportData.property.planetBBox }`,
         "cql_filter": `RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1429,7 +1390,7 @@ module.exports.reportFormatDeter = async (
     });
 
     resultReportData['urlGsImage6'] = await geoserverService.getMapImage({
-        "bbox": `${ resultReportData.property.bboxplanet }`,
+        "bbox": `${ resultReportData.property.planetBBox }`,
         "cql_filter": `RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ cql_filter_deter }`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1478,7 +1439,7 @@ module.exports.reportFormatDeter = async (
             }, false);
 
             alert['urlGsImagePlanetCurrentAndCar'] = await geoserverService.getMapImage({
-                "bbox": `${ resultReportData.property.bboxplanet }`,
+                "bbox": `${ resultReportData.property.planetBBox }`,
                 "cql_filter": `RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }';gid_car='${ resultReportData.property.gid }';${ views.DETER.children.CAR_X_DETER.tableName }_id='${ alert.id }'`,
                 "format": "image/png",
                 "height": `${ config.geoserver.imgHeight }`,
@@ -1508,7 +1469,7 @@ module.exports.reportFormatQueimada = async (
     const filters = `cql_filter=${ carColumnSema }=${ resultReportData.property.gid };${ carColumn }=${ resultReportData.property.gid }`;
     resultReportData.vectorViews = {layers, filters};
     resultReportData['urlGsImage'] = await geoserverService.getMapImage({
-        "bbox": `${ resultReportData.property.bboxplanet }`,
+        "bbox": `${ resultReportData.property.planetBBox }`,
         "cql_filter": `RED_BAND>0;${ carColumnSema }='${ resultReportData.property.gid }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1522,7 +1483,7 @@ module.exports.reportFormatQueimada = async (
     });
 
     resultReportData['urlGsImage1'] = await geoserverService.getMapImage({
-        "bbox": `${ resultReportData.property.bboxplanet }`,
+        "bbox": `${ resultReportData.property.planetBBox }`,
         "cql_filter": `RED_BAND>0;${ carColumnSema }=${ resultReportData.property.gid };${ carColumn }=${ resultReportData.property.gid }`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
@@ -1638,7 +1599,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
 
   const tableName = groupViews.STATIC.children.CAR_VALIDADO.tableName;
 
-  let propertyData = await getCarData(
+  const propertyData = await carService.getCarData(
     tableName,
     groupViews.STATIC.children.MUNICIPIOS.tableName,
     columnCarEstadualSemas,
