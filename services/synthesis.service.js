@@ -6,6 +6,7 @@ const {QueryTypes} = require("sequelize");
 const BadRequestError = require('../errors/bad-request.error');
 const viewService = require("../services/view.service");
 const Layer = require("../utils/layer.utils");
+const carService = require('./car.service');
 
 getSynthesisHistory = async (options) => {
     let {
@@ -164,47 +165,7 @@ getChartJson = (legends, labels, data) => {
     };
 }
 
-getCarData = async (
-    carTableName,
-    cityTableName,
-    sateCarColumn,
-    federalCarColumn,
-    carAreaColumn,
-    carGId
-) => {
-    const sql = `
-      SELECT
-              car.gid AS gid,
-              car.${ sateCarColumn } AS state_register,
-              car.${ federalCarColumn } AS federal_register,
-              ROUND(COALESCE(car.${ carAreaColumn }, 0), 4) AS area,
-              ROUND(COALESCE((car.${ carAreaColumn }/100), 0), 4) AS area_km,
-              car.nome_da_p1 AS name,
-              car.municipio1 AS city,
-              car.cpfcnpj AS cpf,
-              car.nomepropri AS owner,
-              substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS city_bbox,
-              substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS state_bbox,
-              substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
-      FROM public.${ carTableName } AS car
-      INNER JOIN public.${ cityTableName } munic ON
-              car.gid = '${ carGId }'
-              AND munic.municipio = car.municipio1
-      INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
-      GROUP BY car.${ sateCarColumn }, car.${ federalCarColumn }, car.${ carAreaColumn }, car.gid, car.nome_da_p1, car.municipio1, car.geom, car.cpfcnpj, car.nomepropri
-    `;
-    return await sequelize.query(sql, {
-        type: QueryTypes.SELECT,
-        plain: true,
-        fieldMap: {
-            state_register: 'stateRegister',
-            federal_register: 'federalRegister',
-            area_km: 'areaKm',
-            city_bbox: 'cityBBox',
-            state_bbox: 'stateBBox'
-        }
-    });
-};
+
 
 module.exports.getPropertyData = async (carGId) => {
     if (!carGId) {
@@ -216,7 +177,7 @@ module.exports.getPropertyData = async (carGId) => {
     const sateCarColumn = 'numero_do1';
     const federalCarColumn = 'numero_do2';
     const carAreaColumn = 'area_ha_';
-    const propertyData = await getCarData(
+    const propertyData = await carService.getCarData(
         carTableName,
         cityTableName,
         sateCarColumn,
