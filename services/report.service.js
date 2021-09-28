@@ -1140,8 +1140,8 @@ saveReport = async (docName, newNumber, reportData, path) => {
     const report = new Report({
         name: docName.trim(),
         code: parseInt(newNumber),
-        carCode: reportData['property'].register
-            ? reportData['property'].register.trim()
+        carCode: reportData['property'].stateRegister
+            ? reportData['property'].stateRegister.trim()
             : reportData['property'].federalregister,
         carGid: reportData['property'].gid,
         path: path.trim(),
@@ -1201,7 +1201,7 @@ module.exports.reportFormatProdes = async (
 
     resultReportData['urlGsImage'] = await geoserverService.getMapImage({
         "bbox": `${ reportData['stateBBox'] }`,
-        "cql_filter": `geocodigo<>'';municipio='${ resultReportData.property.city.replace("'", "''") }';numero_do1='${ resultReportData.property.register }'`,
+        "cql_filter": `geocodigo<>'';municipio='${ resultReportData.property.city.replace("'", "''") }';numero_do1='${ resultReportData.property.stateRegister }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
         "layers": `${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }`,
@@ -1328,7 +1328,7 @@ module.exports.reportFormatDeter = async (
 
     resultReportData['urlGsImage'] = await geoserverService.getMapImage({
         "bbox": `${ reportData['stateBBox'] }`,
-        "cql_filter": `geocodigo<>'';municipio='${ resultReportData.property.city }';numero_do1='${ resultReportData.property.register }'`,
+        "cql_filter": `geocodigo<>'';municipio='${ resultReportData.property.city }';numero_do1='${ resultReportData.property.stateRegister }'`,
         "format": "image/png",
         "height": `${ config.geoserver.imgHeight }`,
         "layers": `${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.MUNICIPIOS.workspace }:${ views.STATIC.children.MUNICIPIOS.view },${ views.STATIC.children.CAR_VALIDADO.workspace }:${ views.STATIC.children.CAR_VALIDADO.view }`,
