@@ -6,6 +6,7 @@ const {QueryTypes} = require("sequelize");
 const BadRequestError = require('../errors/bad-request.error');
 const viewService = require("../services/view.service");
 const Layer = require("../utils/layer.utils");
+const carService = require('./car.service');
 
 getSynthesisHistory = async (options) => {
     let {
@@ -126,47 +127,45 @@ getSynthesisCard = async (options) => {
     }
 };
 
-getCarData = async (
-    carTableName,
-    cityTableName,
-    sateCarColumn,
-    federalCarColumn,
-    carAreaColumn,
-    carGId
-) => {
-    const sql = `
-      SELECT
-              car.gid AS gid,
-              car.${ sateCarColumn } AS state_register,
-              car.${ federalCarColumn } AS federal_register,
-              ROUND(COALESCE(car.${ carAreaColumn }, 0), 4) AS area,
-              ROUND(COALESCE((car.${ carAreaColumn }/100), 0), 4) AS area_km,
-              car.nome_da_p1 AS name,
-              car.municipio1 AS city,
-              car.cpfcnpj AS cpf,
-              car.nomepropri AS owner,
-              substring(ST_EXTENT(munic.geom)::TEXT, 5, length(ST_EXTENT(munic.geom)::TEXT) - 5) AS city_bbox,
-              substring(ST_EXTENT(UF.geom)::TEXT, 5, length(ST_EXTENT(UF.geom)::TEXT) - 5) AS state_bbox,
-              substring(ST_EXTENT(car.geom)::TEXT, 5, length(ST_EXTENT(car.geom)::TEXT) - 5) AS bbox
-      FROM public.${ carTableName } AS car
-      INNER JOIN public.${ cityTableName } munic ON
-              car.gid = '${ carGId }'
-              AND munic.municipio = car.municipio1
-      INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
-      GROUP BY car.${ sateCarColumn }, car.${ federalCarColumn }, car.${ carAreaColumn }, car.gid, car.nome_da_p1, car.municipio1, car.geom, car.cpfcnpj, car.nomepropri
-    `;
-    return await sequelize.query(sql, {
-        type: QueryTypes.SELECT,
-        plain: true,
-        fieldMap: {
-            state_register: 'stateRegister',
-            federal_register: 'federalRegister',
-            area_km: 'areaKm',
-            city_bbox: 'cityBBox',
-            state_bbox: 'stateBBox'
-        }
-    });
-};
+getChartData = (chartData, legends) => {
+    const years = [];
+    const values = [];
+    if (chartData && chartData.length > 0) {
+        chartData.forEach(data => {
+            const value = parseFloat(data.value);
+            const year = data.year;
+            years.push(year);
+            values.push(value);
+        });
+    }
+    return getChartJson(legends, years, values);
+}
+
+getPerPropertyChart = (chartData, propertyArea, label) => {
+    if (chartData && chartData.length > 0) {
+        const chartDataPerProperty = chartData.map(data => [propertyArea, parseFloat(data.value)]);
+        return chartDataPerProperty.map(data => getChartJson([data.year], ['Área imóvel', label], data));
+    }
+}
+
+getChartJson = (legends, labels, data) => {
+    if (!Array.isArray(labels)) {
+        labels = [labels];
+    }
+    const backgroundColors = labels.map(() => '#' + Math.floor(Math.random() * 16777215).toString(16));
+    return {
+        labels,
+        datasets: [
+            {
+                label: legends,
+                backgroundColor: backgroundColors,
+                data
+            }
+        ]
+    };
+}
+
+
 
 module.exports.getPropertyData = async (carGId) => {
     if (!carGId) {
@@ -178,7 +177,7 @@ module.exports.getPropertyData = async (carGId) => {
     const sateCarColumn = 'numero_do1';
     const federalCarColumn = 'numero_do2';
     const carAreaColumn = 'area_ha_';
-    const propertyData = await getCarData(
+    const propertyData = await carService.getCarData(
         carTableName,
         cityTableName,
         sateCarColumn,
@@ -590,9 +589,9 @@ module.exports.getDeterHistory = async (carGId) => {
     const propertyData = await this.getPropertyData(carGId);
 
     const cardsConfig = synthesisConfig.cards;
-    const deterHistoryConfig = cardsConfig.histories.deterHistory;
-
-    const titleDeter = deterHistoryConfig.titleDeter;
+    const historiesConfig = cardsConfig.histories;
+    const deterHistoryConfig = historiesConfig.deterHistory;
+    const titleDeter = historiesConfig.titleDeter;
 
     const deterHistorySql = `
             SELECT extract(year from date_trunc('year', cd.${ executionDateColumn })) AS year,
@@ -626,6 +625,8 @@ module.exports.getDeterHistory = async (carGId) => {
         }
     );
 
+    const historyDeterChartData = getChartData(deterHistory, 'DETER');
+
     return {
         title: titleDeter,
         deterHistory: await getSynthesisHistory(
@@ -641,7 +642,8 @@ module.exports.getDeterHistory = async (carGId) => {
                 descriptionSuffix: deterHistoryConfig.descriptionSuffix,
                 propertyData
             }
-        )
+        ),
+        historyDeterChartData
     };
 };
 module.exports.getProdesHistory = async (carGId) => {
@@ -654,9 +656,10 @@ module.exports.getProdesHistory = async (carGId) => {
     const propertyData = await this.getPropertyData(carGId);
 
     const cardsConfig = synthesisConfig.cards;
-    const prodesHistoryConfig = cardsConfig.histories.prodesHistory;
-    const landsatLayers = cardsConfig.histories.landsatLayers;
-    const titleProdes = prodesHistoryConfig.titleProdes;
+    const historiesConfig = cardsConfig.histories;
+    const prodesHistoryConfig = historiesConfig.prodesHistory;
+    const landsatLayers = historiesConfig.landsatLayers;
+    const titleProdes = historiesConfig.titleProdes;
 
     const prodesHistorySql = `
             SELECT extract(year from date_trunc('year', cd.${ executionDateColumn })) AS year,
@@ -690,6 +693,8 @@ module.exports.getProdesHistory = async (carGId) => {
         }
     );
 
+    const historyProdesChartData = getChartData(prodesHistory, 'PRODES');
+
     return {
         title: titleProdes,
         prodesHistory: await getSynthesisHistory(
@@ -709,7 +714,8 @@ module.exports.getProdesHistory = async (carGId) => {
                 landsatLayers,
                 propertyData
             }
-        )
+        ),
+        historyProdesChartData
     };
 };
 module.exports.getFireSpotHistory = async (carGId) => {
@@ -721,8 +727,9 @@ module.exports.getFireSpotHistory = async (carGId) => {
     const propertyData = await this.getPropertyData(carGId);
 
     const cardsConfig = synthesisConfig.cards;
-    const fireSpotHistoryConfig = cardsConfig.histories.fireSpotHistory;
-    const titleFireSpot = fireSpotHistoryConfig.titleFireSpot;
+    const historiesConfig = cardsConfig.histories;
+    const fireSpotHistoryConfig = historiesConfig.fireSpotHistory;
+    const titleFireSpot = historiesConfig.titleFireSpot;
 
     const fireSpotHistorySql = `SELECT
                   extract(year from date_trunc('year', cf.${ executionDateColumn })) AS year,
@@ -755,6 +762,8 @@ module.exports.getFireSpotHistory = async (carGId) => {
         }
     );
 
+    const burningFireSpotChartData = getChartData(fireSpotHistory, 'Focos');
+
     return {
         title: titleFireSpot,
         fireSpotHistory: await getSynthesisHistory(
@@ -770,7 +779,8 @@ module.exports.getFireSpotHistory = async (carGId) => {
                 descriptionSuffix: fireSpotHistoryConfig.descriptionSuffix,
                 propertyData
             }
-        )
+        ),
+        burningFireSpotChartData
     };
 };
 module.exports.getBurnedAreaHistory = async (carGId) => {
@@ -783,16 +793,17 @@ module.exports.getBurnedAreaHistory = async (carGId) => {
     const propertyData = await this.getPropertyData(carGId);
 
     const cardsConfig = synthesisConfig.cards;
-    const burnedAreaHistoryConfig = cardsConfig.histories.burnedAreaHistory;
-    const titleBurnedArea = burnedAreaHistoryConfig.titleBurnedArea
+    const historiesConfig = cardsConfig.histories;
+    const burnedAreaHistoryConfig = historiesConfig.burnedAreaHistory;
+    const titleBurnedArea = historiesConfig.titleBurnedArea;
 
-    const burnedAreasHistorySql = ` SELECT
-                  extract(year from date_trunc('year', areaq.${ executionDateColumn })) AS date,
-                  COALESCE(SUM(CAST(areaq.${ calculatedAreaColumn }  AS DECIMAL)), 0) AS value
+    const burnedAreasHistorySql = `SELECT
+                  extract(year from date_trunc('year', areaq.${ executionDateColumn })) AS year,
+                  COALESCE(SUM(CAST(areaq.${ calculatedAreaColumn } AS DECIMAL)), 0) AS value
             FROM public.${ groupViews.BURNED_AREA.children.CAR_X_AREA_Q.tableName } areaq
             WHERE areaq.${ carGIDColumn } = '${ carGId }'
-            GROUP BY date
-            ORDER BY date`;
+            GROUP BY year
+            ORDER BY year`;
 
     const burnedAreaHistory = await sequelize.query(
         burnedAreasHistorySql,
@@ -817,6 +828,9 @@ module.exports.getBurnedAreaHistory = async (carGId) => {
         }
     );
 
+    const burnedAreasChartData = getChartData(burnedAreaHistory, 'Áreas Queimadas');
+    const burnedAreasPerPropertyChartDatas = getPerPropertyChart(burnedAreaHistory, propertyData.area, 'Áreas Queimadas');
+
     return {
         title: titleBurnedArea,
         burnedAreaHistory: await getSynthesisHistory(
@@ -833,7 +847,8 @@ module.exports.getBurnedAreaHistory = async (carGId) => {
                 propertyData
             }
         ),
-        area: propertyData.area
+        burnedAreasChartData,
+        burnedAreasPerPropertyChartDatas
     };
 };
 module.exports.getCharts = async () => {
