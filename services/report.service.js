@@ -12,6 +12,7 @@ const { QueryTypes } = require("sequelize");
 const BadRequestError = require("../errors/bad-request.error");
 const viewService = require("../services/view.service");
 const Layer = require("../utils/layer.utils");
+const formatter = require("../utils/formatter.utils");
 const REPORTTYPE = require("../enum/report-types");
 const ProdesChart = require("../charts/prodes-chart");
 const geoserverService = require("./geoServer.service");
@@ -1164,7 +1165,56 @@ module.exports.reportFormatProdes = async (
   resultReportData[
     "urlGsDeforestationHistory1"
   ] = `${config.geoserver.baseUrl}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${config.geoserver.imgWidth}&height=${config.geoserver.imgHeight}&time=P1Y/#{year}#&cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${config.geoserver.defaultSRID}&format=image/png`;
+
+  formatValuesProdes(resultReportData);
 };
+
+formatValuesProdes = (resultReportData) => {
+  resultReportData.property.area = formatter.formatHectare(resultReportData.property.area);
+  resultReportData.property.area_km = formatter.formatHectare(resultReportData.property.areaKm);
+  resultReportData.property.areaPastDeforestation = formatter.formatNumber(resultReportData.property.areaPastDeforestation);
+  resultReportData.property.lat = formatter.formatNumber(resultReportData.property.lat);
+  resultReportData.property.long = formatter.formatNumber(resultReportData.property.long);
+
+  resultReportData.property.prodesTotalArea = formatter.formatHectare(resultReportData.property.prodesTotalArea);
+  resultReportData.property.areaUsoCon = formatter.formatHectare(resultReportData.property.areaUsoCon);
+  resultReportData.property.prodesArea = formatter.formatHectare(resultReportData.property.prodesArea);
+
+  if (resultReportData.property.tableVegRadam) {
+    if (resultReportData.property.tableVegRadam.pastDeforestation) {
+      const listPastDeforestation = resultReportData.property.tableVegRadam.pastDeforestation.split('\n');
+      let pastDeforestationStr = '';
+      for (const data of listPastDeforestation) {
+        const pastDeforestation = data.substring(0, data.indexOf(':'));
+        const valuePastDeforestation = formatter.formatNumber(data.substring(data.indexOf(':') + 1, data.length));
+
+        pastDeforestationStr = pastDeforestationStr ? `${ pastDeforestationStr }\n${ pastDeforestation }: ${ valuePastDeforestation }` : `${ pastDeforestation }: ${ valuePastDeforestation }`;
+      }
+      resultReportData.property.tableVegRadam.pastDeforestation = pastDeforestationStr;
+    } else {
+      resultReportData.property.tableVegRadam.pastDeforestation = '0';
+    }
+
+    for (const data of resultReportData.prodesTableData) {
+      data.area = formatter.formatNumber(data.area);
+    }
+    for (const data of resultReportData.property.vegRadam) {
+      data.area_ha_ = formatter.formatHectare(data.area_ha_);
+      data.area_ha_car_vegradam = formatter.formatHectare(data.area_ha_car_vegradam);
+    }
+    if (resultReportData.property.prodesRadam) {
+      for (const data of resultReportData.property.prodesRadam) {
+        data.area = formatter.formatHectare(data.area);
+      }
+    }
+    for (const data of resultReportData.property.deforestationHistory) {
+      data.area = formatter.formatHectare(data.area);
+    }
+    for (const data of resultReportData.property.tableData) {
+      data.pastDeforestation = formatter.formatNumber(data.pastDeforestation);
+    }
+  }
+}
 
 module.exports.reportFormatDeter = async (
   reportData,
@@ -1317,7 +1367,22 @@ module.exports.reportFormatDeter = async (
       });
     }
   }
+  formatValuesDeter(resultReportData);
 };
+
+formatValuesDeter = (resultReportData) => {
+  resultReportData.property.area = formatter.formatHectare(resultReportData.property.area);
+  resultReportData.property.area_km = formatter.formatHectare(resultReportData.property.area_km);
+  resultReportData.property.areaPastDeforestation = formatter.formatHectare(resultReportData.property.areaPastDeforestation ? resultReportData.property.areaPastDeforestation : 0);
+  resultReportData.property.lat = formatter.formatNumber(resultReportData.property.lat);
+  resultReportData.property.long = formatter.formatNumber(resultReportData.property.long);
+
+  if (resultReportData.property.tableData) {
+    for (const data of resultReportData.property.tableData) {
+      data.pastDeforestation = formatter.formatHectare(data.pastDeforestation);
+    }
+  }
+}
 
 module.exports.reportFormatQueimada = async (
   reportData,
@@ -1502,6 +1567,7 @@ module.exports.getReportCarData = async (carRegister, date, type, filter) => {
     columnExecutionDate,
     carRegister
   );
+
   await setBurnedData(
     type,
     groupViews,
