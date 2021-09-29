@@ -45,6 +45,10 @@ getAnalysisYear = (data, period, variable) => {
 };
 
 setReportFormat = async (reportData, views, type, carColumn, carColumnSema, date, filter, carRegister) => {
+  const startDate = new Date(date[0]).toLocaleDateString('pt-BR');
+  const endDate = new Date(date[1]).toLocaleDateString('pt-BR');
+  const today = new Date();
+  const currentYear = today.getFullYear();
   const bbox = Layer.setBoundingBox(reportData.bbox);
   const resultReportData = {
     bbox,
@@ -52,7 +56,10 @@ setReportFormat = async (reportData, views, type, carColumn, carColumnSema, date
     images: {},
     type,
     date,
-    carRegister
+    carRegister,
+    formattedFilterDate: `${ startDate } a ${ endDate }`,
+    currentYear,
+    currentDate: `${ ('0' + (today.getDate())).slice(-2) }/${ ('0' + (today.getMonth() + 1)).slice(-2) }/${ currentYear }`
   };
   reportData.bbox = bbox;
   reportData.stateBBox = Layer.setBoundingBox(reportData.stateBBox);
@@ -498,7 +505,7 @@ setBurnedData = async (
 
     // ---  Firing Authorization ---------------------------------------------------------------------------------------
     const sqlBurnCount = `
-        SELECT  COUNT(1) AS total_focus
+        SELECT COUNT(1) AS total_focus
         FROM public.${views.BURNED.children.CAR_X_FOCOS.tableName} car_focos
         WHERE   car_focos.${columnCarEstadual} = ${carRegister}
             AND car_focos.${columnExecutionDate} BETWEEN '${filter.date[0]}' AND '${filter.date[1]}'
@@ -511,7 +518,7 @@ setBurnedData = async (
 
     // ---  historyFireSpot ---------------------------------------------------------------------------------------
     const sqlHistoryFireSpot = `
-            SELECT  COUNT(1) AS total_focus,
+            SELECT COUNT(1) AS total_focus,
                     0 AS authorized_focus,
                     0 AS  unauthorized_focus,
                     COUNT(1) filter(where to_char(car_focos.execution_date, 'MMDD') between '0715' and '0915') as prohibitive_period, -- Contando focos no periodo proibitivo
@@ -807,21 +814,12 @@ getContentConclusion = async (docDefinitionContent, conclusionText) => {
 };
 
 setDocDefinitions = async (reportData, docDefinition) => {
-  docDefinition.content = await getContentConclusion(
-    docDefinition.content,
-    reportData.property.comments
-  );
+  docDefinition.content = await getContentConclusion(docDefinition.content, reportData.property.comments);
   if (reportData.type === "prodes") {
-    docDefinition.content = await getDeforestationHistoryAndChartNdviContext(
-      docDefinition.content,
-      reportData
-    );
+    docDefinition.content = await getDeforestationHistoryAndChartNdviContext(docDefinition.content, reportData);
   }
   if (reportData.type === "deter") {
-    docDefinition.content = await getContentForDeforestionAlertsContext(
-      docDefinition.content,
-      reportData.deforestationAlertsContext
-    );
+    docDefinition.content = await getContentForDeforestionAlertsContext(docDefinition.content, reportData.deforestationAlertsContext);
   }
   return docDefinition;
 };
@@ -951,7 +949,7 @@ firingChartsReport = async (reportData) => {
   };
 };
 
-prodesChartsReport = async (options, idx) => {
+prodesChartsReport = async (options) => {
   const image = await ProdesChart.chartBase64(options);
   return {
     alignment: "center",
@@ -1023,11 +1021,7 @@ getDocDefinitions = async (reportData) => {
   ];
 
   const docDefinitions = DocDefinitions[reportData["type"]](headerDocument, reportData, title);
-
-  return {
-    docDefinitions: await setDocDefinitions(reportData, docDefinitions),
-    headerDocument: headerDocument,
-  };
+  return await setDocDefinitions(reportData, docDefinitions);
 };
 
 module.exports.reportFormatProdes = async (

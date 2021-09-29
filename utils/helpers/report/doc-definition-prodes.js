@@ -31,27 +31,25 @@ module.exports = function (headerDocument, reportData, title) {
             title: 'Relatório PRODES',
         },
         pageMargins: [30, 90, 30, 30],
-        footer(pagenumber, pageCount) {
+        footer: function (pagenumber, pageCount) {
             return {
                 table: {
                     body: [
                         [
                             {
                                 text: 'Página ' + pagenumber + ' de ' + pageCount,
-                                fontSize: 6,
+                                fontSize: 8,
                                 bold: true,
-                                margin: [483, 0, 30, 0],
-                            },
-                        ],
-                    ],
+                                margin: [483, 0, 30, 0]
+                            }
+                        ]
+                    ]
                 },
-                layout: 'noBorders',
+                layout: 'noBorders'
             };
         },
-        header(currentPage, pageCount, pageSize) {
-            return {
-                columns: headerDocument,
-            };
+        header: {
+          columns: headerDocument
         },
         content: [
             {
