@@ -1,6 +1,8 @@
 const FiringCharts = require("../charts/firing-chart");
 const { Report, sequelize } = require("../models");
 const PdfPrinter = require("pdfmake");
+const PdfMake = require("pdfmake/build/pdfmake.min");
+const PdfFonts = require("pdfmake/build/vfs_fonts");
 const fs = require("fs");
 const config = require(__dirname + "/../config/config.json");
 const satVegService = require("../services/sat-veg.service");
@@ -15,6 +17,7 @@ const ProdesChart = require("../charts/prodes-chart");
 const geoserverService = require("./geoServer.service");
 const carService = require("./car.service");
 const gsLayers = require("../enum/geoserver-layers");
+PdfMake.vfs = PdfFonts.pdfMake.vfs;
 
 getFilterClassSearch = (sql, filter, view, tableOwner) => {
   const classSearch = filter && filter.classSearch ? filter.classSearch : null;
@@ -1000,7 +1003,7 @@ saveReport = async (docName, newNumber, reportData, path) => {
   return await Report.create(report.dataValues).then((report) => report.dataValues);
 };
 
-getDocDefinitions = async (reportData) => {
+getDocDefinitions = async (reportData, isBase64 = false) => {
   const code = reportData["code"] ? reportData["code"].code : `XXXXX/${reportData["currentYear"]}`;
   const title =
     reportData["type"] === "deter"
@@ -1021,8 +1024,17 @@ getDocDefinitions = async (reportData) => {
   ];
 
   const docDefinitions = DocDefinitions[reportData["type"]](headerDocument, reportData, title);
-  return await setDocDefinitions(reportData, docDefinitions);
+  await setDocDefinitions(reportData, docDefinitions);
+  if (isBase64) {
+    return await getReportBase64(docDefinitions);
+  }
+  return docDefinitions;
 };
+
+getReportBase64 = async (docDefinitions) => {
+  const pdfDoc = PdfMake.createPdf(docDefinitions);
+  return new Promise((resolve) => pdfDoc.getBase64(data => resolve(data)));
+}
 
 module.exports.reportFormatProdes = async (
   reportData,
@@ -1399,31 +1411,38 @@ module.exports.generatePdf = async (reportData) => {
   if (!reportData) {
     throw new BadRequestError("Report not found");
   }
+  const pathDoc = `documentos/`;
+
+  const code = await this.generateNumber(reportData.type.trim());
+  const docName = `${code.newNumber}_${code.year.toString()}_${code.type.trim()}.pdf`;
+
+  await generateReport(pathDoc, docName, reportData);
+
+  const report = await saveReport(docName, code.newNumber, reportData, pathDoc);
+
+  const document = fs.readFileSync(`${pathDoc}${docName}`, 'base64');
+  return {
+    name: report.name,
+    document
+  }
+};
+generateReport = async (pathDoc, docName, reportData) => {
   const fonts = {
     Roboto: {
       normal: "fonts/Roboto-Regular.ttf",
       bold: "fonts/Roboto-Medium.ttf",
       italics: "fonts/Roboto-Italic.ttf",
       bolditalics: "fonts/Roboto-MediumItalic.ttf",
-    },
+    }
   };
-
-  const pathDoc = `documentos/`;
-
-  const code = await this.generateNumber(reportData.type.trim());
-  const docName = `${code.newNumber}_${code.year.toString()}_${code.type.trim()}.pdf`;
-
   const printer = new PdfPrinter(fonts);
-  const document = await getDocDefinitions(reportData);
-  const pdfDoc = printer.createPdfKitDocument(document.docDefinitions);
-  pdfDoc.pipe(await fs.createWriteStream(`${pathDoc}/${docName}`));
+  const docDefinitions = await getDocDefinitions(reportData);
+  const pdfDoc = printer.createPdfKitDocument(docDefinitions);
+  const docStream = await fs.createWriteStream(`${pathDoc}${docName}`);
+  pdfDoc.pipe(docStream);
   pdfDoc.end();
-
-  reportData["code"] = code;
-  const report = await saveReport(docName, reportData["code"].newNumber, reportData, pathDoc);
-  report["document"] = document;
-  return report;
-};
+  return new Promise(resolve => docStream.on('finish', (data) => resolve(data)));
+}
 
 module.exports.getReportCarData = async (carRegister, date, type, filter) => {
   if (!carRegister || !date || !filter || !type) {
@@ -1595,5 +1614,5 @@ module.exports.getPointsAlerts = async (carRegister, date, type) => {
 };
 
 module.exports.createPdf = async (reportData) => {
-  return await getDocDefinitions(reportData);
+  return await getDocDefinitions(reportData, true);
 };

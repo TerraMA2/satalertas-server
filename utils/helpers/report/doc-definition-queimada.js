@@ -45,14 +45,13 @@ module.exports = function (headerDocument, reportData, title) {
                   {
                     text: 'Página ' + pagenumber + ' de ' + pageCount,
                     fontSize: 8,
-                    bold: true,
                     margin: [483, 0, 30, 0]
                   }
                 ]
               ]
             },
             layout: 'noBorders'
-          };
+          }
         },
         header: {
           columns: headerDocument
