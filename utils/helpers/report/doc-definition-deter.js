@@ -4,27 +4,25 @@ module.exports = function (headerDocument, reportData, title) {
             title: 'Relatório DETER'
         },
         pageMargins: [30, 90, 30, 30],
-        footer(pagenumber, pageCount) {
-            return {
-                table: {
-                    body: [
-                        [
-                            {
-                                text: 'Página ' + pagenumber + ' de ' + pageCount,
-                                fontSize: 6,
-                                bold: true,
-                                margin: [483, 0, 30, 0]
-                            }
-                        ],
-                    ]
-                },
-                layout: 'noBorders'
-            };
+        footer: function (pagenumber, pageCount) {
+          return {
+            table: {
+              body: [
+                [
+                  {
+                    text: 'Página ' + pagenumber + ' de ' + pageCount,
+                    fontSize: 8,
+                    bold: true,
+                    margin: [483, 0, 30, 0]
+                  }
+                ]
+              ]
+            },
+            layout: 'noBorders'
+          }
         },
-        header(currentPage, pageCount, pageSize) {
-            return {
-                columns: headerDocument
-            };
+        header: {
+            columns: headerDocument
         },
         content: [
             {
