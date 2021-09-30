@@ -17,9 +17,9 @@ getInformationVegRadam = function (vegRadam) {
     let textRadam = '';
     vegRadam.forEach((veg) => {
         if (textRadam.length === 0) {
-            textRadam = `${ veg.area_ha_car_vegradam } ha em área da fisionomia ${ veg.fisionomia }`;
+            textRadam = `${ veg.area_ha_car_vegradam } em área da fisionomia ${ veg.fisionomia }`;
         } else {
-            textRadam += `, ${ veg.area_ha_car_vegradam } ha em área da fisionomia ${ veg.fisionomia }`;
+            textRadam += `, ${ veg.area_ha_car_vegradam } em área da fisionomia ${ veg.fisionomia }`;
         }
     });
     return !vegRadam ? '0 ha de desmatamento' : textRadam;
@@ -127,7 +127,7 @@ module.exports = function (headerDocument, reportData, title) {
                             'Trata-se de relatório técnico sobre desmatamentos ilegais identificados ' +
                             ` com o uso de Sistema de Informações Geográficas no imóvel rural ` +
                             `${ reportData.property.name } (Figura 1), ` +
-                            `com área igual a ${ reportData.property.area } ha ` +
+                            `com área igual a ${ reportData.property.area } ` +
                             `(sendo ${ getInformationVegRadam(
                                 reportData.property.vegRadam,
                             ) } segundo Mapa da vegetação ` +
