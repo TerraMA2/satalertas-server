@@ -18,6 +18,7 @@ const geoserverService = require("./geoServer.service");
 const carService = require("./car.service");
 const gsLayers = require("../enum/geoserver-layers");
 PdfMake.vfs = PdfFonts.pdfMake.vfs;
+const deterTools = require('../utils/deter-tools')
 
 getFilterClassSearch = (sql, filter, view, tableOwner) => {
   const classSearch = filter && filter.classSearch ? filter.classSearch : null;
@@ -289,6 +290,8 @@ setDeterData = async (
     // -----------------------------------------------------------------------------------------------------------------
   }
 
+  propertyData["deforestationAlertsContext"] = deterTools.getContextDeforestationAlerts(propertyData["deforestationAlerts"])
+
   return propertyData;
 };
 
@@ -472,6 +475,7 @@ setProdesData = async (
       pastDeforestation: radamText,
     };
   }
+
 
   return propertyData;
 };
