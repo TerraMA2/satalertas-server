@@ -72,7 +72,10 @@ setReportFormat = async (reportData, views, type, carColumn, carColumnSema, date
 
   carColumnSema = "rid";
 
+
   await this["reportFormat" + type.charAt(0).toUpperCase() + type.slice(1)](
+    // reportFormatDeter, reportFormatProdes, reportFormatQueimada
+    // this method creates dynamically those methods names and call them
     reportData,
     views,
     resultReportData,
@@ -290,8 +293,6 @@ setDeterData = async (
     propertyData["foundDeter"] = !!deterSumArea;
     // -----------------------------------------------------------------------------------------------------------------
   }
-
-  propertyData["deforestationAlertsContext"] = deterTools.getContextDeforestationAlerts(propertyData["deforestationAlerts"])
 
   return propertyData;
 };
@@ -1372,6 +1373,7 @@ module.exports.reportFormatDeter = async (
     }
   }
   formatValuesDeter(resultReportData);
+  resultReportData['deforestationAlertsContext'] = await deterTools.getContextDeforestationAlerts(resultReportData.property['deforestationAlerts'])
 };
 
 formatValuesDeter = (resultReportData) => {
