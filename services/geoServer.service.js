@@ -216,9 +216,7 @@ module.exports.getMap = async (params, onlyUrl = false, baseURL = null) => {
     if (!params['srs']) {
       params['srs'] = `EPSG:${ config.geoserver.defaultSRID }`;
     }
-    return axios({url: `${ config.geoserver.api }image/map`, method: 'get', params}).then(response => {
-      return response.data.data
-    });
+    return axios({url: `${ config.geoserver.api }image/map`, method: 'get', params}).then(response => response.data.data);
 }
 
 module.exports.getLegend = async (params, onlyUrl = false) => {

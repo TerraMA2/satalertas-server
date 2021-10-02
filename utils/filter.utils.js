@@ -481,16 +481,27 @@ module.exports.setFilter = async (conn, params, table, view) => {
     return await this.getFilter(conn, table, paramsFilter, view, columns);
 }
 
-module.exports.getFilterClassSearch = (sql, filter, view, tableOwner) => {
+module.exports.getFilterClassSearch = (filter, isPrimary) => {
+  let sql = '';
   if (!filter || !filter.classSearch || filter.classSearch.radioValue !== "SELECTION") {
     return sql;
   }
   const analyzes = filter.classSearch.analyzes;
-  const analyse = analyzes.find(analysis => analysis.type === view.groupCode.toLowerCase());
+  const analyse = analyzes.find(analysis => analysis.type === 'deter');
   if (analyse) {
     const className = analyse.valueOption.name;
-    const columnName = view.isPrimary ? `dd_deter_inpe_classname` : `${ tableOwner }_dd_deter_inpe_classname`;
-    sql += ` AND ${ columnName } like '%${ className }%' `;
+    const columnName = isPrimary ? `dd_deter_inpe_classname` : `a_cardeter_31_dd_deter_inpe_classname`;
+    sql += ` AND ${ columnName } like '%${ className }%'`;
   }
   return sql;
+};
+
+module.exports.getDateFilterSql = (date) => {
+  const [dateFrom, dateTo] = date;
+  return ` and execution_date::date >= '${ dateFrom }' AND execution_date::date <= '${ dateTo }'`;
+};
+
+module.exports.getDateFilterGeoserverSql = (date) => {
+  const [dateFrom, dateTo] = date;
+  return `${ dateFrom }/${ dateTo }`;
 };

@@ -105,21 +105,14 @@ module.exports.get = async (params) => {
     return carResult;
 }
 
-module.exports.getCarData = async (
-    carTableName,
-    cityTableName,
-    stateRegisterColumn,
-    federalRegisterColumn,
-    carAreaColumn,
-    carGid
-) => {
+module.exports.getCarData = async (carGid) => {
     const sql = `
       SELECT
             car.gid AS gid,
-            car.${ stateRegisterColumn } AS state_register,
-            car.${ federalRegisterColumn } AS federal_register,
-            ROUND(COALESCE(car.${ carAreaColumn }, 0), 4) AS area,
-            ROUND(COALESCE((car.${ carAreaColumn }/100), 0), 4) AS area_km,
+            car.numero_do1 AS state_register,
+            car.numero_do2 AS federal_register,
+            ROUND(COALESCE(car.area_ha_, 0), 4) AS area,
+            ROUND(COALESCE((car.area_ha_/100), 0), 4) AS area_km,
             car.nome_da_p1 AS name,
             car.municipio1 AS city_name,
             car.cpfcnpj AS cpf,
@@ -131,12 +124,12 @@ module.exports.getCarData = async (
             substring(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(car.geom, ${config.geoserver.planetSRID}))::TEXT) - 5) AS planet_bbox,
             ST_Y(ST_Centroid(car.geom)) AS lat,
             ST_X(ST_Centroid(car.geom)) AS long
-      FROM public.${ carTableName } AS car
-      INNER JOIN public.${ cityTableName } city ON
+      FROM public.de_car_validado_sema AS car
+      INNER JOIN public.de_municipios_sema city ON
               car.gid = '${ carGid }'
               AND city.municipio = car.municipio1
       INNER JOIN de_uf_mt_ibge UF ON UF.gid = 1
-      GROUP BY car.${ stateRegisterColumn }, car.${ federalRegisterColumn }, car.${ carAreaColumn }, car.gid, car.nome_da_p1, car.municipio1, car.geom, city.comarca, car.cpfcnpj, car.nomepropri
+      GROUP BY car.numero_do1, car.numero_do2, car.area_ha_, car.gid, car.nome_da_p1, car.municipio1, car.geom, city.comarca, car.cpfcnpj, car.nomepropri
     `;
 
     const propertyData = await sequelize.query(sql, {

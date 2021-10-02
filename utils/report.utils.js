@@ -1,14 +1,4 @@
-const formatter = require("./formatter.utils");
 const fs = require("fs");
-const viewService = require("../services/view.service");
-const {QueryTypes} = require("sequelize");
-const {sequelize, Report} = require("../models");
-const Layer = require("../utils/layer.utils");
-const gsLayers = require("../enum/geoserver-layers");
-const geoserverService = require("../services/geoServer.service");
-const satVegService = require("../services/sat-veg.service");
-const ProdesChart = require("../charts/prodes-chart");
-const config = require(__dirname + "/../config/config.json");
 const PdfMake = require("pdfmake/build/pdfmake.min");
 const PdfFonts = require("pdfmake/build/vfs_fonts");
 const docDefinitions = require("../utils/helpers/report/doc-definition.js");
@@ -389,94 +379,6 @@ module.exports.getStaticImages = () => {
   return staticImages;
 };
 
-module.exports.getNDVI = async (carGid, date, type) => {
-  const {planetSRID} = config.geoserver;
-  const groupViews = await viewService.getSidebarLayers(true);
-
-  const carIdColumn = "gid";
-  const analysisCarIdColumn = "de_car_validado_sema_gid";
-
-  const groupType = {
-    prodes: "CAR_X_PRODES",
-    deter: "CAR_X_DETER",
-    queimada: "",
-  };
-
-  const sql = `
-        SELECT main_table.a_carprodes_1_id AS id,
-               ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
-               ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
-               extract(year from date_trunc('year', main_table.execution_date)) AS startYear
-        FROM public.${groupViews[type.toUpperCase()].children[groupType[type]].tableName} AS main_table
-        WHERE main_table.${analysisCarIdColumn} = '${carGid}'
-          AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
-        ORDER BY main_table.calculated_area_ha DESC
-        LIMIT 5
-    `;
-
-  const sqlBbox = `
-    SELECT substring(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT, 5, length(ST_EXTENT(ST_Transform(geom, ${planetSRID}))::TEXT) - 5) AS bbox
-      FROM de_car_validado_sema
-      WHERE ${carIdColumn} = ${carGid}
-      GROUP BY gid`;
-
-  const bboxOptions = {
-    type: QueryTypes.SELECT,
-    plain: true
-  };
-
-  const carBbox = await sequelize.query(sqlBbox, bboxOptions);
-  const deforestationAlerts = await sequelize.query(sql, {type: QueryTypes.SELECT});
-
-  let bbox = Layer.setBoundingBox(carBbox.bbox);
-
-  const currentYear = new Date().getFullYear();
-  const ndviImages = [];
-  for (const deforestationAlert of deforestationAlerts) {
-    const gsConfig = {
-      bbox: `${ bbox }`,
-      cql_filter: `RED_BAND>0;
-        rid='${ carGid }';
-        gid_car='${ carGid }';
-        ${ groupViews[type.toUpperCase()].children[groupType[type]].tableName }_id=${ deforestationAlert.id }`,
-      height: config.geoserver.imgHeight,
-      layers: `${ gsLayers.image.PLANET_LATEST },${
-          groupViews.STATIC.children.CAR_VALIDADO.workspace
-      }:${ groupViews.STATIC.children.CAR_VALIDADO.view },${
-          groupViews.STATIC.children.CAR_X_USOCON.workspace
-      }:${ groupViews.STATIC.children.CAR_X_USOCON.view },${
-          groupViews[type.toUpperCase()].children[groupType[type]].workspace
-      }:${ groupViews[type.toUpperCase()].children[groupType[type]].view }`,
-      srs: `EPSG:${ planetSRID }`,
-      styles: `,${ groupViews.STATIC.children.CAR_VALIDADO.workspace }:${
-          groupViews.STATIC.children.CAR_VALIDADO.view
-      }_yellow_style,${ groupViews.STATIC.children.CAR_VALIDADO.workspace }:${
-          groupViews.STATIC.children.CAR_X_USOCON.view
-      }_hatched_style,${ groupViews[type.toUpperCase()].children[groupType[type]].workspace }:${
-          groupViews[type.toUpperCase()].children[groupType[type]].view
-      }_red_style`,
-      time: `${ deforestationAlert.startyear }/${ currentYear }`,
-      width: config.geoserver.imgWidth,
-    };
-
-    const geoserverImage = this.getImageObject(await geoserverService.getMapImage(gsConfig), [200, 200], [10, 70], "center");
-    const options = await satVegService
-        .get({
-          long: deforestationAlert.long,
-          lat: deforestationAlert.lat
-        }, "ndvi", 3, "wav", "", "aqua")
-        .then(({listaDatas, listaSerie}) => ProdesChart.getChartOptions(listaDatas, listaSerie));
-    const image = await ProdesChart.chartBase64(options);
-    const ndviChartImage = await this.getImageObject(image, [500, 500], [10, 0], "center");
-    ndviImages.push({
-      ndviChartImage,
-      geoserverImage,
-      options
-    })
-  }
-  return ndviImages;
-};
-
 module.exports.getConclusion = (conclusionText) => {
   const conclusionParagraphs = conclusionText ? conclusionText.split("\n") : ["XXXXXXXXXXXXX."];
   const conclusion = [];
@@ -510,26 +412,19 @@ module.exports.getDocDefinitions = (reportData) => {
   return docDefinitions[reportData["type"]](reportData);
 }
 
-module.exports.generateNumber = async (type) => {
-  const sql = `SELECT '${type.trim()}' AS type,
-               EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
-               LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS newnumber,
-               CONCAT(
-                    LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0'),
-                    '/',
-                    EXTRACT(YEAR FROM CURRENT_TIMESTAMP)
-               ) AS code
-        FROM alertas.reports AS rep
-        WHERE rep.type = '${type.trim()}'
-          AND rep.created_at BETWEEN
-            CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
-  return await sequelize.query(sql, {
-    type: QueryTypes.SELECT,
-    fieldMap: {
-      newnumber: "newNumber",
-    },
-    plain: true,
+getInformationVegRadam = function (vegRadam) {
+  if (!vegRadam) {
+    return '0 ha de desmatamento';
+  }
+  let textRadam = ' (sendo ';
+  vegRadam.forEach((veg, index) => {
+    if (index !== 0) {
+      textRadam += ', ';
+    }
+    textRadam += `${ veg.area } em área da fisionomia ${ veg.fisionomia }`;
   });
+  textRadam += ' segundo Mapa da vegetação do Projeto RadamBrasil)'
+  return textRadam;
 };
 
 module.exports.generateReport = async (pathDoc, docName, reportData) => {
@@ -549,32 +444,3 @@ module.exports.generateReport = async (pathDoc, docName, reportData) => {
   pdfDoc.end();
   return new Promise(resolve => docStream.on('finish', (data) => resolve(data)));
 }
-
-module.exports.saveReport = async (docName, newNumber, reportData, path) => {
-  const report = new Report({
-    name: docName.trim(),
-    code: parseInt(newNumber),
-    carCode: reportData.stateRegister
-        ? reportData.stateRegister.trim()
-        : reportData.federalregister,
-    carGid: reportData.gid,
-    path: path.trim(),
-    type: reportData.type.trim(),
-  });
-  return await Report.create(report.dataValues).then((report) => report.dataValues);
-};
-
-getInformationVegRadam = function (vegRadam) {
-  if (!vegRadam) {
-    return '0 ha de desmatamento';
-  }
-  let textRadam = ' (sendo ';
-  vegRadam.forEach((veg, index) => {
-    if (index !== 0) {
-      textRadam += ', ';
-    }
-    textRadam += `${ veg.area } em área da fisionomia ${ veg.fisionomia }`;
-  });
-  textRadam += ' segundo Mapa da vegetação do Projeto RadamBrasil)'
-  return textRadam;
-};
