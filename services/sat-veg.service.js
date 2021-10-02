@@ -12,5 +12,5 @@ exports.get = async (coordinates, type, preFilter, filter, filterParam, sat) => 
 
     const url = `https://www.satveg.cnptia.embrapa.br/satvegws/ws/perfil/${ key }${ type }${ point }${ sat }${ preFilter }${ filter }${ filterParam }`;
 
-    return await axios.get(url);
+    return await axios.get(url).then(response => response.data);
 }

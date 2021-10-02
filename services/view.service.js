@@ -29,8 +29,6 @@ getLayerData = (data_view) => {
         url: `${ config.geoserver.baseUrl }/wms`,
         layers: `${ data_view.workspace }:${ data_view.view }`,
         transparent: true,
-        format: 'image/png',
-        version: '1.1.0',
         time: 'P1Y/PRESENT',
     };
 };
@@ -120,7 +118,7 @@ getViewObject = (groupViews, viewData) => {
 
 getGroupViews = async () => {
     const sql = `
-        SELECT  
+        SELECT
                (CASE
                    WHEN view.source_type = ${ layerType.STATIC } THEN 'STATIC'
                    WHEN view.source_type = ${ layerType.DYNAMIC } THEN 'DYNAMIC'
@@ -132,7 +130,7 @@ getGroupViews = async () => {
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN 'BURNED_AREA'
                END) AS cod,
-        
+
                (CASE
                    WHEN view.source_type = ${ layerType.STATIC } THEN 'Dados estáticos'
                    WHEN view.source_type = ${ layerType.DYNAMIC } THEN 'Dados dinâmicos'
@@ -144,7 +142,7 @@ getGroupViews = async () => {
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN 'Análise área queimada'
                END) AS label,
-        
+
                (CASE
                    WHEN view.source_type = ${ layerType.STATIC } THEN true
                    WHEN view.source_type = ${ layerType.DYNAMIC } THEN true
@@ -156,7 +154,7 @@ getGroupViews = async () => {
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
                END) AS parent,
-        
+
                (CASE
                    WHEN view.source_type = ${ layerType.STATIC } THEN false
                    WHEN view.source_type = ${ layerType.DYNAMIC } THEN false
@@ -168,7 +166,7 @@ getGroupViews = async () => {
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
                          (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
                END) AS view_graph,
-        
+
                (CASE
                    WHEN view.source_type = ${ layerType.STATIC } THEN false
                    WHEN view.source_type = ${ layerType.DYNAMIC } THEN false
@@ -180,7 +178,7 @@ getGroupViews = async () => {
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA_Q') IS NOT NULL) OR
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN false
                END) AS active_area,
-        
+
                (CASE
                    WHEN view.source_type = ${ layerType.STATIC } THEN false
                    WHEN view.source_type = ${ layerType.DYNAMIC } THEN false
@@ -193,7 +191,7 @@ getGroupViews = async () => {
                           (SUBSTRING(UPPER(TRIM(view.name)), 'AREA Q') IS NOT NULL)) THEN true
                END) AS is_private,
                null AS children
-        
+
         FROM terrama2.views AS view
         WHERE view.active = true
         GROUP BY cod, label, parent, view_graph, active_area, is_private `;
@@ -381,7 +379,7 @@ module.exports.getSidebarLayers = async (childrenAsMap = false) => {
 
 module.exports.getReportLayers = async () => {
     const sql = `
-      SELECT 
+      SELECT
               (CASE
                     WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X DETER') IS NOT NULL) THEN 2
                     WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X PRODES') IS NOT NULL) THEN 3

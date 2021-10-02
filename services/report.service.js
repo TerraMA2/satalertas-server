@@ -1018,12 +1018,12 @@ saveReport = async (docName, newNumber, reportData, path) => {
   const report = new Report({
     name: docName.trim(),
     code: parseInt(newNumber),
-    carCode: reportData["property"].stateRegister
-      ? reportData["property"].stateRegister.trim()
-      : reportData["property"].federalregister,
-    carGid: reportData["property"].gid,
+    carCode: reportData.stateRegister
+      ? reportData.stateRegister.trim()
+      : reportData.federalregister,
+    carGid: reportData.gid,
     path: path.trim(),
-    type: reportData["type"].trim(),
+    type: reportData.type.trim(),
   });
   return await Report.create(report.dataValues).then((report) => report.dataValues);
 };
@@ -1040,8 +1040,8 @@ getDocDefinitions = async (reportData, isBase64 = false) => {
       : `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº XXXXX/${reportData["currentYear"]}`;
 
   await setImages(reportData);
-  await setCharts(reportData);
 
+  await setCharts(reportData);
   const headerDocument = [
     reportData.images.headerImage0,
     reportData.images.headerImage1,
@@ -1224,22 +1224,7 @@ module.exports.reportFormatProdes = async (
     "right"
   );
 
-  const urlGsDeforestationHistory = {
-    version: "1.1.0",
-    format: "image/png",
-    layers: `${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}`,
-    styles: `${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style`,
-    bbox: `${resultReportData.property.bbox}`,
-    width: `${config.geoserver.imgWidth}`,
-    height: `${config.geoserver.imgHeight}`,
-    cql_filter: `${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'`,
-    srs: `EPSG:${config.geoserver.defaultSRID}`,
-  };
   formatValuesProdes(resultReportData);
-  resultReportData["deforestationHistoryContext"] = await getContextDeforestationHistory(
-    resultReportData.property["deforestationHistory"],
-    urlGsDeforestationHistory
-  );
 };
 
 formatValuesProdes = (resultReportData) => {

@@ -1,37 +1,28 @@
-function dinamicFiringAuthText(firingAuthData, formattedFilterDate) {
-    const paragraph = [];
-    const authNumbers = firingAuthData.firingAuth.map(
-        (auth) =>
-            `de ${ auth.data_apro } a ${ auth.data_venc }, AQC n. ${ auth['titulo_nu1'] }`,
-    );
-    if (firingAuthData.firingAuth.length === 0) {
-        paragraph.push({
-            text:
-                'Verificou-se que não há autorização de queima controlada emitida ' +
-                'para o imóvel rural em análise.',
-            alignment: 'left',
-            margin: [30, 0, 30, 5],
-            style: 'bodyIndentFirst',
-        });
-    } else {
-        paragraph.push({
-            text:
-                'Verificou-se que há autorização de queima controlada emitida ' +
-                `para o imóvel rural em análise para o período ${ authNumbers.join(
-                    ', ',
-                ) }.`,
-            alignment: 'left',
-            margin: [30, 0, 30, 5],
-            style: 'bodyIndentFirst',
-        });
-    }
-    return paragraph;
+const reportUtil = require("../../report.utils");
+
+function getBurningAuthorizationText(burningAuthorization) {
+  let text = '';
+  if (burningAuthorization.length === 0) {
+    text = 'Verificou-se que não há autorização de queima controlada emitida ' +
+            'para o imóvel rural em análise.'
+  } else {
+    const authorizationPeriod = burningAuthorization.map(auth => `de ${ auth.approvalDate } a ${ auth.expirationDate }, AQC n. ${ auth.authorizationNumber }`);
+    text = `'Verificou-se que há autorização de queima controlada emitida ' +
+            para o imóvel rural em análise para o período ${ authorizationPeriod.join(', ') }.`
+  }
+  return[{
+    text,
+    alignment: 'left',
+    margin: [30, 0, 30, 5],
+    style: 'bodyIndentFirst'
+    }];
 }
 
-module.exports = function (headerDocument, reportData, title) {
-    const registerToUse = reportData.property.stateRegister
-        ? reportData.property.stateRegister
-        : reportData.property.federalregister;
+module.exports = function (reportData) {
+    const registerToUse = reportData.stateRegister
+        ? reportData.stateRegister
+        : reportData.federalregister;
+    const staticImages = reportUtil.getStaticImages();
     return {
         info: {
             title: 'Relatório QUEIMADA',
@@ -54,7 +45,7 @@ module.exports = function (headerDocument, reportData, title) {
           }
         },
         header: {
-          columns: headerDocument
+          columns: staticImages.headerImages
         },
         content: [
             {
@@ -65,8 +56,8 @@ module.exports = function (headerDocument, reportData, title) {
                     },
                     {
                         text: ` ${
-                            reportData.property.sat
-                                ? reportData.property.sat
+                            reportData.sat
+                                ? reportData.sat
                                 : 'XXXXXXXXXXXXX'
                         }`,
                         bold: false,
@@ -81,7 +72,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true,
                     },
                     {
-                        text: ` ${ reportData.property.city }`,
+                        text: ` ${ reportData.cityName }`,
                         bold: false,
                     },
                 ],
@@ -94,7 +85,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true,
                     },
                     {
-                        text: ` ${ reportData.property.county }`,
+                        text: ` ${ reportData.county }`,
                         bold: false,
                     },
                 ],
@@ -107,7 +98,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'title',
             },
             {
-                text: `${ title }`,
+                text: `RELATÓRIO DE FOCOS DE CALOR Nº ${ reportData.code }`,
                 style: 'title',
                 margin: [30, 0, 30, 20],
             },
@@ -132,7 +123,7 @@ module.exports = function (headerDocument, reportData, title) {
                         text:
                             'Trata-se de relatório técnico sobre focos de calor identificado com o ' +
                             'uso de Sistema de Informações Geográficas no imóvel rural ' +
-                            `${ reportData.property.name }`,
+                            `${ reportData.name }`,
                     },
                     {
                         text: ' (Figura 1) ',
@@ -141,11 +132,11 @@ module.exports = function (headerDocument, reportData, title) {
                     {
                         text:
                             ' com área igual a ' +
-                            `${ reportData.property.area }` +
+                            `${ reportData.area }` +
                             ' hectares localizada no município de ' +
-                            reportData.property.city +
+                            reportData.cityName +
                             '-MT, pertencente a ' +
-                            `${ reportData.property.owner }` +
+                            `${ reportData.ownerName }` +
                             ', conforme informações declaradas no ' +
                             ' Sistema Sistema Nacional de Cadastro Ambiental Rural (SICAR), protocolo CAR ' +
                             `${ registerToUse }`,
@@ -162,7 +153,7 @@ module.exports = function (headerDocument, reportData, title) {
                 margin: [30, 0, 30, 0],
                 style: 'bodyIndentFirst',
             },
-            reportData.images.geoserverImage1,
+            reportData.images.propertyLimitImage,
             {
                 text: [
                     {
@@ -363,7 +354,7 @@ module.exports = function (headerDocument, reportData, title) {
             {
                 text:
                     'Todas as informações acima descritas foram integradas utilizando ' +
-                    'a plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
+                    'a plataforma computacional TerraMA². Essa plataforma foi desenvolvida pelo INPE para o monitoramento, ' +
                     'análise e emissão de alertas sobre extremos ambientais¹. Assim, ' +
                     'utilizando esta base tecnológica inovadora, ' +
                     'no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, ' +
@@ -522,9 +513,9 @@ module.exports = function (headerDocument, reportData, title) {
             {
                 text:
                     'O INPE, a partir dos dados do Programa Queimadas identificou ' +
-                    `${ reportData.property.burnCount['total_focus'] } ` +
+                    `${ reportData.historyFireSpot.total } ` +
                     ' focos de calor ativos no imóvel rural denominado ' +
-                    `${ reportData.property.name } ` +
+                    `${ reportData.name } ` +
                     `no período de ${ reportData.formattedFilterDate.replace(
                         'a',
                         'até',
@@ -556,7 +547,7 @@ module.exports = function (headerDocument, reportData, title) {
                 fontSize: 8,
                 margin: [30, 80, 30, 0],
             },
-            reportData.images.geoserverImage2,
+            reportData.images.propertyFireSpotsImage,
             {
                 text: [
                     {
@@ -567,9 +558,9 @@ module.exports = function (headerDocument, reportData, title) {
                         text:
                             '- imagem de satélite evidenciando os focos de calor ativos na vegetação ' +
                             'da ' +
-                            reportData.property.name +
+                            reportData.name +
                             ' em ' +
-                            reportData.property.city +
+                            reportData.cityName +
                             '-MT',
                         bold: false,
                     },
@@ -578,8 +569,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'body',
                 fontSize: 10,
             },
-            // reportData.FocusChartImage,
-            reportData.chartsImages.firstFiringChart,
+            reportData.images.charts.fireSpotHistoryChart,
             {
                 text: [
                     {
@@ -589,9 +579,9 @@ module.exports = function (headerDocument, reportData, title) {
                     {
                         text:
                             '- Série histórica de focos de calor ativos na ' +
-                            reportData.property.name +
+                            reportData.name +
                             ' em ' +
-                            reportData.property.city +
+                            reportData.cityName +
                             '-MT',
                         bold: false,
                     },
@@ -600,10 +590,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'body',
                 fontSize: 10,
             },
-            ...dinamicFiringAuthText(
-                reportData.property,
-                reportData.formattedFilterDate,
-            ),
+            ...getBurningAuthorizationText(reportData.burningAuthorization),
             {
                 text:
                     'A fim de verificar a relação entre focos de calor e desmatamento ' +
@@ -612,7 +599,7 @@ module.exports = function (headerDocument, reportData, title) {
                 margin: [30, 0, 30, 0],
                 style: 'bodyIndentFirst',
             },
-            reportData.chartsImages.secondFiringChart,
+            reportData.images.charts.fireSpotDeforestationChart,
             {
                 text: '',
                 pageBreak: 'after',
@@ -659,27 +646,7 @@ module.exports = function (headerDocument, reportData, title) {
                 margin: [30, 0, 30, 15],
                 style: 'body',
             },
-            {
-                columns: [
-                    reportData.images.partnerImage1,
-                    reportData.images.partnerImage2,
-                    reportData.images.partnerImage3,
-                ],
-            },
-            {
-                columns: [
-                    reportData.images.partnerImage4,
-                    reportData.images.partnerImage5,
-                    reportData.images.partnerImage6,
-                ],
-            },
-            {
-                columns: [
-                    reportData.images.partnerImage7,
-                    reportData.images.partnerImage8,
-                    reportData.images.partnerImage9,
-                ],
-            },
+            staticImages.partnerImages,
         ],
         styles: {
             tableStyle: {

@@ -1,4 +1,8 @@
-module.exports = function (headerDocument, reportData, title) {
+const reportUtil = require("../../report.utils");
+
+module.exports = function (reportData) {
+    const deforestationAlerts = reportData.deforestationAlerts;
+    const staticImages = reportUtil.getStaticImages();
     return {
         info: {
             title: 'Relatório DETER'
@@ -21,7 +25,7 @@ module.exports = function (headerDocument, reportData, title) {
           }
         },
         header: {
-            columns: headerDocument
+          columns: staticImages.headerImages
         },
         content: [
             {
@@ -31,7 +35,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true
                     },
                     {
-                        text: ` ${ reportData.property.sat ? reportData.property.sat : 'XXXXXXXXXXXXX' }`,
+                        text: ` ${ reportData.sat }`,
                         bold: false
                     }
                 ],
@@ -44,7 +48,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true
                     },
                     {
-                        text: ` ${ reportData.property.city }-MT`,
+                        text: ` ${ reportData.cityName }-MT`,
                         bold: false
                     }
                 ],
@@ -57,7 +61,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true
                     },
                     {
-                        text: ` ${ reportData.property.county }`,
+                        text: ` ${ reportData.county }`,
                         bold: false
                     }
                 ],
@@ -70,7 +74,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'title'
             },
             {
-                text: `${ title }`,
+                text: `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${ reportData.code }`,
                 style: 'title',
                 margin: [30, 0, 30, 20]
             },
@@ -99,7 +103,7 @@ module.exports = function (headerDocument, reportData, title) {
                 text: [
                     {
                         text: (
-                            ` com o uso de Sistema de Informações Geográficas no imóvel rural ${ reportData.property.name } (Figura 1) com área igual a ${ reportData.property.area }, localizado no município de ${ reportData.property.city }-MT, de coordenada central longitude = ${ reportData.property.long } e latitude = ${ reportData.property.lat }, pertencente a ${ reportData.property.owner }, conforme informações declaradas no ${ reportData.property.stateRegister ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ' + reportData.property.stateRegister : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR ' + reportData.property.federalregister }`
+                            ` com o uso de Sistema de Informações Geográficas no imóvel rural ${ reportData.name } (Figura 1) com área igual a ${ reportData.area }, localizado no município de ${ reportData.cityName }-MT, de coordenada central longitude = ${ reportData.long } e latitude = ${ reportData.lat }, pertencente a ${ reportData.ownerName }, conforme informações declaradas no ${ reportData.stateRegister ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ' + reportData.stateRegister : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR ' + reportData.federalregister }`
                         ),
                     },
                     {
@@ -118,8 +122,8 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 columns: [
-                    reportData.images.geoserverImage1,
-                    reportData.images.geoserverImage2
+                    reportData.images.propertyLocationImage,
+                    reportData.images.propertyLimitImage
                 ],
                 margin: [30, 0, 30, 15]
             },
@@ -312,7 +316,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'body'
             },
             {
-                text: `plataforma computacional TerraMA2. Essa plataforma foi desenvolvida pelo INPE para o monitoramento, análise e emissão de alertas sobre extremos ambientais¹. Assim, utilizando esta base tecnológica inovadora, no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, analisar (intersecção de geometrias dos mapas), visualizar e consultar dados sobre danos ambientais causados por desmatamentos recentes. Para isso, dados dinâmicos e estáticos foram processados para produzirem as informações que foram sistematizadas neste relatório.`,
+                text: `plataforma computacional TerraMA². Essa plataforma foi desenvolvida pelo INPE para o monitoramento, análise e emissão de alertas sobre extremos ambientais¹. Assim, utilizando esta base tecnológica inovadora, no domínio de softwares abertos, as tarefas executadas pela plataforma foram definidas para coletar, analisar (intersecção de geometrias dos mapas), visualizar e consultar dados sobre danos ambientais causados por desmatamentos recentes. Para isso, dados dinâmicos e estáticos foram processados para produzirem as informações que foram sistematizadas neste relatório.`,
                 margin: [30, 0, 30, 5],
                 style: 'body'
             },
@@ -445,7 +449,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'body'
             },
             {
-                text: `${ reportData.property.areaPastDeforestation } hectares no imóvel rural denominado ${ reportData.property.name } no período de ${ reportData.formattedFilterDate }, conforme desmatamento explicitado no Quadro 1 (quantificação e descrição das áreas desmatadas que foram identificadas com o cruzamento dos dados descritos no histórico desse relatório).`,
+                text: `${ reportData.areaPastDeforestation } no imóvel rural denominado ${ reportData.name } no período de ${ reportData.formattedFilterDate }, conforme desmatamento explicitado no Quadro 1 (quantificação e descrição das áreas desmatadas que foram identificadas com o cruzamento dos dados descritos no histórico desse relatório).`,
                 margin: [30, 0, 30, 15],
                 style: 'body'
             },
@@ -456,7 +460,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true
                     },
                     {
-                        text: ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' + reportData.property.name + ' a  partir da análise do DETER, no período ' + reportData.formattedFilterDate + '.'
+                        text: ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' + reportData.name + ' a  partir da análise do DETER, no período ' + reportData.formattedFilterDate + '.'
                     },
                 ],
                 margin: [30, 0, 30, 5],
@@ -491,10 +495,10 @@ module.exports = function (headerDocument, reportData, title) {
                                 style: 'tableHeader'
                             }
                         ],
-                        ...reportData.property.tableData.map(rel => {
+                        ...reportData.deforestationPerClass.map(rel => {
                             return [
-                                rel.affectedArea,
-                                rel.pastDeforestation
+                                rel.className,
+                                rel.area
                             ];
                         }),
                         [
@@ -508,7 +512,7 @@ module.exports = function (headerDocument, reportData, title) {
                             {
                                 colSpan: 2,
                                 alignment: 'center',
-                                text: `${ reportData.property.areaPastDeforestation }`
+                                text: `${ reportData.totalDeforestationArea }`
                             }
                         ],
 
@@ -544,8 +548,8 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 columns: [
-                    reportData.images.geoserverImage4,
-                    reportData.images.geoserverImage5,
+                    reportData.images.spotPropertyLimitImage,
+                    reportData.images.landsatPropertyLimitImage,
                 ],
                 margin: [30, 0, 30, 0]
             },
@@ -566,8 +570,8 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 columns: [
-                    reportData.images.geoserverImage6,
-                    reportData.images.geoserverImage7
+                    reportData.images.sentinelPropertyLimitImage,
+                    reportData.images.planetPropertyLimitImage
                 ],
                 margin: [30, 0, 30, 0]
             },
@@ -593,7 +597,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true
                     },
                     {
-                        text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Landsat de 2018 , (c) Sentinel de 2019e (d) Planet de ${ reportData.currentYear }`,
+                        text: `Comparativo de imagens de satélite (a) Spot de 2008, (b) Landsat de 2018 , (c) Sentinel de 2019 e (d) Planet de ${ reportData.currentYear }`,
                         bold: false
                     }
                 ],
@@ -605,9 +609,7 @@ module.exports = function (headerDocument, reportData, title) {
                 text: '',
                 pageBreak: 'after'
             },
-            {
-              text: 'DeforestionAlertsContext'
-            },
+            reportUtil.getDeforestationAlertsImages(deforestationAlerts),
             {
                 text: '',
                 pageBreak: 'after'
@@ -646,36 +648,16 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 text: `Este relatório técnico foi validado em ${ reportData.currentDate } por: `,
-                margin: [30, 0, 30, 250],
+                margin: [30, 0, 30, 180],
                 alignment: 'center',
                 style: 'body'
             },
             {
                 text: 'Relatório técnico produzido em parceria com: ',
-                margin: [30, 150, 30, 15],
+                margin: [30, 150, 30, 0],
                 style: 'body'
             },
-            {
-                columns: [
-                    reportData.images.partnerImage1,
-                    reportData.images.partnerImage2,
-                    reportData.images.partnerImage3
-                ]
-            },
-            {
-                columns: [
-                    reportData.images.partnerImage4,
-                    reportData.images.partnerImage5,
-                    reportData.images.partnerImage6
-                ],
-            },
-            {
-                columns: [
-                    reportData.images.partnerImage7,
-                    reportData.images.partnerImage8,
-                    reportData.images.partnerImage9
-                ]
-            }
+            staticImages.partnerImages,
         ],
         styles: {
             tableStyle: {

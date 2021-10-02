@@ -22,8 +22,6 @@ function layerData(layersList, options = undefined) {
         url,
         layers,
         transparent,
-        format: 'image/png',
-        version: '1.1.0',
         time: 'P1Y/PRESENT',
     };
 }

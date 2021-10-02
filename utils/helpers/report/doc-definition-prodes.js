@@ -1,3 +1,4 @@
+const reportUtil = require("../../report.utils");
 // noinspection JSOctalInteger
 
 const superscripts = {
@@ -13,19 +14,8 @@ const superscripts = {
     9: '\u2079',
 };
 
-getInformationVegRadam = function (vegRadam) {
-    let textRadam = '';
-    vegRadam.forEach((veg) => {
-        if (textRadam.length === 0) {
-            textRadam = `${ veg.area_ha_car_vegradam } em área da fisionomia ${ veg.fisionomia }`;
-        } else {
-            textRadam += `, ${ veg.area_ha_car_vegradam } em área da fisionomia ${ veg.fisionomia }`;
-        }
-    });
-    return !vegRadam ? '0 ha de desmatamento' : textRadam;
-};
-
-module.exports = function (headerDocument, reportData, title) {
+module.exports = function (reportData) {
+    const staticImages = reportUtil.getStaticImages();
     return {
         info: {
             title: 'Relatório PRODES',
@@ -48,7 +38,7 @@ module.exports = function (headerDocument, reportData, title) {
           }
         },
         header: {
-          columns: headerDocument
+          columns: staticImages.headerImages
         },
         content: [
             {
@@ -59,8 +49,8 @@ module.exports = function (headerDocument, reportData, title) {
                     },
                     {
                         text: ` ${
-                            reportData.property.sat
-                                ? reportData.property.sat
+                            reportData.sat
+                                ? reportData.sat
                                 : 'XXXXXXXXXXXXX'
                         }`,
                         bold: false,
@@ -75,7 +65,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true,
                     },
                     {
-                        text: ` ${ reportData.property.city }-MT`,
+                        text: ` ${ reportData.cityName }-MT`,
                         bold: false,
                     },
                 ],
@@ -88,7 +78,7 @@ module.exports = function (headerDocument, reportData, title) {
                         bold: true,
                     },
                     {
-                        text: ` ${ reportData.property.county }`,
+                        text: ` ${ reportData.county }`,
                         bold: false,
                     },
                 ],
@@ -101,7 +91,7 @@ module.exports = function (headerDocument, reportData, title) {
                 style: 'title',
             },
             {
-                text: `${ title }`,
+                text: `RELATÓRIO TÉCNICO SOBRE DE DESMATAMENTO Nº ${ reportData.code }`,
                 style: 'title',
                 margin: [30, 0, 30, 20],
             },
@@ -126,20 +116,17 @@ module.exports = function (headerDocument, reportData, title) {
                         text:
                             'Trata-se de relatório técnico sobre desmatamentos ilegais identificados ' +
                             ` com o uso de Sistema de Informações Geográficas no imóvel rural ` +
-                            `${ reportData.property.name } (Figura 1), ` +
-                            `com área igual a ${ reportData.property.area } ` +
-                            `(sendo ${ getInformationVegRadam(
-                                reportData.property.vegRadam,
-                            ) } segundo Mapa da vegetação ` +
-                            `do Projeto RadamBrasil), localizado no município de ${ reportData.property.city }-MT, ` +
-                            `de coordenada central longitude = ${ reportData.property.long } e ` +
-                            `latitude = ${ reportData.property.lat }, pertencente a ${ reportData.property.owner }, ` +
+                            `${ reportData.name } (Figura 1), ` +
+                            `com área igual a ${ reportData.area } ` +
+                            `${getInformationVegRadam(reportData.vegRadam)}, localizado no município de ${ reportData.cityName }-MT, ` +
+                            `de coordenada central longitude = ${ reportData.long } e ` +
+                            `latitude = ${ reportData.lat }, pertencente a ${ reportData.ownerName }, ` +
                             `conforme informações declaradas no ${
-                                reportData.property.stateRegister
+                                reportData.stateRegister
                                     ? 'Sistema Mato-grossense de Cadastro Ambiental Rural (SIMCAR), protocolo CAR ' +
-                                    reportData.property.stateRegister
+                                    reportData.stateRegister
                                     : 'Sistema Nacional de Cadastro Ambiental Rural, protocolo CAR ' +
-                                    reportData.property.federalregister
+                                    reportData.federalregister
                             }`,
                     },
                     {
@@ -156,8 +143,8 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 columns: [
-                    reportData.images.geoserverImage1,
-                    reportData.images.geoserverImage2,
+                    reportData.images.propertyLocationImage,
+                    reportData.images.propertyLimitImage,
                 ],
                 margin: [30, 0, 30, 10],
             },
@@ -497,7 +484,7 @@ module.exports = function (headerDocument, reportData, title) {
                 margin: [30, 0, 30, 0],
                 style: 'bodyIndentFirst',
             },
-            reportData.images.chartImage1,
+            staticImages.chartImages.satVegChart1,
             {
                 text: [
                     {
@@ -516,7 +503,7 @@ module.exports = function (headerDocument, reportData, title) {
                 fontSize: 9,
                 style: 'body',
             },
-            reportData.images.chartImage2,
+            staticImages.chartImages.satVegChart2,
             {
                 text: [
                     {
@@ -536,7 +523,7 @@ module.exports = function (headerDocument, reportData, title) {
                 fontSize: 9,
                 style: 'body',
             },
-            reportData.images.chartImage3,
+            staticImages.chartImages.satVegChart3,
             {
                 text: [
                     {
@@ -802,9 +789,9 @@ module.exports = function (headerDocument, reportData, title) {
             {
                 text:
                     'O INPE, a partir dos dados do PRODES, identificou desmatamento de ' +
-                    reportData.property.prodesArea +
+                    reportData.totalDeforestationArea +
                     ' hectares no imóvel rural denominado ' +
-                    reportData.property.name +
+                    reportData.name +
                     ' no período de ' +
                     reportData.formattedFilterDate +
                     ', conforme desmatamento explicitado ' +
@@ -842,7 +829,7 @@ module.exports = function (headerDocument, reportData, title) {
                             {
                                 colSpan: 2,
                                 alignment: 'center',
-                                text: `${ reportData.property.areaUsoCon }`,
+                                text: `${ reportData.consolidateUseArea }`,
                             },
                         ],
                         [
@@ -855,8 +842,8 @@ module.exports = function (headerDocument, reportData, title) {
                                 style: 'tableHeader',
                             },
                         ],
-                        ...reportData.property.tableData.map((rel) => {
-                            return [rel.affectedArea, rel.pastDeforestation];
+                        ...reportData.deforestationPerClass.map((rel) => {
+                            return [rel.className, rel.area];
                         }),
                         [
                             {
@@ -868,11 +855,11 @@ module.exports = function (headerDocument, reportData, title) {
                         [
                             {
                                 alignment: 'center',
-                                text: `${ reportData.property.tableVegRadam.affectedArea }`,
+                                text: `${ reportData.deforestationByVegetationType.className }`,
                             },
                             {
                                 alignment: 'center',
-                                text: `${ reportData.property.tableVegRadam.pastDeforestation }`,
+                                text: `${ reportData.deforestationByVegetationType.area }`,
                             },
                         ],
                         [
@@ -886,7 +873,7 @@ module.exports = function (headerDocument, reportData, title) {
                             {
                                 colSpan: 2,
                                 alignment: 'center',
-                                text: `${ reportData.property.areaPastDeforestation }`,
+                                text: `${ reportData.totalDeforestationArea }`,
                             },
                         ],
                     ],
@@ -902,7 +889,7 @@ module.exports = function (headerDocument, reportData, title) {
                     {
                         text:
                             ' - Classes e quantitativos de áreas desmatadas e queimadas no imóvel rural denominado ' +
-                            reportData.property.name +
+                            reportData.name +
                             ' a  partir da análise do PRODES, no período ' +
                             reportData.formattedFilterDate +
                             '.',
@@ -917,16 +904,15 @@ module.exports = function (headerDocument, reportData, title) {
                 pageBreak: 'after',
             },
             {
-                text:
-                    'A Figura 5 apresenta a dinâmica de desmatamento em todos os anos do PRODES disponível da base do INPE.',
+                text: 'A Figura 5 apresenta a dinâmica de desmatamento em todos os anos do PRODES disponível da base do INPE.',
                 margin: [30, 0, 30, 15],
                 style: 'body',
             },
             {
                 columns: [
-                    reportData.images.geoserverLegend,
-                    reportData.images.geoserverImage3,
-                ],
+                    reportData.images.deforestationLegendImage,
+                    reportData.images.deforestationPropertyLimitImage
+                ]
             },
             {
                 style: 'tableStyle',
@@ -944,8 +930,8 @@ module.exports = function (headerDocument, reportData, title) {
                                 style: 'tableHeader',
                             },
                         ],
-                        ...reportData.prodesTableData.map((rel) => {
-                            return [rel.date, rel.area];
+                        ...reportData.deforestationByYear.map((rel) => {
+                            return [rel.year, rel.area];
                         }),
                     ],
                 },
@@ -960,7 +946,7 @@ module.exports = function (headerDocument, reportData, title) {
                     {
                         text:
                             'Dinâmica de desmatamento - ' +
-                            reportData.prodesTableData[0].date +
+                            reportData.deforestationByYear[0].year +
                             '/' +
                             reportData.currentYear,
                         bold: false,
@@ -1008,8 +994,8 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 columns: [
-                    reportData.images.geoserverImage4,
-                    reportData.images.geoserverImage6,
+                    reportData.images.spotPropertyLimitImage,
+                    reportData.images.landsatPropertyLimitImage,
                 ],
                 margin: [30, 0, 30, 0],
             },
@@ -1030,8 +1016,8 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 columns: [
-                    reportData.images.geoserverImage5,
-                    reportData.images.geoserverImage7,
+                    reportData.images.sentinelPropertyLimitImage,
+                    reportData.images.planetPropertyLimitImage,
                 ],
                 margin: [30, 0, 30, 0],
             },
@@ -1065,9 +1051,8 @@ module.exports = function (headerDocument, reportData, title) {
                 alignment: 'center',
                 fontSize: 9,
             },
-            {
-                text: 'NDVIGraphs',
-            },
+            reportUtil.getDeforestationHistoryImages(reportData.deforestationHistory),
+            reportUtil.getNDVIImages(reportData.images.ndviImages),
             {
                 text: '4 CONCLUSÃO',
                 margin: [30, 20, 30, 0],
@@ -1102,7 +1087,7 @@ module.exports = function (headerDocument, reportData, title) {
             },
             {
                 text: `Este relatório técnico foi validado em ${ reportData.currentDate } por: `,
-                margin: [30, 0, 30, 60],
+                margin: [30, 0, 30, 180],
                 alignment: 'center',
                 style: 'body',
             },
@@ -1112,30 +1097,7 @@ module.exports = function (headerDocument, reportData, title) {
                 alignment: 'center',
                 style: 'body',
             },
-            {
-                columns: [
-                    reportData.images.partnerImage1,
-                    reportData.images.partnerImage2,
-                    reportData.images.partnerImage3,
-                ],
-            },
-            {
-                columns: [
-                    reportData.images.partnerImage4,
-                    reportData.images.partnerImage5,
-                    reportData.images.partnerImage6,
-                ],
-            },
-            {
-                columns: [
-                    reportData.images.partnerImage7,
-                    reportData.images.partnerImage8,
-                    reportData.images.partnerImage10,
-                ],
-            },
-            {
-                columns: [reportData.images.partnerImage9],
-            },
+            staticImages.partnerImages,
         ],
         styles: {
             tableStyle: {

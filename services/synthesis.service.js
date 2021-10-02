@@ -5,7 +5,6 @@ const synthesisConfig = require(__dirname + `/../config/${ config.project }/synt
 const {QueryTypes} = require("sequelize");
 const BadRequestError = require('../errors/bad-request.error');
 const viewService = require("../services/view.service");
-const Layer = require("../utils/layer.utils");
 const carService = require('./car.service');
 
 getSynthesisHistory = async (options) => {
@@ -42,7 +41,7 @@ getSynthesisHistory = async (options) => {
         if (propertyData) {
             filteredCqlFilter = filteredCqlFilter.replace(/{rid}/g, propertyData.gid);
             filteredCqlFilter = filteredCqlFilter.replace(/{gid}/g, propertyData.gid);
-            filteredCqlFilter = filteredCqlFilter.replace(/{cityName}/g, propertyData.city);
+            filteredCqlFilter = filteredCqlFilter.replace(/{cityName}/g, propertyData.cityName);
         }
         const time = `${ year }/P1Y`
         const image = await geoServerService.getMapImage({
@@ -51,9 +50,6 @@ getSynthesisHistory = async (options) => {
             time,
             cql_filter: filteredCqlFilter,
             styles: filteredStyles,
-            version: '1.1.0',
-            srs: `EPSG:${ config.geoserver.defaultSRID }`,
-            format: 'image/png',
             width: 400,
             height: 400
         });
@@ -98,7 +94,7 @@ getSynthesisCard = async (options) => {
     if (propertyData) {
         cqlFilter = cqlFilter.replace(/{rid}/g, propertyData.gid);
         cqlFilter = cqlFilter.replace(/{gid}/g, propertyData.gid);
-        cqlFilter = cqlFilter.replace(/{cityName}/g, propertyData.city);
+        cqlFilter = cqlFilter.replace(/{cityName}/g, propertyData.cityName);
     }
     const numberFormat = new Intl.NumberFormat('pt-BR', {
         style: 'unit',
@@ -112,9 +108,6 @@ getSynthesisCard = async (options) => {
         time,
         cql_filter: cqlFilter,
         styles: style,
-        version: '1.1.0',
-        srs: `EPSG:${ config.geoserver.defaultSRID }`,
-        format: 'image/png',
         width: 400,
         height: 400
     });
@@ -165,8 +158,6 @@ getChartJson = (legends, labels, data) => {
     };
 }
 
-
-
 module.exports.getPropertyData = async (carGId) => {
     if (!carGId) {
         throw new BadRequestError('CAR not found');
@@ -177,7 +168,7 @@ module.exports.getPropertyData = async (carGId) => {
     const sateCarColumn = 'numero_do1';
     const federalCarColumn = 'numero_do2';
     const carAreaColumn = 'area_ha_';
-    const propertyData = await carService.getCarData(
+    return await carService.getCarData(
         carTableName,
         cityTableName,
         sateCarColumn,
@@ -185,10 +176,6 @@ module.exports.getPropertyData = async (carGId) => {
         carAreaColumn,
         carGId
     );
-    propertyData['bbox'] = Layer.setBoundingBox(propertyData['bbox']);
-    propertyData['cityBBox'] = Layer.setBoundingBox(propertyData['cityBBox']);
-    propertyData['stateBBox'] = Layer.setBoundingBox(propertyData['stateBBox']);
-    return propertyData;
 }
 module.exports.getVisions = async (carGId, date) => {
     const [startDate, endDate] = date;
@@ -286,80 +273,60 @@ module.exports.getLegends = async () => {
     const legendsConfig = cardsConfig.legends;
     const municipalBoundariesLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.municipalBoundaries.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const nativeVegetationAreaLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.nativeVegetationArea.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const indigenousLandLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.indigenousLand.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const appAreaLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.appArea.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const consolidatedUseAreaLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.consolidatedUseArea.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const carLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.car.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const anthropizedUseLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.anthropizedUse.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const carDeterLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.carDeter.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const legalreserveLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.legalreserve.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'
     });
     const carProdesLegend = await geoServerService.getLegendImage({
         layer: legendsConfig.carProdes.layer,
-        format: 'image/png',
-        version: '1.0.0',
         width: 20,
         height: 20,
         legend_options: 'forceLabels:on'

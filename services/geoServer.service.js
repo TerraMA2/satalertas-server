@@ -209,12 +209,25 @@ module.exports.getMap = async (params, onlyUrl = false, baseURL = null) => {
     }
     params['baseURL'] = baseURL;
     params['geoserverBasePath'] = config.geoserver.basePath;
-    return axios({url: `${ config.geoserver.api }image/map`, method: 'get', params}).then(response => response.data.data);
+    params['format'] = 'image/png';
+    if (!params['version']) {
+      params['version'] = '1.1.1';
+    }
+    if (!params['srs']) {
+      params['srs'] = `EPSG:${ config.geoserver.defaultSRID }`;
+    }
+    return axios({url: `${ config.geoserver.api }image/map`, method: 'get', params}).then(response => {
+      return response.data.data
+    });
 }
 
 module.exports.getLegend = async (params, onlyUrl = false) => {
     if (onlyUrl) {
         params['onlyUrl'] = '1';
+    }
+    params['format'] = 'image/png';
+    if (!params['version']) {
+      params['version'] = '1.0.0';
     }
     params['geoserverBasePath'] = config.geoserver.basePath;
     return axios({url: `${ config.geoserver.api }image/legend`, method: 'get', params}).then(response => response.data.data);

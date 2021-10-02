@@ -218,15 +218,15 @@ function historyFireSpot(chartData) {
   const dataFocus = [];
   const prohibitivePeriod = [];
   let labels;
-  labels = genLabels([chartData], 'month_year_occurrence');
+  labels = genLabels([chartData], 'monthYearOccurrence');
   chartData.forEach((item) => {
     dataFocus.push({
-      date: item['month_year_occurrence'],
-      value: item.total_focus,
+      date: item['monthYearOccurrence'],
+      value: item.total,
     });
     prohibitivePeriod.push({
-      date: item['month_year_occurrence'],
-      value: item.prohibitive_period,
+      date: item['monthYearOccurrence'],
+      value: item.prohibitivePeriod,
     });
   });
   const prohibitivePeriodColor = 'rgba(255,5,0,1)';

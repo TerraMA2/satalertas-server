@@ -480,3 +480,17 @@ module.exports.setFilter = async (conn, params, table, view) => {
 
     return await this.getFilter(conn, table, paramsFilter, view, columns);
 }
+
+module.exports.getFilterClassSearch = (sql, filter, view, tableOwner) => {
+  if (!filter || !filter.classSearch || filter.classSearch.radioValue !== "SELECTION") {
+    return sql;
+  }
+  const analyzes = filter.classSearch.analyzes;
+  const analyse = analyzes.find(analysis => analysis.type === view.groupCode.toLowerCase());
+  if (analyse) {
+    const className = analyse.valueOption.name;
+    const columnName = view.isPrimary ? `dd_deter_inpe_classname` : `${ tableOwner }_dd_deter_inpe_classname`;
+    sql += ` AND ${ columnName } like '%${ className }%' `;
+  }
+  return sql;
+};
