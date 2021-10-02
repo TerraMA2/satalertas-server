@@ -369,7 +369,7 @@ module.exports.getNDVI = async (carGid, date) => {
         SELECT main_table.a_carprodes_1_id AS id,
                ST_Y(ST_Centroid(main_table.intersection_geom)) AS "lat",
                ST_X(ST_Centroid(main_table.intersection_geom)) AS "long",
-               extract(year from date_trunc('year', main_table.execution_date)) AS startYear
+               extract(year from date_trunc('year', main_table.execution_date)) AS start_year
         FROM public.a_carprodes_1 AS main_table
         WHERE main_table.de_car_validado_sema_gid = '${carGid}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
@@ -377,7 +377,12 @@ module.exports.getNDVI = async (carGid, date) => {
         LIMIT 5
     `;
 
-  const deforestationAlerts = await sequelize.query(sql, {type: QueryTypes.SELECT});
+  const deforestationAlerts = await sequelize.query(sql, {
+    type: QueryTypes.SELECT,
+    fieldMap: {
+      start_year: 'startYear'
+    }
+  });
   const carBbox = await this.getBBox(carGid);
 
   return {

@@ -513,7 +513,7 @@ module.exports = function (reportData) {
             {
                 text:
                     'O INPE, a partir dos dados do Programa Queimadas identificou ' +
-                    `${ reportData.historyFireSpot.total } ` +
+                    `${ reportData.fireSpotHistory.total } ` +
                     ' focos de calor ativos no imóvel rural denominado ' +
                     `${ reportData.name } ` +
                     `no período de ${ reportData.formattedFilterDate.replace(

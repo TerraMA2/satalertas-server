@@ -99,7 +99,7 @@ module.exports.getReport = async (carGid, date, type, filter) => {
 
     reportData = {...reportData, ...propertyData, ...burnedData};
 
-    reportData['images'] = await getBurnedImages(reportData);
+    reportData['images'] = await getBurnedImages(reportData, filter);
   }
   reportData.sat = 'XXXXXXXXXXXXX';
   reportData.code = code;
@@ -430,7 +430,7 @@ getProdesImages = async (reportData, filterDate) => {
 
     let layers = `terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`;
     let styles = `terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`
-    let cqlFilter = `gid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`;
+    let cqlFilter = `rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`;
 
     if (date !== 2012) {
       layers = `terrama2_35:${ view },${ layers }`
@@ -450,11 +450,11 @@ getProdesImages = async (reportData, filterDate) => {
     count++;
   }
 
-  images['ndviImages'] = await this.getNDVI(reportData.gid, filterDate, ReportType.PRODES);
+  images['ndviImages'] = await this.getNDVI(reportData.gid, filterDate);
   return images;
 };
 
-getBurnedImages = async (reportData, geoserverTime) => {
+getBurnedImages = async (reportData, filter) => {
   const images = [];
   const layers = [
     'terrama2_119:view119',
@@ -486,7 +486,7 @@ getBurnedImages = async (reportData, geoserverTime) => {
 
   const charts = [];
   charts["fireSpotHistoryChart"] = reportUtil.getImageObject(
-      await FiringCharts.historyFireSpot(reportData.historyFireSpot).toDataUrl(),
+      await FiringCharts.historyFireSpot(reportData.fireSpotHistory).toDataUrl(),
       [450, 450],
       [0, 10],
       "center"
@@ -517,10 +517,10 @@ module.exports.getNDVI = async (carGid, date) => {
       bbox: `${ bbox }`,
       cql_filter: `RED_BAND>0;rid='${ carGid }';gid_car='${ carGid }';a_carprodes_1_id=${ deforestationAlert.id }`,
       height: config.geoserver.imgHeight,
-      layers: `${ gsLayers.image.PLANET_LATEST },terrama2_119:view119,terrama2_119:view122,terrama2_35:view35`,
+      layers: `${ gsLayers.image.PLANET_LATEST },terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`,
       srs: `EPSG:${ planetSRID }`,
       styles: `,terrama2_119:view119_yellow_style,terrama2_119:view122_hatched_style,terrama2_35:view35_red_style`,
-      time: `${ deforestationAlert.startyear }/${ currentYear }`,
+      time: `${ deforestationAlert.startYear }/${ currentYear }`,
       width: config.geoserver.imgWidth,
     };
 
