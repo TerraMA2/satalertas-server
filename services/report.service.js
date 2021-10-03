@@ -36,23 +36,28 @@ module.exports.getByCarGid = async (carGid) => {
   return await Report.findAll(options);
 };
 
-module.exports.generatePdf = async (reportData) => {
+module.exports.generateReport = async (reportData) => {
   if (!reportData) {
     throw new BadRequestError("Report not found");
   }
   const pathDoc = `documentos/`;
 
-  const code = await reportUtil.generateNumber(reportData.type.trim());
-  const docName = `${ code.newNumber }_${ code.year.toString() }_${ code.type.trim() }.pdf`;
-  reportData.code = code.newNumber;
+  const reportType = reportData.type;
+  const code = await reportDAO.generateNumber(reportType);
+  const newNumber = code.newNumber;
+  const docName = `${ newNumber }_${ code.year.toString() }_${ reportType }.pdf`;
+  reportData.code = newNumber;
 
-  await reportUtil.generateReport(pathDoc, docName, reportData);
-  const report = await reportUtil.saveReport(docName, code.newNumber, reportData, pathDoc);
+  const docDefinitions = await reportUtil.getDocDefinitions(reportData);
+  docDefinitions.content = reportUtil.getContentConclusion(docDefinitions.content, reportData.comments);
 
-  const document = fs.readFileSync(`${ pathDoc }${ docName }`, 'base64');
+  await reportUtil.generatePdf(pathDoc, docName, docDefinitions);
+  const report = await reportDAO.saveReport(docName, newNumber, reportData, pathDoc);
+  const reportName = report.name;
+  const reportBase64 = fs.readFileSync(`${ pathDoc }${ docName }`, 'base64');
   return {
-    name: report.name,
-    document
+    reportName,
+    reportBase64
   }
 };
 
@@ -110,8 +115,7 @@ module.exports.getReport = async (carGid, date, type, filter) => {
   reportData.currentDate = `${ ('0' + (today.getDate())).slice(-2) }/${ ('0' + (today.getMonth() + 1)).slice(-2) }/${ currentYear }`;
 
   const docDefinitions = reportUtil.getDocDefinitions(reportData);
-
-  docDefinitions.content = await reportUtil.getContentConclusion(docDefinitions.content, reportData.comments);
+  docDefinitions.content = reportUtil.getContentConclusion(docDefinitions.content, reportData.comments);
   reportData = JSON.stringify(reportData);
   const reportBase64 = await reportUtil.getReportBase64(docDefinitions);
   return {
@@ -123,7 +127,7 @@ module.exports.getReport = async (carGid, date, type, filter) => {
 getDeterData = async (carGid, filter) => {
   let totalDeforestationArea = await reportDAO.getDeterTotalDeforestationArea(carGid, filter);
 
-  totalDeforestationArea = formatter.formatHectare(totalDeforestationArea.area);
+  totalDeforestationArea = formatter.formatNumber(totalDeforestationArea.area);
 
   const deforestationPerClass = await reportDAO.getDeterDeforestationPerClass(carGid, filter);
   deforestationPerClass.forEach(element => element.area = formatter.formatNumber(element.area));
@@ -145,7 +149,7 @@ getDeterData = async (carGid, filter) => {
 getProdesData = async (carGid, filter) => {
   let totalDeforestationArea = await reportDAO.getProdesTotalDeforestationArea(carGid, filter);
 
-  totalDeforestationArea = formatter.formatHectare(totalDeforestationArea.area);
+  totalDeforestationArea = formatter.formatNumber(totalDeforestationArea.area);
 
   const vegRadam = await reportDAO.getProdesVegRadam(carGid, filter);
 
@@ -220,17 +224,9 @@ getBurnedData = async (carGid, filter) => {
 
 getDeterImages = async (reportData, filter) => {
   const images = {};
-  const cql_filter_deter = `de_car_validado_sema_gid='${ reportData.gid }'${ Filter.getFilterClassSearch(filter, true) }`;
-  const layers = [
-    'terrama2_119:view119',
-    'terrama2_67:view67'
-  ];
-  const filters = `cql_filter=rid='${ reportData.gid }';gid_car='${ reportData.gid }';${ cql_filter_deter }`;
-  reportData.vectorgroupViews = {layers, filters};
-
   images['propertyLocationImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.stateBBox }`,
-    cql_filter: `geocodigo<>'';municipio='${ reportData.cityName }';numero_do1='${ reportData.stateRegister }'`,
+    cql_filter: `geocodigo<>'';municipio='${ reportData.cityName }';numero_do1='${ reportData.stateRegistry }'`,
     height: `${ config.geoserver.imgHeight }`,
     layers: 'terrama2_170:view170,terrama2_170:view170,terrama2_119:view119',
     styles: "",
@@ -249,7 +245,7 @@ getDeterImages = async (reportData, filter) => {
 
   images['spotPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.bbox }`,
-    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';${ cql_filter_deter }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'${ Filter.getFilterClassSearch(filter, true) }`,
     height: `${ config.geoserver.imgHeight }`,
     layers: `terrama2_119:MosaicSpot2008,terrama2_119:view119,terrama2_122:view122,terrama2_67:view67`,
     styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
@@ -259,7 +255,7 @@ getDeterImages = async (reportData, filter) => {
 
   images['landsatPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.bbox }`,
-    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';${ cql_filter_deter }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'${ Filter.getFilterClassSearch(filter, true) }`,
     height: `${ config.geoserver.imgHeight }`,
     layers: `terrama2_35:LANDSAT_8_2018,terrama2_119:view119,terrama2_122:view122,terrama2_67:view67`,
     styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
@@ -269,7 +265,7 @@ getDeterImages = async (reportData, filter) => {
 
   images['sentinelPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.bbox }`,
-    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';${ cql_filter_deter }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'${ Filter.getFilterClassSearch(filter, true) }`,
     height: `${ config.geoserver.imgHeight }`,
     layers: `terrama2_35:SENTINEL_2_2019,terrama2_119:view119,terrama2_122:view122,terrama2_67:view67`,
     styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
@@ -279,7 +275,7 @@ getDeterImages = async (reportData, filter) => {
 
   images['planetPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.planetBBox }`,
-    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';${ cql_filter_deter }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'${ Filter.getFilterClassSearch(filter, true) }`,
     layers: `terrama2_119:planet_latest_global_monthly,terrama2_119:view119,terrama2_122:view122,terrama2_67:view67`,
     srs: `EPSG:${ config.geoserver.planetSRID }`,
     styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
@@ -335,16 +331,10 @@ getDeterImages = async (reportData, filter) => {
 
 getProdesImages = async (reportData, filterDate) => {
   const images = [];
-  const layers = [
-    `terrama2_119:view119`,
-    `terrama2_35:view35`,
-  ];
-  const filters = `cql_filter=gid=${ reportData.gid };de_car_validado_sema_gid=${ reportData.gid }`;
-  reportData.vectorgroupViews = {layers, filters};
 
   images['propertyLocationImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.stateBBox }`,
-    cql_filter: `geocodigo<>'';municipio='${ reportData.cityName.replace("'", "''") }';numero_do1='${ reportData.stateRegister }'`,
+    cql_filter: `geocodigo<>'';municipio='${ reportData.cityName.replace("'", "''") }';numero_do1='${ reportData.stateRegistry }'`,
     height: `${ config.geoserver.imgHeight }`,
     layers: `terrama2_170:view170,terrama2_170:view170,terrama2_119:view119`,
     styles: "",
@@ -456,12 +446,6 @@ getProdesImages = async (reportData, filterDate) => {
 
 getBurnedImages = async (reportData, filter) => {
   const images = [];
-  const layers = [
-    'terrama2_119:view119',
-    'terrama2_182:view182'
-  ];
-  const filters = `cql_filter=gid=${ reportData.gid };de_car_validado_sema_gid=${ reportData.gid }`;
-  reportData.vectorgroupViews = {layers, filters};
 
   images['propertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.planetBBox }`,
@@ -475,7 +459,7 @@ getBurnedImages = async (reportData, filter) => {
 
   images['propertyFireSpotsImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.planetBBox }`,
-    cql_filter: `RED_BAND>0;gid=${ reportData.gid };de_car_validado_sema_gid=${ reportData.gid }`,
+    cql_filter: `RED_BAND>0;rid=${ reportData.gid };de_car_validado_sema_gid=${ reportData.gid }`,
     height: `${ config.geoserver.imgHeight }`,
     layers: `terrama2_119:planet_latest_global_monthly,terrama2_119:view119,terrama2_182:view182`,
     srs: `EPSG:${ config.geoserver.planetSRID }`,
@@ -484,21 +468,19 @@ getBurnedImages = async (reportData, filter) => {
     width: `${ config.geoserver.imgWidth }`
   }), [180, 180], [0, 10], 'center');
 
-  const charts = [];
-  charts["fireSpotHistoryChart"] = reportUtil.getImageObject(
+  images["fireSpotHistoryChart"] = reportUtil.getImageObject(
       await FiringCharts.historyFireSpot(reportData.fireSpotHistory).toDataUrl(),
       [450, 450],
       [0, 10],
       "center"
   );
-  charts["fireSpotDeforestationChart"] = reportUtil.getImageObject(
+  images["fireSpotDeforestationChart"] = reportUtil.getImageObject(
       await FiringCharts.chartBase64(reportData.gid),
       [450, 200],
       [0, 0],
       "center",
   );
 
-  images.charts = charts;
   return images;
 };
 
@@ -506,7 +488,7 @@ module.exports.getNDVI = async (carGid, date) => {
   const {planetSRID} = config.geoserver;
 
   const ndvi = await reportDAO.getNDVI(carGid, date);
-  const { carBbox, deforestationAlerts } = ndvi;
+  const {carBbox, deforestationAlerts} = ndvi;
 
   let bbox = Layer.setBoundingBox(carBbox.bbox);
 

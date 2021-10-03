@@ -10,7 +10,7 @@ module.exports = {
       },
       view_id: {
         type: Sequelize.INTEGER,
-        references: { 
+        references: {
           model: {
             schema: 'terrama2',
             tableName: 'views'
@@ -22,7 +22,7 @@ module.exports = {
       },
       group_id: {
         type: Sequelize.INTEGER,
-        references: { 
+        references: {
           model: {
             tableName: 'groups',
             schema: 'terrama2'

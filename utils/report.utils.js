@@ -381,24 +381,20 @@ module.exports.getStaticImages = () => {
 
 module.exports.getConclusion = (conclusionText) => {
   const conclusionParagraphs = conclusionText ? conclusionText.split("\n") : ["XXXXXXXXXXXXX."];
-  const conclusion = [];
-
-  for (const paragraph in conclusionParagraphs) {
-    const paragraphObj = {
-      text: conclusionParagraphs[paragraph],
+  return conclusionParagraphs.map(conclusionParagraph => {
+    return {
+      text: conclusionParagraph,
       margin: [30, 0, 30, 5],
       style: "bodyIndentFirst",
-    };
-    conclusion.push(paragraphObj);
-  }
-  return conclusion;
+    }
+  })
 };
 
 module.exports.getContentConclusion = (docDefinitionContent, conclusionText) => {
   const conclusion = this.getConclusion(conclusionText);
-  const conclusionIdx = docDefinitionContent.findIndex(({text}) => text && text.includes("CONCLUSÃO")) + 1;
+  const conclusionIndex = docDefinitionContent.findIndex(({text}) => text && text.includes("CONCLUSÃO")) + 1;
 
-  docDefinitionContent.splice(conclusionIdx, 0, conclusion);
+  docDefinitionContent.splice(conclusionIndex, 0, conclusion);
 
   return docDefinitionContent;
 };
@@ -427,7 +423,7 @@ getInformationVegRadam = function (vegRadam) {
   return textRadam;
 };
 
-module.exports.generateReport = async (pathDoc, docName, reportData) => {
+module.exports.generatePdf = async (pathDoc, docName, docDefinitions) => {
   const fonts = {
     Roboto: {
       normal: "fonts/Roboto-Regular.ttf",
@@ -437,7 +433,6 @@ module.exports.generateReport = async (pathDoc, docName, reportData) => {
     }
   };
   const printer = new PdfPrinter(fonts);
-  const docDefinitions = await this.getDocDefinitions(reportData);
   const pdfDoc = printer.createPdfKitDocument(docDefinitions);
   const docStream = await fs.createWriteStream(`${ pathDoc }${ docName }`);
   pdfDoc.pipe(docStream);

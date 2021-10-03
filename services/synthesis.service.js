@@ -6,6 +6,7 @@ const {QueryTypes} = require("sequelize");
 const BadRequestError = require('../errors/bad-request.error');
 const carService = require('./car.service');
 const Filter = require('../utils/filter.utils');
+const formatter = require("../utils/formatter.utils");
 
 getSynthesisHistory = async (options) => {
   let {
@@ -53,14 +54,8 @@ getSynthesisHistory = async (options) => {
       width: 400,
       height: 400
     });
-    const numberFormat = new Intl.NumberFormat('pt-BR', {
-      style: 'unit',
-      unit: 'hectare',
-      minimumFractionDigits: 4,
-      maximumFractionDigits: 4
-    });
     const analysisData = data && data.length > 0 ? data.find(analysis => analysis.year === year) : null;
-    const value = analysisData ? numberFormat.format(analysisData.value) : numberFormat.format(0);
+    const value = analysisData ? formatter.formatNumber(analysisData.value) : formatter.formatNumber(0);
 
     analysisHistory.push({
       title: `${ title } ${ year }`,
@@ -96,12 +91,6 @@ getSynthesisCard = async (options) => {
     cqlFilter = cqlFilter.replace(/{gid}/g, propertyData.gid);
     cqlFilter = cqlFilter.replace(/{cityName}/g, propertyData.cityName);
   }
-  const numberFormat = new Intl.NumberFormat('pt-BR', {
-    style: 'unit',
-    unit: 'hectare',
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4
-  });
   const image = await geoServerService.getMapImage({
     layers,
     bbox,
@@ -111,7 +100,7 @@ getSynthesisCard = async (options) => {
     width: 400,
     height: 400
   });
-  const area = data ? numberFormat.format(data.area) : numberFormat.format(0);
+  const area = data ? formatter.formatNumber(data.area) : formatter.formatNumber(0);
   const description = data ? `${ descriptionPrefix } ${ area } ${ descriptionSuffix }` : '';
   return {
     title,
@@ -164,6 +153,7 @@ module.exports.getPropertyData = async (carGId) => {
   }
   return await carService.getCarData(carGId);
 }
+
 module.exports.getVisions = async (carGId, date) => {
   const [startDate, endDate] = date;
   const geoserverTime = `${ startDate }/${ endDate }`;
@@ -255,6 +245,7 @@ module.exports.getVisions = async (carGId, date) => {
     burnedAreaVisionCard
   ];
 }
+
 module.exports.getLegends = async () => {
   const cardsConfig = synthesisConfig.cards;
   const legendsConfig = cardsConfig.legends;
@@ -332,6 +323,7 @@ module.exports.getLegends = async () => {
     carProdesLegend
   ];
 }
+
 module.exports.getDetailedVisions = async (carGId, date) => {
   const propertyData = await this.getPropertyData(carGId)
 

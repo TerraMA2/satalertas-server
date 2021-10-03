@@ -6,118 +6,118 @@ const VIEWS = require(__dirname + '/../utils/helpers/views/view');
 const layerType = require('../enum/layer-type');
 
 setFilter = (groupViews, viewData) => {
-    const view_default = `${ viewData.workspace }:${ viewData.view }`;
-    return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter ? VIEWS[viewData.groupCode].filter(
-            view_default,
-            `${ config.project }_${ config.geoserver.workspace }`,
-            viewData.cod,
-            groupViews[viewData.groupCode].tableOwner,
-            viewData.is_primary,
-        )
-        : {};
+  const view_default = `${ viewData.workspace }:${ viewData.view }`;
+  return VIEWS[viewData.groupCode] && VIEWS[viewData.groupCode].filter ? VIEWS[viewData.groupCode].filter(
+          view_default,
+          `${ config.project }_${ config.geoserver.workspace }`,
+          viewData.cod,
+          groupViews[viewData.groupCode].tableOwner,
+          viewData.is_primary,
+      )
+      : {};
 };
 
 getLegend = (data_view) => {
-    return {
-        title: data_view.cod,
-        url: `${ config.geoserver.legendUrl }${ data_view.workspace }:${ data_view.view }`,
-    };
+  return {
+    title: data_view.cod,
+    url: `${ config.geoserver.legendUrl }${ data_view.workspace }:${ data_view.view }`,
+  };
 };
 
 getLayerData = (data_view) => {
-    return {
-        url: `${ config.geoserver.baseUrl }/wms`,
-        layers: `${ data_view.workspace }:${ data_view.view }`,
-        transparent: true,
-        time: 'P1Y/PRESENT',
-    };
+  return {
+    url: `${ config.geoserver.baseUrl }/wms`,
+    layers: `${ data_view.workspace }:${ data_view.view }`,
+    transparent: true,
+    time: 'P1Y/PRESENT',
+  };
 };
 
 getViewObject = (groupViews, viewData) => {
-    return {
-        groupCode: viewData.groupCode,
-        cod: viewData.cod,
-        label: viewData.name_view,
-        description: viewData.description,
-        shortLabel:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].shortLabel
-                ? VIEWS[viewData.groupCode][viewData.cod].shortLabel
-                : viewData.name_view,
-        value: viewData.view_id,
-        tableOwner: groupViews[viewData.groupCode].tableOwner,
-        tableName: viewData.tableName,
-        carRegisterColumn:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
-                ? !viewData.isPrimary
-                    ? `${ groupViews[viewData.groupCode].tableOwner }_${
-                        VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
-                    }`
-                    : VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
-                : null,
-        type: viewData.type,
-        workspace: viewData.workspace,
-        view: viewData.view,
-        dataStore: viewData.datastore ? viewData.datastore : '',
-        isPrivate: viewData.type === 'analysis',
-        isChild:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].isChild
-                ? VIEWS[viewData.groupCode][viewData.cod].isChild
-                : false,
-        isHidden:
-            VIEWS[viewData.groupCode] &&
-            VIEWS[viewData.groupCode][viewData.cod] &&
-            VIEWS[viewData.groupCode][viewData.cod].isHidden
-                ? VIEWS[viewData.groupCode][viewData.cod].isHidden
-                : false,
-        isPrimary: viewData.isPrimary,
-        isDisabled: viewData.is_disable,
-        filter: viewData.type === 'analysis' ? setFilter(groupViews, viewData) : null,
-        layerData: getLayerData(viewData),
-        legend: getLegend(viewData),
-        tools: [
-            {
-                icon: 'fas fa-info',
-                name: 'description',
-                title: 'description',
-            },
-            {
-                icon: 'fas fa-save',
-                name: 'export',
-                title: 'export',
-            },
-            {
-                icon: 'fas fa-adjust',
-                name: 'opacity',
-                title: 'opacity',
-            },
-            // Do not replace or delete, it will be implemented later.
-            // {
-            //     icon: "fas fa-expand-alt",
-            //     name: "extent",
-            //     title: "Extent"
-            // },
-            // {
-            //   icon: "fas fa-calendar-alt",
-            //   name: "calendar",
-            //   title: "Filtrar por intervalo de data"
-            // },
-            // {
-            //   icon: "fas fa-sliders-h",
-            //   name: "slider",
-            //   title: "Filtrar por data"
-            // }
-        ]
-    };
+  return {
+    groupCode: viewData.groupCode,
+    cod: viewData.cod,
+    label: viewData.name_view,
+    description: viewData.description,
+    shortLabel:
+        VIEWS[viewData.groupCode] &&
+        VIEWS[viewData.groupCode][viewData.cod] &&
+        VIEWS[viewData.groupCode][viewData.cod].shortLabel
+            ? VIEWS[viewData.groupCode][viewData.cod].shortLabel
+            : viewData.name_view,
+    value: viewData.view_id,
+    tableOwner: groupViews[viewData.groupCode].tableOwner,
+    tableName: viewData.tableName,
+    carRegisterColumn:
+        VIEWS[viewData.groupCode] &&
+        VIEWS[viewData.groupCode][viewData.cod] &&
+        VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+            ? !viewData.isPrimary
+                ? `${ groupViews[viewData.groupCode].tableOwner }_${
+                    VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+                }`
+                : VIEWS[viewData.groupCode][viewData.cod].carRegisterColumn
+            : null,
+    type: viewData.type,
+    workspace: viewData.workspace,
+    view: viewData.view,
+    dataStore: viewData.datastore ? viewData.datastore : '',
+    isPrivate: viewData.type === 'analysis',
+    isChild:
+        VIEWS[viewData.groupCode] &&
+        VIEWS[viewData.groupCode][viewData.cod] &&
+        VIEWS[viewData.groupCode][viewData.cod].isChild
+            ? VIEWS[viewData.groupCode][viewData.cod].isChild
+            : false,
+    isHidden:
+        VIEWS[viewData.groupCode] &&
+        VIEWS[viewData.groupCode][viewData.cod] &&
+        VIEWS[viewData.groupCode][viewData.cod].isHidden
+            ? VIEWS[viewData.groupCode][viewData.cod].isHidden
+            : false,
+    isPrimary: viewData.isPrimary,
+    isDisabled: viewData.is_disable,
+    filter: viewData.type === 'analysis' ? setFilter(groupViews, viewData) : null,
+    layerData: getLayerData(viewData),
+    legend: getLegend(viewData),
+    tools: [
+      {
+        icon: 'fas fa-info',
+        name: 'description',
+        title: 'description',
+      },
+      {
+        icon: 'fas fa-save',
+        name: 'export',
+        title: 'export',
+      },
+      {
+        icon: 'fas fa-adjust',
+        name: 'opacity',
+        title: 'opacity',
+      },
+      // Do not replace or delete, it will be implemented later.
+      // {
+      //     icon: "fas fa-expand-alt",
+      //     name: "extent",
+      //     title: "Extent"
+      // },
+      // {
+      //   icon: "fas fa-calendar-alt",
+      //   name: "calendar",
+      //   title: "Filtrar por intervalo de data"
+      // },
+      // {
+      //   icon: "fas fa-sliders-h",
+      //   name: "slider",
+      //   title: "Filtrar por data"
+      // }
+    ]
+  };
 };
 
 getGroupViews = async () => {
-    const sql = `
+  const sql = `
         SELECT
                (CASE
                    WHEN view.source_type = ${ layerType.STATIC } THEN 'STATIC'
@@ -195,22 +195,22 @@ getGroupViews = async () => {
         FROM terrama2.views AS view
         WHERE view.active = true
         GROUP BY cod, label, parent, view_graph, active_area, is_private `;
-    const options = {
-        type: QueryTypes.SELECT,
-        fieldMap: {
-            view_graph: 'viewGraph',
-            active_area: 'activeArea',
-            is_private: 'isPrivate'
-        }
+  const options = {
+    type: QueryTypes.SELECT,
+    fieldMap: {
+      view_graph: 'viewGraph',
+      active_area: 'activeArea',
+      is_private: 'isPrivate'
     }
-    const groupViewsData = await sequelize.query(sql, options);
-    const groupViews = {};
-    groupViewsData.forEach(groupView => groupViews[groupView.cod] = groupView);
-    return groupViews;
+  }
+  const groupViewsData = await sequelize.query(sql, options);
+  const groupViews = {};
+  groupViewsData.forEach(groupView => groupViews[groupView.cod] = groupView);
+  return groupViews;
 }
 
 getViews = async () => {
-    const sql = `SELECT
+  const sql = `SELECT
                view.id AS view_id,
                TRIM(view.name) AS name_view,
                view.description AS description,
@@ -273,112 +273,112 @@ getViews = async () => {
         ORDER BY type, cod_group, name_view
       `;
 
-    const options = {
-        type: QueryTypes.SELECT,
-        fieldMap: {
-            cod_group: 'groupCode',
-            is_primary: 'isPrimary',
-            table_name: 'tableName'
-        }
+  const options = {
+    type: QueryTypes.SELECT,
+    fieldMap: {
+      cod_group: 'groupCode',
+      is_primary: 'isPrimary',
+      table_name: 'tableName'
     }
-    return await sequelize.query(sql, options);
+  }
+  return await sequelize.query(sql, options);
 }
 
 setGroupViewsChildren = async (views, groupViews, asMap = true) => {
-    views.forEach(view => {
-        if (!groupViews[view.groupCode].children) {
-            groupViews[view.groupCode].children = [];
-        }
-        if (view.isPrimary) {
-            groupViews[view.groupCode].tableOwner = view.tableName;
-        }
-    });
-
-    if (asMap) {
-        views.forEach(view => groupViews[view.groupCode].children[view.cod] = view);
-    } else {
-        views.forEach(view => groupViews[view.groupCode].children.push(getViewObject(groupViews, view)));
+  views.forEach(view => {
+    if (!groupViews[view.groupCode].children) {
+      groupViews[view.groupCode].children = [];
     }
-    return groupViews;
+    if (view.isPrimary) {
+      groupViews[view.groupCode].tableOwner = view.tableName;
+    }
+  });
+
+  if (asMap) {
+    views.forEach(view => groupViews[view.groupCode].children[view.cod] = view);
+  } else {
+    views.forEach(view => groupViews[view.groupCode].children.push(getViewObject(groupViews, view)));
+  }
+  return groupViews;
 }
 
 sortViews = async (groupViews) => {
-    const groupCodes = [
-        'DETER',
-        'PRODES',
-        'BURNED',
-        'BURNED_AREA',
-        'STATIC',
-        'DYNAMIC',
-    ];
-    return groupCodes.map(groupCode => {
-        const children = groupViews[groupCode].children;
-        const primary = children.filter(child => child.isPrimary);
-        const child = children.filter(child => child.isChild).sort((firstView, secondView) => {
-            return (
-                +(
-                    firstView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase() >
-                    secondView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase()
-                ) ||
-                +(
-                    firstView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase() ===
-                    secondView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase()
-                ) - 1
-            );
-        });
-        const other = children.filter(child => !child.isChild && !child.isPrimary).sort((firstView, secondView) => {
-            return (
-                +(
-                    firstView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase() >
-                    secondView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase()
-                ) ||
-                +(
-                    firstView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase() ===
-                    secondView.shortLabel
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase()
-                ) - 1
-            );
-        });
-        groupViews[groupCode].children = [...primary, ...child, ...other];
-        return groupViews[groupCode];
-    })
+  const groupCodes = [
+    'DETER',
+    'PRODES',
+    'BURNED',
+    'BURNED_AREA',
+    'STATIC',
+    'DYNAMIC',
+  ];
+  return groupCodes.map(groupCode => {
+    const children = groupViews[groupCode].children;
+    const primary = children.filter(child => child.isPrimary);
+    const child = children.filter(child => child.isChild).sort((firstView, secondView) => {
+      return (
+          +(
+              firstView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase() >
+              secondView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase()
+          ) ||
+          +(
+              firstView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase() ===
+              secondView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase()
+          ) - 1
+      );
+    });
+    const other = children.filter(child => !child.isChild && !child.isPrimary).sort((firstView, secondView) => {
+      return (
+          +(
+              firstView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase() >
+              secondView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase()
+          ) ||
+          +(
+              firstView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase() ===
+              secondView.shortLabel
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .toLowerCase()
+          ) - 1
+      );
+    });
+    groupViews[groupCode].children = [...primary, ...child, ...other];
+    return groupViews[groupCode];
+  })
 }
 
 module.exports.getSidebarLayers = async (childrenAsMap = false) => {
-    let groupViews = await getGroupViews();
-    const views = await getViews();
-    groupViews = await setGroupViewsChildren(views, groupViews, childrenAsMap);
-    if (!childrenAsMap) {
-        groupViews = await sortViews(groupViews);
-    }
-    return groupViews;
+  let groupViews = await getGroupViews();
+  const views = await getViews();
+  groupViews = await setGroupViewsChildren(views, groupViews, childrenAsMap);
+  if (!childrenAsMap) {
+    groupViews = await sortViews(groupViews);
+  }
+  return groupViews;
 }
 
 module.exports.getReportLayers = async () => {
-    const sql = `
+  const sql = `
       SELECT
               (CASE
                     WHEN (SUBSTRING(UPPER(TRIM(view.name)), 'CAR X DETER') IS NOT NULL) THEN 2
@@ -441,9 +441,9 @@ module.exports.getReportLayers = async () => {
       ORDER BY seq
     `;
 
-    const options = {
-        type: QueryTypes.SELECT,
-        fieldMap: {cod_group: 'groupCode'}
-    };
-    return await sequelize.query(sql, options);
+  const options = {
+    type: QueryTypes.SELECT,
+    fieldMap: {cod_group: 'groupCode'}
+  };
+  return await sequelize.query(sql, options);
 }

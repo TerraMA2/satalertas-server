@@ -112,7 +112,7 @@ module.exports.getDeterDeforestationAlerts = async (carGid, filter) => {
             ${Filter.getDateFilterSql(filter.date)}
             ${Filter.getFilterClassSearch(filter, true)}
             AND st_intersects(biomes.geom, carxdeter.intersection_geom)
-      GROUP BY a_cardeter_31_id, biomes.gid `;
+      GROUP BY a_cardeter_31_id, biomes.gid`;
 
   return await sequelize.query(deforestationAlertsSql, {
     type: QueryTypes.SELECT,
@@ -407,25 +407,19 @@ module.exports.getBBox = async (carGid) => {
   return await sequelize.query(sqlBbox, bboxOptions);
 }
 
-module.exports.generateNumber = async (type) => {
-  const sql = `SELECT '${type.trim()}' AS type,
-               EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
-               LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS newnumber,
-               CONCAT(
-                    LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0'),
-                    '/',
-                    EXTRACT(YEAR FROM CURRENT_TIMESTAMP)
-               ) AS code
+module.exports.generateNumber = async (reportType) => {
+  const sql = `SELECT EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS year,
+               LPAD(CAST((COALESCE(MAX(rep.code), 0) + 1) AS VARCHAR), 5, '0') AS new_number
         FROM alertas.reports AS rep
-        WHERE rep.type = '${type.trim()}'
-          AND rep.created_at BETWEEN
-            CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
+        WHERE rep.type = '${reportType}'
+        AND rep.created_at BETWEEN CAST(concat(EXTRACT(YEAR FROM CURRENT_TIMESTAMP),\'-01-01 00:00:00\') AS timestamp) AND CURRENT_TIMESTAMP`;
+
   return await sequelize.query(sql, {
     type: QueryTypes.SELECT,
     fieldMap: {
-      newnumber: "newNumber",
+      new_number: "newNumber",
     },
-    plain: true,
+    plain: true
   });
 };
 
@@ -433,9 +427,7 @@ module.exports.saveReport = async (docName, newNumber, reportData, path) => {
   const report = new Report({
     name: docName.trim(),
     code: parseInt(newNumber),
-    carCode: reportData.stateRegister
-        ? reportData.stateRegister.trim()
-        : reportData.federalregister,
+    carCode: reportData.stateRegistry ? reportData.stateRegistry.trim() : reportData.federalRegistry,
     carGid: reportData.gid,
     path: path.trim(),
     type: reportData.type.trim(),

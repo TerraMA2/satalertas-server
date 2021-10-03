@@ -41,7 +41,7 @@
         "disableEditing": false,
         "hide": false,
         "columnPosition": 5,
-        "description": "A camada é privada?" 
+        "description": "A camada é privada?"
       },
       {
         "columnName": "is_primary",
@@ -80,7 +80,7 @@
     "type": "auxiliar-table",
     "columns": [
       {
-        "columnName":"id",
+        "columnName": "id",
         "primaryType": "integer",
         "secondaryType": null,
         "alias": "id",
@@ -90,7 +90,7 @@
         "description": "Campo de identificação"
       },
       {
-        "columnName":"column_name",
+        "columnName": "column_name",
         "primaryType": "string",
         "secondaryType": null,
         "alias": "Nome da Coluna",
@@ -100,7 +100,7 @@
         "description": "Nome da Coluna no Banco"
       },
       {
-        "columnName":"alias",
+        "columnName": "alias",
         "primaryType": "string",
         "secondaryType": null,
         "alias": "Apelido",
@@ -110,7 +110,7 @@
         "description": "Nome a ser exibido."
       },
       {
-        "columnName":"primary_type",
+        "columnName": "primary_type",
         "primaryType": "string",
         "secondaryType": null,
         "alias": "Tipo Primário",
@@ -120,7 +120,7 @@
         "description": "Tipo do campo na tabela do banco"
       },
       {
-        "columnName":"secondary_type",
+        "columnName": "secondary_type",
         "primaryType": "type",
         "secondaryType": null,
         "alias": "Tipo Secundário",
@@ -130,7 +130,7 @@
         "description": "Tipo auxiliar do campo"
       },
       {
-        "columnName":"hide",
+        "columnName": "hide",
         "primaryType": "boolean",
         "secondaryType": null,
         "alias": "Exibe ou não o campo para o usuário",
@@ -140,7 +140,7 @@
         "description": "Exibe ou não o campo para o usuário"
       },
       {
-        "columnName":"disable_editing",
+        "columnName": "disable_editing",
         "primaryType": "boolean",
         "secondaryType": null,
         "alias": "Bloquear Edição",
@@ -150,7 +150,7 @@
         "description": "Desabilita a edição do campo"
       },
       {
-        "columnName":"column_position",
+        "columnName": "column_position",
         "primaryType": "integer",
         "secondaryType": null,
         "alias": "Posição da coluna",
@@ -160,7 +160,7 @@
         "description": "Posição da coluna na exibição"
       },
       {
-        "columnName":"description",
+        "columnName": "description",
         "primaryType": "string",
         "secondaryType": null,
         "alias": "Descrição",
