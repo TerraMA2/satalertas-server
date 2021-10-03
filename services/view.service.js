@@ -26,6 +26,8 @@ getLegend = (data_view) => {
 
 getLayerData = (data_view) => {
   return {
+    format: 'image/png',
+    version: '1.1.1',
     url: `${ config.geoserver.baseUrl }/wms`,
     layers: `${ data_view.workspace }:${ data_view.view }`,
     transparent: true,

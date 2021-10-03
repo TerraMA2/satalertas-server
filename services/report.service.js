@@ -352,7 +352,6 @@ getProdesImages = async (reportData, filterDate) => {
   }), [200, 200], [0, 10], 'center');
 
   images['deforestationLegendImage'] = reportUtil.getImageObject(await geoserverService.getLegendImage({
-    format: "image/png",
     height: "30",
     layer: `terrama2_119:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`,
     version: "1.0.0",
