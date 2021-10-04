@@ -330,7 +330,7 @@ getDeterImages = async (reportData, filter) => {
 };
 
 getProdesImages = async (reportData, filterDate) => {
-  const images = [];
+  const images = {};
 
   images['propertyLocationImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.stateBBox }`,
@@ -444,7 +444,7 @@ getProdesImages = async (reportData, filterDate) => {
 };
 
 getBurnedImages = async (reportData, filter) => {
-  const images = [];
+  const images = {};
 
   images['propertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
     bbox: `${ reportData.planetBBox }`,
