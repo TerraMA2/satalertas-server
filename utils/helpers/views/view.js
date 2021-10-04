@@ -7,13 +7,13 @@ const dynamic_data = require('./dynamic-data');
 const newFilter = require('./filter/new_filter');
 
 const VIEWS = {
-    DETER: deter,
-    PRODES: prodes,
-    BURNED: burned,
-    BURNED_AREA: burned_area,
-    STATIC: static_data,
-    DYNAMIC: dynamic_data,
-    newFilter
+  DETER: deter,
+  PRODES: prodes,
+  BURNED: burned,
+  BURNED_AREA: burned_area,
+  STATIC: static_data,
+  DYNAMIC: dynamic_data,
+  newFilter
 };
 
 module.exports = VIEWS;

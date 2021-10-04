@@ -3,10 +3,10 @@ const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
 exports.get = async (req, res, next) => {
-    try {
-        const file = await exportService.get(req.body.params);
-        res.json(response(httpStatus.SUCCESS, file));
-    } catch (e) {
-        next(e);
-    }
+  try {
+    const file = await exportService.get(req.body.params);
+    res.json(response(httpStatus.SUCCESS, file));
+  } catch (e) {
+    next(e);
+  }
 };

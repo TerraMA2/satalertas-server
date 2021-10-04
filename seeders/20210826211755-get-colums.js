@@ -30,7 +30,7 @@ module.exports = {
 
   down: async (queryInterface, _Sequelize) => {
     return await queryInterface.sequelize.query(
-      'TRUNCATE terrama2.infocolumn_columns_list RESTART IDENTITY CASCADE;',
+        'TRUNCATE terrama2.infocolumn_columns_list RESTART IDENTITY CASCADE;',
     );
   },
 };

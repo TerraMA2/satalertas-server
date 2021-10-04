@@ -1,5 +1,5 @@
 const groupViewService = require('../services/group-view.service');
-const { response } = require('../utils/response.utils');
+const {response} = require('../utils/response.utils');
 const httpStatus = require('../enum/http-status');
 
 exports.get = async (_req, res, next) => {
@@ -23,7 +23,7 @@ exports.getByGroupId = async (req, res, next) => {
 exports.getAvailableLayers = async (req, res, next) => {
   try {
     const availableLayers = await groupViewService.getAvailableLayers(
-      req.query.groupId,
+        req.query.groupId,
     );
     res.json(response(httpStatus.SUCCESS, availableLayers));
   } catch (e) {

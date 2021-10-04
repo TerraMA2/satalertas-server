@@ -9,7 +9,7 @@ const {
   sequelize,
 } = require('../models');
 const Tools = require('../utils/tool.utils');
-const { Op } = Sequelize;
+const {Op} = Sequelize;
 const {
   layerData,
   setLegend,
@@ -18,7 +18,7 @@ const {
 const infoColumnsService = require('./info-columns.service');
 const layerTypeName = require('../enum/layer-type-name');
 const BadRequestError = require('../errors/bad-request.error');
-const { QueryTypes } = require('sequelize');
+const {QueryTypes} = require('sequelize');
 
 const viewTableName = {
   model: DataSet,
@@ -27,7 +27,7 @@ const viewTableName = {
   include: {
     model: DataSetFormat,
     as: 'dataSetFormat',
-    where: { key: { [Op.eq]: 'table_name' } },
+    where: {key: {[Op.eq]: 'table_name'}},
     attributes: [['value', 'tableName']],
   },
 };
@@ -37,7 +37,7 @@ module.exports.setTableName = (data) => {
     dataSet: {
       dataSetFormat: [
         {
-          dataValues: { tableName },
+          dataValues: {tableName},
         },
       ],
     },
@@ -83,19 +83,19 @@ module.exports.getTableName = async (viewId) => {
     WHERE vw.id = $viewId AND dsf.key = 'table_name';`;
   const options = {
     type: QueryTypes.SELECT,
-    fieldMap: { value: 'tableName', view_id: 'viewId' },
-    bind: { viewId },
+    fieldMap: {value: 'tableName', view_id: 'viewId'},
+    bind: {viewId},
     plain: true,
   };
   const result = await sequelize.query(sql, options);
   return result.tableName;
 };
 module.exports.getByGroupId = async (params) => {
-  const { groupId, listSublayers = false } = params;
+  const {groupId, listSublayers = false} = params;
   let tableInfoColumns = [];
   let viewsGroup = [];
   if (groupId) {
-    const { code: groupCode } = await Group.findByPk(groupId, { raw: true });
+    const {code: groupCode} = await Group.findByPk(groupId, {raw: true});
     const where = {
       where: {
         groupId,
@@ -105,17 +105,17 @@ module.exports.getByGroupId = async (params) => {
 
     const groupViews = await RelGroupView.findAll({
       ...where,
-      attributes: { exclude: ['group_id', 'view_id'] },
+      attributes: {exclude: ['group_id', 'view_id']},
       raw: true,
     });
     for (const groupView of groupViews) {
-      const { viewId } = groupView;
+      const {viewId} = groupView;
       let layer = {
         groupCode,
         tools: Tools,
       };
       const options = {
-        attributes: { exclude: ['id', 'project_id', 'data_series_id'] },
+        attributes: {exclude: ['id', 'project_id', 'data_series_id']},
         include: [viewTableName],
       };
 
@@ -129,9 +129,9 @@ module.exports.getByGroupId = async (params) => {
       Object.assign(layer, filteredGroupView);
       if (viewId) {
         layer['tableInfocolumns'] = await infoColumnsService.getInfocolumnsByViewId(
-          viewId,
+            viewId,
         ).then((response) => response.tableInfocolumns);
-        const viewName = `view${viewId}`;
+        const viewName = `view${ viewId }`;
         layer.viewName = viewName;
         const registeredData = await RegisteredView.findOne({
           where: {
@@ -139,11 +139,11 @@ module.exports.getByGroupId = async (params) => {
           },
           raw: true,
         });
-        const { workspace } = registeredData;
-        const layerDataOptions = { geoservice: 'wms' };
+        const {workspace} = registeredData;
+        const layerDataOptions = {geoservice: 'wms'};
         layer.layerData = layerData(
-          `${workspace}:${viewName}`,
-          layerDataOptions,
+            `${ workspace }:${ viewName }`,
+            layerDataOptions,
         );
         layer.legend = setLegend(layer.name, workspace, viewName);
         if (!layer['shortName']) {
@@ -163,7 +163,7 @@ module.exports.getByGroupId = async (params) => {
   }
   if (viewsGroup.length > 2) {
     viewsGroup.forEach((view) => {
-      const { isPrimary, subLayers } = view;
+      const {isPrimary, subLayers} = view;
       if (isPrimary && subLayers) {
         const sbLayers = [];
         subLayers.forEach((layerId) => {
@@ -177,7 +177,7 @@ module.exports.getByGroupId = async (params) => {
   }
   const data = viewsGroup.filter((child) => !child.isSublayer);
   if (listSublayers) {
-      return viewsGroup
+    return viewsGroup
   }
   return viewsGroup.filter((child) => !child.isSublayer);
 };
@@ -187,15 +187,15 @@ module.exports.getAvailableLayers = async (groupId) => {
     throw new BadRequestError('Group not found');
   }
   const viewIds = await RelGroupView.findAll({
-    where: { groupId },
+    where: {groupId},
     attributes: ['viewId'],
   }).then((list) =>
-    list.filter(({ viewId }) => viewId).map(({ viewId }) => viewId),
+      list.filter(({viewId}) => viewId).map(({viewId}) => viewId),
   );
 
   const option = {
     where: {
-      id: { [Op.notIn]: viewIds },
+      id: {[Op.notIn]: viewIds},
     },
     include: [viewTableName],
   };
@@ -213,16 +213,16 @@ module.exports.add = async (newGroupView) => {
     viewId: newGroupView.viewId,
   });
   return await RelGroupView.create(groupView.dataValues).then(
-    (groupView) => groupView.dataValues,
+      (groupView) => groupView.dataValues,
   );
 };
 
 module.exports.update = async (groupViewModify) => {
-  const { layers, groupId, groupOwner } = groupViewModify;
+  const {layers, groupId, groupOwner} = groupViewModify;
   if (!groupId) {
     throw new BadRequestError('Group not found');
   }
-  return await RelGroupView.destroy({ where: { groupId } }).then(async () => {
+  return await RelGroupView.destroy({where: {groupId}}).then(async () => {
     const newLayers = layers.map((layer) => ({
       group_id: layer.groupId,
       view_id: layer.viewId,
@@ -233,17 +233,17 @@ module.exports.update = async (groupViewModify) => {
 };
 
 module.exports.updateAdvanced = async (groupViewModify) => {
-  const { editions, groupId } = groupViewModify;
+  const {editions, groupId} = groupViewModify;
   for (const edition of editions) {
-    const { id, ...el } = edition;
-    const where = { id };
-    const newLayerData = { ...el };
+    const {id, ...el} = edition;
+    const where = {id};
+    const newLayerData = {...el};
     if (edition.hasOwnProperty('subLayers') && edition.subLayers) {
       newLayerData.subLayers = Array.from(
-        new Set(edition.subLayers.map(({ id }) => id)),
+          new Set(edition.subLayers.map(({id}) => id)),
       );
     }
-    await RelGroupView.update(newLayerData, { where });
+    await RelGroupView.update(newLayerData, {where});
   }
   return await this.getByGroupId({groupId});
 };

@@ -81,42 +81,42 @@
       "indigenousLand": {
         "title": "Terra Indígena",
         "descriptionPrefix": "",
-        "descriptionSuffix": "",
+        "descriptionSuffix": "ha",
         "layers": "terrama2_119:view119,terrama2_41:view41",
         "cqlFilter": "rid='{rid}';a_carprodes_1_de_car_validado_sema_gid='{gid}'"
       },
       "conservationUnit": {
         "title": "Unidade de Conservação",
         "descriptionPrefix": "",
-        "descriptionSuffix": "",
+        "descriptionSuffix": "ha",
         "layers": "terrama2_119:view119,terrama2_42:view42",
         "cqlFilter": "rid='{rid}';a_carprodes_1_de_car_validado_sema_gid='{gid}'"
       },
       "legalReserve": {
         "title": "Reserva Legal",
         "descriptionPrefix": "",
-        "descriptionSuffix": "",
+        "descriptionSuffix": "ha",
         "layers": "terrama2_119:view119,terrama2_104:view104",
         "cqlFilter": "rid='{rid}';a_carprodes_1_de_car_validado_sema_gid='{gid}'"
       },
       "app": {
         "title": "APP",
         "descriptionPrefix": "",
-        "descriptionSuffix": "",
+        "descriptionSuffix": "ha",
         "layers": "terrama2_119:view119,terrama2_111:view111",
         "cqlFilter": "rid='{rid}';a_carprodes_1_de_car_validado_sema_gid='{gid}'"
       },
       "anthropizedUse": {
         "title": "Uso antropizado",
         "descriptionPrefix": "",
-        "descriptionSuffix": "",
+        "descriptionSuffix": "ha",
         "layers": "terrama2_119:view119,terrama2_37:view37",
         "cqlFilter": "rid='{rid}';a_carprodes_1_de_car_validado_sema_gid='{gid}'"
       },
       "nativeVegetation": {
         "title": "Vegetação nativa",
         "descriptionPrefix": "",
-        "descriptionSuffix": "",
+        "descriptionSuffix": "ha",
         "layers": "terrama2_119:view119,terrama2_38:view38",
         "cqlFilter": "rid='{rid}';a_carprodes_1_de_car_validado_sema_gid='{gid}'"
       }
@@ -158,7 +158,7 @@
         "cqlFilter": "rid='{rid}';de_car_validado_sema_gid='{gid}'",
         "title": "DETER",
         "descriptionPrefix": "Total Área Desmatada em",
-        "descriptionSuffix": ""
+        "descriptionSuffix": "ha"
       },
       "titleProdes": "Histórico de Desmatamento - PRODES",
       "prodesHistory": {
@@ -167,7 +167,7 @@
         "styles": ",terrama2_119:view119_yellow_style,terrama2_35:view35_Mod_style",
         "title": "PRODES",
         "descriptionPrefix": "Total Área Desmatada em",
-        "descriptionSuffix": ""
+        "descriptionSuffix": "ha"
       },
       "titleFireSpot": "Focos de queimadas",
       "fireSpotHistory": {
@@ -183,7 +183,7 @@
         "cqlFilter": "rid='{rid}';de_car_validado_sema_gid='{gid}'",
         "title": "Área queimada",
         "descriptionPrefix": "Total Áreas queimadas em",
-        "descriptionSuffix": ""
+        "descriptionSuffix": "ha"
       },
       "landsatLayers": {
         "1999": "LANDSAT_5_1999",

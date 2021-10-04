@@ -11,6 +11,6 @@ module.exports = {
     `);
   },
   down: (queryInterface, Sequelize) => {
-      return queryInterface.sequelize.query(`DROP VIEW car_x_vegradam`);
+    return queryInterface.sequelize.query(`DROP VIEW car_x_vegradam`);
   }
 };

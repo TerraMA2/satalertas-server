@@ -1,4 +1,5 @@
 module.exports = {
-  PRODES:  'prodes',
+  PRODES: 'prodes',
   FIRING: 'queimada',
+  DETER: 'deter',
 }

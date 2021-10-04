@@ -13,41 +13,41 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
 fs
     .readdirSync(__dirname)
     .filter(file => {
-        return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js')
+      return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js')
     })
     .forEach(file => {
-        const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-        db[model.name] = model
+      const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+      db[model.name] = model
     });
 
 Object.keys(db).forEach(modelName => {
-    if (db[modelName].associate) {
-        db[modelName].associate(db)
-    }
+  if (db[modelName].associate) {
+    db[modelName].associate(db)
+  }
 });
 
 const umzug = new Umzug({
-    storage: 'sequelize',
-    storageOptions: {sequelize},
-    migrations: {
-        params: [
-            sequelize.getQueryInterface(),
-            Sequelize
-        ],
-        path: path.resolve(__dirname, '../migrations')
-    }
+  storage: 'sequelize',
+  storageOptions: {sequelize},
+  migrations: {
+    params: [
+      sequelize.getQueryInterface(),
+      Sequelize
+    ],
+    path: path.resolve(__dirname, '../migrations')
+  }
 });
 
 const umzugSeed = new Umzug({
-    storage: 'sequelize',
-    storageOptions: {sequelize, modelName: 'SequelizeSeed'},
-    migrations: {
-        params: [
-            sequelize.getQueryInterface(),
-            Sequelize
-        ],
-        path: path.resolve(__dirname, '../seeders')
-    }
+  storage: 'sequelize',
+  storageOptions: {sequelize, modelName: 'SequelizeSeed'},
+  migrations: {
+    params: [
+      sequelize.getQueryInterface(),
+      Sequelize
+    ],
+    path: path.resolve(__dirname, '../seeders')
+  }
 });
 
 umzug.up({}).then(() => umzugSeed.up({}))
