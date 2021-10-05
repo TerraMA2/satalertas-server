@@ -23,6 +23,7 @@ const cityRouter = require('./routes/city.router')
 const classRouter = require('./routes/class.router')
 const exportRouter = require('./routes/export.router')
 const infoColumnsRouter = require('./routes/info-columns.router')
+const countyRouter = require('./routes/county.router')
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json');
@@ -57,6 +58,7 @@ app.use(basePath + '/city', cityRouter)
 app.use(basePath + '/class', classRouter)
 app.use(basePath + '/export', exportRouter)
 app.use(basePath + '/infoColumns', infoColumnsRouter)
+app.use(basePath + '/county', countyRouter)
 
 app.use(errorHandling)
 
