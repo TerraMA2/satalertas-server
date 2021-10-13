@@ -7,7 +7,8 @@ module.exports.get = async (type) => {
   if (!type) {
     throw new BadRequestError('Error occurred while getting classes');
   }
-  const sql = `SELECT ${ type }.classname AS name, row_number() over () AS gid FROM public.dd_deter_inpe ${ type }
+  const sql = `SELECT ${ type }.classname AS label, row_number() over () AS value
+                FROM public.dd_deter_inpe ${ type }
                  GROUP BY ${ type }.classname
                  ORDER BY ${ type }.classname`;
 
