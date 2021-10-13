@@ -23,11 +23,8 @@ const cityRouter = require('./routes/city.router')
 const classRouter = require('./routes/class.router')
 const exportRouter = require('./routes/export.router')
 const infoColumnsRouter = require('./routes/info-columns.router')
-<<<<<<< HEAD
 const countyRouter = require('./routes/county.router')
-=======
 const filterRouter = require('./routes/filter.router')
->>>>>>> 99022f22c016edd0a732960ee60f05e451df2b52
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/config/config.json');
