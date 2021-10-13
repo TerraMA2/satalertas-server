@@ -16,14 +16,15 @@ module.exports.getCountyData = async (params) => {
   const {geocodigo=null, name=null} = params;
   const options = {
     attributes: [
-      'geocode_list', 'name_list'
+      ['geocode_list', 'geocodeList'], ['name_list', 'nameList']
     ],
     order: [
       ['name']
-    ]
+    ],
+    plain: true,
   };
   if (geocodigo) {
-    options.where = { geocodigo}
+    options.where = { geocodigo }
   } else {
     options.where = { name }
   };

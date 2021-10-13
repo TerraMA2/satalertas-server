@@ -1,6 +1,6 @@
 const express = require('express');
-router = express.Router();
-biomeController = require('../controllers/biome.controller');
+const router = express.Router();
+const biomeController = require('../controllers/biome.controller');
 
 router.get('/', biomeController.get);
 
