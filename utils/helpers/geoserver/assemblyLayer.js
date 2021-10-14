@@ -23,6 +23,8 @@ function layerData(layersList, options = undefined) {
     layers,
     transparent,
     time: 'P1Y/PRESENT',
+    format: 'image/png',
+    version: '1.1.1'
   };
 }
 

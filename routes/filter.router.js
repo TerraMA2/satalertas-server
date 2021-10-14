@@ -8,7 +8,7 @@ router.get('/mesoregion', filterController.getMesoregions);
 router.get('/immediateRegion', filterController.getImmediateRegion);
 router.get('/intermediateRegion', filterController.getIntermediateRegion);
 router.get('/pjbh', filterController.getPjbh);
-router.get('/microregions', filterController.getMicroregions);
+router.get('/microregion', filterController.getMicroregions);
 router.get('/ti', filterController.getTI);
 router.get('/uc', filterController.getUC);
 router.get('/projus', filterController.getProjus);

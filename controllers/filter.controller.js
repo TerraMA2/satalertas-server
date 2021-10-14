@@ -1,8 +1,9 @@
-const cityService = require(__dirname + '/../services/city.service');
-const indigenousLandService = require(__dirname + '/../services/indigenous-land.service');
-const projusService = require(__dirname + '/../services/projus.service');
-const conservationUnitService = require(__dirname + '/../services/conservation-unit.service');
-const biomeService = require(__dirname + '/../services/biome.service');
+const cityService = require('../services/city.service');
+const countyService = require('../services/county.service');
+const indigenousLandService = require('../services/indigenous-land.service');
+const projusService = require('../services/projus.service');
+const conservationUnitService = require('../services/conservation-unit.service');
+const biomeService = require('../services/biome.service');
 const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 
@@ -17,8 +18,8 @@ exports.getCity = async (req, res, next) => {
 
 exports.getCounty = async (req, res, next) => {
   try {
-    const regions = await cityService.getRegions();
-    res.json(response(httpStatus.SUCCESS, regions));
+    const counties = await countyService.getAllCounties();
+    res.json(response(httpStatus.SUCCESS, counties));
   } catch (e) {
     next(e);
   }
