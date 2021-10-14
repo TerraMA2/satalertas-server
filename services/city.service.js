@@ -3,16 +3,18 @@ const {City} = require('../models');
 module.exports.get = async () => {
   const options = {
     attributes: [
-      'gid',
       ['municipio', 'name'],
-      'geocodigo'
+      ['geocodigo', 'value']
     ],
     order: [
       ['municipio']
-    ]
+    ],
+    raw: true,
   };
-  return await City.findAll(options);
+  let result = await City.findAll(options);
+  return result.map(item => ({name: item.name, value: item}))
 }
+
 module.exports.getRegions = async () => {
   const options = {
     attributes: [

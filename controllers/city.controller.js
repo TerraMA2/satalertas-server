@@ -1,4 +1,4 @@
-const cityService = require(__dirname + '/../services/city.service');
+const cityService = require('../services/city.service');
 const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 

@@ -3,13 +3,20 @@ const {County, sequelize} = require('../models');
 module.exports.getAllCounties = async () => {
   const options = {
     attributes: [
-      'name', 'geocodigo'
+      'name', 'geocodigo',
+      ['geocode_list', 'geocodeList'], ['name_list', 'nameList']
     ],
     order: [
       ['name']
     ]
   };
-  return await County.findAll(options);
+  const result = await County.findAll(options);
+  return result.map(item => {
+    item.nameList = item.nameList.map(item => item.replace("'", "''"));
+    return {
+    name: item.name,
+    value: item
+  }})
 }
 
 module.exports.getCountyData = async (params) => {
