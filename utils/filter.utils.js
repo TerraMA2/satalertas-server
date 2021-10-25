@@ -61,7 +61,7 @@ const themeSelected = {
 
     await codGoup[cod]();
   },
-  region: async function (conn, sql, filter, columns, cod, aliasTablePrimary, srid) {
+  county: async function (conn, sql, filter, columns, cod, aliasTablePrimary, srid) {
     sql.secondaryTables += ' , public.de_municipios_sema county ';
     const codGoup = {
       focos: async function () {
@@ -176,17 +176,17 @@ const themeSelected = {
   city: async function (conn, sql, filter, columns, cod, aliasTablePrimary, srid) {
     const codGoup = {
       focos: async function () {
-        sql.sqlWhere += ` AND ${ columns.filterColumns.columnsTheme.geocod } = ${ filter.themeSelected.value.geocodigo } `;
+        sql.sqlWhere += ` AND ${ columns.filterColumns.columnsTheme.geocod } = '${ filter.themeSelected.value.value.value.toString() }' `;
       },
       others: async function () {
-        sql.secondaryTables += ' , public.de_municipios_sema county ';
+        sql.secondaryTables += ' , public.de_municipios_sema city ';
         srid = srid && srid[0] && srid[0].srid ? srid : {rows: [{srid: config.geoserver.defaultSRID}]};
 
         const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
-        const fieldIntersects = (srid[0].srid === sridSec[0].srid) ? 'county.geom' : ` st_transform(county.geom, ${ srid[0].srid }) `;
+        const fieldIntersects = (srid[0].srid === sridSec[0].srid) ? 'city.geom' : ` st_transform(city.geom, ${ srid[0].srid }) `;
 
         sql.sqlWhere += ` AND ST_Intersects(${ aliasTablePrimary }.intersection_geom, ${ fieldIntersects }) `;
-        sql.sqlWhere += ` AND county.gid = ${ filter.themeSelected.value.gid } `;
+        sql.sqlWhere += ` AND city.geocodigo = '${ filter.themeSelected.value.value.value.toString() }' `;
       }
     };
     await codGoup[cod]();
