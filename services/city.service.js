@@ -4,7 +4,8 @@ module.exports.get = async () => {
   const options = {
     attributes: [
       ['municipio', 'name'],
-      ['geocodigo', 'value']
+      ['geocodigo', 'value'],
+      ['geocodigo', 'geocodigo']
     ],
     order: [
       ['municipio']
