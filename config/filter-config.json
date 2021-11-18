@@ -1,0 +1,12 @@
+{
+  "filter": {
+    "city": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    }
+
+  }
+}
