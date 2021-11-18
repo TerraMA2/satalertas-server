@@ -1,10 +1,8 @@
 const Sequelize = require("sequelize");
 const {
   View,
-  RelGroupView,
   RegisteredView,
   DataSetFormat,
-  Group,
   DataSet,
   sequelize,
 } = require("../models");
@@ -13,7 +11,6 @@ const Tools = require("../utils/tool.utils");
 const { layerData, setLegend, setFilter } = require("../utils/helpers/geoserver/assemblyLayer");
 const infoColumnsService = require("./info-columns.service");
 const layerTypeName = require("../enum/layer-type-name");
-const BadRequestError = require("../errors/bad-request.error");
 const { QueryTypes } = require("sequelize");
 
 const viewTableName = {
