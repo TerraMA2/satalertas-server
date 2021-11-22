@@ -100,7 +100,7 @@ module.exports.getByGroupId = async (params) => {
       raw: true,
     });
     for (const groupView of groupViews) {
-      await layerService.getLayerById({groupView, groupCode})
+      await layerService.getLayerByViewId({groupView, groupCode})
       .then(response => {
         viewsGroup.push(response);
       })
