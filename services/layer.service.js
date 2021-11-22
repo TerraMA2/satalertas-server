@@ -51,9 +51,10 @@ module.exports.getTableName = async (viewId) => {
   return result.tableName;
 };
 
-module.exports.getLayerById = async (params) => {
+module.exports.getLayerByViewId = async (params) => {
   const { groupView, groupCode } = params;
   let layer = {
+    ...groupView,
     groupCode,
     tools: Tools,
     viewName: `view${groupView.viewId}`,
@@ -65,7 +66,7 @@ module.exports.getLayerById = async (params) => {
   await View.findByPk(groupView.viewId, options).then((response) => {
     const filteredResponse = this.removeNullProperties(response.toJSON());
     layer["type"] = layerTypeName[filteredResponse["sourceType"]];
-    Object.assign(layerType, filteredResponse);
+    Object.assign(layer, filteredResponse);
     if (!layer["shortName"]) {
       layer.shortName = layer.name;
     }
