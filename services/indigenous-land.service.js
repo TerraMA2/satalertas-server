@@ -5,7 +5,8 @@ module.exports.get = async () => {
     attributes: [
       'gid',
       ['nome', 'name'],
-      'nome_ti_a1'
+      'nome_ti_a1',
+      ['objectid', 'objectId']
     ],
     order: [
       ['name']
