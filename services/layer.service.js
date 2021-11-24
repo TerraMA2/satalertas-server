@@ -91,11 +91,11 @@ module.exports.getLayerByViewId = async (params) => {
     const layerDataOptions = { geoservice: "wms" };
     layer.layerData = layerData(`${workspace}:${layer.viewName}`, layerDataOptions);
     layer.legend = setLegend(layer.name, workspace, layer.viewName);
-    const gp = {
-      workspace,
-      groupView,
-    };
-    layer.filter = setFilter(gp, layer);
+    // const gp = {
+    //   workspace,
+    //   groupView,
+    // };
+    // layer.filter = setFilter(gp, layer);
   });
   return await layer;
 };
