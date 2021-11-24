@@ -6,8 +6,9 @@
     "start": "DEBUG=satalertas-server:development NODE_ENV=development nodemon --inspect ./bin/www",
     "dev": "DEBUG=satalertas-server:development NODE_ENV=development nodemon --inspect ./bin/www",
     "prod": "NODE_ENV=production node ./bin/www",
-    "sequelize-undo-migrations": "export NODE_ENV=db; npx sequelize db:migrate:undo:all",
-    "sequelize-undo-seeds": "export NODE_ENV=db; npx sequelize db:seed:undo:all"
+    "sequelize-undo-all-migrations": "export NODE_ENV=db; npx sequelize db:migrate:undo:all",
+    "sequelize-undo-all-seeds": "export NODE_ENV=db; npx sequelize db:seed:undo:all",
+    "sequelize": "export NODE_ENV=db; npx sequelize"
   },
   "dependencies": {
     "axios": "^0.22.0",
