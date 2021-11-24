@@ -1,11 +1,12 @@
-const cityService = require('../services/city.service');
-const countyService = require('../services/county.service');
-const indigenousLandService = require('../services/indigenous-land.service');
-const projusService = require('../services/projus.service');
-const conservationUnitService = require('../services/conservation-unit.service');
-const biomeService = require('../services/biome.service');
-const {response} = require("../utils/response.utils");
-const httpStatus = require('../enum/http-status');
+const cityService = require("../services/city.service");
+const countyService = require("../services/county.service");
+const indigenousLandService = require("../services/indigenous-land.service");
+const projusService = require("../services/projus.service");
+const conservationUnitService = require("../services/conservation-unit.service");
+const biomeService = require("../services/biome.service");
+const { response } = require("../utils/response.utils");
+const httpStatus = require("../enum/http-status");
+const filterService = require("../services/filter.service");
 
 exports.getCity = async (req, res, next) => {
   try {
@@ -63,7 +64,7 @@ exports.getPjbh = async (req, res, next) => {
 
 exports.getMicroregions = async (req, res, next) => {
   try {
-    const microregions = await cityService.getMicroregions()
+    const microregions = await cityService.getMicroregions();
     res.json(response(httpStatus.SUCCESS, microregions));
   } catch (e) {
     next(e);
@@ -81,10 +82,10 @@ exports.getTI = async (req, res, next) => {
 
 exports.getUC = async (req, res, next) => {
   try {
-    const conservationUnits = await conservationUnitService.get()
+    const conservationUnits = await conservationUnitService.get();
     res.json(response(httpStatus.SUCCESS, conservationUnits));
   } catch (e) {
-    next(e)
+    next(e);
   }
 };
 
@@ -93,7 +94,7 @@ exports.getProjus = async (req, res, next) => {
     const projus = await projusService.get();
     res.json(response(httpStatus.SUCCESS, projus));
   } catch (e) {
-    next(e)
+    next(e);
   }
 };
 
@@ -101,6 +102,16 @@ exports.getBiome = async (req, res, next) => {
   try {
     const biomes = await biomeService.get();
     res.json(response(httpStatus.SUCCESS, biomes));
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.getGeoserverThemeFilter = async (req, res, next) => {
+  try {
+    const { filterData } = req.query;
+    const themeFilter = await filterService.getGeoserverThemeFilter(JSON.parse(filterData));
+    res.json(response(httpStatus.SUCCESS, themeFilter));
   } catch (e) {
     next(e);
   }
