@@ -72,9 +72,10 @@ const themeSelected = {
         srid = srid && srid[0] && srid[0].srid ? srid : {rows: [{srid: config.geoserver.defaultSRID}]};
         const sridSec = await conn.sequelize.query(`SELECT ST_SRID(geom) AS srid FROM public.de_municipios_sema LIMIT 1`, QUERY_TYPES_SELECT);
         const fieldIntersects = (srid[0].srid === sridSec[0].srid) ? ' county.geom ' : ` st_transform(county.geom, ${ srid[0].srid }) `;
-
+        let geocodeList = filter.themeSelected.value.value.geocodeList.map(geocode => `'${geocode}'`);
+        geocodeList = `(${geocodeList})`
         sql.sqlWhere += ` AND ST_Intersects(${ aliasTablePrimary }.intersection_geom, ${ fieldIntersects }) `;
-        sql.sqlWhere += ` AND county.comarca = '${ filter.themeSelected.value.name }'  `;
+        sql.sqlWhere += 'AND county.geocodigo IN' + geocodeList;
       }
     };
 

@@ -13,5 +13,6 @@ router.get('/ti', filterController.getTI);
 router.get('/uc', filterController.getUC);
 router.get('/projus', filterController.getProjus);
 router.get('/biome', filterController.getBiome);
+router.get('/geoserverThemeFilter', filterController.getGeoserverThemeFilter);
 
 module.exports = router;

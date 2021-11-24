@@ -2,21 +2,13 @@ const Sequelize = require('sequelize');
 const {
   View,
   RelGroupView,
-  RegisteredView,
   DataSetFormat,
   Group,
   DataSet,
   sequelize,
 } = require('../models');
-const Tools = require('../utils/tool.utils');
 const {Op} = Sequelize;
-const {
-  layerData,
-  setLegend,
-  setFilter,
-} = require('../utils/helpers/geoserver/assemblyLayer');
-const infoColumnsService = require('./info-columns.service');
-const layerTypeName = require('../enum/layer-type-name');
+const layerService = require('./layer.service');
 const BadRequestError = require('../errors/bad-request.error');
 const {QueryTypes} = require('sequelize');
 
@@ -92,7 +84,6 @@ module.exports.getTableName = async (viewId) => {
 };
 module.exports.getByGroupId = async (params) => {
   const {groupId, listSublayers = false} = params;
-  let tableInfoColumns = [];
   let viewsGroup = [];
   if (groupId) {
     const {code: groupCode} = await Group.findByPk(groupId, {raw: true});
@@ -109,56 +100,10 @@ module.exports.getByGroupId = async (params) => {
       raw: true,
     });
     for (const groupView of groupViews) {
-      const {viewId} = groupView;
-      let layer = {
-        groupCode,
-        tools: Tools,
-      };
-      const options = {
-        attributes: {exclude: ['id', 'project_id', 'data_series_id']},
-        include: [viewTableName],
-      };
-
-      await View.findByPk(viewId, options).then((response) => {
-        const filteredResponse = this.removeNullProperties(response.toJSON());
-        layer['type'] = layerTypeName[filteredResponse['sourceType']];
-        Object.assign(layer, filteredResponse);
-      });
-      layer.tableName = await this.getTableName(viewId);
-      const filteredGroupView = this.removeNullProperties(groupView);
-      Object.assign(layer, filteredGroupView);
-      if (viewId) {
-        layer['tableInfocolumns'] = await infoColumnsService.getInfocolumnsByViewId(
-            viewId,
-        ).then((response) => response.tableInfocolumns);
-        const viewName = `view${ viewId }`;
-        layer.viewName = viewName;
-        const registeredData = await RegisteredView.findOne({
-          where: {
-            view_id: viewId,
-          },
-          raw: true,
-        });
-        const {workspace} = registeredData;
-        const layerDataOptions = {geoservice: 'wms'};
-        layer.layerData = layerData(
-            `${ workspace }:${ viewName }`,
-            layerDataOptions,
-        );
-        layer.legend = setLegend(layer.name, workspace, viewName);
-        if (!layer['shortName']) {
-          layer.shortName = layer.name;
-        }
-        if (layer.isPrimary) {
-          layer.tableOwner = layer.tableName;
-        }
-        const gp = {
-          workspace,
-          groupView,
-        };
-        layer.filter = setFilter(gp, layer);
-      }
-      viewsGroup.push(layer);
+      await layerService.getLayerByViewId({groupView, groupCode})
+      .then(response => {
+        viewsGroup.push(response);
+      })
     }
   }
   if (viewsGroup.length > 2) {
@@ -175,7 +120,6 @@ module.exports.getByGroupId = async (params) => {
       }
     });
   }
-  const data = viewsGroup.filter((child) => !child.isSublayer);
   if (listSublayers) {
     return viewsGroup
   }
@@ -218,17 +162,17 @@ module.exports.add = async (newGroupView) => {
 };
 
 module.exports.update = async (groupViewModify) => {
-  const {layers, groupId, groupOwner} = groupViewModify;
+  const {layers, groupId} = groupViewModify;
   if (!groupId) {
     throw new BadRequestError('Group not found');
   }
   return await RelGroupView.destroy({where: {groupId}}).then(async () => {
     const newLayers = layers.map((layer) => ({
-      group_id: layer.groupId,
-      view_id: layer.viewId,
+      groupId: layer.groupId,
+      viewId: layer.viewId,
       ...layer,
     }));
-    await RelGroupView.bulkCreate(newLayers);
+    await RelGroupView.bulkCreate(layers);
   });
 };
 

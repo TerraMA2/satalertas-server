@@ -4,7 +4,8 @@ module.exports.get = async () => {
   const options = {
     attributes: [
       'gid',
-      ['nome', 'name']
+      ['nome', 'name'],
+      ['codigo_uc', 'ucCode']
     ],
     order: [
       ['name']

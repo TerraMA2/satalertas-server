@@ -2,7 +2,11 @@ const models = require('../models');
 const {View, Project, Group, RelGroupView} = models;
 const BadRequestError = require('../errors/bad-request.error');
 
-module.exports.get = async () => {
+module.exports.get = async (filter = null) => {
+  if (filter) {
+    const where = {...filter}
+    return await Group.findAll({where, raw: true})
+  }
   return await Group.findAll({raw: true});
 }
 

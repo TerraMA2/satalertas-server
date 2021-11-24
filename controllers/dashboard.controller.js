@@ -1,4 +1,4 @@
-const dashboardService = require(__dirname + '/../services/dashboard.service');
+const dashboardService = require('../services/dashboard.service');
 const {response} = require("../utils/response.utils");
 const httpStatus = require('../enum/http-status');
 

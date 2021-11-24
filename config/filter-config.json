@@ -1,0 +1,86 @@
+{
+  "filter": {
+    "city": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    },
+    "county": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    },
+    "mesoregion": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    },
+    "microregion": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    },
+    "immediateregion": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    },
+    "intermediateregion": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    },
+    "pjbh": {
+      "gsLayer": "terrama2_170:view170",
+      "table": {
+        "schema": "public",
+        "name": "de_municipios_sema"
+      }
+    },
+    "biome": {
+      "gsLayer": "terrama2_15:view15",
+      "table": {
+        "schema": "public",
+        "name": "de_biomas_mt"
+      }
+    },
+    "uc": {
+      "gsLayer": "terrama2_16:view16",
+      "table": {
+        "schema": "public",
+        "name": "de_unidade_cons_sema"
+      }
+    },
+    "ti": {
+      "gsLayer": "terrama2_7:view7",
+      "table": {
+        "schema": "public",
+        "name": "de_terra_indigena_sema"
+      }
+    }
+  },
+  "filterTypes": {
+    "CITY": "city",
+    "COUNTY": "county",
+    "MESOREGION": "mesoregion",
+    "MICROREGION": "microregion",
+    "IMMEDIATEREGION": "immediateregion",
+    "INTERMEDIATEREGION": "intermediateregion",
+    "PJBH": "pjbh",
+    "BIOME": "biome",
+    "UC": "uc",
+    "TI": "ti"
+  }
+}
