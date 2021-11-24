@@ -1,4 +1,4 @@
-const {City} = require('../models');
+const {City, sequelize} = require('../models');
 
 module.exports.get = async () => {
   const options = {
@@ -31,7 +31,8 @@ module.exports.getRegions = async () => {
 module.exports.getMesoregions = async () => {
   const options = {
     attributes: [
-      ['nm_meso', 'name']
+      ['nm_meso', 'name'],
+      [sequelize.fn('ARRAY_AGG', sequelize.col('geocodigo')), 'geocodeList']
     ],
     group: 'nm_meso',
     order: [
@@ -43,7 +44,8 @@ module.exports.getMesoregions = async () => {
 module.exports.getImmediateRegion = async () => {
   const options = {
     attributes: [
-      ['nm_rgi', 'name']
+      ['nm_rgi', 'name'],
+      [sequelize.fn('ARRAY_AGG', sequelize.col('geocodigo')), 'geocodeList']
     ],
     group: 'nm_rgi',
     order: [
@@ -55,7 +57,8 @@ module.exports.getImmediateRegion = async () => {
 module.exports.getIntermediateRegion = async () => {
   const options = {
     attributes: [
-      ['nm_rgint', 'name']
+      ['nm_rgint', 'name'],
+      [sequelize.fn('ARRAY_AGG', sequelize.col('geocodigo')), 'geocodeList']
     ],
     group: 'nm_rgint',
     order: [
@@ -67,7 +70,8 @@ module.exports.getIntermediateRegion = async () => {
 module.exports.getPjbh = async () => {
   const options = {
     attributes: [
-      ['pjbh', 'name']
+      ['pjbh', 'name'],
+      [sequelize.fn('ARRAY_AGG', sequelize.col('geocodigo')), 'geocodeList']
     ],
     group: 'pjbh',
     order: [
@@ -79,7 +83,8 @@ module.exports.getPjbh = async () => {
 module.exports.getMicroregions = async () => {
   const options = {
     attributes: [
-      ['nm_micro', 'name']
+      ['nm_micro', 'name'],
+      [sequelize.fn('ARRAY_AGG', sequelize.col('geocodigo')), 'geocodeList']
     ],
     group: 'nm_micro',
     order: [
