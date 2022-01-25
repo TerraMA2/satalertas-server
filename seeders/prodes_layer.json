@@ -1,0 +1,80 @@
+{
+  "cod": "PRODES",
+  "label": "Análise PRODES",
+  "parent": true,
+  "layers": [
+    {
+      "description": "CAR x PRODES",
+      "shortLabel": "CAR x PRODES",
+      "tableName": "a_carprodes_1",
+      "subLayers": [
+        "a_carprodes_app_67", "a_carprodes_reserva_64", "a_carprodes_usoant_3"
+        , "a_carprodes_veg_5"
+      ]
+    },
+    {
+      "description": "CAR_PRODES x APP",
+      "shortLabel": "APP",
+      "tableName": "a_carprodes_app_67"
+    },
+    {
+      "description": "CAR_PRODES x Reserva",
+      "shortLabel": "Reserva Legal",
+      "tableName": "a_carprodes_reserva_64"
+    },
+    {
+      "description": "CAR_PRODES x UsoAnt",
+      "shortLabel": "Uso Antropizado",
+      "tableName": "a_carprodes_usoant_3"
+    },
+    {
+      "description": "CAR_PRODES x VegNat",
+      "shortLabel": "Vegetação Nativa",
+      "tableName": "a_carprodes_veg_5"
+    },
+    {
+      "description": "CAR_PRODES x DESEMB",
+      "shortLabel": "Área Desembargada",
+      "tableName": "a_carprodes_desemb_10"
+    },
+    {
+      "description": "CAR_PRODES x EMB",
+      "shortLabel": "Áreas Embargadas",
+      "tableName": "a_carprodes_emb_9"
+    },
+    {
+      "description": "CAR_PRODES x DESMATE",
+      "shortLabel": "Aut. Desmate",
+      "tableName": "a_carprodes_desmate_89"
+    },
+    {
+      "description": "CAR_PRODES x EXPLORA",
+      "shortLabel": "Aut. Exploração",
+      "tableName": "a_carprodes_explora_90"
+    },
+    {
+      "description": "CAR_PRODES x QUEIMA",
+      "shortLabel": "Aut. Queimada",
+      "tableName": "a_carprodes_queima_12"
+    },
+    {
+      "description": "CAR_PRODES x TI",
+      "shortLabel": "Terra Indígena",
+      "tableName": "a_carprodes_ti_7"
+    },
+    {
+      "description": "CAR_PRODES x UC",
+      "shortLabel": "Unidade de Conservação",
+      "tableName": "a_carprodes_uc_8"
+    },
+    {
+      "description": "CAR_PRODES x USO_RESTRITO",
+      "shortLabel": "Uso Restrito",
+      "tableName": "a_carprodes_usorestrito_15"
+    }
+  ],
+  "viewGraph": true,
+  "activeArea": false,
+  "isPrivate": true,
+  "tableOwner": "a_carprodes_1"
+}

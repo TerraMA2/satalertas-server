@@ -1,0 +1,80 @@
+{
+  "cod": "DETER",
+  "label": "Análise DETER",
+  "parent": true,
+  "layers": [
+    {
+      "description": "CAR x DETER",
+      "shortLabel": "CAR x DETER",
+      "tableName": "a_cardeter_31",
+      "subLayers": [
+        "a_cardeter_app_68", "a_cardeter_reserva_36",
+        "a_cardeter_usoant_33", "a_cardeter_veg_37"
+      ]
+    },
+    {
+      "description": "CAR_DETER x APP : Cruzamento secundário da interseção do CARxDeter com as áreas de APP.",
+      "shortLabel": "APP",
+      "tableName": "a_cardeter_app_68"
+    },
+    {
+      "description": "CAR_DETER x Reserva",
+      "shortLabel": "Reserva Legal",
+      "tableName": "a_cardeter_reserva_36"
+    },
+    {
+      "description": "CAR_DETER x UsoAnt",
+      "shortLabel": "Uso Antropizado",
+      "tableName": "a_cardeter_usoant_33"
+    },
+    {
+      "description": "CAR_DETER x VegNat",
+      "shortLabel": "Vegetação Nativa",
+      "tableName": "a_cardeter_veg_37"
+    },
+    {
+      "description": "CAR_DETER x DESEMB",
+      "shortLabel": "Área Desembargada",
+      "tableName": "a_cardeter_desemb_42"
+    },
+    {
+      "description": "CAR_DETER x EMB",
+      "shortLabel": "Áreas Embargadas",
+      "tableName": "a_cardeter_emb_41"
+    },
+    {
+      "description": "CAR_DETER x DESMATE",
+      "shortLabel": "Aut. Desmate",
+      "tableName": "a_cardeter_desmate_91"
+    },
+    {
+      "description": "CAR_DETER x EXPLORA",
+      "shortLabel": "Aut. Exploração",
+      "tableName": "a_cardeter_explora_92"
+    },
+    {
+      "description": "CAR_DETER x QUEIMA",
+      "shortLabel": "Aut. Queimada",
+      "tableName": "a_cardeter_queima_44"
+    },
+    {
+      "description": "CAR_DETER x TI",
+      "shortLabel": "Terra Indígena",
+      "tableName": "a_cardeter_ti_39"
+    },
+    {
+      "description": "CAR_DETER x UC",
+      "shortLabel": "Unidade de Conservação",
+      "tableName": "a_cardeter_uc_40"
+    },
+    {
+      "description": "CAR_DETER x USO_RESTRITO",
+      "shortLabel": "Uso Restrito",
+      "tableName": "a_cardeter_usorestrito_47"
+    }
+  ],
+  "viewGraph": true,
+  "activeArea": true,
+  "isPrivate": true,
+  "tableOwner": "a_cardeter_31"
+}
