@@ -1,0 +1,82 @@
+{
+  "cod": "BURNED_AREA",
+  "label": "Análise área queimada",
+  "parent": true,
+  "layers": [
+    {
+      "description": "CAR x Area Q",
+      "shortLabel": "CAR x Area Q",
+      "tableName": "a_caraq_75",
+      "subLayers": [
+        "a_caraq_app_76", "a_caraq_reserva_78", "a_caraq_usoant_77"
+      ]
+    },
+    {
+      "description": "CAR_AQ x APP",
+      "shortLabel": "APP",
+      "tableName": "a_caraq_app_76"
+    },
+    {
+      "description": "CAR_AQ x Reserva",
+      "shortLabel": "Reserva Legal",
+      "tableName": "a_caraq_reserva_78"
+    },
+    {
+      "description": "CAR_AQ x UsoAnt",
+      "shortLabel": "Uso Antropizado",
+      "tableName": "a_caraq_usoant_77"
+    },
+    {
+      "description": "CAR_AQ x DESEMB",
+      "shortLabel": "Área Desembargada",
+      "tableName": "a_caraq_desemb_83"
+    },
+    {
+      "description": "CAR_AQ  x EMB",
+      "shortLabel": "Áreas Embargadas",
+      "tableName": "a_caraq_emb_82",
+      "subLayers": [
+        "a_caraq_desmate_95", "a_caraq_explora_96", "a_caraq_queima_85"
+      ]
+    },
+    {
+      "description": "CAR_AQ x DESMATE",
+      "shortLabel": "Aut. Desmate",
+      "tableName": "a_caraq_desmate_95"
+    },
+    {
+      "description": "CAR_AQ x EXPLORA",
+      "shortLabel": "Aut. Exploração",
+      "tableName": "a_caraq_explora_96"
+    },
+    {
+      "description": "CAR_AQ x QUEIMA",
+      "shortLabel": "Aut. Queimada",
+      "tableName": "a_caraq_queima_85"
+    },
+    {
+      "description": "CAR_AQ x UsoCon",
+      "shortLabel": "CAR_AQ x UsoCon",
+      "tableName": "a_caraq_usocon_79"
+    },
+    {
+      "description": "CAR_AQ x TI",
+      "shortLabel": "Terra Indígena",
+      "tableName": "a_caraq_ti_80"
+    },
+    {
+      "description": "CAR_AQ x UC",
+      "shortLabel": "Unidade de Conservação",
+      "tableName": "a_caraq_uc_81"
+    },
+    {
+      "description": "CAR_AQ x USO_RESTRITO",
+      "shortLabel": "Uso Restrito",
+      "tableName": "a_caraq_usorestrito_88"
+    }
+  ],
+  "viewGraph": true,
+  "activeArea": false,
+  "isPrivate": true,
+  "tableOwner": "a_caraq_75"
+}
