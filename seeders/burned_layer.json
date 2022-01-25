@@ -1,0 +1,16 @@
+{
+  "cod": "BURNED",
+  "label": "Análise FOCOS",
+  "parent": true,
+  "layers": [
+    {
+      "description": null,
+      "shortLabel": "CAR x FOCOS",
+      "tableName": "a_carfocos_99"
+    }
+  ],
+  "viewGraph": true,
+  "activeArea": false,
+  "isPrivate": true,
+  "tableOwner": "a_carfocos_99"
+}
