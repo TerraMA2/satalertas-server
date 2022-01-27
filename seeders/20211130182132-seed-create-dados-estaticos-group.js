@@ -1,6 +1,6 @@
 "use strict";
 
-const groupCode = "DADOSDINAMICOS";
+const groupCode = "DADOSESTATICOS";
 let createGroup = "INSERT INTO terrama2.groups (name, code)\n\t";
 createGroup += `VALUES ('Dados Estáticos', '${groupCode}')\n\t`;
 createGroup += "RETURNING id;";
