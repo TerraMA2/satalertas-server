@@ -191,6 +191,94 @@ const analysisReportFormat = {
       'urlGsDeforestationHistory1'
     ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/#{year}#&cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
   },
+  prodesv2(
+    reportData,
+    views,
+    resultReportData,
+    carColumn,
+    carColumnSema,
+    date,
+    filter = null,
+  ) {
+    const layers = [
+      `${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}`,
+      `${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}`,
+    ];
+    const filters = `cql_filter=${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}`;
+    resultReportData.vectorViews = { layers, filters };
+
+    resultReportData[
+      'urlGsImage'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.MUNICIPIOS.workspace}:${views.STATIC.children.MUNICIPIOS.view},${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=&bbox=${reportData['statebbox']}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=geocodigo<>'';municipio='${resultReportData.property.city.replace("'", "''")}';numero_do1='${resultReportData.property.register}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+
+    resultReportData['prodesStartYear'] =
+      resultReportData.property['period'][0]['start_year'];
+
+    resultReportData['prodesTableData'] = reportData.analyzesYear;
+    resultReportData['prodesTableData'].push({
+      date: 'Total',
+      area: resultReportData.property.prodesTotalArea,
+    });
+
+    resultReportData[
+      'urlGsImage1'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
+
+    resultReportData[
+      'urlGsImage2'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,terrama2_119:${views.DYNAMIC.children.PRODES.view}_color_style&bbox=${resultReportData.property.bboxplanet}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=${resultReportData.property['period'][0]['start_year']}/${resultReportData.property['period'][0]['end_year']}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
+
+    resultReportData[
+      'urlGsLegend'
+    ] = `${confGeoServer.baseHost}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=30&HEIGHT=30&legend_options=forceLabels:on;forceTitles:off;layout:vertical;columns:2;fontSize:16&LAYER=${views.STATIC.children.CAR_VALIDADO.workspace}:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`;
+
+    resultReportData['urlGsImage3'] = `${
+      confGeoServer.baseHost
+    }/wms?service=WMS&version=1.1.0&request=GetMap&layers=${
+      views.STATIC.children.CAR_VALIDADO.workspace
+    }:MosaicSpot2008,${views.STATIC.children.CAR_VALIDADO.workspace}:${
+      views.STATIC.children.CAR_VALIDADO.view
+    },${views.STATIC.children.CAR_X_USOCON.workspace}:${
+      views.STATIC.children.CAR_X_USOCON.view
+    },${views.PRODES.children.CAR_X_PRODES.workspace}:${
+      views.PRODES.children.CAR_X_PRODES.view
+    }&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${
+      views.STATIC.children.CAR_VALIDADO.view
+    }_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${
+      views.STATIC.children.CAR_X_USOCON.view
+    }_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${
+      views.PRODES.children.CAR_X_PRODES.view
+    }_Mod_style&bbox=${resultReportData.property.bbox.replace(
+      /\s+/g,
+      '',
+    )}&width=${confGeoServer.imgWidth}&height=${
+      confGeoServer.imgHeigh
+    }&time=P1Y/2019&cql_filter=RED_BAND>0;${carColumnSema}='${
+      resultReportData.property.gid
+    }';gid_car='${resultReportData.property.gid}';${carColumn}='${
+      resultReportData.property.gid
+    }'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+
+    resultReportData[
+      'urlGsImage4'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:LANDSAT_8_2018,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/2018&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+
+    resultReportData[
+      'urlGsImage5'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:SENTINEL_2_2019,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/2019&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+
+    resultReportData[
+      'urlGsImage6'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
+
+    resultReportData[
+      'urlGsDeforestationHistory'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=terrama2_35:#{image}#,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/#{year}#&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+
+    resultReportData[
+      'urlGsDeforestationHistory1'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/#{year}#&cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+  },
   deter(
     reportData,
     views,
@@ -789,6 +877,44 @@ setProdesData = async function (
   return await propertyData;
 };
 
+setProdesDataV2 = async function (
+  type,
+  views,
+  propertyData,
+  dateSql,
+  columnCarEstadual,
+  columnCalculatedAreaHa,
+  columnExecutionDate,
+  carRegister,
+  columnCarEstadualSemas,
+  filter
+) {
+  if (type === 'prodesv2') {
+    await setProdesData(
+      'prodes',
+      views,
+      propertyData,
+      dateSql,
+      columnCarEstadual,
+      columnCalculatedAreaHa,
+      columnExecutionDate,
+      carRegister
+    )    
+    await setBurnedData(
+      'queimada', // type
+      views, //views
+      propertyData, // properyData
+      dateSql, // dateSql
+      columnCarEstadual, // columCarEstadual
+      columnCarEstadualSemas, // columCarEstadualSemas
+      columnExecutionDate, //  columExecutionDate
+      carRegister, // carRegister
+      filter // filter
+    )
+  }
+  return await propertyData;
+};
+
 setBurnedData = async function (
   type,
   views,
@@ -1188,7 +1314,8 @@ getContentConclusion = async function (docDefinitionContent, conclusionText) {
   const conclusion = await getConclusion(conclusionText);
   const conclusionIdx =
     docDefinitionContent.findIndex(
-      ({ text }) => text && text.includes('CONCLUSÃO'),
+      //TODO text aparece aqui
+      (item) => item && item.hasOwnProperty('text') && item.text.includes('CONCLUSÃO'),
     ) + 1;
 
   docDefinitionContent.splice(conclusionIdx, 0, conclusion);
@@ -1436,7 +1563,7 @@ async function setCharts(reportData) {
     }
     const charts = reportData.chartsImages;
   
-    if(reportData.type === 'queimada') {
+    if(['queimada', 'prodesv2'].includes(reportData.type)) {
       charts['firstFiringChart'] = {
         image: await FiringCharts.historyBurnlight(
           reportData.property.historyBurnlight,
@@ -1713,6 +1840,18 @@ module.exports = FileReport = {
         columnExecutionDate,
         carRegister,
       );
+      await setProdesDataV2(
+        type,
+        views,
+        propertyData,
+        dateSql,
+        columnCar,
+        columnCalculatedAreaHa,
+        columnExecutionDate,
+        carRegister,
+        columnCarSemas,
+        filter
+      );
       await setBurnedData(
         type,
         views,
@@ -1738,7 +1877,8 @@ module.exports = FileReport = {
         ),
       );
     } catch (e) {
-      msgError(__filename, 'getReportCARData', e);
+      console.log(e)
+      msgError(__filename, 'getReportCarData', e);
       return Result.err(e);
     }
   },
@@ -1999,7 +2139,7 @@ module.exports = FileReport = {
     const { carRegister, date, type } = query;
     const { sridPlanet: srid } = confGeoServer;
     const views = await ViewUtil.getGrouped();
-
+    let reportType = type === 'prodesv2' ?'prodes' : type;
     const carColumn = 'gid';
     const carColumnSemas = 'de_car_validado_sema_gid';
 
@@ -2018,7 +2158,7 @@ module.exports = FileReport = {
                extract(year from date_trunc('year', main_table.execution_date)) AS startYear,
                main_table.execution_date
         FROM public.${
-          views[type.toUpperCase()].children[groupType[type]].table_name
+          views[reportType.toUpperCase()].children[groupType[reportType]].table_name
         } AS main_table
         WHERE main_table.${carColumnSemas} = '${carRegister}'
           AND main_table.execution_date BETWEEN '${date[0]}' AND '${date[1]}'
@@ -2053,19 +2193,19 @@ module.exports = FileReport = {
         }:${views.STATIC.children.CAR_VALIDADO.view},${
           views.STATIC.children.CAR_X_USOCON.workspace
         }:${views.STATIC.children.CAR_X_USOCON.view},${
-          views[type.toUpperCase()].children[groupType[type]].workspace
-        }:${views[type.toUpperCase()].children[groupType[type]].view}&styles=,${
+          views[reportType.toUpperCase()].children[groupType[reportType]].workspace
+        }:${views[reportType.toUpperCase()].children[groupType[reportType]].view}&styles=,${
           views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_VALIDADO.view}_yellow_style,${
           views.STATIC.children.CAR_VALIDADO.workspace
         }:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${
-          views[type.toUpperCase()].children[groupType[type]].workspace
+          views[reportType.toUpperCase()].children[groupType[reportType]].workspace
         }:${
-          views[type.toUpperCase()].children[groupType[type]].view
+          views[reportType.toUpperCase()].children[groupType[reportType]].view
         }_red_style&bbox=${bbox}&width=256&height=256&time=${
           points[index].startyear
         }/${currentYear}&cql_filter=RED_BAND>0;rid='${carRegister}';gid_car='${carRegister}';${
-          views[type.toUpperCase()].children[groupType[type]].table_name
+          views[reportType.toUpperCase()].children[groupType[reportType]].table_name
         }_id=${points[index].a_carprodes_1_id}&srs=EPSG:${
           srid
         }&format=image/png`;
@@ -2117,6 +2257,8 @@ module.exports = FileReport = {
         reportData['type'] === 'deter'
           ? `RELATÓRIO TÉCNICO SOBRE ALERTA DE DESMATAMENTO Nº ${code}`
           : reportData['type'] === 'prodes'
+          ? `RELATÓRIO TÉCNICO SOBRE DESMATAMENTO Nº ${code}`
+          : reportData['type'] === 'prodesv2'
           ? `RELATÓRIO TÉCNICO SOBRE DESMATAMENTO Nº ${code}`
           : reportData['type'] === 'queimada'
           ? `RELATÓRIO DE FOCOS DE CALOR Nº ${code}`
