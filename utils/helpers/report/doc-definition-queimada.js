@@ -560,7 +560,7 @@ module.exports = function (headerDocument, reportData, title) {
         fontSize: 8,
         margin: [30, 80, 30, 0],
       },
-      reportData.images.geoserverImage2,
+      reportData.images.geoserverImageWithFocus,
       {
         text: [
           {

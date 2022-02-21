@@ -649,7 +649,7 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
-      [
+      [ // notas de rodapé
         {
           text: [
             {
@@ -681,7 +681,6 @@ module.exports = function (headerDocument, reportData, title) {
         },
         {
           text: '',
-          pageBreak: 'after',
         },
       ],
       {
@@ -796,6 +795,25 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
       },
+      { // Notas de rodapé
+        text: [
+          {
+            text: '6    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
+          },
+          {
+            text: 'http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+            link: 'http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
+            color: 'blue',
+          },
+          {
+            text: '. Acessado em 13.10.2019.',
+          },
+        ],
+        fontSize: 8,
+        margin: [30, 5, 30, 0],
+        pageBreak: 'after',
+        absolutePosition: {x: 60, y:750}
+      },
       {
         text: '4.2 Programa Queimadas',
         style: 'listItem',
@@ -818,23 +836,6 @@ module.exports = function (headerDocument, reportData, title) {
           style: 'bodyIndentFirst',
       },
       {
-        text: [
-          {
-            text: '6    SOUZA, A. et al. Metodologia utilizada nos Projetos PRODES e DETER. Instituto Nacional de Pesquisas Espaciais – INPE, 2019. Disponível em: ',
-          },
-          {
-            text: 'http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
-            link: 'http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes/pdfs/Metodologia_Prodes_Deter_revisada.pdf',
-            color: 'blue',
-          },
-          {
-            text: '. Acessado em 13.10.2019.',
-          },
-        ],
-        fontSize: 8,
-        margin: [30, 5, 30, 0],
-      },
-      {
         text:
           'Os dados do INPE constituem fonte de acentuada importância para a ' +
           'gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o ' +
@@ -846,8 +847,34 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 5],
         style: 'bodyIndentFirst',
       },
+      { //notas de rodapé
+        stack: [
+          {
+            text: '7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.',
+            fontSize: 8,
+            margin: [30, 5, 30, 0],
+          },
+          {
+            text: [
+              { text: '8     Disponível em ' },
+              {
+                text: 'https://scholar.google.com.br/',
+                link: 'https://scholar.google.com.br/',
+                color: 'blue',
+              },
+              {
+                text: ', acessado em 13.01.2020.',
+              },
+            ],
+            fontSize: 8,
+            margin: [30, 5, 30, 0],
+          },
+        ],
+        pageBreak: 'after',
+        absolutePosition: {x: 30, y:750}
+      },
       {
-        text: '3 ANÁLISE TÉCNICA',
+        text: '5 ANÁLISE TÉCNICA',
         style: 'listItem',
       },
       {
@@ -963,30 +990,7 @@ module.exports = function (headerDocument, reportData, title) {
         margin: [30, 0, 30, 5],
         style: 'body',
         fontSize: 9,
-      },
-      {
-        text: '7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.',
-        fontSize: 8,
-        margin: [30, 5, 30, 0],
-      },
-      {
-        text: [
-          { text: '8     Disponível em ' },
-          {
-            text: 'https://scholar.google.com.br/',
-            link: 'https://scholar.google.com.br/',
-            color: 'blue',
-          },
-          {
-            text: ', acessado em 13.01.2020.',
-          },
-        ],
-        fontSize: 8,
-        margin: [30, 5, 30, 0],
-      },
-      {
-        text: '',
-        pageBreak: 'after',
+          pageBreak: 'after',
       },
       {
         text:
@@ -1055,7 +1059,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: [
           {
-            text: 'Na  representação  cartográfica  abaixo ',
+            text: 'Na representação cartográfica abaixo ',
           },
           {
             text: '(Figura 6)',
@@ -1073,6 +1077,7 @@ module.exports = function (headerDocument, reportData, title) {
         ],
         margin: [30, 0, 30, 0],
         style: 'bodyIndentFirst',
+        pageBreak: 'after'
       },
       {
         columns: [
@@ -1095,7 +1100,7 @@ module.exports = function (headerDocument, reportData, title) {
           },
         ],
         margin: [30, 0, 30, 0],
-        pageBreak: 'after'
+        // pageBreak: 'after'
       },
       {
         columns: [
@@ -1134,6 +1139,8 @@ module.exports = function (headerDocument, reportData, title) {
         alignment: 'center',
         fontSize: 9,
       },
+      'deforestationParagraph',
+      // reportData.deforestationHistory,
       {
         text:
           'O objetivo do DETER é identificar as alterações da vegetação natural ' +
@@ -1168,7 +1175,8 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'bodyIndentFirst',
         // pageBreak: 'after',
       },
-      reportData.images.geoserverImage2,{
+      reportData.images.geoserverImageWithFocus,
+      {
         text: [
           {
             text: 'Figura 8 ',
@@ -1224,13 +1232,13 @@ module.exports = function (headerDocument, reportData, title) {
       },
       reportData.chartsImages.secondFiringChart,
       {
-        text: '4 CONCLUSÃO',
+        text: '5 CONCLUSÃO',
         margin: [30, 20, 30, 0],
         style: 'listItem',
         pageBreak: 'before'
       },
       {
-        text: '5 ANEXOS',
+        text: '6 ANEXOS',
         style: 'listItem',
       },
       {
@@ -1252,7 +1260,7 @@ module.exports = function (headerDocument, reportData, title) {
         pageBreak: 'after',
       },
       {
-        text: '6 VALIDAÇÃO',
+        text: '7 VALIDAÇÃO',
         margin: [30, 20, 30, 0],
         style: 'listItem',
       },
