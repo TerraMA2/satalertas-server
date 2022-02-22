@@ -19,6 +19,183 @@ const DocDefinitions = require(__dirname +
   '/../utils/helpers/report/doc-definition.js');
 const QUERY_TYPES_SELECT = { type: 'SELECT' };
 
+const reportDAO = require("../dao/report.dao");
+
+
+getProdesImages = async (reportData, filterDate) => {
+  const images = {};
+
+  images['propertyLocationImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
+    bbox: `${ reportData.stateBBox }`,
+    cql_filter: `geocodigo<>'';municipio='${ reportData.cityName.replace("'", "''") }';numero_do1='${ reportData.stateRegistry }'`,
+    height: `${ config.geoserver.imgHeight }`,
+    layers: `terrama2_170:view170,terrama2_170:view170,terrama2_119:view119`,
+    styles: "",
+    width: `${ config.geoserver.imgWidth }`,
+  }), [200, 200], [0, 10], 'center');
+
+  images['propertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
+    bbox: `${ reportData.planetBBox }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }'`,
+    height: `${ config.geoserver.imgHeight }`,
+    layers: `terrama2_119:planet_latest_global_monthly,terrama2_119:view119`,
+    srs: `EPSG:${ config.geoserver.planetSRID }`,
+    styles: `,terrama2_119:view119_Mod_style`,
+    width: `${ config.geoserver.imgWidth }`,
+  }), [200, 200], [0, 10], 'center');
+
+  images['deforestationLegendImage'] = reportUtil.getImageObject(await geoserverService.getLegendImage({
+    height: "30",
+    layer: `terrama2_119:CAR_VALIDADO_X_CAR_PRODES_X_USOCON`,
+    version: "1.0.0",
+    width: "30",
+    legend_options: "forceLabels:on;forceTitles:off;layout:vertical;columns:2;fontSize:16",
+  }), [200, 200], [0, 10], 'center');
+
+  images['deforestationPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
+    bbox: `${ reportData.planetBBox }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`,
+    height: `${ config.geoserver.imgHeight }`,
+    layers: `terrama2_119:planet_latest_global_monthly,terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`,
+    srs: `EPSG:${ config.geoserver.planetSRID }`,
+    styles: `,terrama2_119:view119_yellow_style,terrama2_119:view122_hatched_style,terrama2_119:view106_color_style`,
+    time: `${ reportData["deforestationPeriod"]["startYear"] }/${ reportData["deforestationPeriod"]["endYear"] }`,
+    width: `${ config.geoserver.imgWidth }`,
+  }), [200, 200], [0, 10], 'center');
+
+  images['spotPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
+    bbox: `${ reportData.bbox.replace(/\\s /g, "") }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`,
+    height: `${ config.geoserver.imgHeight }`,
+    layers: `terrama2_119:MosaicSpot2008,terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`,
+    styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
+    time: "P1Y/2019",
+    width: `${ config.geoserver.imgWidth }`
+  }), [200, 200], [0, 10], 'center');
+
+  images['landsatPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
+    bbox: `${ reportData.bbox }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`,
+    height: `${ config.geoserver.imgHeight }`,
+    layers: `terrama2_35:LANDSAT_8_2018,terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`,
+    styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
+    time: "P1Y/2018",
+    width: `${ config.geoserver.imgWidth }`,
+  }), [200, 200], [0, 10], 'center');
+
+  images['sentinelPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
+    bbox: `${ reportData.bbox }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`,
+    height: `${ config.geoserver.imgHeight }`,
+    layers: `terrama2_35:SENTINEL_2_2019,terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`,
+    styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
+    time: "P1Y/2019",
+    width: `${ config.geoserver.imgWidth }`,
+  }), [200, 200], [0, 10], 'center');
+
+  images['planetPropertyLimitImage'] = reportUtil.getImageObject(await geoserverService.getMapImage({
+    bbox: `${ reportData.planetBBox }`,
+    cql_filter: `RED_BAND>0;rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`,
+    height: `${ config.geoserver.imgHeight }`,
+    layers: `terrama2_119:planet_latest_global_monthly,terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`,
+    srs: `EPSG:${ config.geoserver.planetSRID }`,
+    styles: `,terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`,
+    width: `${ config.geoserver.imgWidth }`,
+  }), [200, 200], [0, 10], 'center');
+
+  const deforestationHistory = reportData.deforestationHistory;
+  let count = 0;
+  for (const deforestation of deforestationHistory) {
+    const {date} = deforestation;
+    let view = date < 2013 ? "LANDSAT_5_" : date < 2017 ? "LANDSAT_8_" : "SENTINEL_2_";
+    view = `${ view }${ date }`
+
+    let layers = `terrama2_119:view119,terrama2_122:view122,terrama2_35:view35`;
+    let styles = `terrama2_119:view119_Mod_style,terrama2_119:view122_hatched_style,terrama2_35:view35_Mod_style`
+    let cqlFilter = `rid='${ reportData.gid }';gid_car='${ reportData.gid }';de_car_validado_sema_gid='${ reportData.gid }'`;
+
+    if (date !== 2012) {
+      layers = `terrama2_35:${ view },${ layers }`
+      styles = `,${ styles }`
+      cqlFilter = `RED_BAND>0;${ cqlFilter }`
+    }
+
+    deforestation[`deforestationHistoryImage${ count }`] = reportUtil.getImageObject(await geoserverService.getMapImage({
+      layers,
+      styles,
+      cql_filter: cqlFilter,
+      bbox: `${ reportData.bbox }`,
+      width: `${ config.geoserver.imgWidth }`,
+      height: `${ config.geoserver.imgHeight }`,
+      time: `P1Y/${ date }`
+    }), [117, 117], [5, 0], "center");
+    count++;
+  }
+
+  images['ndviImages'] = await this.getNDVI(reportData.gid, filterDate);
+  return images;
+};
+
+getProdesData = async (carGid, filter) => {
+  let totalDeforestationArea = await reportDAO.getProdesTotalDeforestationArea(carGid, filter);
+
+  totalDeforestationArea = formatter.formatNumber(totalDeforestationArea.area);
+
+  const vegRadam = await reportDAO.getProdesVegRadam(carGid, filter);
+
+  vegRadam.forEach((element) => element.area = formatter.formatHectare(element.area));
+
+  let consolidateUseArea = await reportDAO.getProdesConsolidateUseArea(carGid, filter);
+
+  consolidateUseArea = formatter.formatNumber(consolidateUseArea.area);
+
+  const deforestationPerClass = await reportDAO.getProdesDeforestationPerClass(carGid, filter);
+
+  deforestationPerClass.forEach(element => element.area = formatter.formatNumber(element.area));
+
+  let deforestationByVegetationType = await reportDAO.getProdesDeforestationByVegetationType(carGid, filter);
+
+  let areaText = "";
+  if (deforestationByVegetationType && deforestationByVegetationType.length > 0) {
+    deforestationByVegetationType.forEach((element, index) => {
+      const {area, className} = element;
+      if (index !== 0) {
+        areaText += '\n'
+      }
+      areaText += `${ className }: ${ formatter.formatNumber(area) }`;
+    });
+  }
+
+  deforestationByVegetationType = {
+    className: "Vegetação RADAM BR",
+    area: areaText
+  };
+
+  const deforestationByYear = await reportDAO.getProdesDeforestationByYear(carGid, filter);
+
+  deforestationByYear.forEach(element => element.area = formatter.formatNumber(element.area));
+
+  deforestationByYear.push({
+    year: 'Total',
+    area: totalDeforestationArea
+  });
+
+  const deforestationPeriod = await reportDAO.getDeforestationPeriod(carGid, filter);
+
+  const deforestationHistory = await reportDAO.getDeforestationHistory(carGid, filter);
+
+  return {
+    totalDeforestationArea,
+    vegRadam,
+    consolidateUseArea,
+    deforestationPerClass,
+    deforestationByVegetationType,
+    deforestationByYear,
+    deforestationPeriod,
+    deforestationHistory
+  }
+};
+
 getFilterClassSearch = function (sql, filter, view, tableOwner) {
   const classSearch = filter && filter.classSearch ? filter.classSearch : null;
   if (
@@ -278,6 +455,9 @@ const analysisReportFormat = {
     resultReportData[
       'urlGsDeforestationHistory1'
     ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.STATIC.children.CAR_X_USOCON.workspace}:${views.STATIC.children.CAR_X_USOCON.view},${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}&styles=${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_X_USOCON.view}_hatched_style,${views.PRODES.children.CAR_X_PRODES.workspace}:${views.PRODES.children.CAR_X_PRODES.view}_Mod_style&bbox=${resultReportData.property.bbox}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&time=P1Y/#{year}#&cql_filter=${carColumnSema}='${resultReportData.property.gid}';gid_car='${resultReportData.property.gid}';${carColumn}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridTerraMa}&format=image/png`;
+    resultReportData[
+      'urlGsImageWithFocus'
+    ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bboxplanet}&time=${date[0]}/${date[1]}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=RED_BAND>0;${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
   },
   deter(
     reportData,
@@ -376,7 +556,7 @@ const analysisReportFormat = {
       'urlGsImage'
     ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style&bbox=${resultReportData.property.bboxplanet}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=RED_BAND>0;${carColumnSema}='${resultReportData.property.gid}'&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
     resultReportData[
-      'urlGsImage1'
+      'urlGsImageWithFocus'
     ] = `${confGeoServer.baseHost}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${views.STATIC.children.CAR_VALIDADO.workspace}:planet_latest_global_monthly,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view},${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}&styles=,${views.STATIC.children.CAR_VALIDADO.workspace}:${views.STATIC.children.CAR_VALIDADO.view}_Mod_style,${views.BURNED.children.CAR_X_FOCOS.workspace}:${views.BURNED.children.CAR_X_FOCOS.view}_style&bbox=${resultReportData.property.bboxplanet}&time=${date[0]}/${date[1]}&width=${confGeoServer.imgWidth}&height=${confGeoServer.imgHeigh}&cql_filter=RED_BAND>0;${carColumnSema}=${resultReportData.property.gid};${carColumn}=${resultReportData.property.gid}&srs=EPSG:${confGeoServer.sridPlanet}&format=image/png`;
   },
 };
@@ -697,7 +877,7 @@ setProdesData = async function (
   columnExecutionDate,
   carRegister,
 ) {
-  if (propertyData && views.PRODES && type === 'prodes') {
+  if (propertyData && views.PRODES && ['prodes', 'prodesv2'].includes(type)) {
     // --- Prodes area grouped by year ---------------------------------------------------------------------------------
     const sqlProdesYear = `SELECT
         extract(year from date_trunc('year', cp.${columnExecutionDate})) AS date,
@@ -809,7 +989,7 @@ setProdesData = async function (
             WHERE cp.${columnCarEstadual} = '${carRegister}'
             GROUP BY date
             ORDER BY date`;
-    const deflorestationHistory = await Report.sequelize.query(
+    const deforestationHistory = await Report.sequelize.query(
       sqlDeforestationHistory,
       QUERY_TYPES_SELECT,
     );
@@ -820,8 +1000,8 @@ setProdesData = async function (
       QUERY_TYPES_SELECT,
     );
 
-    propertyData['deflorestationHistory'] = setAnalysisYear(
-      deflorestationHistory,
+    propertyData['deforestationHistory'] = setAnalysisYear(
+      deforestationHistory,
       {
         startYear: propertyData['period'][0]['start_year'],
         endYear: propertyData['period'][0]['end_year'],
@@ -926,7 +1106,7 @@ setBurnedData = async function (
   carRegister,
   filter,
 ) {
-  if (propertyData && views.BURNED && type === 'queimada') {
+  if (propertyData && views.BURNED && ['queimada', 'prodesv2'].includes(type)) {
     // ---  Firing Authorization ---------------------------------------------------------------------------------------
     const sqlFiringAuth = `
         SELECT 
@@ -1241,7 +1421,7 @@ getContextChartNdvi = async function (chartImages, startDate, endDate) {
   return ndviContext;
 };
 
-getDesflorestationHistoryAndChartNdviContext = async function (
+getDeforestationHistoryAndChartNdviContext = async function (
   docDefinitionContent,
   reportData,
 ) {
@@ -1250,27 +1430,33 @@ getDesflorestationHistoryAndChartNdviContext = async function (
   const endDate = moment(reportData.date[1]).format('L');
 
   const content = [];
-  for (let j = 0; j < docDefinitionContent.length; j++) {
-    if (j === 73) {
-      reportData.desflorestationHistoryContext.forEach(
-        (desflorestationHistory) => {
-          content.push(desflorestationHistory);
-        },
-      );
+  const deforestationIdx = docDefinitionContent.indexOf('deforestationParagraph');
+  if (deforestationIdx > 0) {
+    reportData.deforestationHistoryContext.forEach(
+      (deforestationHistory) => {
+        content.push(deforestationHistory);
+      },
+    );
+    const ndviContext = await getContextChartNdvi(
+      reportData['chartImages'],
+      startDate,
+      endDate,
+    );
+    ndviContext.forEach((ndvi) => {
+  
+      content.push(ndvi);
+    });
+    docDefinitionContent.splice(deforestationIdx, 1, ...content)
 
-      const ndviContext = await getContextChartNdvi(
-        reportData['chartImages'],
-        startDate,
-        endDate,
-      );
-      ndviContext.forEach((ndvi) => {
-        content.push(ndvi);
-      });
-    }
-
-    content.push(docDefinitionContent[j]);
   }
-  return content;
+  // for (let j = 0; j < docDefinitionContent.length; j++) {
+  //   if (j === 73) {
+
+  //   }
+  //   content.push(docDefinitionContent[j]);
+
+  // }
+  return docDefinitionContent;
 };
 
 getContentForDeflorestionAlertsContext = async function (
@@ -1346,8 +1532,8 @@ setDocDefinitions = async function (reportData, docDefinition) {
     docDefinition.content,
     reportData.property.comments,
   );
-  if (reportData.type === 'prodes') {
-    docDefinition.content = await getDesflorestationHistoryAndChartNdviContext(
+  if (['prodes', 'prodesv2'].includes(reportData.type)) {
+    docDefinition.content = await getDeforestationHistoryAndChartNdviContext(
       docDefinition.content,
       reportData,
     );
@@ -1581,6 +1767,8 @@ async function setCharts(reportData) {
     msgError(__filename, 'setCharts', e);
   }
 }
+
+// module.exports.get
 
 module.exports = FileReport = {
   async saveBase64(document, code, type, path, docName) {

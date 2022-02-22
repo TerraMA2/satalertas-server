@@ -1,3 +1,5 @@
+const reportUtil = require('../../report.utils');
+
 const superscripts = {
   0: '\u2070',
   1: '\u00B9',
@@ -1067,6 +1069,10 @@ module.exports = function (headerDocument, reportData, title) {
         alignment: 'center',
         fontSize: 9,
       },
+      'deforestationParagraph',
+      // reportUtil.getDeforestationHistoryImages(reportData, reportData.deforestationHistory),
+      // reportData.deforestationHistory,
+      // reportUtil.getNDVIImages(reportData.images.ndviImages),
       {
         text: '4 CONCLUSÃO',
         margin: [30, 20, 30, 0],
