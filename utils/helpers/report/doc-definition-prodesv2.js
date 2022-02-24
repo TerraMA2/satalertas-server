@@ -267,7 +267,7 @@ module.exports = function (headerDocument, reportData, title) {
               'Dados de áreas de cicatrizes de fogo, desmatamentos e degradações ' +
               'florestais mapeadas pelo Sistema de Detecção do Desmatamento em Tempo ' +
               'Real (DETER), e dados históricos dos focos de calor ativos no '+
-              'no Estado de Mato Grosso mapeadas pelo Programa Queimadas' +
+              'Estado de Mato Grosso mapeadas pelo Programa Queimadas' +
               'todos desenvolvidos pelo INPE);',
             margin: [20, 0, 30, 5],
             width: 'auto',
@@ -313,7 +313,7 @@ module.exports = function (headerDocument, reportData, title) {
               'ii. Base de referência das áreas desembargadas pela SEMA; ' +
               'iii. Base de referência das Autorizações de Exploração (AUTEX); ' +
               'iv. Base de referência das Autorizações de Desmatamento (AD); ' +
-              'v. Base de referência das Áreas de Preservação Permanente (APP), Reserva Legal (ARL), Uso Restrito (AUS) e de Uso Consolidado (AUC);' +
+              'v. Base de referência das Áreas de Preservação Permanente (APP), Reserva Legal (ARL), Uso Restrito (AUS) e de Uso Consolidado (AUC); ' +
               'vi. Base de autorizações de queima controlada (AQC)',
             margin: [20, 0, 30, 5],
             width: 'auto',
@@ -494,7 +494,7 @@ module.exports = function (headerDocument, reportData, title) {
         text: // Parágrafo novo
           'Os focos de calor foram intersectados com os dados geospaciais do ' +
           'PRODES e DETER, bem como das autorizações de queima controlada (AQC) ' +
-          'emitidas pela SEMA durante o período de (período da análise), ' +
+          `emitidas pela SEMA durante o período de ${reportData.formattedFilterDate}, ` +
           'permitindo a elaboração de gráficos contendo as séries temporais de ' +
           'focos de calor que incidiram no imóvel rural ao longo dos anos e no período ',
           
@@ -828,7 +828,7 @@ module.exports = function (headerDocument, reportData, title) {
           'comparações interanuais são realizadas apenas pelos dados do satélite ' +
           'AQUA. No entanto, para identificar e confirmar a ocorrência de fogo ' +
           'na vegetação este relatório considera todos os focos dos satélites ' +
-          'AQUA,TERRA, SNPP e NOAA-20 pelo fato de possuírem uma precisão ' +
+          'AQUA, TERRA, SNPP e NOAA-20 pelo fato de possuírem uma precisão ' +
           'geométrica maior. Devido a alta frequência de imageamento os pontos ' +
           'de todos os satélites são utilizados para indicar o primeiro e último ' +
           'dia de ocorrência de fogo numa dada propriedade.',
@@ -838,10 +838,14 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text:
           'Os dados do INPE constituem fonte de acentuada importância para a ' +
-          'gestão ambiental, e já embasaram importantes acordos com setores ligados ao agronegócio, como o ' +
-          'Termo de Ajustamento de Conduta (TAC) da carne, Moratória da Soja e outros acordos intergovernamentais, como ' +
-          'o feito na Conferência das Nações Unidas Sobre Mudanças Climáticas (COP21) para a redução das emissões de gases ' +
-          'de efeito estufa por desflorestamento e degradação florestal(7). Ainda, a importância e credibilidade dos dados gerados pelo INPE é refletida pelas milhares de publicações científicas ' +
+          'gestão ambiental, e já embasaram importantes acordos com setores ' +
+          'ligados ao agronegócio, como o Termo de Ajustamento de Conduta (TAC) ' +
+          'da carne, Moratória da Soja e outros acordos intergovernamentais, como ' +
+          'o feito na Conferência das Nações Unidas Sobre Mudanças Climáticas ' +
+          '(COP21) para a redução das emissões de gases ' +
+          'de efeito estufa por desflorestamento e degradação florestal(7). ' +
+          'Ainda, a importância e credibilidade dos dados gerados pelo INPE é ' +
+          'refletida pelas milhares de publicações científicas ' +
           'que utilizaram essas informações para realização de ' +
           'pesquisas, que podem ser encontrada no Google Scholar(8)',
         margin: [30, 0, 30, 5],
@@ -850,7 +854,9 @@ module.exports = function (headerDocument, reportData, title) {
       { //notas de rodapé
         stack: [
           {
-            text: '7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa da acurácia do mapeamento do desmatamento no estado de Mato Grosso. Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.',
+            text: '7    ADAMI, M. et al. A confiabilidade do PRODES: estimativa ' +
+            'da acurácia do mapeamento do desmatamento no estado de Mato Grosso. ' +
+            'Anais do XVIII Simpósio Brasileiro de Sensoriamento Remoto – SBSR, 2017.',
             fontSize: 8,
             margin: [30, 5, 30, 0],
           },
@@ -1139,21 +1145,6 @@ module.exports = function (headerDocument, reportData, title) {
         alignment: 'center',
         fontSize: 9,
       },
-      'deforestationParagraph',
-      // reportData.deforestationHistory,
-      {
-        text:
-          'O objetivo do DETER é identificar as alterações da vegetação natural ' +
-          'em biomas da Amazônia Legal (Amazônia e Cerrado), em áreas acima de 3 ha, ' +
-          'com a emissão de alertas para apoio à fiscalização em tempo quase real. ' +
-          'Para fisionomias florestais no bioma Amazônia, os alertas indicam ' +
-          'áreas que sofreram corte raso ou intervenções pela exploração madeireira, ' +
-          'mineração ou queimadas, ou seja, identificam e mapeiam áreas ' +
-          'desflorestadas e degradadas, enquanto para o bioma Cerrado, ' +
-          'é identificada apenas o corte raso da vegetação natural.',
-        margin: [30, 5, 30, 0],
-        style: 'bodyIndentFirst',
-      },
       {
         text:
           'O INPE, a partir dos dados do Programa Queimadas identificou ' +
@@ -1171,7 +1162,7 @@ module.exports = function (headerDocument, reportData, title) {
           'após a vigência da Lei Estadual n. 233, de 21 de dezembro de 2005, que ' +
           'estabelece o período proibitivo de uso do fogo para limpeza e manejo de ' +
           'áreas no Estado de Mato Grosso).',
-        margin: [30, 0, 30, 0],
+        margin: [30, 10, 30, 0],
         style: 'bodyIndentFirst',
         // pageBreak: 'after',
       },
@@ -1179,12 +1170,12 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: [
           {
-            text: 'Figura 8 ',
+            text: 'Figura 7 ',
             bold: true,
           },
           {
             text:
-              '- imagem de satélite evidenciando os focos de calor ativos na vegetação ' +
+              '- imagem com a representação dos focos de calor ativos na vegetação ' +
               'da ' +
               reportData.property.name +
               ' em ' +
@@ -1201,7 +1192,7 @@ module.exports = function (headerDocument, reportData, title) {
       {
         text: [
           {
-            text: 'Figura 9 ',
+            text: 'Figura 8 ',
             bold: true,
           },
           {
@@ -1231,14 +1222,15 @@ module.exports = function (headerDocument, reportData, title) {
         style: 'bodyIndentFirst',
       },
       reportData.chartsImages.secondFiringChart,
+      'deforestationParagraph',
       {
-        text: '5 CONCLUSÃO',
+        text: '6 CONCLUSÃO',
         margin: [30, 20, 30, 0],
         style: 'listItem',
         pageBreak: 'before'
       },
       {
-        text: '6 ANEXOS',
+        text: '7 ANEXOS',
         style: 'listItem',
       },
       {
@@ -1260,7 +1252,7 @@ module.exports = function (headerDocument, reportData, title) {
         pageBreak: 'after',
       },
       {
-        text: '7 VALIDAÇÃO',
+        text: '8 VALIDAÇÃO',
         margin: [30, 20, 30, 0],
         style: 'listItem',
       },

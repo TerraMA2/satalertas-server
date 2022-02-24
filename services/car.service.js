@@ -64,7 +64,7 @@ module.exports = carService = {
       
       filter.sqlWhere += specificParameters.isDynamic ?
       ` AND property.gid = ${specificParameters.tableAlias}.de_car_validado_sema_gid ` : '';
-      
+
       if (filterReceived.themeSelected && specificParameters.isDynamic) {
         filter.sqlWhere += ' AND property.geocodigo = county.geocodigo '
       }
