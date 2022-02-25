@@ -68,23 +68,26 @@ function deterClassToDataSet(data) {
     if (!allClasses.includes(classe)) allClasses.push(classe);
   });
   allClasses.forEach((cls) => {
-    const {colors: {backgroundColor, borderColor}} = enums.DETER[cls.toUpperCase()]
-    const sdset = {
-      label: cls,
+    const {
+      colors: { backgroundColor, borderColor },
+    } = enums.DETER[cls.toUpperCase()];
+    const subDataset = {
+      label: cls.split('_').join(' '),
       font: 'DETER',
       rawValues: [...data.filter((ds) => ds.classe == cls)],
     };
-    if(backgroundColor !== '') {
-      sdset.backgroundColor = backgroundColor;
+    if (backgroundColor !== '') {
+      subDataset.backgroundColor = backgroundColor;
     }
-    if(borderColor !== '') {
-      sdset.borderColor = borderColor;
+    if (borderColor !== '') {
+      subDataset.borderColor = borderColor;
     }
-    subDatasets.push(sdset);
+    subDatasets.push(subDataset);
   });
   return subDatasets;
 }
-async function twoAxisGraph(propertyGid) {
+
+async function twoAxisGraph(propertyGid, newReport = false) {
   const promisses = [
     getData(sqlDeter(propertyGid)),
     getData(sqlProdes(propertyGid)),
@@ -103,9 +106,8 @@ async function twoAxisGraph(propertyGid) {
         rawValues: calor,
         axis: 'y',
         borderWidth: 2,
-        // backgroundColor: 
         ...FOCOS.colors,
-        // borderColor: 'rgb(255, 99, 132)',
+        showLine: !newReport,
         fill: false,
       },
       {
@@ -114,16 +116,11 @@ async function twoAxisGraph(propertyGid) {
         rawValues: prodes,
         axis: 'y1',
         ...PRODES.colors,
-        // backgroundColor: 'rgb(54, 162, 235)',
-        // borderColor: 'rgb(54, 162, 235)',
         fill: false,
       },
     );
     deterClassToDataSet(deter).forEach((dts) => {
       dts.type = 'bar';
-      // const color = randomRGB(0, 255);
-      // dts.borderColor = color;
-      // dts.backgroundColor = color;
       dts.fill = false;
       dts.yAxisID = 'y1';
       allDatasets.push(dts);
@@ -133,10 +130,6 @@ async function twoAxisGraph(propertyGid) {
       const { rawValues } = rawDs;
       labels.forEach((label) => {
         const val = rawValues.find(({ date }) => date === label);
-        // data.push(
-        //   (val && parseFloat(val.value)) ||
-        //     Math.floor(Math.random() * (1200 - 200 + 1)),
-        // );
         data.push((val && parseFloat(val.value)) || 0);
       });
       rawDs.data = data;
@@ -145,7 +138,7 @@ async function twoAxisGraph(propertyGid) {
   });
 }
 
-function chartBase64(propertyGid) {
+function chartBase64(propertyGid, newReport = false) {
   const options = {
     title: {
       display: true,
@@ -166,7 +159,7 @@ function chartBase64(propertyGid) {
           position: 'right',
           scaleLabel: {
             display: true,
-            labelString: 'Focos de calor (qt)',
+            labelString: 'Focos de calor (un)',
           },
           gridLines: {
             drawOnChartArea: false,
@@ -194,12 +187,13 @@ function chartBase64(propertyGid) {
       labels: {
         fontSize: 8,
         boxWidth: 20,
+        usePointStyle: !!newReport,
       },
       position: 'bottom',
     },
   };
   const newChart = new SatAlertasChart();
-  return twoAxisGraph(propertyGid).then((data) => {
+  return twoAxisGraph(propertyGid, newReport).then((data) => {
     const config = {
       type: 'bar',
       data: data,
@@ -226,9 +220,6 @@ function historyBurnlight(chartData) {
       },
       yAxes: [
         {
-          // gridLines: {
-          //   display: false,
-          // },
           ticks: {
             stepSize: 100,
           },
@@ -280,7 +271,6 @@ function historyBurnlight(chartData) {
   newChart.setWidth(450);
   newChart.setHeight(150);
   newChart.setConfig(config).setDevicePixelRatio(8.0);
-  // console.log('>>>>: ', newChart.getUrl());
   return newChart;
 }
 
