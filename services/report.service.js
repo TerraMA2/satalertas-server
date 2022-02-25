@@ -2161,15 +2161,16 @@ async function setCharts(reportData) {
     const charts = reportData.chartsImages;
   
     if(['queimada', 'prodesv2'].includes(reportData.type)) {
+      const newReport = reportData.type === 'prodesv2' ? true : false;
       charts['firstFiringChart'] = {
         image: await FiringCharts.historyBurnlight(
-          reportData.property.historyBurnlight,
+          reportData.property.historyBurnlight
         ).toDataUrl(),
         fit: [450, 450],
         alignment: 'center',
       };
       charts['secondFiringChart'] = {
-        image: await FiringCharts.chartBase64(reportData.property.gid),
+        image: await FiringCharts.chartBase64(reportData.property.gid, newReport),
         fit: [450, 200],
         alignment: 'center',
       };
