@@ -20,7 +20,18 @@ FROM public.a_carfocos_99 cf
 WHERE cf.de_car_validado_sema_gid = '${propertyGid}'
 GROUP BY date
 ORDER BY date;`;
-
+const sqlCalorProdes = (propertyGid) => `SELECT
+extract(year from date_trunc('year', acf.execution_date)) AS date,
+  COUNT(acf.*) AS value
+FROM public.a_carfocos_99 acf
+JOIN public.a_carprodes_1 acp ON st_intersects(
+  st_transform(acp.intersection_geom, 4326)
+  , acf.intersection_geom
+)
+WHERE acf.de_car_validado_sema_gid = '${propertyGid}'
+  AND acp.de_car_validado_sema_gid = '${propertyGid}'
+GROUP BY date
+ORDER BY date;`;
 const sqlProdes = (propertyGid) => `SELECT
 extract(year from date_trunc('year', areaq.execution_date)) AS date,
 COALESCE(SUM(CAST(areaq.calculated_area_ha  AS DECIMAL)), 0) AS value
@@ -91,7 +102,7 @@ async function twoAxisGraph(propertyGid, newReport = false) {
   const promisses = [
     getData(sqlDeter(propertyGid)),
     getData(sqlProdes(propertyGid)),
-    getData(sqlCalor(propertyGid)), // se precisar do dados de calor
+    getData(!newReport ? sqlCalor(propertyGid) : sqlCalorProdes(propertyGid)), // se precisar do dados de calor
   ];
   return Promise.all(promisses).then((fetchData) => {
     const [deter, prodes, calor] = fetchData;
